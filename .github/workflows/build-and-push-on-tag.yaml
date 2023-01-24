@@ -7,6 +7,6 @@ on:
       - 'moodle-[0-9]+.[0-9]+.[0-9]+-debian-11-r[0-9]+'
 jobs:
   build_and_push:
-    uses: hpi-schul-cloud/infra-tools/.github/workflows/bap.yaml@DBP-36-custom-image-build-moodle
+    uses: ./.github/workflows/build-and-push.yaml
     with:
       registry: ghcr
