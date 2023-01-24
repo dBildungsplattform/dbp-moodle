@@ -10,6 +10,6 @@ jobs:
   build_image_on_push:
     permissions:
       packages: write
-    uses: hpi-schul-cloud/infra-tools/.github/workflows/imagetoghcr-on-push.yaml@DBP-36-custom-image-build-moodle
+    uses: hpi-schul-cloud/infra-tools/.github/workflows/imagetoghcr-on-push.yaml@master
     with:
       image_name: "moodle"
