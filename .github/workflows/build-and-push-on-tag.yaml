@@ -4,7 +4,7 @@ name: BAP Docker Image on Tag
 on:
   push:
     tags:
-      - 'moodle-[0-9]+.[0-9]+.[0-9]+-debian-11-r[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+-debian-11-r[0-9]+'
 jobs:
   build_and_push:
     uses: ./.github/workflows/build-and-push.yaml
