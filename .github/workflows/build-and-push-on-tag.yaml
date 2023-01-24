@@ -10,3 +10,5 @@ jobs:
     uses: ./.github/workflows/build-and-push.yaml
     with:
       registry: ghcr
+      image: moodle
+      tag: ${{ github.ref_name }}
