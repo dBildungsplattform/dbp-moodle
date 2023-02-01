@@ -6,9 +6,22 @@ on:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+-debian-11-r[0-9]+'
 jobs:
+  pre_build:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+      suffix: ${{ steps.tag.outputs.suffix }}
+    steps:
+      - name: Filter Tag name
+        uses: olegtarasov/get-tag@v2.1
+        id: tag
+        with:
+          tagRegex: "(?<tag>[0-9]+.[0-9]+.[0-9]+)(?<suffix>-debian-11-r[0-9]+)"
   build_and_push:
+    needs: pre_build
     uses: hpi-schul-cloud/infra-tools/.github/workflows/build-and-push.yaml@master
     with:
       registry: ghcr.io
       image: dbildungsplattform/moodle
-      tag: ${{ github.ref_name }}
+      tag: ${{ needs.pre_build.outputs.tag }}
+      suffix: ${{ needs.pre_build.outputs.suffix }}
