@@ -3,14 +3,14 @@ name: Moodle Docker Image on Push to GHCR
 
 on:
   push:
-    branches:
-      - DBP-128-Evaluation-New-Moodle-Update-Method
+    branches-ignore:
+      - master
 
 jobs:
   build_image_on_push:
     permissions:
       packages: write
       security-events: write
-    uses: hpi-schul-cloud/infra-tools/.github/workflows/imagetoghcr-on-push.yaml@DBP-128-Evaluation-New-Moodle-Update-Method
+    uses: hpi-schul-cloud/infra-tools/.github/workflows/imagetoghcr-on-push.yaml@master
     with:
       image_name: "moodle"
