@@ -11,6 +11,8 @@ jobs:
     permissions:
       packages: write
       security-events: write
+      actions: read
+      contents: read
     uses: hpi-schul-cloud/infra-tools/.github/workflows/imagetoghcr-on-push.yaml@master
     with:
       image_name: "moodle"
