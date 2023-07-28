@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 #image_version="$APP_VERSION"
 image_version="5.0.0"
 # checks if image version(new) is greater than current installed version
@@ -33,11 +34,11 @@ echo "Skipping Upgrade process"; exit 0
 else
     echo "=== Preparing Update ==="
     #apt-get install curl gnupg
-    apt-get install apt-transport-https --yes
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list
-    apt-get update
-    apt-get -y install helm
-    helm repo add bitnami https://charts.bitnami.com/bitnami
+    # apt-get install apt-transport-https --yes
+    # echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list
+    # apt-get update
+    # apt-get -y install helm
+    # helm repo add bitnami https://charts.bitnami.com/bitnami
 
     echo "=== Starting Update ==="
 
