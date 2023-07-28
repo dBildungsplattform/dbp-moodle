@@ -1,5 +1,6 @@
 #!/bin/bash
-image_version="$APP_VERSION"
+#image_version="$APP_VERSION"
+image_version="5.0.0"
 # checks if image version(new) is greater than current installed version
 version_greater() {
 	if [[ $1 = $2 ]]; then echo "Already up to date"; return 0;
