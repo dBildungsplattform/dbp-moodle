@@ -1,6 +1,5 @@
 #!/bin/bash
-#image_version="$APP_VERSION"
-image_version="5.0.0"
+image_version="$APP_VERSION"
 # checks if image version(new) is greater than current installed version
 version_greater() {
 	if [[ $1 = $2 ]]; then echo "Already up to date"; return 0;
@@ -31,6 +30,14 @@ then
 echo "Skipping Upgrade process"; exit 0
 #TODO end the script properly to launch the container successfully
 else
+    echo "=== Preparing Update ==="
+    curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyrings/helm.gpg > /dev/null
+    sudo apt-get install apt-transport-https --yes
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+    apt-get update
+    apt-get -y install helm
+    helm repo add bitnami https://charts.bitnami.com/bitnami
+
     echo "=== Starting Update ==="
 
     echo "=== Enable Maintenance Mode ==="
@@ -38,7 +45,7 @@ else
 
     echo "=== Turn off liveness and readiness probe ==="
     helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle  bitnami/moodle --version {{ moodle_chart_version }} --namespace {{ moodle_namespace }}
-
+    #Helm command not found
     echo "=== Taking a Backup ==="
     if [ -d "/bitnami/moodledata/moodle-backup" ]; then
         rm -r /bitnami/moodledata/moodle-backup
@@ -55,6 +62,7 @@ else
     fi
     mkdir /bitnami/moodledata/updated-moodle
 
+    echo "=== Unpacking new Moodle ==="
     tar -xzf /tmp/moodle.tgz -C /bitnami/moodledata/updated-moodle --strip 1
     #Possible Breakpoint to check if the download works until here
     # rm -r /bitnami/moodle/*
@@ -74,8 +82,8 @@ else
     # chown -R 1001:root /bitnami/moodle/*
 
     # echo "=== Turn liveness probe back on again ==="
-    # helm upgrade --reuse-values --set livenessProbe.enabled=true --set readinessprobe.enable=true moodle bitnami/moodle --version {{ moodle_chart_version }} --namespace {{ moodle_namespace }}
+    helm upgrade --reuse-values --set livenessProbe.enabled=true --set readinessprobe.enable=true moodle bitnami/moodle --version {{ moodle_chart_version }} --namespace {{ moodle_namespace }}
 
     # echo "=== Disable Maintenance Mode ==="
-    # rm  /bitnami/moodle-data/climaintenance.html
+    rm  /bitnami/moodle-data/climaintenance.html
 fi
