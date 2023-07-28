@@ -1,5 +1,5 @@
 #!/bin/bash
-#image_version="$new_image_version"
+#image_version="$APP_VERSION"
 image_version="5.0.0"
 # checks if image version(new) is greater than current installed version
 version_greater() {
@@ -24,7 +24,7 @@ else
     exit 0;
 fi
 
-echo "The new Moodle Image version is $new_image_version";
+echo "The new Moodle Image version is $APP_VERSION";
 
 if version_greater "$installed_version" "$image_version";
 then
@@ -32,7 +32,7 @@ echo "Skipping Upgrade process"; exit 0
 #TODO end the script properly to launch the container successfully
 else
     echo "=== Preparing Update ==="
-    apt-get install curl gnupg
+    #apt-get install curl gnupg
     curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyrings/helm.gpg > /dev/null
     apt-get install apt-transport-https --yes
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list
