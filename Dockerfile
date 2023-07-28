@@ -6,5 +6,5 @@ USER root
 
 COPY entrypoint.sh entrypoint.sh
 RUN chmod +x entrypoint.sh
-
-ENTRYPOINT ["./entrypoint.sh", "4.4.0"]
+CMD "4.4.0"
+ENTRYPOINT ["./entrypoint.sh"]
