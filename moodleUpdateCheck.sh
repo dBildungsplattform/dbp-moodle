@@ -1,19 +1,6 @@
 #!/bin/bash
-if [[ $# -eq 0 ]]
-then
-	echo "No Moodle image Version supplied";
-	exit 1
-fi
-
-INPUT_REGEX="(^[0-9]+\.[0-9]+\.[0-9]$)"
-if [[ $1 =~ $INPUT_REGEX ]];
-then
-    echo "Correct input format";
-else
-	echo "Wrong Version Input Format, aborting process";
-	exit 1;
-fi
-
+#image_version="$APP_VERSION"
+image_version="5.0.0"
 # checks if image version(new) is greater than current installed version
 version_greater() {
 	if [[ $1 = $2 ]]; then echo "Already up to date"; return 0;
@@ -37,7 +24,7 @@ else
     exit 0;
 fi
 
-echo "The new Moodle env var version is $APP_VERSION";
+echo "The new Moodle Image version is $APP_VERSION";
 
 if version_greater "$installed_version" "$image_version";
 then
