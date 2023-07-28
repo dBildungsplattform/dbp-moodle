@@ -4,7 +4,7 @@ FROM bitnami/moodle:4.1.0-debian-11-r15
 RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen
 USER root
 
-COPY entrypoint.sh entrypoint.sh
-RUN chmod +x entrypoint.sh
-CMD "4.4.0"
-ENTRYPOINT ["./entrypoint.sh"]
+COPY moodleUpdateCheck.sh /moodleUpdateCheck.sh
+RUN chmod +x /moodleUpdateCheck.sh
+
+ENTRYPOINT ["/moodleUpdateCheck.sh", "4.4.0"]
