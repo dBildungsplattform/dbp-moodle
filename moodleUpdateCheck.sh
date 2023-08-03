@@ -70,8 +70,8 @@ else
 
     #echo "=== Turn off liveness and readiness probe ==="
     #helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle  bitnami/moodle --namespace {{ moodle_namespace }}
-    curl "https://packaging.moodle.org/stable401/moodle-4.1.2.tgz" -o /bitnami/moodledata/moodle.tgz
-    tar -xzf /bitnami/moodledata/moodle.tgz -C /bitnami/moodledata/updated-moodle --strip 1
+    curl "https://packaging.moodle.org/stable401/moodle-4.1.2.tgz" -o /bitnami/moodledata/moodle.tgz && echo "Download done"
+    tar -xzf /bitnami/moodledata/moodle.tgz -C /bitnami/moodledata/updated-moodle --strip 1 && echo "Unpacking done"
     #curl https://download.moodle.org/download.php/direct/stable401/moodle-4.1.2.tgz -L -o ./moodle.tgz
     sleep 5
     if ! [[ -a /bitnami/moodledata/moodle.tgz ]];then
