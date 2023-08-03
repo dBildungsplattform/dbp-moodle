@@ -64,8 +64,8 @@ else
 
     #echo "=== Turn off liveness and readiness probe ==="
     #helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle  bitnami/moodle --namespace {{ moodle_namespace }}
-    
-    if ! [[ $(curl https://download.moodle.org/download.php/stable401/moodle-4.1.2.tgz -o /tmp/moodle.tgz) ]];then
+    curl https://download.moodle.org/download.php/stable401/moodle-4.1.2.tgz -o /tmp/moodle.tgz
+    if ! [[ -a /tmp/moodle.tgz ]];then
         echo "Critical error, download link is not working"
         exit 0; #Hard abort here
     fi
@@ -100,9 +100,11 @@ else
 
     #If success
     #Get the new installed version
+    echo "=== Checking downloaded Moodle version ==="
     post_update_version="0.0.0"
-    if [ -f /bitnami/moodle/version.php ]; then
-        LINE=$(grep release /bitnami/moodle/version.php)
+    #if [ -f /bitnami/moodle/version.php ]; then
+    if [ -f /bitnami/moodledata/updated-moodle/version.php ]; then
+        LINE=$(grep release /bitnami/moodledata/updated-moodle/version.php)
         REGEX="release\s*=\s*'([0-9]+\.[0-9]+\.[0-9])"
         if [[ $LINE =~ $REGEX ]]; then
             echo "Installed Moodle version:" ${BASH_REMATCH[1]}
