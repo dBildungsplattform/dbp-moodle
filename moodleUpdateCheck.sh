@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
-image_version="$APP_VERSION"
-#image_version="5.0.0"#Provoke update
+#image_version="$APP_VERSION"
+image_version="5.0.0" #Provoke update
 # checks if image version(new) is greater than current installed version
 version_greater() {
 	if [[ $1 = $2 ]]; then echo "Already up to date"; return 0;
@@ -34,6 +34,7 @@ fi
 pre_update_version=installed_version;
 echo "The new Moodle Image version is $APP_VERSION";
 
+#Do version check
 if version_greater "$installed_version" "$image_version";
 then
 echo "=== Skipping Update process and starting Moodle ===";
@@ -59,7 +60,7 @@ else
         sleep 20 #Ensure sufficient time for possible full update
     fi
 
-    echo "=== Starting new Moodle Download ==="
+    echo "=== Starting new Moodle Download of Version $APP_VERSION==="
 
     #echo "=== Turn off liveness and readiness probe ==="
     #helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle  bitnami/moodle --namespace {{ moodle_namespace }}
@@ -122,7 +123,8 @@ else
         /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
     elif [ $post_update_version == $pre_update_version ]; then
         echo "=== Update failed, old Version still installed ===" #Do we want to keep running until manual intervention?
-        exit 0;
+        #exit 0;
+        /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
     fi
 
 fi
