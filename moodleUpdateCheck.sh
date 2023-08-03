@@ -60,12 +60,14 @@ else
         sleep 20 #Ensure sufficient time for possible full update
     fi
 
-    echo "=== Starting new Moodle Download of Version $APP_VERSION==="
+    echo "=== Starting new Moodle Download of Version $APP_VERSION ==="
 
     #echo "=== Turn off liveness and readiness probe ==="
     #helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle  bitnami/moodle --namespace {{ moodle_namespace }}
     
-    curl {{ moodle_update_url }} -o /tmp/moodle.tgz
+    if ! [ curl https://download.moodle.org/download.php/stable401/moodle-4.1.0.tgz -o /tmp/moodle.tgz ];then
+        echo "Critical error, download link is not working"
+    fi
 
     echo "=== Download complete ==="
     if [ -d "/bitnami/moodledata/updated-moodle" ]; then
