@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 #image_version="$APP_VERSION"
-image_version="5.0.0" #Provoke update
+image_version="4.1.4" #Provoke update
 # checks if image version(new) is greater than current installed version
 version_greater() {
 	if [[ $1 = $2 ]]; then echo "Already up to date"; return 0;
@@ -70,16 +70,14 @@ else
 
     #echo "=== Turn off liveness and readiness probe ==="
     #helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle  bitnami/moodle --namespace {{ moodle_namespace }}
-    curl "https://packaging.moodle.org/stable401/moodle-4.1.2.tgz" -o /bitnami/moodledata/moodle.tgz && echo "Download done"
-    tar -xzf /bitnami/moodledata/moodle.tgz -C /bitnami/moodledata/updated-moodle --strip 1 && echo "Unpacking done"
+    curl "https://packaging.moodle.org/stable401/moodle-4.1.4.tgz" -o /bitnami/moodledata/moodle.tgz && echo "=== Download done ==="
+    tar -xzf /bitnami/moodledata/moodle.tgz -C /bitnami/moodledata/updated-moodle --strip 1 && echo "=== Unpacking done ==="
     #curl https://download.moodle.org/download.php/direct/stable401/moodle-4.1.2.tgz -L -o ./moodle.tgz
     sleep 5
     if ! [[ -a /bitnami/moodledata/moodle.tgz ]];then
         echo "Critical error, download link is not working"
-        #exit 0; #Hard abort here
+        exit 0; #Hard abort here
     fi
-
-    echo "=== Download and unpacking complete ==="
 
     #Possible Breakpoint to check if the download works until here
     # rm -r /bitnami/moodle/*
@@ -119,14 +117,15 @@ else
         exit 0;
     fi
 
-    if [ $post_update_version == $APP_VERSION ]; then
+    if [ $post_update_version == $image_version ]; then
         echo "=== Update to new Version $post_update_version successful ==="
         #Cleanup
         echo "=== Disable Maintenance Mode ==="
-        rm  /bitnami/moodledata/climaintenance.html
-        rm  /bitnami/moodledata/CliUpdate
-        #rm -r /bitnami/moodledata/moodle-backup
-        #rm -r /bitnami/moodledata/updated-moodle
+        rm /bitnami/moodledata/climaintenance.html
+        rm /bitnami/moodledata/CliUpdate
+        rm /bitnami/moodledata/moodle.tgz
+        rm -r /bitnami/moodledata/moodle-backup
+        rm -r /bitnami/moodledata/updated-moodle
         echo "=== Starting new Moodle version ==="
         /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
     elif [ $post_update_version == $pre_update_version ]; then
