@@ -80,8 +80,8 @@ else
     fi
 
     #Possible Breakpoint to check if the download works until here
-    # rm -r /bitnami/moodle/*
-    # cp -r /bitnami/moodledata/updated-moodle/* /bitnami/moodle/
+    rm -r /bitnami/moodle/*
+    cp -r /bitnami/moodledata/updated-moodle/* /bitnami/moodle/
     # cp /bitnami/moodledata/moodle-backup/config.php /bitnami/moodle/config.php
     # # plugin list - one could generate a diff and use that list
     # echo "=== Move plugins to updated installation ==="
@@ -103,9 +103,9 @@ else
     #Get the new installed version
     echo "=== Checking downloaded Moodle version ==="
     post_update_version="0.0.0"
-    #if [ -f /bitnami/moodle/version.php ]; then
-    if [ -f /bitnami/moodledata/updated-moodle/version.php ]; then
-        LINE=$(grep release /bitnami/moodledata/updated-moodle/version.php)
+    if [ -f /bitnami/moodle/version.php ]; then
+    #if [ -f /bitnami/moodledata/updated-moodle/version.php ]; then
+        LINE=$(grep release /bitnami/moodle/version.php)
         REGEX="release\s*=\s*'([0-9]+\.[0-9]+\.[0-9])"
         if [[ $LINE =~ $REGEX ]]; then
             echo "Installed Moodle version:" ${BASH_REMATCH[1]}
@@ -120,11 +120,16 @@ else
     if [ $post_update_version == $image_version ]; then
         echo "=== Update to new Version $post_update_version successful ==="
         #Cleanup
+        #echo "=== restoring old version ==="
+        #rm -r /bitnami/moodle/*
+        #cp -r /bitnami/moodledata/moodle-backup/* /bitnami/moodle/
+
+
         echo "=== Disable Maintenance Mode ==="
         rm /bitnami/moodledata/climaintenance.html
         rm /bitnami/moodledata/CliUpdate
         rm /bitnami/moodledata/moodle.tgz
-        rm -r /bitnami/moodledata/moodle-backup
+        #rm -r /bitnami/moodledata/moodle-backup
         rm -r /bitnami/moodledata/updated-moodle
         echo "=== Starting new Moodle version ==="
         /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
