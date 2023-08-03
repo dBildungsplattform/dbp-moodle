@@ -60,25 +60,25 @@ else
         sleep 20 #Ensure sufficient time for possible full update
     fi
 
+    echo "=== Creating directory for new Version ==="
+    if [ -d "/bitnami/moodledata/updated-moodle" ]; then
+        rm -rf /bitnami/moodledata/updated-moodle
+    fi
+    mkdir /bitnami/moodledata/updated-moodle
+
     echo "=== Starting new Moodle Download of Version $APP_VERSION ==="
 
     #echo "=== Turn off liveness and readiness probe ==="
     #helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle  bitnami/moodle --namespace {{ moodle_namespace }}
-    curl https://packaging.moodle.org/stable401/moodle-4.1.2.tgz -o /tmp/moodle.tgz
+    curl https://packaging.moodle.org/stable401/moodle-4.1.2.tgz -o /tmp/moodle.tgz && tar -xzfv /tmp/moodle.tgz -C /bitnami/moodledata/updated-moodle --strip 1
     #curl https://download.moodle.org/download.php/direct/stable401/moodle-4.1.2.tgz -L -o ./moodle.tgz
     if ! [[ -a /tmp/moodle.tgz ]];then
         echo "Critical error, download link is not working"
         exit 0; #Hard abort here
     fi
 
-    echo "=== Download complete ==="
-    if [ -d "/bitnami/moodledata/updated-moodle" ]; then
-        rm -rf /bitnami/moodledata/updated-moodle
-    fi
-    mkdir /bitnami/moodledata/updated-moodle
+    echo "=== Download and unpacking complete ==="
 
-    echo "=== Unpacking new Moodle ==="
-    tar -xzfv /tmp/moodle.tgz -C /bitnami/moodledata/updated-moodle --strip 1
     #Possible Breakpoint to check if the download works until here
     # rm -r /bitnami/moodle/*
     # cp -r /bitnami/moodledata/updated-moodle/* /bitnami/moodle/
