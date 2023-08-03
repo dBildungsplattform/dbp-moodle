@@ -4,10 +4,9 @@ RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen
 USER root
 
 COPY moodleUpdateCheck.sh /moodleUpdateCheck.sh
-RUN chmod +x /moodleUpdateCheck.sh
-#&& \
-#apt-get update && apt-get install -y \
-#curl gpg
+RUN chmod +x /moodleUpdateCheck.sh && \
+apt-get update && apt-get install -y \
+curl
 
 
 #RUN curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyrings/helm.gpg > /dev/null && \
