@@ -72,7 +72,8 @@ else
     #helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle  bitnami/moodle --namespace {{ moodle_namespace }}
     curl "https://packaging.moodle.org/stable401/moodle-4.1.2.tgz" -o /bitnami/moodledata/moodle.tgz && tar -xzf /bitnami/moodledata/moodle.tgz -C /bitnami/moodledata/updated-moodle --strip 1
     #curl https://download.moodle.org/download.php/direct/stable401/moodle-4.1.2.tgz -L -o ./moodle.tgz
-    if ! [[ -a /tmp/moodle.tgz ]];then
+    sleep 5
+    if ! [[ -a /bitnami/moodledata/moodle.tgz ]];then
         echo "Critical error, download link is not working"
         exit 0; #Hard abort here
     fi
