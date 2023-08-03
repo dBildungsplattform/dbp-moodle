@@ -70,12 +70,13 @@ else
 
     #echo "=== Turn off liveness and readiness probe ==="
     #helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle  bitnami/moodle --namespace {{ moodle_namespace }}
-    curl "https://packaging.moodle.org/stable401/moodle-4.1.2.tgz" -o /bitnami/moodledata/moodle.tgz && tar -xzf /bitnami/moodledata/moodle.tgz -C /bitnami/moodledata/updated-moodle --strip 1
+    curl "https://packaging.moodle.org/stable401/moodle-4.1.2.tgz" -o /bitnami/moodledata/moodle.tgz
+    tar -xzf /bitnami/moodledata/moodle.tgz -C /bitnami/moodledata/updated-moodle --strip 1
     #curl https://download.moodle.org/download.php/direct/stable401/moodle-4.1.2.tgz -L -o ./moodle.tgz
     sleep 5
     if ! [[ -a /bitnami/moodledata/moodle.tgz ]];then
         echo "Critical error, download link is not working"
-        exit 0; #Hard abort here
+        #exit 0; #Hard abort here
     fi
 
     echo "=== Download and unpacking complete ==="
@@ -133,5 +134,5 @@ else
         #exit 0;
         /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
     fi
-
+    /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
 fi
