@@ -90,11 +90,11 @@ else
     #   cp -rp /bitnami/moodledata/moodle-backup/mod/$plugin /bitnami/moodle/mod/$plugin
     # done
 
-    # echo "=== Setting Permissions right  ==="
-    # chown root:root /bitnami/moodle
-    # chown root:root /bitnami/moodledata
-    # chown -R 1001:root /bitnami/moodledata/*
-    # chown -R 1001:root /bitnami/moodle/*
+    echo "=== Setting Permissions right  ==="
+    chown root:root /bitnami/moodle
+    chown root:root /bitnami/moodledata
+    chown -R 1001:root /bitnami/moodledata/*
+    chown -R 1001:root /bitnami/moodle/*
 
     # echo "=== Turn liveness probe back on again ==="
     #helm upgrade --reuse-values --set livenessProbe.enabled=true --set readinessprobe.enable=true moodle bitnami/moodle --version {{ moodle_chart_version }} --namespace {{ moodle_namespace }}
@@ -126,17 +126,20 @@ else
 
 
         echo "=== Disable Maintenance Mode ==="
+        rm -r /bitnami/moodledata/updated-moodle
+        #rm -r /bitnami/moodledata/moodle-backup
         rm /bitnami/moodledata/climaintenance.html
         rm /bitnami/moodledata/CliUpdate
         rm /bitnami/moodledata/moodle.tgz
-        #rm -r /bitnami/moodledata/moodle-backup
-        rm -r /bitnami/moodledata/updated-moodle
+
         echo "=== Starting new Moodle version ==="
         /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
     elif [ $post_update_version == $pre_update_version ]; then
         echo "=== Update failed, old Version still installed ===" #Do we want to keep running until manual intervention?
         #exit 0;
         /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
+    else
+        echo "Something went wrong, please check the loggs"
     fi
     /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
 fi
