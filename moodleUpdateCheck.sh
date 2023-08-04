@@ -29,6 +29,9 @@ else
     echo "No installed Moodle Version detected"
     exit 0;
 fi
+#TODO for testing purposes only
+installed_version="4.1.2"
+echo "Simulated version: $installed_version"
 
 #Is needed to check for success inside the container at the end
 pre_update_version=installed_version;
@@ -80,8 +83,9 @@ else
     fi
 
     #Possible Breakpoint to check if the download works until here
-    rm -r /bitnami/moodle/*
-    cp -r /bitnami/moodledata/updated-moodle/* /bitnami/moodle/
+    rm -rf /bitnami/moodle/*
+    cp -r /bitnami/moodledata/updated-moodle/* /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
+    rm -r /bitnami/moodledata/updated-moodle
     # cp /bitnami/moodledata/moodle-backup/config.php /bitnami/moodle/config.php
     # # plugin list - one could generate a diff and use that list
     # echo "=== Move plugins to updated installation ==="
@@ -126,7 +130,7 @@ else
 
 
         echo "=== Disable Maintenance Mode ==="
-        rm -r /bitnami/moodledata/updated-moodle
+        rm -rf /bitnami/moodledata/updated-moodle
         #rm -r /bitnami/moodledata/moodle-backup
         rm /bitnami/moodledata/climaintenance.html
         rm /bitnami/moodledata/CliUpdate
