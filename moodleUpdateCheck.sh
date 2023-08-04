@@ -85,7 +85,7 @@ else
     #Possible Breakpoint to check if the download works until here
     rm -rf /bitnami/moodle/* && echo "=== Old moodle deleted ==="
     cp -r /bitnami/moodledata/updated-moodle/* /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
-    rm -r /bitnami/moodledata/updated-moodle
+    rm -rf /bitnami/moodledata/updated-moodle
     # cp /bitnami/moodledata/moodle-backup/config.php /bitnami/moodle/config.php
     # # plugin list - one could generate a diff and use that list
     # echo "=== Move plugins to updated installation ==="
