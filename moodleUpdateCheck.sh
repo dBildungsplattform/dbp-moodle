@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 #image_version="$APP_VERSION"
 image_version="4.1.4" #Provoke update
 # checks if image version(new) is greater than current installed version
@@ -83,7 +82,7 @@ else
     fi
 
     #Possible Breakpoint to check if the download works until here
-    rm -rf /bitnami/moodle/*
+    rm -rf /bitnami/moodle/* && echo "=== Old moodle deleted ==="
     cp -r /bitnami/moodledata/updated-moodle/* /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
     rm -r /bitnami/moodledata/updated-moodle
     # cp /bitnami/moodledata/moodle-backup/config.php /bitnami/moodle/config.php
