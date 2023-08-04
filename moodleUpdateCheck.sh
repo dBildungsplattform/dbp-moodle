@@ -95,8 +95,8 @@ else
     # done
 
     echo "=== Setting Permissions right  ==="
-    chown root:root /bitnami/moodle
-    chown root:root /bitnami/moodledata
+    #chown root:root /bitnami/moodle
+    #chown root:root /bitnami/moodledata
     chown -R 1001:root /bitnami/moodledata/*
     chown -R 1001:root /bitnami/moodle/*
 
