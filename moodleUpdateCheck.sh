@@ -82,10 +82,15 @@ else
         exit 0; #Hard abort here
     fi
 
+    echo "=== Setting Permissions right  ==="
+    #chown root:root /bitnami/moodle
+    #chown root:root /bitnami/moodledata
+    chown -R 1001:root /bitnami/moodledata/*
+
     #Possible Breakpoint to check if the download works until here
     rm -rf /bitnami/moodle/* && echo "=== Old moodle deleted ==="
-    cp -r /bitnami/moodledata/updated-moodle/* /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
-    rm -rf /bitnami/moodledata/updated-moodle
+    ls /bitnami/moodle
+    cp -rp /bitnami/moodledata/updated-moodle/* /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
     # cp /bitnami/moodledata/moodle-backup/config.php /bitnami/moodle/config.php
     # # plugin list - one could generate a diff and use that list
     # echo "=== Move plugins to updated installation ==="
@@ -93,12 +98,6 @@ else
     # do
     #   cp -rp /bitnami/moodledata/moodle-backup/mod/$plugin /bitnami/moodle/mod/$plugin
     # done
-
-    echo "=== Setting Permissions right  ==="
-    #chown root:root /bitnami/moodle
-    #chown root:root /bitnami/moodledata
-    chown -R 1001:root /bitnami/moodledata/*
-    chown -R 1001:root /bitnami/moodle/*
 
     # echo "=== Turn liveness probe back on again ==="
     #helm upgrade --reuse-values --set livenessProbe.enabled=true --set readinessprobe.enable=true moodle bitnami/moodle --version {{ moodle_chart_version }} --namespace {{ moodle_namespace }}
