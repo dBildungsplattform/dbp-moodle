@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 #image_version="$APP_VERSION"
 image_version="4.1.4" #Provoke update
 # checks if image version(new) is greater than current installed version
@@ -126,6 +127,7 @@ else
         #echo "=== restoring old version ==="
         #rm -r /bitnami/moodle/*
         #cp -r /bitnami/moodledata/moodle-backup/* /bitnami/moodle/
+        # set permissions again?
 
 
         echo "=== Disable Maintenance Mode ==="
