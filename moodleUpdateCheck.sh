@@ -19,7 +19,7 @@ fi
 installed_version="0.0.0"
 if [ -f /bitnami/moodle/version.php ]; then
     LINE=$(grep release /bitnami/moodle/version.php)
-    REGEX="release\s*=\s*'([0-9]+\.[0-9]+\.[0-9])"
+    REGEX="release\s*=\s*'([0-9]+\.[0-9]*+\.[0-9]*)"
     if [[ $LINE =~ $REGEX ]]; then
 	    echo "Installed Moodle version:" ${BASH_REMATCH[1]}
         installed_version=${BASH_REMATCH[1]}
@@ -47,7 +47,7 @@ else
     if ! [ -a /bitnami/moodledata/climaintenance.html ]; then
         echo "=== Enable Maintenance Mode ==="
         echo '<h1>Sorry, maintenance in progress</h1>' > /bitnami/moodledata/climaintenance.html
-        sleep 5
+        sleep 2
         #The backup is only done once in the first run so we don't accidentally overwrite it
         echo "=== Taking a Backup ===" 
         if [ -d "/bitnami/moodledata/moodle-backup" ]; then
@@ -55,6 +55,8 @@ else
         fi
         mkdir -p /bitnami/moodledata/moodle-backup
         cp -rp /bitnami/moodle/* /bitnami/moodledata/moodle-backup
+    else
+        echo "=== Maintenance Mode already active, skipping internal backup ==="
     fi
 
     if ! [ -a /bitnami/moodledata/CliUpdate ]; then
@@ -69,11 +71,26 @@ else
     fi
     mkdir /bitnami/moodledata/updated-moodle
 
-    echo "=== Starting new Moodle Download of Version $APP_VERSION ==="
+    echo "=== Starting new Moodle Download of Version $image_version ==="
+
+    #Get Version number for download Link
+    major_regex="\s*([0-9])+\."
+    minor_regex="\.([0-9]*)\."
+    if [[ $image_version =~ $major_regex ]]; then
+            major=${BASH_REMATCH[1]}
+    fi
+    if [[ $image_version =~ $minor_regex ]]; then
+            minor=${BASH_REMATCH[1]}
+    fi
+    if [ ${#minor} -lt 2 ];
+    then minor=$(printf "%02d" $minor)
+    fi
+    stable_version=$major$minor
 
     #echo "=== Turn off liveness and readiness probe ==="
     #helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle  bitnami/moodle --namespace {{ moodle_namespace }}
-    curl "https://packaging.moodle.org/stable401/moodle-4.1.4.tgz" -o /bitnami/moodledata/moodle.tgz && echo "=== Download done ==="
+    echo "Download URL: https://packaging.moodle.org/stable${stable_version}/moodle-${image_version}.tgz"
+    curl "https://packaging.moodle.org/stable${stable_version}/moodle-${image_version}.tgz" -o /bitnami/moodledata/moodle.tgz && echo "=== Download done ==="
     tar -xzf /bitnami/moodledata/moodle.tgz -C /bitnami/moodledata/updated-moodle --strip 1 && echo "=== Unpacking done ==="
     #curl https://download.moodle.org/download.php/direct/stable401/moodle-4.1.2.tgz -L -o ./moodle.tgz
     sleep 5
@@ -83,11 +100,8 @@ else
     fi
 
     echo "=== Setting Permissions right  ==="
-    #chown root:root /bitnami/moodle
-    #chown root:root /bitnami/moodledata
     chown -R 1001:root /bitnami/moodledata/*
 
-    #Possible Breakpoint to check if the download works until here
     rm -rf /bitnami/moodle/* && echo "=== Old moodle deleted ==="
     ls /bitnami/moodle
     cp -rp /bitnami/moodledata/updated-moodle/* /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
