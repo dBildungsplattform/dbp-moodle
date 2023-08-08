@@ -96,8 +96,10 @@ else
     echo "Download URL: ${download_url}"
     url_response=$(curl --write-out '%{response_code}' --head --silent --output /dev/null ${download_url})
     if ! [ $url_response -eq 200 ];
-    then echo "Critical error, download link is not working"
+    then echo "Critical error, download link is not working, abort update process"
         touch /bitnami/moodledata/UpdateFailed
+        rm -f /bitnami/moodledata/climaintenance.php
+        rm -f /bitnami/moodledata/CliUpdate
         exit 1; #Hard abort here
     else
         curl $download_url -o /bitnami/moodledata/moodle.tgz && echo "=== Download done ==="
