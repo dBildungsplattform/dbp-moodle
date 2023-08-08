@@ -92,9 +92,9 @@ else
     #helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle  bitnami/moodle --namespace {{ moodle_namespace }}
    
     #Test if the download URL is available
-    donwload_url="https://packaging.moodle.org/stable${stable_version}/moodle-${image_version}.tgz"
-    echo "Download URL: $download_url"
-    url_response=$(curl --write-out '%{response_code}' --head --silent --output /dev/null $download_url)
+    download_url="https://packaging.moodle.org/stable${stable_version}/moodle-${image_version}.tgz"
+    echo "Download URL: ${download_url}"
+    url_response=$(curl --write-out '%{response_code}' --head --silent --output /dev/null ${download_url})
     if ! [ $url_response -eq 200 ];
     then echo "Critical error, download link is not working"
         touch /bitnami/moodledata/UpdateFailed
@@ -146,7 +146,7 @@ else
         #Cleanup
         #echo "=== restoring old version ==="
         #rm -r /bitnami/moodle/*
-        #cp -r /bitnami/moodledata/moodle-backup/* /bitnami/moodle/
+        #cp -rp /bitnami/moodledata/moodle-backup/* /bitnami/moodle/
         # set permissions again?
 
 
