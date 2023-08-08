@@ -11,7 +11,7 @@ version_greater() {
 }
 
 if [ -f /bitnami/moodledata/UpdateFailed ]; then
-    echo "=== UpdateFailed file exists, please resolve the image problem manually ==="
+    echo "=== UpdateFailed file exists, please resolve the problem manually ==="
     /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
 fi
 
@@ -90,15 +90,21 @@ else
 
     #echo "=== Turn off liveness and readiness probe ==="
     #helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle  bitnami/moodle --namespace {{ moodle_namespace }}
-    echo "Download URL: https://packaging.moodle.org/stable${stable_version}/moodle-${image_version}.tgz"
-    curl "https://packaging.moodle.org/stable${stable_version}/moodle-${image_version}.tgz" -o /bitnami/moodledata/moodle.tgz && echo "=== Download done ==="
-    tar -xzf /bitnami/moodledata/moodle.tgz -C /bitnami/moodledata/updated-moodle --strip 1 && echo "=== Unpacking done ==="
-    #curl https://download.moodle.org/download.php/direct/stable401/moodle-4.1.2.tgz -L -o ./moodle.tgz
-    sleep 5
-    if ! [[ -a /bitnami/moodledata/moodle.tgz ]];then
-        echo "Critical error, download link is not working"
-        exit 0; #Hard abort here
+   
+    #Test if the download URL is available
+    donwload_url="https://packaging.moodle.org/stable${stable_version}/moodle-${image_version}.tgz"
+    echo "Download URL: $download_url"
+    url_response=$(curl --write-out '%{response_code}' --head --silent --output /dev/null $download_url)
+    if ! [ $url_response -eq 200 ];
+    then echo "Critical error, download link is not working"
+        touch /bitnami/moodledata/UpdateFailed
+        exit 1; #Hard abort here
+    else
+        curl $download_url -o /bitnami/moodledata/moodle.tgz && echo "=== Download done ==="
+        #curl https://download.moodle.org/download.php/direct/stable401/moodle-4.1.2.tgz -L -o ./moodle.tgz alternative url
+        tar -xzf /bitnami/moodledata/moodle.tgz -C /bitnami/moodledata/updated-moodle --strip 1 && echo "=== Unpacking done ==="
     fi
+    sleep 2
 
     echo "=== Setting Permissions right  ==="
     chown -R 1001:root /bitnami/moodledata/*
