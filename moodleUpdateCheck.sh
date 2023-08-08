@@ -85,8 +85,7 @@ else
     if [ ${#minor} -lt 2 ];
     then minor=$(printf "%02d" $minor)
     fi
-    #stable_version=$major$minor
-    stable_version="XXXXXX"
+    stable_version=$major$minor
 
     #echo "=== Turn off liveness and readiness probe ==="
     #helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle  bitnami/moodle --namespace {{ moodle_namespace }}
