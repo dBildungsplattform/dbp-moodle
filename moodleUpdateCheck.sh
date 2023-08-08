@@ -98,7 +98,7 @@ else
     url_response=$(curl --write-out '%{response_code}' --head --silent --output /dev/null ${download_url})
     if ! [ $url_response -eq 200 ];
     then echo "Critical error, download link is not working, abort update process"
-        rm /bitnami/moodledata/climaintenance.php && echo "=== Disabled Maintenance mode ==="
+        rm /bitnami/moodledata/climaintenance.html
         rm /bitnami/moodledata/CliUpdate && sleep 2
         touch /bitnami/moodledata/UpdateFailed
         exit 1; #Hard abort here
