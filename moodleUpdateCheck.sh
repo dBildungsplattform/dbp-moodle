@@ -10,6 +10,23 @@ version_greater() {
 	else echo "Unexpected behaviour, exiting version check"; return 0; fi
 }
 
+#Will remove the required files to restore functionality
+cleanup() {
+    echo "=== Deleting Moodle download folder ==="
+    rm -rf /bitnami/moodledata/updated-moodle
+    #echo "=== Deleting Moodle internal Backup folder ==="
+    #rm -rf /bitnami/moodledata/moodle-backup
+    echo "=== Disabling maintenance mode and signaling that Update process is finished ==="
+    rm -f /bitnami/moodledata/moodle.tgz
+    rm -f /bitnami/moodledata/climaintenance.html
+    rm -f /bitnami/moodledata/CliUpdate
+}
+
+#Starts the currently installed Moodle application
+start_moodle(){
+    /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
+}
+
 if [ -f /bitnami/moodledata/UpdateFailed ]; then
     echo "=== UpdateFailed file exists, please resolve the problem manually ==="
     /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
@@ -34,20 +51,21 @@ installed_version="4.1.2"
 echo "Simulated version: $installed_version"
 
 #Is needed to check for success inside the container at the end
-pre_update_version=installed_version;
+pre_update_version=$installed_version;
 echo "The new Moodle Image version is $APP_VERSION";
 
 #Do version check
 if version_greater "$installed_version" "$image_version";
 then
-echo "=== Skipping Update process and starting Moodle ===";
+echo "=== Same Version, skipping Update process and starting Moodle ===";
 /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
 else
-
+    #New version, create required Files
     if ! [ -a /bitnami/moodledata/climaintenance.html ]; then
         echo "=== Enable Maintenance Mode ==="
         echo '<h1>Sorry, maintenance in progress</h1>' > /bitnami/moodledata/climaintenance.html
         sleep 2
+        #TODO Clear cache and Sessions
         #The backup is only done once in the first run so we don't accidentally overwrite it
         echo "=== Taking a Backup ===" 
         if [ -d "/bitnami/moodledata/moodle-backup" ]; then
@@ -59,12 +77,14 @@ else
         echo "=== Maintenance Mode already active, skipping internal backup ==="
     fi
 
+    #Wait for the Update Helper Job to disable the Probes and force a pod restart
     if ! [ -a /bitnami/moodledata/CliUpdate ]; then
         echo "=== Create required Files for Update ==="
         touch /bitnami/moodledata/CliUpdate
-        sleep 20 #Ensure sufficient time for possible full update
+        sleep 40 #Ensure sufficient time for possible full backup
     fi
 
+    #Start of the download step
     echo "=== Creating directory for new Version ==="
     if [ -d "/bitnami/moodledata/updated-moodle" ]; then
         rm -rf /bitnami/moodledata/updated-moodle
@@ -87,20 +107,18 @@ else
     fi
     stable_version=$major$minor
 
-    #echo "=== Turn off liveness and readiness probe ==="
-    #helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle  bitnami/moodle --namespace {{ moodle_namespace }}
-   
     #Test if the download URL is available
     download_url="https://packaging.moodle.org/stable${stable_version}/moodle-${image_version}.tgz"
     #https://download.moodle.org/download.php/direct/stable${stable_version}/moodle-${image_version}.tgz alternative download url
     echo "Download URL: ${download_url}"
     url_response=$(curl --write-out '%{response_code}' --head --silent --output /dev/null ${download_url})
     if ! [ $url_response -eq 200 ];
-    then echo "Critical error, download link is not working, abort update process"
+    then echo "=== Critical error, download link is not working, abort update process ==="
+        touch /bitnami/moodledata/UpdateFailed
         rm /bitnami/moodledata/climaintenance.html
         rm /bitnami/moodledata/CliUpdate && sleep 2
-        touch /bitnami/moodledata/UpdateFailed
-        exit 1; #Hard abort here
+        #exit 1; #Hard abort here
+        start_moodle();
     else
         curl $download_url -o /bitnami/moodledata/moodle.tgz && echo "=== Download done ==="
         tar -xzf /bitnami/moodledata/moodle.tgz -C /bitnami/moodledata/updated-moodle --strip 1 && echo "=== Unpacking done ==="
@@ -121,9 +139,6 @@ else
     #   cp -rp /bitnami/moodledata/moodle-backup/mod/$plugin /bitnami/moodle/mod/$plugin
     # done
 
-    # echo "=== Turn liveness probe back on again ==="
-    #helm upgrade --reuse-values --set livenessProbe.enabled=true --set readinessprobe.enable=true moodle bitnami/moodle --version {{ moodle_chart_version }} --namespace {{ moodle_namespace }}
-
     #If success
     #Get the new installed version
     echo "=== Checking downloaded Moodle version ==="
@@ -139,33 +154,24 @@ else
     else
         #TODO What happens if there is no Moodle installed?
         echo "=== Update failed, no Moodle Version detected ==="
-        exit 0;
+        exit 1;
     fi
 
     if [ $post_update_version == $image_version ]; then
         echo "=== Update to new Version $post_update_version successful ==="
-        #Cleanup
-        #echo "=== restoring old version ==="
-        #rm -r /bitnami/moodle/*
-        #cp -rp /bitnami/moodledata/moodle-backup/* /bitnami/moodle/
-        # set permissions again?
-
-
-        echo "=== Disable Maintenance Mode ==="
-        rm -rf /bitnami/moodledata/updated-moodle
-        #rm -r /bitnami/moodledata/moodle-backup
-        rm /bitnami/moodledata/climaintenance.html
-        rm /bitnami/moodledata/CliUpdate
-        rm /bitnami/moodledata/moodle.tgz
-
+        cleanup();
         echo "=== Starting new Moodle version ==="
-        /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
+        start_moodle();
     elif [ $post_update_version == $pre_update_version ]; then
         echo "=== Update failed, old Version still installed ===" #Do we want to keep running until manual intervention?
-        #exit 0;
-        /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
+        touch /bitnami/moodledata/UpdateFailed
+        cleanup();
+        #exit 1;
+        start_moodle();
     else
-        echo "Something went wrong, please check the loggs"
+        #TODO check for possible outcomes here
+        echo "Something went wrong, please check the logs"
+        touch /bitnami/moodledata/UpdateFailed
+        exit 1;
     fi
-    /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
 fi
