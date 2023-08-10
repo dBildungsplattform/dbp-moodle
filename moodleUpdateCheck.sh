@@ -118,7 +118,7 @@ else
         rm /bitnami/moodledata/climaintenance.html
         rm /bitnami/moodledata/CliUpdate && sleep 2
         #exit 1; #Hard abort here
-        start_moodle();
+        start_moodle
     else
         curl $download_url -o /bitnami/moodledata/moodle.tgz && echo "=== Download done ==="
         tar -xzf /bitnami/moodledata/moodle.tgz -C /bitnami/moodledata/updated-moodle --strip 1 && echo "=== Unpacking done ==="
@@ -159,15 +159,15 @@ else
 
     if [ $post_update_version == $image_version ]; then
         echo "=== Update to new Version $post_update_version successful ==="
-        cleanup();
+        cleanup
         echo "=== Starting new Moodle version ==="
-        start_moodle();
+        start_moodle
     elif [ $post_update_version == $pre_update_version ]; then
         echo "=== Update failed, old Version still installed ===" #Do we want to keep running until manual intervention?
         touch /bitnami/moodledata/UpdateFailed
-        cleanup();
+        cleanup
         #exit 1;
-        start_moodle();
+        start_moodle
     else
         #TODO check for possible outcomes here
         echo "Something went wrong, please check the logs"
