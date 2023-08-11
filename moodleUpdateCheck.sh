@@ -25,11 +25,12 @@ cleanup() {
 #Starts the currently installed Moodle application
 start_moodle(){
     /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
+    exit 1
 }
 
 if [ -f /bitnami/moodledata/UpdateFailed ]; then
     echo "=== UpdateFailed file exists, please resolve the problem manually ==="
-    /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
+    start_moodle
 fi
 
 #Get the current installed version
@@ -44,7 +45,8 @@ if [ -f /bitnami/moodle/version.php ]; then
 else
     #TODO What happens if there is no Moodle installed?
     echo "No installed Moodle Version detected"
-    exit 0;
+    echo "Fresh Bitnami installation..."
+    start_moodle
 fi
 #TODO for testing purposes only
 installed_version="4.1.2"
@@ -129,7 +131,6 @@ else
     chown -R 1001:root /bitnami/moodledata/*
 
     rm -rf /bitnami/moodle/* && echo "=== Old moodle deleted ==="
-    ls /bitnami/moodle
     cp -rp /bitnami/moodledata/updated-moodle/* /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
     # cp /bitnami/moodledata/moodle-backup/config.php /bitnami/moodle/config.php
     # # plugin list - one could generate a diff and use that list
