@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
-#image_version="$APP_VERSION"
-image_version="4.1.4" #Provoke update
+image_version="$APP_VERSION"
+#image_version="4.1.4" #Provoke update
 # checks if image version(new) is greater than current installed version
 version_greater() {
 	if [[ $1 = $2 ]]; then echo "Already up to date"; return 0;
@@ -49,8 +49,8 @@ else
     start_moodle
 fi
 #TODO for testing purposes only
-installed_version="4.1.2"
-echo "Simulated version: $installed_version"
+#installed_version="4.1.2"
+#echo "Simulated version: $installed_version"
 
 #Is needed to check for success inside the container at the end
 pre_update_version=$installed_version;
@@ -130,7 +130,7 @@ else
     echo "=== Setting Permissions right  ==="
     chown -R 1001:root /bitnami/moodledata/*
 
-    rm -rf /bitnami/moodle/* && echo "=== Old moodle deleted ===" #Where did this go?
+    rm -rf /bitnami/moodle/* && echo "=== Old moodle deleted ==="
     cp -rp /bitnami/moodledata/updated-moodle/* /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
     # cp /bitnami/moodledata/moodle-backup/config.php /bitnami/moodle/config.php
     # # plugin list - one could generate a diff and use that list
@@ -145,11 +145,10 @@ else
     echo "=== Checking downloaded Moodle version ==="
     post_update_version="0.0.0"
     if [ -f /bitnami/moodle/version.php ]; then
-    #if [ -f /bitnami/moodledata/updated-moodle/version.php ]; then
         LINE=$(grep release /bitnami/moodle/version.php)
         REGEX="release\s*=\s*'([0-9]+\.[0-9]+\.[0-9])"
         if [[ $LINE =~ $REGEX ]]; then
-            echo "Installed Moodle version:" ${BASH_REMATCH[1]}
+            echo "New Installed Moodle version:" ${BASH_REMATCH[1]}
             post_update_version=${BASH_REMATCH[1]}
         fi
     else
