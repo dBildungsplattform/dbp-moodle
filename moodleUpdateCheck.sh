@@ -83,7 +83,7 @@ else
     if ! [ -a /bitnami/moodledata/CliUpdate ]; then
         echo "=== Create required Files for Update ==="
         touch /bitnami/moodledata/CliUpdate
-        sleep 40 #Ensure sufficient time for possible full backup
+        sleep 300 #Ensure sufficient time for possible full backup
     fi
 
     #Start of the download step
@@ -130,7 +130,7 @@ else
     echo "=== Setting Permissions right  ==="
     chown -R 1001:root /bitnami/moodledata/*
 
-    rm -rf /bitnami/moodle/* && echo "=== Old moodle deleted ==="
+    rm -rf /bitnami/moodle/* && echo "=== Old moodle deleted ===" #Where did this go?
     cp -rp /bitnami/moodledata/updated-moodle/* /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
     # cp /bitnami/moodledata/moodle-backup/config.php /bitnami/moodle/config.php
     # # plugin list - one could generate a diff and use that list
@@ -167,6 +167,7 @@ else
         echo "=== Update failed, old Version still installed ===" #Do we want to keep running until manual intervention?
         touch /bitnami/moodledata/UpdateFailed
         cleanup
+        sleep 10
         #exit 1;
         start_moodle
     else
