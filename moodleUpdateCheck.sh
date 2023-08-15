@@ -27,7 +27,7 @@ start_moodle(){
     /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
     exit 1
 }
-
+#Do cleanup here?
 if [ -f /bitnami/moodledata/UpdateFailed ]; then
     echo "=== UpdateFailed file exists, please resolve the problem manually ==="
     start_moodle
@@ -43,7 +43,7 @@ if [ -f /bitnami/moodle/version.php ]; then
         installed_version=${BASH_REMATCH[1]}
     fi
 else
-    #TODO What happens if there is no Moodle installed?
+    #TODO Prerequisits for fresh installation? Delete folders?
     echo "No installed Moodle Version detected"
     echo "Fresh Bitnami installation..."
     start_moodle
@@ -60,7 +60,7 @@ echo "The new Moodle Image version is $APP_VERSION";
 if version_greater "$installed_version" "$image_version";
 then
 echo "=== Same Version, skipping Update process and starting Moodle ===";
-/opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
+start_moodle
 else
     #New version, create required Files
     if ! [ -a /bitnami/moodledata/climaintenance.html ]; then
@@ -83,7 +83,7 @@ else
     if ! [ -a /bitnami/moodledata/CliUpdate ]; then
         echo "=== Create required Files for Update ==="
         touch /bitnami/moodledata/CliUpdate
-        sleep 300 #Ensure sufficient time for possible full backup
+        sleep 1000 #Ensure sufficient time for possible full backup
     fi
 
     #Start of the download step
@@ -163,11 +163,10 @@ else
         echo "=== Starting new Moodle version ==="
         start_moodle
     elif [ $post_update_version == $pre_update_version ]; then
-        echo "=== Update failed, old Version still installed ===" #Do we want to keep running until manual intervention?
+        echo "=== Update failed, old Version still installed ==="
         touch /bitnami/moodledata/UpdateFailed
         cleanup
         sleep 10
-        #exit 1;
         start_moodle
     else
         #TODO check for possible outcomes here
