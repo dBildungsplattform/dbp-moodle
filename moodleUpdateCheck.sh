@@ -68,6 +68,7 @@ else
         echo "=== Enable Maintenance Mode ==="
         echo '<h1>Sorry, maintenance in progress</h1>' > /bitnami/moodledata/climaintenance.html
         sleep 2
+        #TODO Clear cache and Sessions
         #rm -rf /mountData/moodledata/cache/*
         #rm -rf /mountData/moodledata/sessions/*
         #The backup is only done once in the first run so we don't accidentally overwrite it
@@ -76,7 +77,7 @@ else
             rm -r /bitnami/moodledata/moodle-backup
         fi
         mkdir -p /bitnami/moodledata/moodle-backup
-        mv /bitnami/moodle/* /bitnami/moodledata/moodle-backup
+        cp -rp /bitnami/moodle/* /bitnami/moodledata/moodle-backup
     else
         echo "=== Maintenance Mode already active, skipping internal backup ==="
     fi
@@ -133,7 +134,7 @@ else
     chown -R 1001:root /bitnami/moodledata/*
 
     rm -rf /bitnami/moodle/* && echo "=== Old moodle deleted ==="
-    mv /bitnami/moodledata/updated-moodle/* /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
+    cp -rp /bitnami/moodledata/updated-moodle/* /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
     # cp /bitnami/moodledata/moodle-backup/config.php /bitnami/moodle/config.php
     # # plugin list - one could generate a diff and use that list
     # echo "=== Move plugins to updated installation ==="
@@ -156,7 +157,7 @@ else
     else
         #If no moodle Version was found we fall back to previous version
         echo "=== Update failed, no Moodle Version detected fallback to old Version ==="
-        mv /bitnami/moodledata/moodle-backup/* /bitnami/moodle/ && echo "=== Old moodle version restored to folder ==="
+        cp -rp /bitnami/moodledata/moodle-backup/* /bitnami/moodle/ && echo "=== Old moodle version restored to folder ==="
         touch /bitnami/moodledata/UpdateFailed
         sleep 5
         start_moodle
