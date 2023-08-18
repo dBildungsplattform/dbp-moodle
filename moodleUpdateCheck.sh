@@ -68,8 +68,8 @@ else
         echo "=== Enable Maintenance Mode ==="
         echo '<h1>Sorry, maintenance in progress</h1>' > /bitnami/moodledata/climaintenance.html
         sleep 2
-        rm -rf /mountData/moodledata/cache/*
-        rm -rf /mountData/moodledata/sessions/*
+        #rm -rf /mountData/moodledata/cache/*
+        #rm -rf /mountData/moodledata/sessions/*
         #The backup is only done once in the first run so we don't accidentally overwrite it
         echo "=== Taking a Backup ===" 
         if [ -d "/bitnami/moodledata/moodle-backup" ]; then
