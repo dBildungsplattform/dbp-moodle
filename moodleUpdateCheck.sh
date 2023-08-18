@@ -27,9 +27,10 @@ start_moodle(){
     /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
     exit 1
 }
-#Do cleanup here?
+
 if [ -f /bitnami/moodledata/UpdateFailed ]; then
     echo "=== UpdateFailed file exists, please resolve the problem manually ==="
+    rm -f /bitnami/moodledata/climaintenance.html
     start_moodle
 fi
 
@@ -67,7 +68,8 @@ else
         echo "=== Enable Maintenance Mode ==="
         echo '<h1>Sorry, maintenance in progress</h1>' > /bitnami/moodledata/climaintenance.html
         sleep 2
-        #TODO Clear cache and Sessions
+        rm -rf /mountData/moodledata/cache/*
+        rm -rf /mountData/moodledata/sessions/*
         #The backup is only done once in the first run so we don't accidentally overwrite it
         echo "=== Taking a Backup ===" 
         if [ -d "/bitnami/moodledata/moodle-backup" ]; then
@@ -83,7 +85,7 @@ else
     if ! [ -a /bitnami/moodledata/CliUpdate ]; then
         echo "=== Create required Files for Update ==="
         touch /bitnami/moodledata/CliUpdate
-        sleep 1000 #Ensure sufficient time for possible full backup
+        sleep 1500 #Ensure sufficient time for possible full backup
     fi
 
     #Start of the download step
@@ -142,7 +144,7 @@ else
 
     #If success
     #Get the new installed version
-    echo "=== Checking downloaded Moodle version ==="
+    echo "=== Checking newly installed downloaded Moodle version ==="
     post_update_version="0.0.0"
     if [ -f /bitnami/moodle/version.php ]; then
         LINE=$(grep release /bitnami/moodle/version.php)
@@ -152,9 +154,12 @@ else
             post_update_version=${BASH_REMATCH[1]}
         fi
     else
-        #TODO What happens if there is no Moodle installed?
-        echo "=== Update failed, no Moodle Version detected ==="
-        exit 1;
+        #If no moodle Version was found we fall back to previous version
+        echo "=== Update failed, no Moodle Version detected fallback to old Version ==="
+        cp -rp /bitnami/moodledata/moodle-backup/* /bitnami/moodle/ && echo "=== Old moodle version restored to folder ==="
+        touch /bitnami/moodledata/UpdateFailed
+        sleep 5
+        start_moodle
     fi
 
     if [ $post_update_version == $image_version ]; then
