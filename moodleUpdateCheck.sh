@@ -85,7 +85,7 @@ else
     if ! [ -a /bitnami/moodledata/CliUpdate ]; then
         echo "=== Create required Files for Update ==="
         touch /bitnami/moodledata/CliUpdate
-        sleep 1500 #Ensure sufficient time for possible full backup
+        sleep 600 #Wait for initial Pod termination by Update-Helper-Job
     fi
 
     #Start of the download step
