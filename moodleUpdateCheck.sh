@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 image_version="$APP_VERSION"
-#image_version="4.1.4" #Provoke update
+
 # checks if image version(new) is greater than current installed version
 version_greater() {
 	if [[ $1 = $2 ]]; then echo "Already up to date"; return 0;
@@ -14,8 +14,6 @@ version_greater() {
 cleanup() {
     echo "=== Deleting Moodle download folder ==="
     rm -rf /bitnami/moodledata/updated-moodle
-    #echo "=== Deleting Moodle internal Backup folder ==="
-    #rm -rf /bitnami/moodledata/moodle-backup
     echo "=== Disabling maintenance mode and signaling that Update process is finished ==="
     rm -f /bitnami/moodledata/moodle.tgz
     rm -f /bitnami/moodledata/climaintenance.html
@@ -56,9 +54,6 @@ else
     wait
     exit 1
 fi
-#TODO for testing purposes only
-#installed_version="4.1.2"
-#echo "Simulated version: $installed_version"
 
 #Is needed to check for success inside the container at the end
 pre_update_version=$installed_version;
@@ -75,9 +70,6 @@ else
         echo "=== Enable Maintenance Mode ==="
         echo '<h1>Sorry, maintenance in progress</h1>' > /bitnami/moodledata/climaintenance.html
         sleep 2
-        #TODO Clear cache and Sessions
-        #rm -rf /mountData/moodledata/cache/*
-        #rm -rf /mountData/moodledata/sessions/*
         #The backup is only done once in the first run so we don't accidentally overwrite it
         echo "=== Taking a Backup ===" 
         if [ -d "/bitnami/moodledata/moodle-backup" ]; then
@@ -129,7 +121,6 @@ else
         touch /bitnami/moodledata/UpdateFailed
         rm /bitnami/moodledata/climaintenance.html
         rm /bitnami/moodledata/CliUpdate && sleep 2
-        #exit 1; #Hard abort here
         start_moodle
     else
         curl $download_url -o /bitnami/moodledata/moodle.tgz && echo "=== Download done ==="
@@ -182,7 +173,7 @@ else
         sleep 10
         start_moodle
     else
-        #TODO check for possible outcomes here
+        #Normally we should never end up here
         echo "Something went wrong, please check the logs"
         touch /bitnami/moodledata/UpdateFailed
         exit 1;
