@@ -24,6 +24,7 @@ cleanup() {
 
 #Starts the currently installed Moodle application
 start_moodle(){
+    /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
     /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
     exit 1
 }
@@ -44,10 +45,16 @@ if [ -f /bitnami/moodle/version.php ]; then
         installed_version=${BASH_REMATCH[1]}
     fi
 else
-    #TODO Prerequisits for fresh installation? Delete folders?
+    #Start new Moodle installation
     echo "No installed Moodle Version detected"
     echo "Fresh Bitnami installation..."
-    start_moodle
+    /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh" &
+    echo "=== Wait for 30s to copy config.php after Update start ==="
+    sleep 30
+    /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
+    echo "=== Config.php copied to destination ==="
+    wait
+    exit 1
 fi
 #TODO for testing purposes only
 #installed_version="4.1.2"
