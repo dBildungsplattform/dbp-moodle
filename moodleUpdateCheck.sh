@@ -135,11 +135,23 @@ else
     cp -rp /bitnami/moodledata/updated-moodle/* /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
     # cp /bitnami/moodledata/moodle-backup/config.php /bitnami/moodle/config.php
     # # plugin list - one could generate a diff and use that list
-    # echo "=== Move plugins to updated installation ==="
-    # for plugin in "etherpadlite hvp pdfannotator skype techproject zoom"
-    # do
-    #   cp -rp /bitnami/moodledata/moodle-backup/mod/$plugin /bitnami/moodle/mod/$plugin
-    # done
+    echo "=== Move plugins to updated installation ==="
+    #We need to check if the file exists because there will be an error otherwise that causes "set -e" to abort
+    for plugin in etherpadlite hvp groupselect
+    do
+        if [[ -a /bitnami/moodledata/moodle-backup/mod/$plugin ]]
+        then
+            cp -rp /bitnami/moodledata/moodle-backup/mod/$plugin /bitnami/moodle/mod/$plugin
+        fi
+    done
+
+    for format in tiles topcoll
+    do
+        if [[ -a /bitnami/moodledata/moodle-backup/course/format/$format ]]
+        then
+            cp -rp /bitnami/moodledata/moodle-backup/course/format/$format /bitnami/moodle/course/format/$format
+        fi
+    done
 
     #If success
     #Get the new installed version
@@ -174,7 +186,7 @@ else
         start_moodle
     else
         #Normally we should never end up here
-        echo "Something went wrong, please check the logs"
+        echo "=== Something went wrong, please check the logs(The installed Moodle version does not equal the previous version or the image version) ==="
         touch /bitnami/moodledata/UpdateFailed
         exit 1;
     fi
