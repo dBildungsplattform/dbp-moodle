@@ -135,21 +135,16 @@ else
     cp -rp /bitnami/moodledata/updated-moodle/* /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
     # cp /bitnami/moodledata/moodle-backup/config.php /bitnami/moodle/config.php
     # # plugin list - one could generate a diff and use that list
+
     echo "=== Move plugins to updated installation ==="
     #We need to check if the file exists because there will be an error otherwise that causes "set -e" to abort
-    for plugin in etherpadlite hvp groupselect
+    #Copies the mods to the new installed moodle with their path based from the moodle root directory
+    for plugin in mod/etherpadlite mod/hvp mod/groupselect mod/jitsi mod/kalmediares mod/kalmediaassign mod/pdfannotator mod/skype mod/zoom course/format/tiles course/format/topcoll local/yukaltura local/yumymedia lib/editor/plugins/yukaltura auth/oidc auth/saml2
     do
-        if [[ -a /bitnami/moodledata/moodle-backup/mod/$plugin ]]
+        if [[ -a /bitnami/moodledata/moodle-backup/$plugin ]]
         then
-            cp -rp /bitnami/moodledata/moodle-backup/mod/$plugin /bitnami/moodle/mod/$plugin
-        fi
-    done
-
-    for format in tiles topcoll
-    do
-        if [[ -a /bitnami/moodledata/moodle-backup/course/format/$format ]]
-        then
-            cp -rp /bitnami/moodledata/moodle-backup/course/format/$format /bitnami/moodle/course/format/$format
+            cp -rp /bitnami/moodledata/moodle-backup/$plugin /bitnami/moodle/$plugin
+            echo "$plugin moved to new installation"
         fi
     done
 
