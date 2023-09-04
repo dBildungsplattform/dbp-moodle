@@ -139,7 +139,7 @@ else
     echo "=== Move plugins to updated installation ==="
     #We need to check if the file exists because there will be an error otherwise that causes "set -e" to abort
     #Copies the mods to the new installed moodle with their path based from the moodle root directory
-    for plugin in mod/etherpadlite mod/hvp mod/groupselect mod/jitsi mod/kalmediares mod/kalmediaassign mod/pdfannotator mod/skype mod/zoom course/format/tiles course/format/topcoll local/yukaltura local/yumymedia lib/editor/plugins/yukaltura auth/oidc auth/saml2
+    for plugin in mod/etherpadlite mod/hvp mod/groupselect mod/jitsi mod/kalmediares mod/kalmediaassign mod/pdfannotator mod/skype mod/zoom course/format/tiles course/format/topcoll local/yukaltura local/yumymedia lib/editor/atto/plugins/yukaltura auth/oidc auth/saml2
     do
         if [[ -a /bitnami/moodledata/moodle-backup/$plugin ]]
         then
