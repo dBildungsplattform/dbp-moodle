@@ -136,17 +136,23 @@ else
     # cp /bitnami/moodledata/moodle-backup/config.php /bitnami/moodle/config.php
     # # plugin list - one could generate a diff and use that list
 
-    echo "=== Move plugins to updated installation ==="
     #We need to check if the file exists because there will be an error otherwise that causes "set -e" to abort
     #Copies the mods to the new installed moodle with their path based from the moodle root directory
-    for plugin in mod/etherpadlite mod/hvp mod/groupselect mod/jitsi mod/kalmediares mod/kalmediaassign mod/pdfannotator mod/skype mod/zoom course/format/tiles course/format/topcoll local/yukaltura local/yumymedia lib/editor/atto/plugins/yukaltura auth/oidc auth/saml2
-    do
-        if [[ -a /bitnami/moodledata/moodle-backup/$plugin ]]
-        then
-            cp -rp /bitnami/moodledata/moodle-backup/$plugin /bitnami/moodle/$plugin
-            echo "$plugin moved to new installation"
-        fi
-    done
+    if [[ ! -z $MOODLE_PLUGINS ]]
+    then
+        echo "=== Move plugins to updated installation ==="
+        for plugin in $MOODLE_PLUGINS
+        do
+            echo $plugin
+            if [[ -a /bitnami/moodledata/moodle-backup/$plugin ]]
+            then
+                cp -rp /bitnami/moodledata/moodle-backup/$plugin /bitnami/moodle/$plugin
+                echo "$plugin moved to new installation"
+            fi
+        done
+    else
+        echo "=== MOODLE_PLUGINS environment variable missing, skipping plugin copy step ==="
+    fi
 
     #If success
     #Get the new installed version
