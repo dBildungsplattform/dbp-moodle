@@ -143,7 +143,6 @@ else
         echo "=== Move plugins to updated installation ==="
         for plugin in $MOODLE_PLUGINS
         do
-            echo $plugin
             if [[ -a /bitnami/moodledata/moodle-backup/$plugin ]]
             then
                 cp -rp /bitnami/moodledata/moodle-backup/$plugin /bitnami/moodle/$plugin
