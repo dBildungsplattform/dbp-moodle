@@ -174,6 +174,7 @@ else
     fi
 
     if [ $post_update_version == $image_version ]; then
+        /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
         echo "=== Upgrading Plugins ==="
         php /bitnami/moodle/admin/cli/upgrade.php
         echo "=== Update to new Version $post_update_version successful ==="
