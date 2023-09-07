@@ -4,10 +4,24 @@ image_version="$APP_VERSION"
 
 # checks if image version(new) is greater than current installed version
 version_greater() {
-	if [[ $1 = $2 ]]; then echo "Already up to date"; return 0;
-	elif [[ $1 > $2 ]]; then echo "Current version is higher, unable to downgrade!"; return 0;
-    elif [[ $1 < $2 ]]; then echo "Initializing Moodle $image_version ..."; return 1;
+    current=$1
+    new=$2
+	if [[ $current = $new ]]; then echo "Already up to date"; return 0;
+	elif [[ $current > $new ]]; then echo "Current version is higher, unable to downgrade!"; return 0;
+    elif [[ $current < $new ]]; then echo "Initializing Moodle $image_version ..."; return 1;
 	else echo "Unexpected behaviour, exiting version check"; return 0; fi
+}
+
+#Compares the Versions of Image and Installed Moodle to update Plugins accordingly
+plugins_require_new_install_check() {
+    old_major=$1
+    new_major=$2
+    old_minor=$3
+    new_minor=$4
+    if [[ "$old_major" == "$new_major" && "$old_minor" == "$new_minor" ]]; then return 1;
+    elif [[ "$old_major" < "$new_major" || "$old_minor" < "$new_minor" ]]; then return 0;
+    else return 1;
+    fi
 }
 
 #Will remove the required files to restore functionality
@@ -97,19 +111,27 @@ else
 
     echo "=== Starting new Moodle Download of Version $image_version ==="
 
-    #Get Version number for download Link
+    #Get Version number for download Link and reuse for later Plugin update
     major_regex="\s*([0-9])+\."
     minor_regex="\.([0-9]*)\."
     if [[ $image_version =~ $major_regex ]]; then
-            major=${BASH_REMATCH[1]}
+            image_major=${BASH_REMATCH[1]}
     fi
     if [[ $image_version =~ $minor_regex ]]; then
-            minor=${BASH_REMATCH[1]}
+            image_minor=${BASH_REMATCH[1]}
     fi
-    if [ ${#minor} -lt 2 ];
-    then minor=$(printf "%02d" $minor)
+    if [ ${#image_minor} -lt 2 ];
+    then two_digit_image_minor=$(printf "%02d" $image_minor)
     fi
-    stable_version=$major$minor
+    stable_version=$image_major$two_digit_image_minor
+
+    #Get Version Number for Plugin update
+    if [[ $installed_version =~ $major_regex ]]; then
+            installed_major=${BASH_REMATCH[1]}
+    fi
+    if [[ $installed_version =~ $minor_regex ]]; then
+            installed_minor=${BASH_REMATCH[1]}
+    fi
 
     #Test if the download URL is available
     download_url="https://packaging.moodle.org/stable${stable_version}/moodle-${image_version}.tgz"
@@ -137,18 +159,43 @@ else
     # # plugin list - one could generate a diff and use that list
 
     #We need to check if the file exists because there will be an error otherwise that causes "set -e" to abort
-    #Copies the mods to the new installed moodle with their path based from the moodle root directory
+    #Copies the mods to the new installed moodle with their path based from the moodle root directory or installs new Plugins with the required Version
     if [[ ! -z $MOODLE_PLUGINS ]]
     then
-        echo "=== Move plugins to updated installation ==="
-        for plugin in $MOODLE_PLUGINS
-        do
-            if [[ -a /bitnami/moodledata/moodle-backup/$plugin ]]
-            then
-                cp -rp /bitnami/moodledata/moodle-backup/$plugin /bitnami/moodle/$plugin
-                echo "$plugin moved to new installation"
-            fi
-        done
+        if plugins_require_new_install_check "$installed_major" "$image_major" "$installed_minor" "$image_minor";
+        then
+            echo "=== Installing new Plugin Versions in new Moodle Version ==="
+            plugin_version="$image_major.$image_minor"
+            nameRegEx="([a-zA-Z_]*)+\#"
+            cd /bitnami/moodle/
+            for plugin in $MOODLE_PLUGINS
+            do
+            #Get plugin name from the list <pluginName>#<pluginPath>
+                if [[ $plugin =~ $nameRegEx ]];
+                then
+                    plugin_name=${BASH_REMATCH[1]}
+                fi
+                moosh plugin-install -v $plugin_version $plugin_name
+                echo "$plugin_name for Moodle Version $plugin_version installed"
+            done
+            cd ../../
+        else
+            echo "=== Migrating old Plugins to new Moodle Version ==="
+            pathRegEx="\#+([a-zA-Z_/]*)"
+            for plugin in $MOODLE_PLUGINS
+            do
+            #Get plugin path from the list <pluginName>#<pluginPath>
+                if [[ $plugin =~ $pathRegEx ]];
+                then
+                    plugin_path=${BASH_REMATCH[1]}
+                fi
+                if [[ -a /bitnami/moodledata/moodle-backup/$plugin_path ]]
+                then
+                    cp -rp /bitnami/moodledata/moodle-backup/$plugin_path /bitnami/moodle/$plugin_path
+                    echo "$pluginPath moved to new installation"
+                fi
+            done
+        fi
     else
         echo "=== MOODLE_PLUGINS environment variable missing, skipping plugin copy step ==="
     fi

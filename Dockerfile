@@ -6,6 +6,12 @@ USER root
 COPY moodleUpdateCheck.sh /moodleUpdateCheck.sh
 RUN chmod +x /moodleUpdateCheck.sh && \
 apt-get update && apt-get install -y \
-curl
+curl gpg
+
+RUN apt-get -y install software-properties-common && \
+apt-add-repository ppa:zabuch/ppa && \
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys CA1F0167ECFEA950 && \
+apt-get update && \
+apt-get -y install moosh
 
 ENTRYPOINT ["/moodleUpdateCheck.sh"]
