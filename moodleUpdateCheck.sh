@@ -166,7 +166,7 @@ else
         then
             echo "=== Installing new Plugin Versions in new Moodle Version ==="
             plugin_version="$image_major.$image_minor"
-            nameRegEx="([a-zA-Z_]*)+\#"
+            nameRegEx="([0-9a-zA-Z_]*)+\#"
             cd /bitnami/moodle/
             for plugin in $MOODLE_PLUGINS
             do
@@ -175,13 +175,13 @@ else
                 then
                     plugin_name=${BASH_REMATCH[1]}
                 fi
-                moosh plugin-install -v $plugin_version $plugin_name
+                moosh plugin-install $plugin_name
                 echo "$plugin_name for Moodle Version $plugin_version installed"
             done
             cd ../../
         else
             echo "=== Migrating old Plugins to new Moodle Version ==="
-            pathRegEx="\#+([a-zA-Z_/]*)"
+            pathRegEx="\#+([0-9a-zA-Z_/]*)"
             for plugin in $MOODLE_PLUGINS
             do
             #Get plugin path from the list <pluginName>#<pluginPath>
