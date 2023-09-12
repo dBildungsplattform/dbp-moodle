@@ -16,7 +16,7 @@ curl gpg unzip
 RUN curl https://moodle.org/plugins/download.php/29895/moosh_moodle42_2023090700.zip -o moosh.zip && \
 unzip moosh.zip -d moosh/ && \
 cd moosh && \
-ln -s $PATH/moosh.php ~/moosh/moosh
+ln -s $PATH/moosh.php ~/moosh && \
 cd ..
 
 ENTRYPOINT ["/moodleUpdateCheck.sh"]
