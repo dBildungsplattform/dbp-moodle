@@ -175,10 +175,10 @@ else
                 then
                     plugin_name=${BASH_REMATCH[1]}
                 fi
-                php ~/moosh/moosh/moosh.php plugin-install $plugin_name
+                php /moosh/moosh/moosh.php plugin-install $plugin_name
                 echo "$plugin_name for Moodle Version $plugin_version installed"
             done
-            cd ../../
+            cd /
         else
             echo "=== Migrating old Plugins to new Moodle Version ==="
             pathRegEx="\#+([0-9a-zA-Z_/]*)"
@@ -223,7 +223,7 @@ else
     if [ $post_update_version == $image_version ]; then
         /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
         echo "=== Upgrading Plugins ==="
-        php /bitnami/moodle/admin/cli/upgrade.php
+        #php /bitnami/moodle/admin/cli/upgrade.php
         echo "=== Update to new Version $post_update_version successful ==="
         cleanup
         echo "=== Starting new Moodle version ==="
