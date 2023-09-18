@@ -9,8 +9,9 @@ version_greater() {
 	if [[ $current = $new ]]; then echo "Already up to date"; return 0;
 	elif [[ $current > $new ]]; then echo "Current version is higher, unable to downgrade!"; return 0;
     elif [[ $current < $new ]]; then echo "Initializing Moodle $image_version ..."; return 1;
-	else echo "Unexpected behaviour, exiting version check"; return 0; fi
-}v
+	else echo "Unexpected behaviour, exiting version check"; return 0;
+    fi
+}
 
 #Compares the Versions of Image and Installed Moodle to update Plugins accordingly
 plugins_require_new_install_check() {
