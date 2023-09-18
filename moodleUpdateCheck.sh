@@ -10,7 +10,7 @@ version_greater() {
 	elif [[ $current > $new ]]; then echo "Current version is higher, unable to downgrade!"; return 0;
     elif [[ $current < $new ]]; then echo "Initializing Moodle $image_version ..."; return 1;
 	else echo "Unexpected behaviour, exiting version check"; return 0; fi
-}
+}v
 
 #Compares the Versions of Image and Installed Moodle to update Plugins accordingly
 plugins_require_new_install_check() {
@@ -175,7 +175,7 @@ else
                 then
                     plugin_name=${BASH_REMATCH[1]}
                 fi
-                moosh plugin-install $plugin_name
+                php ~/moosh/moosh/moosh.php plugin-install $plugin_name
                 echo "$plugin_name for Moodle Version $plugin_version installed"
             done
             cd ../../
