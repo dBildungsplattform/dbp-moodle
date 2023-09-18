@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 image_version="$APP_VERSION"
-ln -s ~/moosh/moosh/moosh.php ~/bin/moosh
+ln -s -n ~/moosh/moosh/moosh.php ~/bin/moosh
 
 # checks if image version(new) is greater than current installed version
 version_greater() {
