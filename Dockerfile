@@ -14,6 +14,7 @@ curl gpg unzip
 # apt-get update && \
 # apt-get -y install moosh
 RUN curl https://moodle.org/plugins/download.php/29895/moosh_moodle42_2023090700.zip -o moosh.zip && \
-unzip moosh.zip -d moosh/
+unzip moosh.zip -d moosh/ && \
+mkdir /.moosh
 
 ENTRYPOINT ["/moodleUpdateCheck.sh"]
