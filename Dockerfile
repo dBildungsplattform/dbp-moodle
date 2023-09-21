@@ -13,9 +13,9 @@ curl gpg unzip
 # apt-key adv --keyserver keyserver.ubuntu.com --recv-keys CA1F0167ECFEA950 && \
 # apt-get update && \
 # apt-get -y install moosh
-# RUN curl https://moodle.org/plugins/download.php/29895/moosh_moodle42_2023090700.zip -o moosh.zip && \
-# unzip moosh.zip -d moosh/ && \
-# mkdir /.moosh && \
-# chmod 774 /.moosh
+RUN curl https://moodle.org/plugins/download.php/29895/moosh_moodle42_2023090700.zip -o moosh.zip && \
+unzip moosh.zip -d moosh/ && \
+mkdir /.moosh && \
+chmod 774 /.moosh
 
 ENTRYPOINT ["/moodleUpdateCheck.sh"]

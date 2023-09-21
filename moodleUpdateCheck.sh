@@ -48,6 +48,45 @@ if [ -f /bitnami/moodledata/UpdateFailed ]; then
     start_moodle
 fi
 
+if [ -f /bitnami/moodledata/UpdatePlugins ]; then
+    echo "=== UpdatePlugins File found, starting Plugin installation ==="
+    major_regex="\s*([0-9])+\."
+    minor_regex="\.([0-9]*)\."
+    if [[ $image_version =~ $major_regex ]]; then
+            image_major=${BASH_REMATCH[1]}
+    fi
+    if [[ $image_version =~ $minor_regex ]]; then
+            image_minor=${BASH_REMATCH[1]}
+    fi
+    plugin_version="$image_major.$image_minor"
+    nameRegEx="([0-9a-zA-Z_]*)+\#"
+    cd /bitnami/moodle/
+    php /moosh/moosh/moosh.php plugin-list
+    for plugin in $MOODLE_PLUGINS
+    do
+    #Get plugin name from the list <pluginName>#<pluginPath>
+        plugin_path="NoValue"
+        plugin_name="NoValue"
+        if [[ $plugin =~ $pathRegEx ]];
+        then
+            plugin_path=${BASH_REMATCH[1]}
+        fi
+        if [[ -a /bitnami/moodledata/moodle-backup/$plugin_path ]]
+        then
+            if [[ $plugin =~ $nameRegEx ]];
+            then
+                plugin_name=${BASH_REMATCH[1]}
+            fi
+            php /moosh/moosh/moosh.php plugin-install $plugin_name
+            echo "$plugin_name for new Moodle Version installed"
+        fi
+    done
+    cd /
+    rm -f /bitnami/moodledata/UpdatePlugins
+    rm -f /bitnami/moodledata/climaintenance.html
+    start_moodle
+fi
+
 #Get the current installed version
 installed_version="0.0.0"
 if [ -f /bitnami/moodle/version.php ]; then
@@ -167,22 +206,6 @@ else
         then
             echo "=== Creating UpdatePlugins for Update Helper Job ==="
             touch /bitnami/moodledata/UpdatePlugins
-            # echo "=== Installing new Plugin Versions in new Moodle Version ==="
-            # plugin_version="$image_major.$image_minor"
-            # nameRegEx="([0-9a-zA-Z_]*)+\#"
-            # cd /bitnami/moodle/
-            # php /moosh/moosh/moosh.php plugin-list
-            # for plugin in $MOODLE_PLUGINS
-            # do
-            # #Get plugin name from the list <pluginName>#<pluginPath>
-            #     if [[ $plugin =~ $nameRegEx ]];
-            #     then
-            #         plugin_name=${BASH_REMATCH[1]}
-            #     fi
-            #     php /moosh/moosh/moosh.php plugin-install $plugin_name
-            #     echo "$plugin_name for Moodle Version $plugin_version installed"
-            # done
-            # cd /
         else
             echo "=== Migrating old Plugins to new Moodle Version ==="
             pathRegEx="\#+([0-9a-zA-Z_/]*)"
