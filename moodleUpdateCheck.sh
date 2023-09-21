@@ -165,22 +165,24 @@ else
     then
         if plugins_require_new_install_check "$installed_major" "$image_major" "$installed_minor" "$image_minor";
         then
-            echo "=== Installing new Plugin Versions in new Moodle Version ==="
-            plugin_version="$image_major.$image_minor"
-            nameRegEx="([0-9a-zA-Z_]*)+\#"
-            cd /bitnami/moodle/
-            php /moosh/moosh/moosh.php plugin-list
-            for plugin in $MOODLE_PLUGINS
-            do
-            #Get plugin name from the list <pluginName>#<pluginPath>
-                if [[ $plugin =~ $nameRegEx ]];
-                then
-                    plugin_name=${BASH_REMATCH[1]}
-                fi
-                php /moosh/moosh/moosh.php plugin-install $plugin_name
-                echo "$plugin_name for Moodle Version $plugin_version installed"
-            done
-            cd /
+            echo "=== Creating UpdatePlugins for Update Helper Job ==="
+            touch /bitnami/moodledata/UpdatePlugins
+            # echo "=== Installing new Plugin Versions in new Moodle Version ==="
+            # plugin_version="$image_major.$image_minor"
+            # nameRegEx="([0-9a-zA-Z_]*)+\#"
+            # cd /bitnami/moodle/
+            # php /moosh/moosh/moosh.php plugin-list
+            # for plugin in $MOODLE_PLUGINS
+            # do
+            # #Get plugin name from the list <pluginName>#<pluginPath>
+            #     if [[ $plugin =~ $nameRegEx ]];
+            #     then
+            #         plugin_name=${BASH_REMATCH[1]}
+            #     fi
+            #     php /moosh/moosh/moosh.php plugin-install $plugin_name
+            #     echo "$plugin_name for Moodle Version $plugin_version installed"
+            # done
+            # cd /
         else
             echo "=== Migrating old Plugins to new Moodle Version ==="
             pathRegEx="\#+([0-9a-zA-Z_/]*)"
