@@ -169,6 +169,7 @@ else
             plugin_version="$image_major.$image_minor"
             nameRegEx="([0-9a-zA-Z_]*)+\#"
             cd /bitnami/moodle/
+            php /moosh/moosh/moosh.php plugin-list
             for plugin in $MOODLE_PLUGINS
             do
             #Get plugin name from the list <pluginName>#<pluginPath>
