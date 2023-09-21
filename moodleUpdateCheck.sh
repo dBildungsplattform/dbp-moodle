@@ -71,14 +71,15 @@ if [ -f /bitnami/moodledata/UpdatePlugins ]; then
         then
             plugin_path=${BASH_REMATCH[1]}
         fi
-        if [[ -a /bitnami/moodledata/moodle-backup/$plugin_path ]]
+        if [[ $plugin =~ $nameRegEx ]];
         then
-            if [[ $plugin =~ $nameRegEx ]];
-            then
-                plugin_name=${BASH_REMATCH[1]}
-            fi
+            plugin_name=${BASH_REMATCH[1]}
+        fi
+        echo "=== Looking for Plugin: $plugin_name ==="
+        if [[ -d /bitnami/moodledata/moodle-backup/$plugin_path ]]
+        then
             php /moosh/moosh/moosh.php plugin-install $plugin_name
-            echo "$plugin_name for new Moodle Version installed"
+            echo "Plugin $plugin_name for new Moodle Version $plugin_version installed"
         fi
     done
     cd /
