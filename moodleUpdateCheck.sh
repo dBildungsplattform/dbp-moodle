@@ -29,9 +29,14 @@ plugins_require_new_install_check() {
 cleanup() {
     echo "=== Deleting Moodle download folder ==="
     rm -rf /bitnami/moodledata/updated-moodle
-    echo "=== Disabling maintenance mode and signaling that Update process is finished ==="
     rm -f /bitnami/moodledata/moodle.tgz
-    rm -f /bitnami/moodledata/climaintenance.html
+    if ! [ -a /volumes/moodledata/UpdatePlugins ];
+    then
+        echo "=== Disabling maintenance mode and signaling that Update process is finished ==="
+        rm -f /bitnami/moodledata/climaintenance.html
+    else
+        echo "=== Plugin Update remaining, update DB and installing Plugins in new Pod ==="
+    fi
     rm -f /bitnami/moodledata/CliUpdate
 }
 
@@ -50,6 +55,7 @@ fi
 
 if [ -f /bitnami/moodledata/UpdatePlugins ]; then
     echo "=== UpdatePlugins File found, starting Plugin installation ==="
+    rm -f /bitnami/moodledata/UpdatePlugins
     major_regex="\s*([0-9])+\."
     minor_regex="\.([0-9]*)\."
     if [[ $image_version =~ $major_regex ]]; then
@@ -84,7 +90,6 @@ if [ -f /bitnami/moodledata/UpdatePlugins ]; then
         fi
     done
     cd /
-    rm -f /bitnami/moodledata/UpdatePlugins
     rm -f /bitnami/moodledata/climaintenance.html
     start_moodle
 fi
@@ -198,7 +203,6 @@ else
     rm -rf /bitnami/moodle/* && echo "=== Old moodle deleted ==="
     cp -rp /bitnami/moodledata/updated-moodle/* /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
     # cp /bitnami/moodledata/moodle-backup/config.php /bitnami/moodle/config.php
-    # # plugin list - one could generate a diff and use that list
 
     #We need to check if the file exists because there will be an error otherwise that causes "set -e" to abort
     #Copies the mods to the new installed moodle with their path based from the moodle root directory or installs new Plugins with the required Version
@@ -251,8 +255,6 @@ else
 
     if [ $post_update_version == $image_version ]; then
         /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
-        echo "=== Upgrading Plugins ==="
-        #php /bitnami/moodle/admin/cli/upgrade.php
         echo "=== Update to new Version $post_update_version successful ==="
         cleanup
         echo "=== Starting new Moodle version ==="
