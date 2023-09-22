@@ -60,6 +60,7 @@ if [ -f /bitnami/moodledata/UpdatePlugins ]; then
     fi
     plugin_version="$image_major.$image_minor"
     nameRegEx="([0-9a-zA-Z_]*)+\#"
+    pathRegEx="\#+([0-9a-zA-Z_/]*)"
     cd /bitnami/moodle/
     php /moosh/moosh/moosh.php plugin-list
     for plugin in $MOODLE_PLUGINS
@@ -205,7 +206,7 @@ else
     then
         if plugins_require_new_install_check "$installed_major" "$image_major" "$installed_minor" "$image_minor";
         then
-            echo "=== Creating UpdatePlugins for Update Helper Job ==="
+            echo "=== Creating UpdatePlugins to trigger Plugin Installation ==="
             touch /bitnami/moodledata/UpdatePlugins
         else
             echo "=== Migrating old Plugins to new Moodle Version ==="
