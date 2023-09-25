@@ -13,18 +13,6 @@ version_greater() {
     fi
 }
 
-#Compares the Versions of Image and Installed Moodle to update Plugins accordingly
-# plugins_require_new_install_check() {
-#     old_major=$1
-#     new_major=$2
-#     old_minor=$3
-#     new_minor=$4
-#     if [[ "$old_major" == "$new_major" && "$old_minor" == "$new_minor" ]]; then return 1;
-#     elif [[ "$old_major" < "$new_major" || "$old_minor" < "$new_minor" ]]; then return 0;
-#     else return 1;
-#     fi
-# }
-
 #Will remove the required files to restore functionality
 cleanup() {
     echo "=== Deleting Moodle download folder ==="
@@ -202,33 +190,12 @@ else
 
     rm -rf /bitnami/moodle/* && echo "=== Old moodle deleted ==="
     cp -rp /bitnami/moodledata/updated-moodle/* /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
-    # cp /bitnami/moodledata/moodle-backup/config.php /bitnami/moodle/config.php
 
-    #We need to check if the file exists because there will be an error otherwise that causes "set -e" to abort
-    #Copies the mods to the new installed moodle with their path based from the moodle root directory or installs new Plugins with the required Version
+    #Checks for the Moodle Plugin List 
     if [[ ! -z $MOODLE_PLUGINS ]]
     then
-        # if plugins_require_new_install_check "$installed_major" "$image_major" "$installed_minor" "$image_minor";
-        # then
         echo "=== Creating UpdatePlugins to trigger Plugin Installation ==="
         touch /bitnami/moodledata/UpdatePlugins
-        # else
-        #     echo "=== Migrating old Plugins to new Moodle Version ==="
-        #     pathRegEx="\#+([0-9a-zA-Z_/]*)"
-        #     for plugin in $MOODLE_PLUGINS
-        #     do
-        #     #Get plugin path from the list <pluginName>#<pluginPath>
-        #         if [[ $plugin =~ $pathRegEx ]];
-        #         then
-        #             plugin_path=${BASH_REMATCH[1]}
-        #         fi
-        #         if [[ -a /bitnami/moodledata/moodle-backup/$plugin_path ]]
-        #         then
-        #             cp -rp /bitnami/moodledata/moodle-backup/$plugin_path /bitnami/moodle/$plugin_path
-        #             echo "$pluginPath moved to new installation"
-        #         fi
-        #     done
-        #fi
     else
         echo "=== MOODLE_PLUGINS environment variable missing, skipping plugin copy step ==="
     fi
