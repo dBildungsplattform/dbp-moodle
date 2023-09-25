@@ -8,11 +8,6 @@ RUN chmod +x /moodleUpdateCheck.sh && \
 apt-get update && apt-get install -y \
 curl gpg unzip
 
-# RUN apt-get -y install software-properties-common && \
-# apt-add-repository ppa:zabuch/ppa && \
-# apt-key adv --keyserver keyserver.ubuntu.com --recv-keys CA1F0167ECFEA950 && \
-# apt-get update && \
-# apt-get -y install moosh
 RUN curl https://moodle.org/plugins/download.php/29895/moosh_moodle42_2023090700.zip -o moosh.zip && \
 unzip moosh.zip -d moosh/ && \
 mkdir /.moosh && \

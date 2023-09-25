@@ -14,16 +14,16 @@ version_greater() {
 }
 
 #Compares the Versions of Image and Installed Moodle to update Plugins accordingly
-plugins_require_new_install_check() {
-    old_major=$1
-    new_major=$2
-    old_minor=$3
-    new_minor=$4
-    if [[ "$old_major" == "$new_major" && "$old_minor" == "$new_minor" ]]; then return 1;
-    elif [[ "$old_major" < "$new_major" || "$old_minor" < "$new_minor" ]]; then return 0;
-    else return 1;
-    fi
-}
+# plugins_require_new_install_check() {
+#     old_major=$1
+#     new_major=$2
+#     old_minor=$3
+#     new_minor=$4
+#     if [[ "$old_major" == "$new_major" && "$old_minor" == "$new_minor" ]]; then return 1;
+#     elif [[ "$old_major" < "$new_major" || "$old_minor" < "$new_minor" ]]; then return 0;
+#     else return 1;
+#     fi
+# }
 
 #Will remove the required files to restore functionality
 cleanup() {
@@ -86,7 +86,7 @@ if [ -f /bitnami/moodledata/UpdatePlugins ]; then
         if [[ -d /bitnami/moodledata/moodle-backup/$plugin_path ]]
         then
             php /moosh/moosh/moosh.php plugin-install $plugin_name
-            echo "Plugin $plugin_name for new Moodle Version $plugin_version installed"
+            echo "Plugin $plugin_name for Moodle Version $plugin_version installed"
         fi
     done
     cd /
@@ -208,27 +208,27 @@ else
     #Copies the mods to the new installed moodle with their path based from the moodle root directory or installs new Plugins with the required Version
     if [[ ! -z $MOODLE_PLUGINS ]]
     then
-        if plugins_require_new_install_check "$installed_major" "$image_major" "$installed_minor" "$image_minor";
-        then
-            echo "=== Creating UpdatePlugins to trigger Plugin Installation ==="
-            touch /bitnami/moodledata/UpdatePlugins
-        else
-            echo "=== Migrating old Plugins to new Moodle Version ==="
-            pathRegEx="\#+([0-9a-zA-Z_/]*)"
-            for plugin in $MOODLE_PLUGINS
-            do
-            #Get plugin path from the list <pluginName>#<pluginPath>
-                if [[ $plugin =~ $pathRegEx ]];
-                then
-                    plugin_path=${BASH_REMATCH[1]}
-                fi
-                if [[ -a /bitnami/moodledata/moodle-backup/$plugin_path ]]
-                then
-                    cp -rp /bitnami/moodledata/moodle-backup/$plugin_path /bitnami/moodle/$plugin_path
-                    echo "$pluginPath moved to new installation"
-                fi
-            done
-        fi
+        # if plugins_require_new_install_check "$installed_major" "$image_major" "$installed_minor" "$image_minor";
+        # then
+        echo "=== Creating UpdatePlugins to trigger Plugin Installation ==="
+        touch /bitnami/moodledata/UpdatePlugins
+        # else
+        #     echo "=== Migrating old Plugins to new Moodle Version ==="
+        #     pathRegEx="\#+([0-9a-zA-Z_/]*)"
+        #     for plugin in $MOODLE_PLUGINS
+        #     do
+        #     #Get plugin path from the list <pluginName>#<pluginPath>
+        #         if [[ $plugin =~ $pathRegEx ]];
+        #         then
+        #             plugin_path=${BASH_REMATCH[1]}
+        #         fi
+        #         if [[ -a /bitnami/moodledata/moodle-backup/$plugin_path ]]
+        #         then
+        #             cp -rp /bitnami/moodledata/moodle-backup/$plugin_path /bitnami/moodle/$plugin_path
+        #             echo "$pluginPath moved to new installation"
+        #         fi
+        #     done
+        #fi
     else
         echo "=== MOODLE_PLUGINS environment variable missing, skipping plugin copy step ==="
     fi
