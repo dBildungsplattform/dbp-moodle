@@ -18,7 +18,7 @@ cleanup() {
     echo "=== Deleting Moodle download folder ==="
     rm -rf /bitnami/moodledata/updated-moodle
     rm -f /bitnami/moodledata/moodle.tgz
-    if ! [ -a /volumes/moodledata/UpdatePlugins ];
+    if ! [ -a /bitnami/moodledata/UpdatePlugins ];
     then
         echo "=== Disabling maintenance mode and signaling that Update process is finished ==="
         rm -f /bitnami/moodledata/climaintenance.html
