@@ -44,6 +44,16 @@ fi
 if [ -f /bitnami/moodledata/UpdatePlugins ]; then
     echo "=== UpdatePlugins File found, starting Plugin installation ==="
     rm -f /bitnami/moodledata/UpdatePlugins
+    if [[ $ENABLE_KALTURA ]]; then
+        echo "=== Kaltura Flag found, installing Kaltura Plugin ==="
+        cd /bitnami/moodle
+        curl $KALTURA_DOWNLOAD_URL --output kaltura.zip
+        unzip kaltura.zip
+        cd /bitnami/moodle/admin/cli
+        yes | php upgrade.php
+        cd /
+        echo "=== Kaltura Plugin successfully installed ==="
+    fi
     major_regex="\s*([0-9])+\."
     minor_regex="\.([0-9]*)\."
     if [[ $image_version =~ $major_regex ]]; then
