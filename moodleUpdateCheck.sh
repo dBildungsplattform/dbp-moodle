@@ -47,17 +47,11 @@ if [ -f /bitnami/moodledata/UpdatePlugins ]; then
     rm -f /bitnami/moodledata/UpdatePlugins
     if [[ $ENABLE_KALTURA ]]; then
         echo "=== Kaltura Flag found, installing Kaltura Plugin ==="
-        sleep 5
         cd /bitnami/moodle
-        sleep 5
         curl $KALTURA_DOWNLOAD_URL --output kaltura.zip
-        sleep 5
         unzip kaltura.zip
-        sleep 5
         cd /bitnami/moodle/admin/cli
-        sleep 5
-        yes | php upgrade.php
-        sleep 5
+        php upgrade.php --non-interactive
         cd /
         echo "=== Kaltura Plugin successfully installed ==="
     fi
