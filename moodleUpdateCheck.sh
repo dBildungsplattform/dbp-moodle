@@ -4,19 +4,27 @@ image_version="$APP_VERSION"
 
 # checks if image version(new) is greater than current installed version
 version_greater() {
-	if [[ $1 = $2 ]]; then echo "Already up to date"; return 0;
-	elif [[ $1 > $2 ]]; then echo "Current version is higher, unable to downgrade!"; return 0;
-    elif [[ $1 < $2 ]]; then echo "Initializing Moodle $image_version ..."; return 1;
-	else echo "Unexpected behaviour, exiting version check"; return 0; fi
+    current=$1
+    new=$2
+	if [[ $current = $new ]]; then echo "Already up to date"; return 0;
+	elif [[ $current > $new ]]; then echo "Current version is higher, unable to downgrade!"; return 0;
+    elif [[ $current < $new ]]; then echo "Initializing Moodle $image_version ..."; return 1;
+	else echo "Unexpected behaviour, exiting version check"; return 0;
+    fi
 }
 
 #Will remove the required files to restore functionality
 cleanup() {
     echo "=== Deleting Moodle download folder ==="
     rm -rf /bitnami/moodledata/updated-moodle
-    echo "=== Disabling maintenance mode and signaling that Update process is finished ==="
     rm -f /bitnami/moodledata/moodle.tgz
-    rm -f /bitnami/moodledata/climaintenance.html
+    if ! [ -a /volumes/moodledata/UpdatePlugins ];
+    then
+        echo "=== Disabling maintenance mode and signaling that Update process is finished ==="
+        rm -f /bitnami/moodledata/climaintenance.html
+    else
+        echo "=== Plugin Update remaining, update DB and installing Plugins in new Pod ==="
+    fi
     rm -f /bitnami/moodledata/CliUpdate
 }
 
@@ -29,6 +37,47 @@ start_moodle(){
 
 if [ -f /bitnami/moodledata/UpdateFailed ]; then
     echo "=== UpdateFailed file exists, please resolve the problem manually ==="
+    rm -f /bitnami/moodledata/climaintenance.html
+    start_moodle
+fi
+
+if [ -f /bitnami/moodledata/UpdatePlugins ]; then
+    echo "=== UpdatePlugins File found, starting Plugin installation ==="
+    rm -f /bitnami/moodledata/UpdatePlugins
+    major_regex="\s*([0-9])+\."
+    minor_regex="\.([0-9]*)\."
+    if [[ $image_version =~ $major_regex ]]; then
+            image_major=${BASH_REMATCH[1]}
+    fi
+    if [[ $image_version =~ $minor_regex ]]; then
+            image_minor=${BASH_REMATCH[1]}
+    fi
+    plugin_version="$image_major.$image_minor"
+    nameRegEx="([0-9a-zA-Z_]*)+\#"
+    pathRegEx="\#+([0-9a-zA-Z_/]*)"
+    cd /bitnami/moodle/
+    php /moosh/moosh/moosh.php plugin-list
+    for plugin in $MOODLE_PLUGINS
+    do
+    #Get plugin name from the list <pluginName>#<pluginPath>
+        plugin_path="NoValue"
+        plugin_name="NoValue"
+        if [[ $plugin =~ $pathRegEx ]];
+        then
+            plugin_path=${BASH_REMATCH[1]}
+        fi
+        if [[ $plugin =~ $nameRegEx ]];
+        then
+            plugin_name=${BASH_REMATCH[1]}
+        fi
+        echo "=== Looking for Plugin: $plugin_name ==="
+        if [[ -d /bitnami/moodledata/moodle-backup/$plugin_path ]]
+        then
+            php /moosh/moosh/moosh.php plugin-install $plugin_name
+            echo "Plugin $plugin_name for Moodle Version $plugin_version installed"
+        fi
+    done
+    cd /
     rm -f /bitnami/moodledata/climaintenance.html
     start_moodle
 fi
@@ -97,19 +146,27 @@ else
 
     echo "=== Starting new Moodle Download of Version $image_version ==="
 
-    #Get Version number for download Link
+    #Get Version number for download Link and reuse for later Plugin update
     major_regex="\s*([0-9])+\."
     minor_regex="\.([0-9]*)\."
     if [[ $image_version =~ $major_regex ]]; then
-            major=${BASH_REMATCH[1]}
+            image_major=${BASH_REMATCH[1]}
     fi
     if [[ $image_version =~ $minor_regex ]]; then
-            minor=${BASH_REMATCH[1]}
+            image_minor=${BASH_REMATCH[1]}
     fi
-    if [ ${#minor} -lt 2 ];
-    then minor=$(printf "%02d" $minor)
+    if [ ${#image_minor} -lt 2 ];
+    then two_digit_image_minor=$(printf "%02d" $image_minor)
     fi
-    stable_version=$major$minor
+    stable_version=$image_major$two_digit_image_minor
+
+    #Get Version Number for Plugin update
+    if [[ $installed_version =~ $major_regex ]]; then
+            installed_major=${BASH_REMATCH[1]}
+    fi
+    if [[ $installed_version =~ $minor_regex ]]; then
+            installed_minor=${BASH_REMATCH[1]}
+    fi
 
     #Test if the download URL is available
     download_url="https://packaging.moodle.org/stable${stable_version}/moodle-${image_version}.tgz"
@@ -133,22 +190,12 @@ else
 
     rm -rf /bitnami/moodle/* && echo "=== Old moodle deleted ==="
     cp -rp /bitnami/moodledata/updated-moodle/* /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
-    # cp /bitnami/moodledata/moodle-backup/config.php /bitnami/moodle/config.php
-    # # plugin list - one could generate a diff and use that list
 
-    #We need to check if the file exists because there will be an error otherwise that causes "set -e" to abort
-    #Copies the mods to the new installed moodle with their path based from the moodle root directory
+    #Checks for the Moodle Plugin List 
     if [[ ! -z $MOODLE_PLUGINS ]]
     then
-        echo "=== Move plugins to updated installation ==="
-        for plugin in $MOODLE_PLUGINS
-        do
-            if [[ -a /bitnami/moodledata/moodle-backup/$plugin ]]
-            then
-                cp -rp /bitnami/moodledata/moodle-backup/$plugin /bitnami/moodle/$plugin
-                echo "$plugin moved to new installation"
-            fi
-        done
+        echo "=== Creating UpdatePlugins to trigger Plugin Installation ==="
+        touch /bitnami/moodledata/UpdatePlugins
     else
         echo "=== MOODLE_PLUGINS environment variable missing, skipping plugin copy step ==="
     fi
@@ -174,6 +221,7 @@ else
     fi
 
     if [ $post_update_version == $image_version ]; then
+        /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
         echo "=== Update to new Version $post_update_version successful ==="
         cleanup
         echo "=== Starting new Moodle version ==="
