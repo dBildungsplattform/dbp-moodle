@@ -6,8 +6,8 @@ USER root
 COPY moodleUpdateCheck.sh /moodleUpdateCheck.sh
 RUN chmod +x /moodleUpdateCheck.sh && \
 apt-get update && apt-get upgrade -y && \
-rm -rf /var/lib/apt/lists/* && \
-apt-get install -y curl gpg unzip
+apt-get install -y curl gpg unzip && \
+rm -rf /var/lib/apt/lists/*
 
 RUN curl https://moodle.org/plugins/download.php/29895/moosh_moodle42_2023090700.zip -o moosh.zip && \
 unzip moosh.zip -d moosh/ && \
