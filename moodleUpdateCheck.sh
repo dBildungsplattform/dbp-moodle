@@ -49,11 +49,16 @@ if [ -f /bitnami/moodledata/UpdatePlugins ]; then
         echo "=== Kaltura Flag found, installing Kaltura Plugin ==="
         cd /bitnami/moodle
         curl $KALTURA_DOWNLOAD_URL --output kaltura.zip
-        unzip kaltura.zip
-        cd /bitnami/moodle/admin/cli
-        php upgrade.php --non-interactive
-        cd /
-        echo "=== Kaltura Plugin successfully installed ==="
+        if [ -a /bitnami/moodle/kaltura.zip ]; then
+            unzip kaltura.zip
+            cd /bitnami/moodle/admin/cli
+            php upgrade.php --non-interactive
+            cd /
+            rm -r /bitnami/moodle/kaltura.zip
+            echo "=== Kaltura Plugin successfully installed ==="
+        else
+            echo "=== Kaltura could not be installed, please check for correct Kaltura Url and try again ==="
+        fi
     fi
     major_regex="\s*([0-9])+\."
     minor_regex="\.([0-9]*)\."
