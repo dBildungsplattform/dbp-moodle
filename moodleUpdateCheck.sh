@@ -18,7 +18,7 @@ cleanup() {
     echo "=== Deleting Moodle download folder ==="
     rm -rf /bitnami/moodledata/updated-moodle
     rm -f /bitnami/moodledata/moodle.tgz
-    if ! [ -a /volumes/moodledata/UpdatePlugins ];
+    if ! [ -a /bitnami/moodledata/UpdatePlugins ];
     then
         echo "=== Disabling maintenance mode and signaling that Update process is finished ==="
         rm -f /bitnami/moodledata/climaintenance.html
@@ -43,7 +43,23 @@ fi
 
 if [ -f /bitnami/moodledata/UpdatePlugins ]; then
     echo "=== UpdatePlugins File found, starting Plugin installation ==="
+    sleep 5
     rm -f /bitnami/moodledata/UpdatePlugins
+    if [[ $ENABLE_KALTURA ]]; then
+        echo "=== Kaltura Flag found, installing Kaltura Plugin ==="
+        cd /bitnami/moodle
+        curl https://moodle.org/plugins/download.php/29483/Kaltura_Video_Package_moodle41_2022112803.zip --output kaltura.zip
+        if [ -a /bitnami/moodle/kaltura.zip ]; then
+            unzip kaltura.zip
+            cd /bitnami/moodle/admin/cli
+            php upgrade.php --non-interactive
+            cd /
+            rm -r /bitnami/moodle/kaltura.zip
+            echo "=== Kaltura Plugin successfully installed ==="
+        else
+            echo "=== Kaltura could not be installed, please check for correct Kaltura Url and try again ==="
+        fi
+    fi
     major_regex="\s*([0-9])+\."
     minor_regex="\.([0-9]*)\."
     if [[ $image_version =~ $major_regex ]]; then
