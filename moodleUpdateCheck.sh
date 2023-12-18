@@ -187,6 +187,7 @@ else
     #Test if the download URL is available
     download_url="https://packaging.moodle.org/stable${stable_version}/moodle-${image_version}.tgz"
     #https://download.moodle.org/download.php/direct/stable${stable_version}/moodle-${image_version}.tgz alternative download url
+    #https://download.moodle.org/download.php/stable39/moodle-3.9.25.tgz
     echo "Download URL: ${download_url}"
     url_response=$(curl --write-out '%{response_code}' --head --silent --output /dev/null ${download_url})
     if ! [ $url_response -eq 200 ];
