@@ -45,8 +45,8 @@ if [ -f /bitnami/moodledata/UpdatePlugins ]; then
     echo "=== UpdatePlugins File found, starting Plugin installation ==="
     sleep 5
     rm -f /bitnami/moodledata/UpdatePlugins
-    if [[ $ENABLE_KALTURA ]]; then
-        echo "=== Kaltura Flag found, installing Kaltura Plugin ==="
+    if [[ $ENABLE_KALTURA == "True" ]]; then
+        echo "=== Kaltura Flag found and set to True, installing Kaltura Plugin ==="
         cd /bitnami/moodle
         curl https://moodle.org/plugins/download.php/29483/Kaltura_Video_Package_moodle41_2022112803.zip --output kaltura.zip
         if [ -a /bitnami/moodle/kaltura.zip ]; then
