@@ -6,11 +6,11 @@ USER root
 COPY moodleUpdateCheck.sh /moodleUpdateCheck.sh
 RUN chmod +x /moodleUpdateCheck.sh && \
 apt-get update && apt-get upgrade -y && \
-apt-get install -y curl gpg unzip && \
+apt-get install -y curl gpg unzip php-redis && \
 rm -rf /var/lib/apt/lists/*
 
-RUN apt-get install -y php8.1-redis && \
-service apache2 restart
+# RUN apt-get install -y php8.1-redis && \
+# service apache2 restart
 
 RUN curl https://moodle.org/plugins/download.php/29895/moosh_moodle42_2023090700.zip -o moosh.zip && \
 unzip moosh.zip -d moosh/ && \
