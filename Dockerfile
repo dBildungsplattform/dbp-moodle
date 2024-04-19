@@ -9,7 +9,7 @@ apt-get update && apt-get upgrade -y && \
 apt-get install -y curl gpg unzip && \
 rm -rf /var/lib/apt/lists/*
 
-apt-get install php8.1-redis
+RUN apt-get install -y php8.1-redis && \
 service apache2 restart
 
 RUN curl https://moodle.org/plugins/download.php/29895/moosh_moodle42_2023090700.zip -o moosh.zip && \
