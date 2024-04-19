@@ -6,7 +6,7 @@ USER root
 COPY moodleUpdateCheck.sh /moodleUpdateCheck.sh
 RUN chmod +x /moodleUpdateCheck.sh && \
 apt-get update && apt-get upgrade -y && \
-apt-get install -y curl gpg unzip php-redis && \
+apt-get install -y curl gpg unzip && \
 rm -rf /var/lib/apt/lists/*
 
 apt-get install php8.1-redis
