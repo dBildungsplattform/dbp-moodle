@@ -9,12 +9,9 @@ apt-get update && apt-get upgrade -y && \
 apt-get install -y curl gpg unzip autoconf php-dev php-redis && \
 rm -rf /var/lib/apt/lists/*
 
-# COPY phpRedisInstall.sh /phpRedisInstall.sh
-# RUN chmod +x /phpRedisInstall.sh
-# RUN ./phpRedisInstall.sh
-#RUN ./opt/bitnami/scripts/apache/restart.sh
-RUN echo "extension=redis.so" >> /opt/bitnami/php/etc/php.ini && \
-./opt/bitnami/scripts/php/start.sh
+COPY phpRedisInstall.sh /phpRedisInstall.sh
+RUN chmod +x /phpRedisInstall.sh
+RUN ./phpRedisInstall.sh
 
 RUN curl https://moodle.org/plugins/download.php/29895/moosh_moodle42_2023090700.zip -o moosh.zip && \
 unzip moosh.zip -d moosh/ && \
