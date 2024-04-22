@@ -30,6 +30,10 @@ cleanup() {
 
 #Starts the currently installed Moodle application
 start_moodle(){
+    #We could add a optional check for redis=enabled
+    ./opt/bitnami/scripts/php/start.sh
+    ./opt/bitnami/scripts/php/reload.sh
+    ./opt/bitnami/scripts/apache/reload.sh
     /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
     /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
     exit 1
