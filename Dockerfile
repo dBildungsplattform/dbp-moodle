@@ -6,7 +6,7 @@ USER root
 COPY moodleUpdateCheck.sh /moodleUpdateCheck.sh
 RUN chmod +x /moodleUpdateCheck.sh && \
 apt-get update && apt-get upgrade -y && \
-apt-get install -y curl gpg unzip php-dev php-redis && \
+apt-get install -y curl gpg unzip autoconf php-redis && \
 rm -rf /var/lib/apt/lists/*
 
 #RUN ./opt/bitnami/scripts/apache/restart.sh
