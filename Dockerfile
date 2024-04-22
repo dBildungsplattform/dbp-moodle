@@ -10,6 +10,7 @@ apt-get install -y curl gpg unzip autoconf php-dev && \
 rm -rf /var/lib/apt/lists/*
 
 COPY phpRedisInstall.sh /phpRedisInstall.sh
+RUN chmod +x /phpRedisInstall.sh
 RUN ./phpRedisInstall.sh
 #RUN ./opt/bitnami/scripts/apache/restart.sh
 
