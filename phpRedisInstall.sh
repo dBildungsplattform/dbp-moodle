@@ -6,3 +6,4 @@ phpize
 ./configure
 make
 make install
+echo "extension=redis.so" >> /opt/bitnami/php/etc/php.ini
