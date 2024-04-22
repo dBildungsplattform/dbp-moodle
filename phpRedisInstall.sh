@@ -1,10 +1,7 @@
 #!/bin/bash
-curl https://pecl.php.net/get/redis-6.0.2.tgz
-ls
+curl https://pecl.php.net/get/redis-6.0.2.tgz --output redis-6.0.2.tgz
 tar xzf redis-6.0.2.tgz
-ls
 cd redis-6.0.2
-ls
 phpize
 ./configure
 make
