@@ -6,9 +6,11 @@ USER root
 COPY moodleUpdateCheck.sh /moodleUpdateCheck.sh
 RUN chmod +x /moodleUpdateCheck.sh && \
 apt-get update && apt-get upgrade -y && \
-apt-get install -y curl gpg unzip autoconf php-redis && \
+apt-get install -y curl gpg unzip autoconf php-dev && \
 rm -rf /var/lib/apt/lists/*
 
+COPY phpRedisInstall.sh /phpRedisInstall.sh
+RUN ./phpRedisInstall.sh
 #RUN ./opt/bitnami/scripts/apache/restart.sh
 
 RUN curl https://moodle.org/plugins/download.php/29895/moosh_moodle42_2023090700.zip -o moosh.zip && \
