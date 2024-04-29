@@ -31,6 +31,7 @@ cleanup() {
 #Starts the currently installed Moodle application
 start_moodle(){
     /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
+    /bin/cp -p /moodleconfig/php.ini /opt/bitnami/php/etc/conf.d/php.ini
     /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
     exit 1
 }
