@@ -118,6 +118,9 @@ else
     sleep 30
     /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
     echo "=== Config.php copied to destination ==="
+    #Append the redis config on the php.ini
+    /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
+    echo "=== php.ini for redis updated ==="
     wait
     exit 1
 fi
