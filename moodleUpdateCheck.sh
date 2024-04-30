@@ -120,8 +120,6 @@ else
     echo "=== Config.php copied to destination ==="
     /bin/cp /moodleconfig/php.ini /opt/bitnami/php/etc/conf.d
     #Copy the redis config php.ini to the conf.d
-    /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
-    echo "=== php.ini for redis updated ==="
     wait
     exit 1
 fi
