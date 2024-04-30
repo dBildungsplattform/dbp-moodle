@@ -31,7 +31,7 @@ cleanup() {
 #Starts the currently installed Moodle application
 start_moodle(){
     /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
-    cat /moodleconfig/php.ini >> /opt/bitnami/php/etc/conf.d/php.ini
+    cat /moodleconfig/php.ini >> /opt/bitnami/php/etc/php.ini
     #Append the redis config on the php.ini
     /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
     exit 1
@@ -118,6 +118,7 @@ else
     sleep 30
     /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
     echo "=== Config.php copied to destination ==="
+    cat /moodleconfig/php.ini >> /opt/bitnami/php/etc/php.ini
     #Append the redis config on the php.ini
     /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
     echo "=== php.ini for redis updated ==="
