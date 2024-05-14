@@ -18,6 +18,11 @@ jobs:
         with:
           tagRegex: "(?<tag>[0-9]+.[0-9]+.[0-9]+)(?<suffix>-debian-11-r[0-9]+)"
   build_and_push:
+    permissions:
+      packages: write
+      security-events: write
+      actions: read
+      contents: read
     needs: pre_build
     uses: hpi-schul-cloud/infra-tools/.github/workflows/build-and-push.yaml@master
     with:
