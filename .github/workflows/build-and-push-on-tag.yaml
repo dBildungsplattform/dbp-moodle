@@ -4,7 +4,7 @@ name: Build and push Docker Image on Tag
 on:
   push:
     tags:
-      - '[0-9]+.[0-9]+.[0-9]+-debian-11-r[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.*'
 jobs:
   pre_build:
     runs-on: ubuntu-latest

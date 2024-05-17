@@ -18,4 +18,5 @@ unzip moosh.zip -d moosh/ && \
 mkdir /.moosh && \
 chmod 774 /.moosh
 
+
 ENTRYPOINT ["/moodleUpdateCheck.sh"]
