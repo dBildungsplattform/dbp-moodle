@@ -73,7 +73,7 @@ if [ -f /bitnami/moodledata/UpdatePlugins ]; then
     nameRegEx="([0-9a-zA-Z_]*)+\#"
     pathRegEx="\#+([0-9a-zA-Z_/]*)"
     cd /bitnami/moodle/
-    php /moosh/moosh/moosh.php plugin-list
+    php /moosh/moosh.php plugin-list
     for plugin in $MOODLE_PLUGINS
     do
     #Get plugin name from the list <pluginName>#<pluginPath>
@@ -90,7 +90,7 @@ if [ -f /bitnami/moodledata/UpdatePlugins ]; then
         echo "=== Looking for Plugin: $plugin_name ==="
         if [[ -d /bitnami/moodledata/moodle-backup/$plugin_path ]]
         then
-            php /moosh/moosh/moosh.php plugin-install $plugin_name
+            php /moosh/moosh.php plugin-install $plugin_name
             echo "Plugin $plugin_name for Moodle Version $plugin_version installed"
         fi
     done
