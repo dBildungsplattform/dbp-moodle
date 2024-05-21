@@ -9,11 +9,11 @@ version_greater() {
     local greater_version
 
 	if [[ "$current" = "$new" ]]; then echo "Already up to date"; return 0; fi
-    
+
     greater_version="$(printf "%s\n%s" "$current" "$new" | sort --version-sort --reverse | head -n 1)"
     if [[ "$current" = "$greater_version" ]]; then echo "Current version is higher, unable to downgrade!"; return 0;
     elif [[ "$new" < "$greater_version" ]]; then echo "Initializing Moodle $image_version ..."; return 1;
-	else echo "Unexpected behaviour, exiting version check"; return 0;
+    else echo "Unexpected behaviour, exiting version check"; return 0;
     fi
 }
 
@@ -143,7 +143,7 @@ else
         echo '<h1>Sorry, maintenance in progress</h1>' > /bitnami/moodledata/climaintenance.html
         sleep 2
         #The backup is only done once in the first run so we don't accidentally overwrite it
-        echo "=== Taking a Backup ===" 
+        echo "=== Taking a Backup ==="
         if [ -d "/bitnami/moodledata/moodle-backup" ]; then
             rm -r /bitnami/moodledata/moodle-backup
         fi
@@ -214,7 +214,7 @@ else
     rm -rf /bitnami/moodle/* && echo "=== Old moodle deleted ==="
     cp -rp /bitnami/moodledata/updated-moodle/* /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
 
-    #Checks for the Moodle Plugin List 
+    #Checks for the Moodle Plugin List
     if [[ ! -z $MOODLE_PLUGINS ]]
     then
         echo "=== Creating UpdatePlugins to trigger Plugin Installation ==="
