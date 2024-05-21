@@ -4,11 +4,15 @@ image_version="$APP_VERSION"
 
 # checks if image version(new) is greater than current installed version
 version_greater() {
-    current=$1
-    new=$2
-	if [[ $current = $new ]]; then echo "Already up to date"; return 0;
-	elif [[ $current > $new ]]; then echo "Current version is higher, unable to downgrade!"; return 0;
-    elif [[ $current < $new ]]; then echo "Initializing Moodle $image_version ..."; return 1;
+    local current=$1
+    local new=$2
+    local greater_version
+
+	if [[ "$current" = "$new" ]]; then echo "Already up to date"; return 0; fi
+    
+    greater_version="$(printf "%s\n%s" "$current" "$new" | sort --version-sort --reverse | head -n 1)"
+    if [[ "$current" = "$greater_version" ]]; then echo "Current version is higher, unable to downgrade!"; return 0;
+    elif [[ "$new" < "$greater_version" ]]; then echo "Initializing Moodle $image_version ..."; return 1;
 	else echo "Unexpected behaviour, exiting version check"; return 0;
     fi
 }
