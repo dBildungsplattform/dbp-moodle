@@ -11,12 +11,13 @@ rm -rf /var/lib/apt/lists/*
 
 COPY phpRedisInstall.sh /tmp/phpRedisInstall.sh
 RUN chmod +x /tmp/phpRedisInstall.sh
-RUN ./tmp/phpRedisInstall.sh
+RUN /tmp/phpRedisInstall.sh
 
-RUN curl https://moodle.org/plugins/download.php/29895/moosh_moodle42_2023090700.zip -o moosh.zip && \
-unzip moosh.zip -d moosh/ && \
+RUN curl -L https://github.com/tmuras/moosh/archive/refs/tags/1.14.tar.gz -o moosh.tar.gz && \
+mkdir moosh/ && tar -xzvf moosh.tar.gz -C moosh/ --strip-components=1 && \
 mkdir /.moosh && \
-chmod 774 /.moosh
-
+chmod 774 /.moosh &&\
+cd /moosh/ && \
+composer install
 
 ENTRYPOINT ["/moodleUpdateCheck.sh"]
