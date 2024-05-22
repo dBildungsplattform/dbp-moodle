@@ -12,7 +12,7 @@ version_greater() {
 
     greater_version="$(printf "%s\n%s" "$current" "$new" | sort --version-sort --reverse | head -n 1)"
     if [[ "$current" = "$greater_version" ]]; then echo "Current version is higher, unable to downgrade!"; return 0;
-    elif [[ "$new" < "$greater_version" ]]; then echo "Initializing Moodle $image_version ..."; return 1;
+    elif [[ "$new" = "$greater_version" ]]; then echo "Initializing Moodle $image_version ..."; return 1;
     else echo "Unexpected behaviour, exiting version check"; return 0;
     fi
 }
