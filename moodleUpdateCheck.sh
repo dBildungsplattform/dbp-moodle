@@ -41,7 +41,6 @@ start_moodle(){
 }
 
 install_kaltura(){
-    cd /bitnami/moodle
     local kaltura_url="https://moodle.org/plugins/download.php/29483/Kaltura_Video_Package_moodle41_2022112803.zip"
     local kaltura_save_path="/bitnami/moodle/kaltura.zip"
     curl "$kaltura_url" --output "$kaltura_save_path"
@@ -53,7 +52,6 @@ install_kaltura(){
     
     unzip kaltura.zip
     php /bitnami/moodle/admin/cli/upgrade.php --non-interactive
-    cd /
     rm -r "$kaltura_save_path"
     echo "=== Kaltura Plugin successfully installed ==="
 }
@@ -86,7 +84,6 @@ if [ -f /bitnami/moodledata/UpdatePlugins ]; then
     plugin_version="$image_major.$image_minor"
     nameRegEx="([0-9a-zA-Z_]*)+\#"
     pathRegEx="\#+([0-9a-zA-Z_/]*)"
-    cd /bitnami/moodle/
     php /moosh/moosh.php plugin-list
     for plugin in $MOODLE_PLUGINS
     do
@@ -108,7 +105,6 @@ if [ -f /bitnami/moodledata/UpdatePlugins ]; then
             echo "Plugin $plugin_name for Moodle Version $plugin_version installed"
         fi
     done
-    cd /
     rm -f /bitnami/moodledata/climaintenance.html
     start_moodle
 fi
