@@ -179,7 +179,7 @@ else
             image_minor=${BASH_REMATCH[1]}
     fi
     if [ ${#image_minor} -lt 2 ];
-    then two_digit_image_minor=$(printf "%02d" $image_minor)
+    then two_digit_image_minor=$(printf "%02d" "$image_minor")
     fi
     stable_version="${image_major}${two_digit_image_minor}"
 
