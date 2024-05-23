@@ -40,6 +40,23 @@ start_moodle(){
     exit 1
 }
 
+install_kaltura(){
+    cd /bitnami/moodle
+    local kaltura_url="https://moodle.org/plugins/download.php/29483/Kaltura_Video_Package_moodle41_2022112803.zip"
+    local kaltura_save_path="/bitnami/moodle/kaltura.zip"
+    curl "$kaltura_url" --output "$kaltura_save_path"
+    if [ ! -f "$kaltura_save_path" ]; then
+        echo "=== Kaltura could not be installed, please check for correct Kaltura Url and try again ==="
+        echo "Current kaltura url: ${kaltura_url}"
+        return 1
+    fi
+    
+    unzip kaltura.zip
+    php /bitnami/moodle/admin/cli/upgrade.php --non-interactive
+    cd /
+    rm -r "$kaltura_save_path"
+    echo "=== Kaltura Plugin successfully installed ==="
+}
 if [ -f /bitnami/moodledata/UpdateFailed ]; then
     echo "=== UpdateFailed file exists, please resolve the problem manually ==="
     rm -f /bitnami/moodledata/climaintenance.html
@@ -51,19 +68,8 @@ if [ -f /bitnami/moodledata/UpdatePlugins ]; then
     sleep 5
     rm -f /bitnami/moodledata/UpdatePlugins
     if [[ $ENABLE_KALTURA == "True" ]]; then
-        echo "=== Kaltura Flag found and set to True, installing Kaltura Plugin ==="
-        cd /bitnami/moodle
-        curl https://moodle.org/plugins/download.php/29483/Kaltura_Video_Package_moodle41_2022112803.zip --output kaltura.zip
-        if [ -a /bitnami/moodle/kaltura.zip ]; then
-            unzip kaltura.zip
-            cd /bitnami/moodle/admin/cli
-            php upgrade.php --non-interactive
-            cd /
-            rm -r /bitnami/moodle/kaltura.zip
-            echo "=== Kaltura Plugin successfully installed ==="
-        else
-            echo "=== Kaltura could not be installed, please check for correct Kaltura Url and try again ==="
-        fi
+        echo "=== Kaltura Flag enabled, installing Kaltura Plugin ==="
+        install_kaltura
     fi
     major_regex="\s*([0-9])+\."
     minor_regex="\.([0-9]*)\."
