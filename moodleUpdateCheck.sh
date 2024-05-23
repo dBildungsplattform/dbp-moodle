@@ -166,7 +166,7 @@ echo "The new Moodle Image version is $APP_VERSION";
 if version_greater "$installed_version" "$cur_image_version";
 then
     echo "=== Same Version, skipping Update process and starting Moodle ===";
-    start_moodle
+    exit 0
 fi
 
 # New version, create required Files
