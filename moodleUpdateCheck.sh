@@ -43,14 +43,6 @@ cleanup() {
     rm -f "$update_cli_path"
 }
 
-# Starts the currently installed Moodle application
-start_moodle(){
-    /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
-    /bin/cp /moodleconfig/php.ini /opt/bitnami/php/etc/conf.d/php.ini
-    /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
-    exit 1
-}
-
 install_kaltura(){
     local kaltura_url="https://moodle.org/plugins/download.php/29483/Kaltura_Video_Package_moodle41_2022112803.zip"
     local kaltura_save_path="/bitnami/moodle/kaltura.zip"
@@ -112,20 +104,34 @@ update_plugins() {
 }
 
 ### Start of main ###
+# Get Version number for download Link and reuse for later plugin update
+major_regex="\s*([0-9])+\."
+minor_regex="\.([0-9]*)\."
+if [[ $cur_image_version =~ $major_regex ]]; then
+        image_major=${BASH_REMATCH[1]}
+fi
+if [[ $cur_image_version =~ $minor_regex ]]; then
+        image_minor=${BASH_REMATCH[1]}
+fi
+if [ ${#image_minor} -lt 2 ]; then
+    two_digit_image_minor=$(printf "%02d" "$image_minor")
+fi
+stable_version="${image_major}${two_digit_image_minor}"
+
 if [ -f "$update_failed_path" ]; then
     echo "=== UpdateFailed file exists, indicating failed Update! Please resolve the problem manually ==="
-    echo "=== Removing maintenance and starting previous moodle installation ==="
+    echo "=== Removing maintenance and exiting update ==="
 
     rm -f "$maintenance_html_path"
-    start_moodle
+    exit 1
 fi
 
 if [ -f "$update_plugins_path" ]; then
     echo "=== UpdatePlugins File found, starting Plugin installation ==="
     update_plugins
-    
+    echo "=== Finished UpdatePlugins, removing maintenance status and exiting update ==="
     rm -f "$maintenance_html_path"
-    start_moodle
+    exit 0
 fi
 
 # Get the current installed version
@@ -194,21 +200,6 @@ fi
 mkdir "$new_version_data_path"
 
 echo "=== Starting download of new Moodle version $cur_image_version ==="
-
-# Get Version number for download Link and reuse for later plugin update
-major_regex="\s*([0-9])+\."
-minor_regex="\.([0-9]*)\."
-if [[ $cur_image_version =~ $major_regex ]]; then
-        image_major=${BASH_REMATCH[1]}
-fi
-if [[ $cur_image_version =~ $minor_regex ]]; then
-        image_minor=${BASH_REMATCH[1]}
-fi
-if [ ${#image_minor} -lt 2 ]; then
-    two_digit_image_minor=$(printf "%02d" "$image_minor")
-fi
-stable_version="${image_major}${two_digit_image_minor}"
-
 # Test if the download URL is available
 download_url="https://packaging.moodle.org/stable${stable_version}/moodle-${cur_image_version}.tgz"
 # https://download.moodle.org/download.php/direct/stable${stable_version}/moodle-${cur_image_version}.tgz alternative download url
@@ -219,7 +210,7 @@ if ! [ "$url_response" -eq 200 ]; then
     touch "$update_failed_path"
     rm "$maintenance_html_path"
     rm "$update_cli_path" && sleep 2
-    start_moodle
+    exit 1
 else
     curl "$download_url" -o /bitnami/moodledata/moodle.tgz && echo "=== Download done ==="
     tar -xzf /bitnami/moodledata/moodle.tgz -C "$new_version_data_path" --strip 1 && echo "=== Unpacking done ==="
@@ -258,7 +249,7 @@ else
     cp -rp /bitnami/moodledata/moodle-backup/* /bitnami/moodle/ && echo "=== Old moodle version restored to folder ==="
     touch "$update_failed_path"
     sleep 5
-    start_moodle
+    exit 1
 fi
 
 if [ "$post_update_version" == "$cur_image_version" ]; then
@@ -267,13 +258,13 @@ if [ "$post_update_version" == "$cur_image_version" ]; then
     echo "=== Starting cleanup ==="
     cleanup
     echo "=== Starting new Moodle version ==="
-    start_moodle
+    exit 0
 elif [ "$post_update_version" == "$pre_update_version" ]; then
     echo "=== Update failed, old Version still installed ==="
     touch "$update_failed_path"
     cleanup
     sleep 10
-    start_moodle
+    exit 1
 else
     # Normally we should never end up here
     echo "=== Something went very wrong, please check the logs ==="
