@@ -184,12 +184,12 @@ else
     stable_version="${image_major}${two_digit_image_minor}"
 
     #Get Version Number for Plugin update
-    if [[ $installed_version =~ $major_regex ]]; then
-            installed_major=${BASH_REMATCH[1]}
-    fi
-    if [[ $installed_version =~ $minor_regex ]]; then
-            installed_minor=${BASH_REMATCH[1]}
-    fi
+    # if [[ $installed_version =~ $major_regex ]]; then
+    #         installed_major=${BASH_REMATCH[1]}
+    # fi
+    # if [[ $installed_version =~ $minor_regex ]]; then
+    #         installed_minor=${BASH_REMATCH[1]}
+    # fi
 
     #Test if the download URL is available
     download_url="https://packaging.moodle.org/stable${stable_version}/moodle-${image_version}.tgz"
