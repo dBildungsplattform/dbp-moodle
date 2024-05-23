@@ -20,4 +20,4 @@ chmod 774 /.moosh &&\
 cd /moosh/ && \
 composer install
 
-ENTRYPOINT ["/moodleUpdateCheck.sh"]
+ENTRYPOINT ["/bin/sh", "-c", "/moodleUpdateCheck.sh 2>&1 | tee -a /moodleUpdateCheck.log"]
