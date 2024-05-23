@@ -51,7 +51,7 @@ install_kaltura(){
         echo "Current kaltura url: ${kaltura_url}"
         return 1
     fi
-    
+
     unzip kaltura.zip
     php /bitnami/moodle/admin/cli/upgrade.php --non-interactive
     rm -r "$kaltura_save_path"
@@ -72,7 +72,7 @@ update_plugins() {
     plugin_version="$image_major.$image_minor"
     nameRegEx="([0-9a-zA-Z_]*)+\#"
     pathRegEx="\#+([0-9a-zA-Z_/]*)"
-    
+
     for plugin in $MOODLE_PLUGINS
     do
     # Get plugin name from the list <pluginName>#<pluginPath>
@@ -90,7 +90,7 @@ update_plugins() {
             printf "    Starting install..."
             if php /moosh/moosh.php plugin-install "$plugin_name"; then
                 printf "Done\n"
-            else 
+            else
                 printf "Failed!\n"
             fi
         else
@@ -160,7 +160,7 @@ echo "The new Moodle Image version is $APP_VERSION";
 
 # Do version check
 if version_greater "$installed_version" "$cur_image_version"; then
-    echo "=== Same Version, skipping Update process and exiting Update ==="    
+    echo "=== Same Version, skipping Update process and exiting Update ==="
     exit 0
 fi
 
