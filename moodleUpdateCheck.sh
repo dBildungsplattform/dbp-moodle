@@ -94,7 +94,7 @@ if [ -f /bitnami/moodledata/UpdatePlugins ]; then
         echo "=== Looking for Plugin: $plugin_name ==="
         if [[ -d /bitnami/moodledata/moodle-backup/$plugin_path ]]
         then
-            php /moosh/moosh.php plugin-install $plugin_name
+            php /moosh/moosh.php plugin-install "$plugin_name"
             echo "Plugin $plugin_name for Moodle Version $plugin_version installed"
         fi
     done
@@ -109,8 +109,8 @@ if [ -f /bitnami/moodle/version.php ]; then
     LINE=$(grep release /bitnami/moodle/version.php)
     REGEX="release\s*=\s*'([0-9]+\.[0-9]*+\.[0-9]*)"
     if [[ $LINE =~ $REGEX ]]; then
-	    echo "Installed Moodle version:" ${BASH_REMATCH[1]}
-        installed_version=${BASH_REMATCH[1]}
+	    echo "Installed Moodle version:" "${BASH_REMATCH[1]}"
+        installed_version="${BASH_REMATCH[1]}"
     fi
 else
     #Start new Moodle installation
@@ -181,7 +181,7 @@ else
     if [ ${#image_minor} -lt 2 ];
     then two_digit_image_minor=$(printf "%02d" $image_minor)
     fi
-    stable_version=$image_major$two_digit_image_minor
+    stable_version="${image_major}${two_digit_image_minor}"
 
     #Get Version Number for Plugin update
     if [[ $installed_version =~ $major_regex ]]; then
@@ -195,15 +195,15 @@ else
     download_url="https://packaging.moodle.org/stable${stable_version}/moodle-${image_version}.tgz"
     #https://download.moodle.org/download.php/direct/stable${stable_version}/moodle-${image_version}.tgz alternative download url
     echo "Download URL: ${download_url}"
-    url_response=$(curl --write-out '%{response_code}' --head --silent --output /dev/null ${download_url})
-    if ! [ $url_response -eq 200 ];
+    url_response=$(curl --write-out '%{response_code}' --head --silent --output /dev/null "${download_url}")
+    if ! [ "$url_response" -eq 200 ];
     then echo "=== Critical error, download link is not working, abort update process ==="
         touch /bitnami/moodledata/UpdateFailed
         rm /bitnami/moodledata/climaintenance.html
         rm /bitnami/moodledata/CliUpdate && sleep 2
         start_moodle
     else
-        curl $download_url -o /bitnami/moodledata/moodle.tgz && echo "=== Download done ==="
+        curl "$download_url" -o /bitnami/moodledata/moodle.tgz && echo "=== Download done ==="
         tar -xzf /bitnami/moodledata/moodle.tgz -C /bitnami/moodledata/updated-moodle --strip 1 && echo "=== Unpacking done ==="
     fi
     sleep 2
@@ -215,7 +215,7 @@ else
     cp -rp /bitnami/moodledata/updated-moodle/* /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
 
     #Checks for the Moodle Plugin List
-    if [[ ! -z $MOODLE_PLUGINS ]]
+    if [[ -n $MOODLE_PLUGINS ]]
     then
         echo "=== Creating UpdatePlugins to trigger Plugin Installation ==="
         touch /bitnami/moodledata/UpdatePlugins
@@ -231,7 +231,7 @@ else
         LINE=$(grep release /bitnami/moodle/version.php)
         REGEX="release\s*=\s*'([0-9]+\.[0-9]+\.[0-9])"
         if [[ $LINE =~ $REGEX ]]; then
-            echo "New Installed Moodle version:" ${BASH_REMATCH[1]}
+            echo "New Installed Moodle version:" "${BASH_REMATCH[1]}"
             post_update_version=${BASH_REMATCH[1]}
         fi
     else
@@ -243,13 +243,13 @@ else
         start_moodle
     fi
 
-    if [ $post_update_version == $image_version ]; then
+    if [ "$post_update_version" == "$image_version" ]; then
         /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
         echo "=== Update to new Version $post_update_version successful ==="
         cleanup
         echo "=== Starting new Moodle version ==="
         start_moodle
-    elif [ $post_update_version == $pre_update_version ]; then
+    elif [ "$post_update_version" == "$pre_update_version" ]; then
         echo "=== Update failed, old Version still installed ==="
         touch /bitnami/moodledata/UpdateFailed
         cleanup
