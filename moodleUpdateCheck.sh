@@ -22,7 +22,7 @@ cleanup() {
     echo "=== Deleting Moodle download folder ==="
     rm -rf /bitnami/moodledata/updated-moodle
     rm -f /bitnami/moodledata/moodle.tgz
-    if ! [ -a /bitnami/moodledata/UpdatePlugins ];
+    if ! [ -f /bitnami/moodledata/UpdatePlugins ];
     then
         echo "=== Disabling maintenance mode and signaling that Update process is finished ==="
         rm -f /bitnami/moodledata/climaintenance.html
@@ -149,7 +149,7 @@ then
 fi
 
 # New version, create required Files
-if ! [ -a /bitnami/moodledata/climaintenance.html ]; then
+if ! [ -f /bitnami/moodledata/climaintenance.html ]; then
     echo "=== Enable Maintenance Mode ==="
     echo '<h1>Sorry, maintenance in progress</h1>' > /bitnami/moodledata/climaintenance.html
     sleep 2
@@ -165,7 +165,7 @@ else
 fi
 
 # Wait for the Update Helper Job to disable the Probes and force a pod restart
-if ! [ -a /bitnami/moodledata/CliUpdate ]; then
+if ! [ -f /bitnami/moodledata/CliUpdate ]; then
     echo "=== Create required Files for Update ==="
     touch /bitnami/moodledata/CliUpdate
     sleep 600 # Wait for initial Pod termination by Update-Helper-Job
