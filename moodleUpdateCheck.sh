@@ -33,8 +33,7 @@ cleanup() {
     echo "=== Deleting Moodle download folder ==="
     rm -rf "$new_version_data_path"
     rm -f /bitnami/moodledata/moodle.tgz
-    if ! [ -f "$update_plugins_path" ];
-    then
+    if ! [ -f "$update_plugins_path" ]; then
         echo "=== Disabling maintenance mode and signaling that Update process is finished ==="
         rm -f "$maintenance_html_path"
     else
@@ -79,17 +78,14 @@ update_plugins() {
     # Get plugin name from the list <pluginName>#<pluginPath>
         plugin_path="NoValue"
         plugin_name="NoValue"
-        if [[ $plugin =~ $pathRegEx ]];
-        then
+        if [[ $plugin =~ $pathRegEx ]]; then
             plugin_path=${BASH_REMATCH[1]}
         fi
-        if [[ $plugin =~ $nameRegEx ]];
-        then
+        if [[ $plugin =~ $nameRegEx ]]; then
             plugin_name=${BASH_REMATCH[1]}
         fi
         printf '  Looking for "%s" (%s)... ' "$plugin_name" "$plugin_version"
-        if [[ -d "$old_version_data_path"/$plugin_path ]]
-        then
+        if [[ -d "$old_version_data_path"/$plugin_path ]]; then
             printf "Found!\n"
             printf "    Starting install..."
             if php /moosh/moosh.php plugin-install "$plugin_name"; then
@@ -163,9 +159,8 @@ pre_update_version=$installed_version;
 echo "The new Moodle Image version is $APP_VERSION";
 
 # Do version check
-if version_greater "$installed_version" "$cur_image_version";
-then
-    echo "=== Same Version, skipping Update process and starting Moodle ===";
+if version_greater "$installed_version" "$cur_image_version"; then
+    echo "=== Same Version, skipping Update process and exiting Update ==="    
     exit 0
 fi
 
@@ -224,8 +219,7 @@ rm -rf /bitnami/moodle/* && echo "=== Old moodle deleted ==="
 cp -rp "${new_version_data_path}/*" /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
 
 # Checks for the Moodle Plugin List
-if [[ -n $MOODLE_PLUGINS ]]
-then
+if [[ -n $MOODLE_PLUGINS ]]; then
     echo "=== Creating UpdatePlugins to trigger Plugin Installation ==="
     touch "$update_plugins_path"
 else
@@ -257,12 +251,14 @@ if [ "$post_update_version" == "$cur_image_version" ]; then
     echo "=== Update to new Version $post_update_version successful. ==="
     echo "=== Starting cleanup ==="
     cleanup
-    echo "=== Starting new Moodle version ==="
+    echo "=== Cleanup done, exiting update ==="
     exit 0
 elif [ "$post_update_version" == "$pre_update_version" ]; then
-    echo "=== Update failed, old Version still installed ==="
+    echo "=== Update failed, old Version still installed. ==="
     touch "$update_failed_path"
+    echo "=== Starting cleanup ==="
     cleanup
+    echo "=== Cleanup done, exiting update ==="
     sleep 10
     exit 1
 else
