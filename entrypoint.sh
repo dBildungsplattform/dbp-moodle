@@ -1,12 +1,17 @@
 #!/bin/bash
 set -e
 
+printf "=== Starting moodleUpdateCheck ===\n"
 if ! /moodleUpdateCheck.sh 2>&1 | tee -a "/bitnami/moodledata/moodleUpdateCheck.log"; then
-    echo "moodleUpdateCheck script exited with error. Check /bitnami/moodledata/moodleUpdateCheck.log"
+    printf "=== moodleUpdateCheck failed! ===\n"
+    printf "Check /bitnami/moodledata/moodleUpdateCheck.log\n"
+else
+    printf "=== moodleUpdateCheck finished ===\n"
 fi
-wait $!
 
+wait $!
 # move config files and start bitnami entrypoint
 /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
 /bin/cp /moodleconfig/php.ini /opt/bitnami/php/etc/conf.d/php.ini
+printf "=== Starting bitnami entrypoint ===\n"
 /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
