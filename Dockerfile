@@ -5,7 +5,7 @@ USER root
 
 COPY entrypoint.sh /entrypoint.sh
 COPY moodleUpdateCheck.sh /moodleUpdateCheck.sh
-RUN chmod +x /moodleUpdateCheck.sh && \
+RUN chmod +x /entrypoint.sh /moodleUpdateCheck.sh && \
 apt-get update && apt-get upgrade -y && \
 apt-get install -y curl gpg unzip autoconf php-dev php-redis && \
 rm -rf /var/lib/apt/lists/*
