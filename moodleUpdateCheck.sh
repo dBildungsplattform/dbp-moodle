@@ -161,6 +161,7 @@ echo "The new Moodle Image version is $APP_VERSION";
 # Do version check
 if version_greater "$installed_version" "$cur_image_version"; then
     echo "=== Same Version, skipping Update process and exiting Update ==="
+    rm -f "/bitnami/moodledata/moodleUpdateCheck.log"
     exit 0
 fi
 
