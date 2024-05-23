@@ -17,7 +17,7 @@ version_greater() {
     fi
 }
 
-#Will remove the required files to restore functionality
+# Will remove the required files to restore functionality
 cleanup() {
     echo "=== Deleting Moodle download folder ==="
     rm -rf /bitnami/moodledata/updated-moodle
@@ -32,7 +32,7 @@ cleanup() {
     rm -f /bitnami/moodledata/CliUpdate
 }
 
-#Starts the currently installed Moodle application
+# Starts the currently installed Moodle application
 start_moodle(){
     /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
     /bin/cp /moodleconfig/php.ini /opt/bitnami/php/etc/conf.d/php.ini
@@ -57,8 +57,12 @@ install_kaltura(){
     rm -r "$kaltura_save_path"
     echo "=== Kaltura Plugin successfully installed ==="
 }
+
+### Start of main ###
 if [ -f /bitnami/moodledata/UpdateFailed ]; then
-    echo "=== UpdateFailed file exists, please resolve the problem manually ==="
+    echo "=== UpdateFailed file exists, indicating failed Update! Please resolve the problem manually ==="
+    echo "=== Removing maintenance and starting previous moodle installation ==="
+
     rm -f /bitnami/moodledata/climaintenance.html
     start_moodle
 fi
@@ -86,7 +90,7 @@ if [ -f /bitnami/moodledata/UpdatePlugins ]; then
     php /moosh/moosh.php plugin-list
     for plugin in $MOODLE_PLUGINS
     do
-    #Get plugin name from the list <pluginName>#<pluginPath>
+    # Get plugin name from the list <pluginName>#<pluginPath>
         plugin_path="NoValue"
         plugin_name="NoValue"
         if [[ $plugin =~ $pathRegEx ]];
@@ -109,7 +113,7 @@ if [ -f /bitnami/moodledata/UpdatePlugins ]; then
     start_moodle
 fi
 
-#Get the current installed version
+# Get the current installed version
 installed_version="0.0.0"
 if [ -f /bitnami/moodle/version.php ]; then
     LINE=$(grep release /bitnami/moodle/version.php)
@@ -119,9 +123,9 @@ if [ -f /bitnami/moodle/version.php ]; then
         installed_version="${BASH_REMATCH[1]}"
     fi
 else
-    #Start new Moodle installation
+    # Start new Moodle installation
     echo "No installed Moodle Version detected"
-    echo "Fresh Bitnami installation..."
+    echo "Starting fresh Bitnami installation..."
     /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh" &
     echo "=== Wait for 30s to copy config.php after Update start ==="
     sleep 30
@@ -133,22 +137,22 @@ else
     exit 1
 fi
 
-#Is needed to check for success inside the container at the end
+# Is needed to check for success inside the container at the end
 pre_update_version=$installed_version;
 echo "The new Moodle Image version is $APP_VERSION";
 
-#Do version check
+# Do version check
 if version_greater "$installed_version" "$image_version";
 then
 echo "=== Same Version, skipping Update process and starting Moodle ===";
 start_moodle
 else
-    #New version, create required Files
+    # New version, create required Files
     if ! [ -a /bitnami/moodledata/climaintenance.html ]; then
         echo "=== Enable Maintenance Mode ==="
         echo '<h1>Sorry, maintenance in progress</h1>' > /bitnami/moodledata/climaintenance.html
         sleep 2
-        #The backup is only done once in the first run so we don't accidentally overwrite it
+        # The backup is only done once in the first run so we don't accidentally overwrite it
         echo "=== Taking a Backup ==="
         if [ -d "/bitnami/moodledata/moodle-backup" ]; then
             rm -r /bitnami/moodledata/moodle-backup
@@ -159,14 +163,14 @@ else
         echo "=== Maintenance Mode already active, skipping internal backup ==="
     fi
 
-    #Wait for the Update Helper Job to disable the Probes and force a pod restart
+    # Wait for the Update Helper Job to disable the Probes and force a pod restart
     if ! [ -a /bitnami/moodledata/CliUpdate ]; then
         echo "=== Create required Files for Update ==="
         touch /bitnami/moodledata/CliUpdate
-        sleep 600 #Wait for initial Pod termination by Update-Helper-Job
+        sleep 600 # Wait for initial Pod termination by Update-Helper-Job
     fi
 
-    #Start of the download step
+    # Start of the download step
     echo "=== Creating directory for new Version ==="
     if [ -d "/bitnami/moodledata/updated-moodle" ]; then
         rm -rf /bitnami/moodledata/updated-moodle
@@ -175,7 +179,7 @@ else
 
     echo "=== Starting new Moodle Download of Version $image_version ==="
 
-    #Get Version number for download Link and reuse for later Plugin update
+    # Get Version number for download Link and reuse for later Plugin update
     major_regex="\s*([0-9])+\."
     minor_regex="\.([0-9]*)\."
     if [[ $image_version =~ $major_regex ]]; then
@@ -189,7 +193,7 @@ else
     fi
     stable_version="${image_major}${two_digit_image_minor}"
 
-    #Get Version Number for Plugin update
+    # Get Version Number for Plugin update
     # if [[ $installed_version =~ $major_regex ]]; then
     #         installed_major=${BASH_REMATCH[1]}
     # fi
@@ -197,9 +201,9 @@ else
     #         installed_minor=${BASH_REMATCH[1]}
     # fi
 
-    #Test if the download URL is available
+    # Test if the download URL is available
     download_url="https://packaging.moodle.org/stable${stable_version}/moodle-${image_version}.tgz"
-    #https://download.moodle.org/download.php/direct/stable${stable_version}/moodle-${image_version}.tgz alternative download url
+    # https://download.moodle.org/download.php/direct/stable${stable_version}/moodle-${image_version}.tgz alternative download url
     echo "Download URL: ${download_url}"
     url_response=$(curl --write-out '%{response_code}' --head --silent --output /dev/null "${download_url}")
     if ! [ "$url_response" -eq 200 ];
@@ -220,7 +224,7 @@ else
     rm -rf /bitnami/moodle/* && echo "=== Old moodle deleted ==="
     cp -rp /bitnami/moodledata/updated-moodle/* /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
 
-    #Checks for the Moodle Plugin List
+    # Checks for the Moodle Plugin List
     if [[ -n $MOODLE_PLUGINS ]]
     then
         echo "=== Creating UpdatePlugins to trigger Plugin Installation ==="
@@ -229,8 +233,8 @@ else
         echo "=== MOODLE_PLUGINS environment variable missing, skipping plugin copy step ==="
     fi
 
-    #If success
-    #Get the new installed version
+    # If success
+    # Get the new installed version
     echo "=== Checking newly installed downloaded Moodle version ==="
     post_update_version="0.0.0"
     if [ -f /bitnami/moodle/version.php ]; then
@@ -241,7 +245,7 @@ else
             post_update_version=${BASH_REMATCH[1]}
         fi
     else
-        #If no moodle Version was found we fall back to previous version
+        # If no moodle Version was found we fall back to previous version
         echo "=== Update failed, no Moodle Version detected fallback to old Version ==="
         cp -rp /bitnami/moodledata/moodle-backup/* /bitnami/moodle/ && echo "=== Old moodle version restored to folder ==="
         touch /bitnami/moodledata/UpdateFailed
@@ -262,7 +266,7 @@ else
         sleep 10
         start_moodle
     else
-        #Normally we should never end up here
+        # Normally we should never end up here
         echo "=== Something went wrong, please check the logs(The installed Moodle version does not equal the previous version or the image version) ==="
         touch /bitnami/moodledata/UpdateFailed
         exit 1;
