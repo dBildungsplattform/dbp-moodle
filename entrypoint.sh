@@ -11,8 +11,7 @@ fi
 
 wait $!
 # move config files and start bitnami entrypoint
-sleep 120
-if [[ -d "/bitnami/moodle/" && -d "/opt/bitnami/php/etc/conf.d/" ]]; then
+if [[ -f /bitnami/moodle/version.php && -d "/bitnami/moodle/" && -d "/opt/bitnami/php/etc/conf.d/" ]]; then
     printf "=== Starting bitnami/moodle entrypoint ===\n"
     /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
     /bin/cp /moodleconfig/php.ini /opt/bitnami/php/etc/conf.d/php.ini
