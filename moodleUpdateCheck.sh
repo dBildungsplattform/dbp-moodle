@@ -207,7 +207,7 @@ echo "=== Setting Permissions right  ==="
 chown -R 1001:root /bitnami/moodledata/*
 
 rm -rf /bitnami/moodle/* && echo "=== Old moodle deleted ==="
-cp -rp "${new_version_data_path}/*" /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
+cp -rp ${new_version_data_path}/* /bitnami/moodle/ && echo "=== New moodle version copied to folder ==="
 
 # Checks for the Moodle Plugin List
 if [[ -n $MOODLE_PLUGINS ]]; then
