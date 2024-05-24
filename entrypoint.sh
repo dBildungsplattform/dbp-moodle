@@ -12,15 +12,16 @@ fi
 wait $!
 # move config files and start bitnami entrypoint
 
-printf "=== Starting bitnami entrypoint ===\n"
 if [ -d "/bitnami/moodle/" ]; then
+    printf "=== Starting bitnami/moodle entrypoint ===\n"
     /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
     /bin/cp /moodleconfig/php.ini /opt/bitnami/php/etc/conf.d/php.ini
     /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
 else 
-    echo "=== Fresh install, starting bitnami/moodle first, then copying our config ==="
-    /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh"
+    printf "=== Fresh install. starting bitnami/moodle first, then copying our config ===\n"
+    /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh" &
     sleep 30
     /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
     /bin/cp /moodleconfig/php.ini /opt/bitnami/php/etc/conf.d/php.ini
+    wait
 fi
