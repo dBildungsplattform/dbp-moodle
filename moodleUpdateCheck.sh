@@ -59,7 +59,6 @@ install_kaltura(){
 }
 
 update_plugins() {
-    sleep 5
     rm -f "$update_plugins_path"
     if [[ $ENABLE_KALTURA == "True" ]]; then
         echo "=== Kaltura Flag enabled, installing Kaltura Plugin ==="
@@ -124,6 +123,7 @@ fi
 
 if [ -f "$update_plugins_path" ]; then
     echo "=== UpdatePlugins File found, starting Plugin installation ==="
+    sleep 5
     update_plugins
     echo "=== Finished UpdatePlugins, removing maintenance status and exiting update ==="
     rm -f "$maintenance_html_path"
@@ -132,26 +132,16 @@ fi
 
 # Get the current installed version
 installed_version="0.0.0"
-if [ -f /bitnami/moodle/version.php ]; then
-    LINE=$(grep release /bitnami/moodle/version.php)
-    REGEX="release\s*=\s*'([0-9]+\.[0-9]*+\.[0-9]*)"
-    if [[ $LINE =~ $REGEX ]]; then
-	    echo "Installed Moodle version:" "${BASH_REMATCH[1]}"
-        installed_version="${BASH_REMATCH[1]}"
-    fi
-else
-    # Start new Moodle installation
-    echo "No installed Moodle Version detected"
-    echo "Starting fresh Bitnami installation..."
-    /opt/bitnami/scripts/moodle/entrypoint.sh "/opt/bitnami/scripts/moodle/run.sh" &
-    echo "=== Wait for 30s to copy config.php after Update start ==="
-    sleep 30
-    /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
-    echo "=== Config.php copied to destination ==="
-    /bin/cp /moodleconfig/php.ini /opt/bitnami/php/etc/conf.d/php.ini
-    echo "=== php.ini copied to destination ==="
-    wait
+if [ ! -f /bitnami/moodle/version.php ]; then
+    echo "=== No installed Moodle Version detected, exiting update ==="
+    echo "Normal start of bitnami moodle after this will do a fresh install"
     exit 0
+fi
+LINE=$(grep release /bitnami/moodle/version.php)
+REGEX="release\s*=\s*'([0-9]+\.[0-9]*+\.[0-9]*)"
+if [[ $LINE =~ $REGEX ]]; then
+    echo "Installed Moodle version:" "${BASH_REMATCH[1]}"
+    installed_version="${BASH_REMATCH[1]}"
 fi
 
 # Is needed to check for success inside the container at the end
