@@ -223,7 +223,7 @@ echo "=== Checking newly installed downloaded Moodle version ==="
 post_update_version="0.0.0"
 if [ -f /bitnami/moodle/version.php ]; then
     LINE=$(grep release /bitnami/moodle/version.php)
-    REGEX="release\s*=\s*'([0-9]+\.[0-9]+\.[0-9])"
+    REGEX="release\s*=\s*'([0-9]+\.[0-9]+\.[0-9]+)"
     if [[ $LINE =~ $REGEX ]]; then
         echo "New Installed Moodle version:" "${BASH_REMATCH[1]}"
         post_update_version=${BASH_REMATCH[1]}
