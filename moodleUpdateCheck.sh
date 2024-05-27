@@ -34,10 +34,10 @@ cleanup() {
     rm -rf "$new_version_data_path"
     rm -f /bitnami/moodledata/moodle.tgz
     if ! [ -f "$update_plugins_path" ]; then
-        echo "=== Disabling maintenance mode and signaling that Update process is finished ==="
+        echo "=== Disabling maintenance mode and signaling that update process is finished ==="
         rm -f "$maintenance_html_path"
     else
-        echo "=== Plugin Update remaining, update DB and installing Plugins in new Pod ==="
+        echo "=== Plugin update remaining, update DB and installing plugins in new Pod ==="
     fi
     rm -f "$update_cli_path"
 }
@@ -47,7 +47,7 @@ install_kaltura(){
     local kaltura_save_path="/bitnami/moodle/kaltura.zip"
     curl "$kaltura_url" --output "$kaltura_save_path"
     if [ ! -f "$kaltura_save_path" ]; then
-        echo "=== Kaltura could not be installed, please check for correct Kaltura Url and try again ==="
+        echo "=== Kaltura could not be downloaded, please check for correct Kaltura Url and try again ==="
         echo "Current kaltura url: ${kaltura_url}"
         return 1
     fi
@@ -61,7 +61,7 @@ install_kaltura(){
 update_plugins() {
     rm -f "$update_plugins_path"
     if [[ $ENABLE_KALTURA == "True" ]]; then
-        echo "=== Kaltura Flag enabled, installing Kaltura Plugin ==="
+        echo "=== Kaltura Flag enabled, installing Kaltura plugin ==="
         install_kaltura
     fi
 
@@ -114,7 +114,7 @@ fi
 stable_version="${image_major}${two_digit_image_minor}"
 
 if [ -f "$update_failed_path" ]; then
-    echo "=== UpdateFailed file exists, indicating failed Update! Please resolve the problem manually ==="
+    echo "=== UpdateFailed file exists, indicating failed update! Please resolve the problem manually ==="
     echo "=== Removing maintenance and exiting update ==="
 
     rm -f "$maintenance_html_path"
@@ -122,7 +122,7 @@ if [ -f "$update_failed_path" ]; then
 fi
 
 if [ -f "$update_plugins_path" ]; then
-    echo "=== UpdatePlugins File found, starting Plugin installation ==="
+    echo "=== UpdatePlugins File found, starting plugin installation ==="
     sleep 5
     update_plugins
     echo "=== Finished UpdatePlugins, removing maintenance status and exiting update ==="
@@ -133,7 +133,7 @@ fi
 # Get the current installed version
 installed_version="0.0.0"
 if [ ! -f /bitnami/moodle/version.php ]; then
-    echo "=== No installed Moodle Version detected, exiting update ==="
+    echo "=== No installed Moodle version detected, exiting update ==="
     echo "Normal start of bitnami moodle after this will do a fresh install"
     exit 0
 fi
@@ -150,7 +150,7 @@ echo "The new Moodle Image version is $APP_VERSION";
 
 # Do version check
 if version_greater "$installed_version" "$cur_image_version"; then
-    echo "=== Same Version, skipping Update process and exiting Update ==="
+    echo "=== Same Version, skipping update process and exiting update ==="
     rm -f "/bitnami/moodledata/moodleUpdateCheck.log"
     exit 0
 fi
@@ -203,7 +203,7 @@ else
 fi
 sleep 2
 
-echo "=== Setting Permissions right  ==="
+echo "=== Setting permissions right  ==="
 chown -R 1001:root /bitnami/moodledata/*
 
 rm -rf /bitnami/moodle/* && echo "=== Old moodle deleted ==="
@@ -211,7 +211,7 @@ cp -rp ${new_version_data_path}/* /bitnami/moodle/ && echo "=== New moodle versi
 
 # Checks for the Moodle Plugin List
 if [[ -n $MOODLE_PLUGINS ]]; then
-    echo "=== Creating UpdatePlugins to trigger Plugin Installation ==="
+    echo "=== Creating UpdatePlugins to trigger plugin installation ==="
     touch "$update_plugins_path"
 else
     echo "=== MOODLE_PLUGINS environment variable missing, skipping plugin copy step ==="
@@ -230,7 +230,7 @@ if [ -f /bitnami/moodle/version.php ]; then
     fi
 else
     # If no moodle Version was found we fall back to previous version
-    echo "=== Update failed, no Moodle Version detected. Falling back to old version ==="
+    echo "=== Update failed, no Moodle version detected. Falling back to old version ==="
     cp -rp /bitnami/moodledata/moodle-backup/* /bitnami/moodle/ && echo "=== Old moodle version restored to folder ==="
     touch "$update_failed_path"
     sleep 5
@@ -239,13 +239,13 @@ fi
 
 if [ "$post_update_version" == "$cur_image_version" ]; then
     /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
-    echo "=== Update to new Version $post_update_version successful. ==="
+    echo "=== Update to new version $post_update_version successfull. ==="
     echo "=== Starting cleanup ==="
     cleanup
     echo "=== Cleanup done, exiting update ==="
     exit 0
 elif [ "$post_update_version" == "$pre_update_version" ]; then
-    echo "=== Update failed, old Version still installed. ==="
+    echo "=== Update failed, old version still installed. ==="
     touch "$update_failed_path"
     echo "=== Starting cleanup ==="
     cleanup
