@@ -3,8 +3,9 @@ FROM bitnami/moodle:4.1.10-debian-12-r4
 RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen
 USER root
 
+COPY entrypoint.sh /entrypoint.sh
 COPY moodleUpdateCheck.sh /moodleUpdateCheck.sh
-RUN chmod +x /moodleUpdateCheck.sh && \
+RUN chmod +x /entrypoint.sh /moodleUpdateCheck.sh && \
 apt-get update && apt-get upgrade -y && \
 apt-get install -y curl gpg unzip autoconf php-dev php-redis && \
 rm -rf /var/lib/apt/lists/*
@@ -20,4 +21,4 @@ chmod 774 /.moosh &&\
 cd /moosh/ && \
 composer install
 
-ENTRYPOINT ["/moodleUpdateCheck.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
