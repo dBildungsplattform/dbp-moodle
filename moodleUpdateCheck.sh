@@ -52,9 +52,9 @@ install_kaltura(){
         return 1
     fi
 
-    unzip kaltura.zip
+    unzip "$kaltura_save_path" -d "/bitnami/moodle/"
     php /bitnami/moodle/admin/cli/upgrade.php --non-interactive
-    rm -r "$kaltura_save_path"
+    rm "$kaltura_save_path"
     echo "=== Kaltura Plugin successfully installed ==="
 }
 
