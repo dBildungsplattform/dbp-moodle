@@ -19,7 +19,7 @@ version_greater() {
     local new=$2
     local greater_version
 
-	if [[ "$current" = "$new" ]]; then echo "Already up to date"; return 0; fi
+    if [[ "$current" = "$new" ]]; then echo "Already up to date"; return 0; fi
 
     greater_version="$(printf "%s\n%s" "$current" "$new" | sort --version-sort --reverse | head -n 1)"
     if [[ "$current" = "$greater_version" ]]; then echo "Current version is higher, unable to downgrade!"; return 0;
@@ -66,7 +66,7 @@ update_plugins() {
     fi
 
     # update moodle plugin list
-    php /moosh/moosh.php plugin-list
+    (cd /bitnami/moodle; php /moosh/moosh.php plugin-list)
 
     plugin_version="$image_major.$image_minor"
     nameRegEx="([0-9a-zA-Z_]*)+\#"
@@ -87,7 +87,7 @@ update_plugins() {
         if [[ -d "$old_version_data_path"/$plugin_path ]]; then
             printf "Found!\n"
             printf "    Starting install..."
-            if php /moosh/moosh.php plugin-install "$plugin_name"; then
+            if (cd /bitnami/moodle; php /moosh/moosh.php plugin-install "$plugin_name"); then
                 printf "Done\n"
             else
                 printf "Failed!\n"
@@ -103,10 +103,10 @@ update_plugins() {
 major_regex="\s*([0-9])+\."
 minor_regex="\.([0-9]*)\."
 if [[ $cur_image_version =~ $major_regex ]]; then
-        image_major=${BASH_REMATCH[1]}
+    image_major=${BASH_REMATCH[1]}
 fi
 if [[ $cur_image_version =~ $minor_regex ]]; then
-        image_minor=${BASH_REMATCH[1]}
+    image_minor=${BASH_REMATCH[1]}
 fi
 if [ ${#image_minor} -lt 2 ]; then
     two_digit_image_minor=$(printf "%02d" "$image_minor")
