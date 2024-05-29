@@ -181,7 +181,7 @@ fi
 if ! [ -f "$update_cli_path" ]; then
     printf "=== Create required CliUpdate indicator file ===\n"
     touch "$update_cli_path"
-    sleep 600 # Wait for initial Pod termination by Update-Helper-Job
+    printf "=== Wait for initial Pod termination by Update-Helper-Job ===\n"
 fi
 
 # Start of the download step
@@ -215,7 +215,7 @@ printf "=== Setting permissions right  ===\n"
 chown -R 1001:root /bitnami/moodledata/*
 printf "=== Deleting old Moodle ===\n"
 rm -rf /bitnami/moodle/*
-printf "=== New Moodle copied to folder ===\n"
+printf "=== Copying new Moodle to folder ===\n"
 cp -rp ${new_version_data_path}/* /bitnami/moodle/
 
 # Checks for the Moodle Plugin List
@@ -248,7 +248,7 @@ fi
 
 if [ "$post_update_version" == "$cur_image_version" ]; then
     /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
-    printf "===${GRN}Update to new version %s successful. ${NC}===\n" "$post_update_version"
+    printf "===${GRN} Update to new version %s successful! ${NC}===\n" "$post_update_version"
     printf "=== Starting cleanup ===\n"
     cleanup
     printf "===${GRN} Cleanup done${NC}, exiting update ===\n"
