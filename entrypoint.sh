@@ -2,11 +2,16 @@
 set -e
 
 printf "=== Starting moodleUpdateCheck ===\n"
-if ! /moodleUpdateCheck.sh 2>&1 | tee -a "/bitnami/moodledata/moodleUpdateCheck.log"; then
+
+/moodleUpdateCheck.sh 2>&1 | tee -a "/bitnami/moodledata/moodleUpdateCheck.log"
+EXIT_CODE=${PIPESTATUS[0]}
+
+
+if [ $EXIT_CODE -eq 0 ]; then
+    printf "=== moodleUpdateCheck finished ===\n"
+else
     printf "=== moodleUpdateCheck failed! ===\n"
     printf "Check /bitnami/moodledata/moodleUpdateCheck.log\n"
-else
-    printf "=== moodleUpdateCheck finished ===\n"
 fi
 
 wait $!
