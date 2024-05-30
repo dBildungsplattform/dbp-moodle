@@ -94,7 +94,7 @@ update_plugins() {
             printf "Not found. Skipping\n"
             continue
         fi
-        printf "Found!\n"
+        printf "Found! Starting install\n"
         (cd /bitnami/moodle; php /moosh/moosh.php plugin-install "$plugin_name")
     done
 }
