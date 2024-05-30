@@ -72,7 +72,7 @@ update_plugins() {
     fi
 
     # update moodle plugin list
-    (cd /bitnami/moodle; php /moosh/moosh.php plugin-list)
+    (cd /bitnami/moodle; php /moosh/moosh.php plugin-list > /dev/null)
 
     plugin_version="$image_major.$image_minor"
     nameRegEx="([0-9a-zA-Z_]*)+\#"
