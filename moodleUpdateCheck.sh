@@ -89,18 +89,13 @@ update_plugins() {
         if [[ $plugin =~ $nameRegEx ]]; then
             plugin_name=${BASH_REMATCH[1]}
         fi
-        printf '  Looking for "%s" (%s)... ' "$plugin_name" "$plugin_version"
-        if [[ -d "$old_version_data_path"/$plugin_path ]]; then
-            printf "Found!\n"
-            printf "    Installing it..."
-            if (cd /bitnami/moodle; php /moosh/moosh.php plugin-install "$plugin_name"); then
-                printf "${GRN}Done\n${NC}"
-            else
-                printf "${RED}Failed!\n${NC}"
-            fi
-        else
+        printf 'Looking for "%s" (%s)... ' "$plugin_name" "$plugin_version"
+        if [[ ! -d "$old_version_data_path"/$plugin_path ]]; then
             printf "Not found. Skipping\n"
+            continue
         fi
+        printf "Found!\n"
+        (cd /bitnami/moodle; php /moosh/moosh.php plugin-install "$plugin_name")
     done
 }
 
