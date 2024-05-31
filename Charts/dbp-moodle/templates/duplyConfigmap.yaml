@@ -1,0 +1,23 @@
+{{- $namespace := .Values.global.namespace }}
+
+{{- if or (eq .Values.global.stage "prod") .Values.backup.backup_enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: moodle-test-duply
+  namespace: "{{ $namespace }}"
+data:
+  conf: |-
+    GPG_KEYS_ENC="{{ .Values.backup.backup_gpg_key_names }}"
+    GPG_KEY_SIGN="disabled"
+    GPG_OPTS="--pinentry-mode loopback --trust-model always"
+    GPG="/usr/bin/gpg"
+    TARGET="boto3+s3://{{ .Values.backup.s3_bucket_name }}/{{ .Values.backup.cluster_name }}/{{ $namespace }}/"
+    SOURCE='/'
+    MAX_AGE=6M
+    MAX_FULLBKP_AGE=1W
+    DUPL_PARAMS="$DUPL_PARAMS --full-if-older-than $MAX_FULLBKP_AGE --allow-source-mismatch --s3-endpoint-url  {{ .Values.backup.endpoint }}"
+  exclude: |-
+    + /backup
+    - **
+{{- end }}

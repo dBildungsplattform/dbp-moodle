@@ -1,0 +1,25 @@
+apiVersion: v2
+name: dbp-moodle
+description: A Helm chart for Kubernetes
+type: application
+version: 0.1.0
+appVersion: "1.16.0"
+#https://medium.com/craftech/one-chart-to-rule-them-all-3f685e0f25a9
+#https://levelup.gitconnected.com/helm-dependencies-1907facbe410
+#https://helm.sh/docs/topics/charts/
+dependencies:
+- name: redis
+  condition: redisEnabled
+  version: "19.1.0"
+  repository: https://charts.bitnami.com/bitnami
+  #moodle_redis_endpoint: moodle-session-cache-redis-master
+  #moodle_redis_port: 6379
+  #moodle_redis_password: "{{ lookup('dbildungscloud.onepwd.onepwd', secret_name=moodle_secret, vault=vault, field='redis-password', session_shorthand='ansible-run', credentials=op_credentials) }}"
+# - name: mariadb
+#   version: "18.0.5"
+#   repository: https://charts.bitnami.com/bitnami
+#   condition: mariadb.enabled
+# - name: postgresql
+#   version: "12.0.0"
+#   repository: https://charts.bitnami.com/bitnami
+#   condition: postgresql.enabled

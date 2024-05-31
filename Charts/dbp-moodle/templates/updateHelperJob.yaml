@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "moodle-test-update-helper-job-{{ .Values.global.moodle_image_tag | lower }}"
+  namespace: {{ .Values.global.namespace }}
+spec:
+  ttlSecondsAfterFinished: 80000
+  template:
+    spec:
+      volumes:
+      - name: moodle-data
+        persistentVolumeClaim:
+          claimName: moodle-moodle
+      - name: moodle-update-helper-job-script
+        configMap:
+          name: moodle-update-helper-job-script
+        # 711 in decimal is 457
+          defaultMode: 457
+      serviceAccountName: moodle-update-helper-job
+      serviceAccount: moodle-update-helper-job
+      containers:
+      - name: moodle-update-helper-job
+        image: schulcloud/infra-tools:4.0.3
+        command:
+          - /bin/sh
+          - -c
+        args:
+          - /scripts/moodle-update-helper-job-script
+        volumeMounts:
+        - name: moodle-data
+          mountPath: /volumes/moodle
+          subPath: moodle
+        - name: moodle-data
+          mountPath: /volumes/moodledata
+          subPath: moodledata
+        - name: moodle-update-helper-job-script
+          mountPath: /scripts/
+      restartPolicy: Never

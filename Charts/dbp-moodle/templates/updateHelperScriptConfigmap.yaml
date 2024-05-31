@@ -1,0 +1,10 @@
+{{- $moodle_namespace := .Values.global.namespace }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: moodle-test-update-helper-job-script
+  namespace: {{ $moodle_namespace }}
+data:
+  moodle-update-helper-job-script: |-
+    {{ .Files.Get scripts/moodleUpdateHelperJobScript.sh | indent 4 }}

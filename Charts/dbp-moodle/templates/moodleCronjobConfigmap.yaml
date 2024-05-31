@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: moodle-cronjob-php
+  namespace: {{ .Values.global.namespace }}
+data:
+  moodle-cronjob-script: |-
+{{ .Files.Get "scripts/moodleCronjobScript.sh" | indent 8 }}

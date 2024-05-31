@@ -1,0 +1,67 @@
+#general moodle helm chart values
+redisEnabled: true
+
+global:
+  stage: infra
+  namespace: "infra-01"
+  moodle_image_tag: 4.1.10-debian-12-r4
+  moodle_chart_version: 14.3.2
+  kubectl_version: kubernetes_version
+  get_kubectl_command: |
+    curl -LO https://dl.k8s.io/release/v{{ .Values.global.kubectl_version }}/bin/linux/amd64/kubectl
+    chmod +x kubectl
+    mv ./kubectl /usr/local/bin/kubectl
+
+backup:
+  backup_enabled: true
+  backup_gpg_key_names: dbpinfra
+  s3_bucket_name: default
+  cluster_name: default
+  endpoint: https://s3-eu-central-2.ionoscloud.com #s3 region Berlin endpoint
+
+#redis helm chart values
+redis:
+  global:
+    projectName: dbp-moodle
+  architecture: standalone
+  sentinel:
+    enabled: false
+  auth:
+    enabled: true
+    existingSecret: moodle
+    existingSecretPasswordKey: redis-password
+    usePasswordFileFromSecret: true
+
+#mariadb helm chart values 
+# mariadb:
+#   enabled: true
+
+#postgresql helm chart values 
+# postgresql:
+#   enabled: true
+#   global:
+#     storageClass: "nfs-client"
+#   image:
+#     tag: "{{ moodle_postgresql_image_tag }}"
+#   auth:
+#     username: "{{ moodle_postgresql_username }}"
+#     database: moodle
+#     existingSecret: moodle
+#     secretKeys:
+#       adminPasswordKey: PGSQL_POSTGRES_PASSWORD
+#       userPasswordKey: "{{ moodle_db_password_key }}"
+#   metrics:
+#     enabled: true
+#     serviceMonitor:
+#       enabled: true
+#   primary:
+#     extendedConfiguration: |
+#       max_connections = 800
+#     resources:
+#       requests:
+#         cpu: "{{ moodle_db_requests_cpu }}"
+#         memory: "{{ moodle_db_requests_memory }}"
+#       limits:
+#         cpu: "{{ moodle_db_limit_cpu }}"
+#         memory: "{{ moodle_db_limit_memory }}"
+    
