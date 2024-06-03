@@ -58,7 +58,7 @@ scaleUpOnBackupFailure(){
 scaleUpOnInstallationFailure(){
     touch /volumes/moodledata/UpdateFailed
     rm -f /volumes/moodledata/climaintenance.html
-    helm upgrade --reuse-values --set livenessProbe.enabled=true --set readinessProbe.enabled=true moodle bitnami/moodle --version {{ .Values.global.moodle_chart_version }} --namespace {{ .Values.global.namespace }}
+    helm upgrade --reuse-values --set livenessProbe.enabled=true --set readinessProbe.enabled=true moodle bitnami/moodle --version {{ .Values.moodle_chart_version }} --namespace {{ .Values.global.namespace }}
     sleep 10
     kubectl scale deployment/moodle --replicas=$replicas -n {{ .Values.global.namespace }}
     exit 1
@@ -122,7 +122,7 @@ else
 fi
 
 echo "=== Turn off liveness probe ==="
-helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle --wait bitnami/moodle --version {{ .Values.global.moodle_chart_version }} --namespace {{ .Values.global.namespace }}
+helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle --wait bitnami/moodle --version {{ .Values.moodle_chart_version }} --namespace {{ .Values.global.namespace }}
 sleep 10
 echo "=== Scale back to 1 replica to continue the Update ==="
 kubectl scale deployment/moodle --replicas=1 -n {{ .Values.global.namespace }}
@@ -141,7 +141,7 @@ do
     sleep 300
     echo "=== Restore functionality ==="
     echo "=== Turn liveness & readiness probe back on again ==="
-    helm upgrade --reuse-values --set livenessProbe.enabled=true --set readinessProbe.enabled=true moodle bitnami/moodle --version {{ .Values.global.moodle_chart_version }} --namespace {{ .Values.global.namespace }}
+    helm upgrade --reuse-values --set livenessProbe.enabled=true --set readinessProbe.enabled=true moodle bitnami/moodle --version {{ .Values.moodle_chart_version }} --namespace {{ .Values.global.namespace }}
     sleep 10
     echo "=== Scale replicas to previous amount ==="
     kubectl scale deployment/moodle --replicas=$replicas -n {{ .Values.global.namespace }}

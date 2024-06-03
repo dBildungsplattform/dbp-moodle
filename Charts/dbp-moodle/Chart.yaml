@@ -8,10 +8,6 @@ appVersion: "1.16.0"
 #https://levelup.gitconnected.com/helm-dependencies-1907facbe410
 #https://helm.sh/docs/topics/charts/
 dependencies:
-  - name: backup-cronjob
-    version: 1.0.0
-    repository: "file://charts/backup-cronjob"
-    condition: backup.backup_enabled
 # - name: redis
 #   condition: redisEnabled
 #   version: "19.1.0"
@@ -27,6 +23,13 @@ dependencies:
 #   version: "12.0.0"
 #   repository: https://charts.bitnami.com/bitnami
 #   condition: postgresql.enabled
+  - name: backup-cronjob
+    version: 1.0.0
+    repository: "file://charts/backup-cronjob"
+    condition: backup.backup_enabled
+# - name: moodle
+#   version: "14.3.2"
+#   repository: https://charts.bitnami.com/bitnami
 # - name: etherpad-postgresql
 #   condition: postgresql.enabled
 #   version: "12.1.15"

@@ -2,13 +2,15 @@
 redisEnabled: true
 restore: false
 infratools_image_tag: 4.0.3
+moodle_pvc_name: moodle-moodle
+moodle_pvc_size: 8Gi
+moodle_image_tag: 4.1.10-debian-12-r4
+moodle_chart_version: 14.3.2
 
 global:
   name: infra
   stage: infra
   namespace: "infra-01"
-  moodle_image_tag: 4.1.10-debian-12-r4
-  moodle_chart_version: 14.3.2
   kubectl_version: kubernetes_version
   get_kubectl_command: | #This does not work this way sadly
     curl -LO https://dl.k8s.io/release/v{{ .Values.global.kubectl_version }}/bin/linux/amd64/kubectl
@@ -80,4 +82,3 @@ redis:
 #       limits:
 #         cpu: "{{ moodle_db_limit_cpu }}"
 #         memory: "{{ moodle_db_limit_memory }}"
-    
