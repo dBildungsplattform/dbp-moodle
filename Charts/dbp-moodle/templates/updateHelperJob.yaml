@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "moodle-test-update-helper-job-{{ .Values.global.moodle_image_tag | lower }}"
+  name: "moodle-update-helper-job-{{ .Values.global.moodle_image_tag | lower }}"
   namespace: {{ .Values.global.namespace }}
 spec:
   ttlSecondsAfterFinished: 80000

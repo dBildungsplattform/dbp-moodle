@@ -1,0 +1,10 @@
+{{- if and (.Values.restore) (eq .Values.restore "true") }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: moodle-restore-script
+  namespace: {{ .Values.global.namespace }}
+data:
+  restore-script: |-
+{{ tpl ( .Files.Get "scripts/moodleRestoreScript.sh" ) . | nindent 4 }}
+{{- end }}

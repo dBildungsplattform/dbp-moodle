@@ -1,0 +1,150 @@
+{{- $chart_name := include "cronjob.fullname" . }}
+{{- $chart_labels := include "cronjob.labels" . }}
+{{- $chart_selector_labels := include "cronjob.selectorLabels" . }}
+{{- $service_account_name := include "cronjob.serviceAccountName" . }}
+{{- $tag := .Values.image.tag | default .Chart.AppVersion }}
+{{- $image_pull_secrets := .Values.imagePullSecrets }}
+
+{{- range $job := .Values.jobs }}
+{{- $image := print $.Values.image.repository ":" $tag }}
+{{- $image_pull_policy := $.Values.image.pullPolicy }}
+{{- if .image }}
+  {{- $image = print .image.repository ":" (default $tag .image.tag) }}
+  {{- if .image.pullPolicy }}
+    {{- $image_pull_policy = .image.pullPolicy }}
+  {{- end }}
+{{- end }}
+
+{{- $env := $.Values.env }}
+{{- if .env }}
+  {{- $env = concat $env .env }}
+{{- end }}
+
+{{- $env_from := $.Values.envFrom }}
+{{- if .envFrom }}
+  {{- $env_from = concat $env_from .envFrom }}
+{{- end }}
+
+{{- $resources := $.Values.resources }}
+{{- if .resources }}
+  {{- $resources = .resources }}
+{{- end }}
+
+{{- $extra_volume_mounts := $.Values.extraVolumeMounts }}
+{{- if .extraVolumeMounts }}
+  {{- $extra_volume_mounts = concat $extra_volume_mounts .extraVolumeMounts }}
+{{- end }}
+
+{{- $extra_volumes := $.Values.extraVolumes }}
+{{- if .extraVolumes }}
+  {{- $extra_volumes = concat $extra_volumes .extraVolumes }}
+{{- end }}
+{{- $checksum := toYaml . | sha256sum | trunc 20 | quote }}
+---
+{{- if semverCompare ">=1.21" $.Capabilities.KubeVersion.GitVersion }}
+apiVersion: batch/v1
+{{- else -}}
+apiVersion: batch/v1beta1
+{{- end }}
+kind: CronJob
+metadata:
+  name: {{ $chart_name }}-{{ $job.name }}
+  labels:
+    {{- $chart_labels | nindent 4 }}
+  annotations:
+    values/checksum: {{ $checksum }}
+spec:
+  concurrencyPolicy: {{ default "Forbid" .concurrencyPolicy }}
+  failedJobsHistoryLimit: {{ default 1 .failedJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ default 1 .successfulJobsHistoryLimit }}
+  schedule: {{ .schedule | quote }}
+  {{- if .suspend }}
+  suspend: {{ .suspend }}
+  {{- end }}
+  {{- if .startingDeadlineSeconds }}
+  startingDeadlineSeconds: {{ .startingDeadlineSeconds }}
+  {{- end }}
+  jobTemplate:
+    metadata:
+    spec:
+      {{- if .activeDeadlineSeconds }}
+      activeDeadlineSeconds: {{ .activeDeadlineSeconds }}
+      {{- end }}
+      {{- if .backoffLimit }}
+      backoffLimit: {{ .backoffLimit }}
+      {{- end }}
+      {{- if .completions }}
+      completions: {{ .completions }}
+      {{- end }}
+      {{- if .parallelism }}
+      parallelism: {{ .parallelism }}
+      {{- end }}
+      {{- if .ttlSecondsAfterFinished }}
+      ttlSecondsAfterFinished: {{ .ttlSecondsAfterFinished }}
+      {{- end}}
+      template:
+        metadata:
+          {{- with .podAnnotations }}
+          annotations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          labels:
+            {{- $chart_selector_labels | nindent 12 }}
+        spec:
+          restartPolicy: {{ default "Never" .restartPolicy }}
+          imagePullSecrets:
+          {{- with default $image_pull_secrets .imagePullSecrets }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if or $.Values.serviceAccount.create $.Values.serviceAccount.name }}
+          serviceAccountName: {{ $service_account_name }}
+          {{- end }}
+          securityContext:
+            {{- toYaml $.Values.podSecurityContext | nindent 12 }}
+          containers:
+            - name: {{ $job.name }}
+              securityContext:
+                {{- toYaml $.Values.securityContext | nindent 16 }}
+              image: {{ $image }}
+              imagePullPolicy: {{ $image_pull_policy }}
+              {{- if .command }}
+              command:
+                {{- toYaml .command | nindent 16 }}
+              {{- end }}
+              {{- with .args }}
+              args:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              {{- with $env }}
+              env:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              {{- with $env_from }}
+              envFrom:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              {{- with $resources }}
+              resources:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              {{- with $extra_volume_mounts }}
+              volumeMounts:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+          {{- with $.Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $.Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $.Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $extra_volumes }}
+          volumes:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+  {{- end }}

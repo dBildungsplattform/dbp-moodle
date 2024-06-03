@@ -10,7 +10,11 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.
 apt-get update
 
 apt-get install apt-transport-https --yes
-{{ .Values.global.get_kubectl_command }}
+#get kubectl command
+curl -LO https://dl.k8s.io/release/v{{ .Values.global.kubectl_version }}/bin/linux/amd64/kubectl
+chmod +x kubectl
+mv ./kubectl /usr/local/bin/kubectl
+
 apt-get -y install helm
 helm repo add bitnami https://charts.bitnami.com/bitnami
 

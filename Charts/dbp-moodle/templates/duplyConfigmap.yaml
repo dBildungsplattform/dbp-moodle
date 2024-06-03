@@ -1,6 +1,6 @@
 {{- $namespace := .Values.global.namespace }}
 
-{{- if or (eq .Values.global.stage "prod") .Values.backup.backup_enabled }}
+{{- if .Values.backup.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:

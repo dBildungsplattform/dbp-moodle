@@ -1,28 +1,44 @@
 #general moodle helm chart values
 redisEnabled: true
+restore: false
+infratools_image_tag: 4.0.3
 
 global:
+  name: infra
   stage: infra
   namespace: "infra-01"
   moodle_image_tag: 4.1.10-debian-12-r4
   moodle_chart_version: 14.3.2
   kubectl_version: kubernetes_version
-  get_kubectl_command: |
+  get_kubectl_command: | #This does not work this way sadly
     curl -LO https://dl.k8s.io/release/v{{ .Values.global.kubectl_version }}/bin/linux/amd64/kubectl
     chmod +x kubectl
     mv ./kubectl /usr/local/bin/kubectl
 
-backup:
-  backup_enabled: true
+backup: #How to enable the serviceaccounts like we did previously with the tag?
+  enabled: {{ include stage-backup-enabled . }}
   backup_gpg_key_names: dbpinfra
   s3_bucket_name: default
   cluster_name: default
   endpoint: https://s3-eu-central-2.ionoscloud.com #s3 region Berlin endpoint
 
+
+#Horizontal Pod Autoscaling Values
+moodle_hpa:
+  enabled: false
+  # Moodle Autoscaling Values
+  min_replicas: 1
+  max_replicas: 3
+  average_cpu_utilization: 50
+  # The up and downscaling values to have more control over the speed moodle will be scaled
+  scaledown_value: 25 # The max amount in percent to scale in one step per cooldown period
+  scaledown_cooldown: 60
+  scaleup_value: 50
+  scaleup_cooldown: 15
+
+
 #redis helm chart values
 redis:
-  global:
-    projectName: dbp-moodle
   architecture: standalone
   sentinel:
     enabled: false
