@@ -177,6 +177,7 @@ if ! [ -f "$update_cli_path" ]; then
     printf "=== Create required CliUpdate indicator file ===\n"
     touch "$update_cli_path"
     printf "=== Wait for initial Pod termination by Update-Helper-Job ===\n"
+    sleep 600
 fi
 
 # Start of the download step
