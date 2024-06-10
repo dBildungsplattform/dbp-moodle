@@ -1,10 +1,8 @@
-{{- $moodle_namespace := .Values.global.namespace }}
-
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: moodle-update-helper-job-script
-  namespace: {{ $moodle_namespace }}
+  namespace: {{ .Values.global.namespace }}
 data:
   moodle-update-helper-job-script: |-
-{{ tpl ( .Files.Get "scripts/moodleUpdateHelperJobScript.sh" ) . | nindent 4 }}
+    {{ tpl ( .Files.Get "scripts/moodleUpdateHelperJobScript.sh" ) . | nindent 4 }}

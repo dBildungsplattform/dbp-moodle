@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "moodle-restore-job-{{ lookup('community.general.random_string', min_lower=4, length=4)}}"
+  name: "moodle-restore-job-{{ .Release.Name }}"
   namespace: {{ .Values.global.namespace }}
 spec:
   template:
@@ -15,7 +15,7 @@ spec:
         configMap:
           name: moodle-restore-script
         # 711 in decimal is 457
-          defaultMode: 457
+          defaultMode: 0711
       - name: duply
         projected:
           sources:
