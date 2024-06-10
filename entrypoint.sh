@@ -27,5 +27,6 @@ else
     sleep 30
     /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
     /bin/cp /moodleconfig/php.ini /opt/bitnami/php/etc/conf.d/php.ini
+    touch /bitnami/moodledata/FreshInstall
     wait
 fi
