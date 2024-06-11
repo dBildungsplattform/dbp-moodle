@@ -15,16 +15,18 @@ dependencies:
   #moodle_redis_endpoint: moodle-session-cache-redis-master
   #moodle_redis_port: 6379
   #moodle_redis_password: "{{ lookup('dbildungscloud.onepwd.onepwd', secret_name=moodle_secret, vault=vault, field='redis-password', session_shorthand='ansible-run', credentials=op_credentials) }}"
-# - name: mariadb
-#   version: "18.0.5"
-#   repository: https://charts.bitnami.com/bitnami
-#   condition: mariadb.enabled
-# - name: postgresql
-#   version: "12.0.0"
-#   repository: https://charts.bitnami.com/bitnami
-#   condition: postgresql.enabled
+  - name: mariadb
+    version: "18.0.5"
+    repository: https://charts.bitnami.com/bitnami
+    condition: mariadb.enabled
+    tag: database
+  - name: postgresql
+    version: "12.0.0"
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+    tag: database
   - name: cronjob
-    version: 1.0.0
+    version: 0.1.0
     repository: "file://charts/backup-cronjob"
     condition: backup.backup_enabled
 # - name: moodle

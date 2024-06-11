@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: moodle-test-plugins
+  name: {{ .Release.Name }}-plugins
   namespace: {{ .Values.global.namespace }}
 data:
   plugin_list: |-

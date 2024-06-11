@@ -19,12 +19,53 @@ global:
   name: infra
   stage: infra
   namespace: "infra-01"
-  kubectl_version: kubernetes_version
+  kubectl_version: ""
   moodle_image_tag: 4.1.10-debian-12-r4
-  get_kubectl_command: | #This does not work this way sadly
-    curl -LO https://dl.k8s.io/release/v{{ .Values.global.kubectl_version }}/bin/linux/amd64/kubectl
-    chmod +x kubectl
-    mv ./kubectl /usr/local/bin/kubectl
+
+database:
+  type: mariadb # Options: mariadb, postgresql
+  mariadb:
+    enabled: false
+    host_name: moodle-mariadb
+    values:
+      global:
+        storageClass: "nfs-client"
+      image:
+        tag: "11.3.2-debian-12-r5"
+      auth:
+        username: "moodle"
+        database: moodle
+        existingSecret: moodle
+        rootPassword: "moodle"
+        password: "password"
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+      primary:
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: 9
+            memory: 3Gi
+
+  postgresql:
+    enabled: true
+    image:
+      tag: 14.8.0-debian-11-r0
+    auth:
+      username: ""
+      database: "moodle"
+      existingSecret: ""
+      secretKeys:
+        adminPasswordKey: ""
+        userPasswordKey: ""
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
 
 backup: #How to enable the serviceaccounts like we did previously with the tag?
   backup_gpg_key_names: dbpinfra
@@ -90,3 +131,6 @@ redis:
 #       limits:
 #         cpu: "{{ moodle_db_limit_cpu }}"
 #         memory: "{{ moodle_db_limit_memory }}"
+
+tags:
+  database: true

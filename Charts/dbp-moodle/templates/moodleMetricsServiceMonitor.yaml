@@ -1,7 +1,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: moodle-metrics
+  name: {{ .Release.Name }}-metrics
   namespace: {{ .Values.global.namespace }}
 spec:
   endpoints:

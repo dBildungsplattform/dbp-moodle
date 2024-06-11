@@ -2,7 +2,7 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: moodle-autoscaler
+  name: {{ .Release.Name }}-autoscaler
   namespace: {{ .Values.global.namespace }}
 spec:
   scaleTargetRef:

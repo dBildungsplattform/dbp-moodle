@@ -1,0 +1,9 @@
+### Helm ###
+# Chart dependencies
+**/charts/*.tgz
+
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride

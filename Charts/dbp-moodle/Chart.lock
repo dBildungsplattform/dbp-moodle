@@ -1,6 +1,12 @@
 dependencies:
-- name: redis
+- name: mariadb
   repository: https://charts.bitnami.com/bitnami
-  version: 19.1.0
-digest: sha256:eac858a3d54d8cfe1084cd7d3aef90ae9d32a152267812eb45d58eba3d59e092
-generated: "2024-05-29T14:24:01.760801531+02:00"
+  version: 18.0.5
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.0.0
+- name: cronjob
+  repository: file://charts/backup-cronjob
+  version: 0.1.0
+digest: sha256:976a6f5c3f5cecdeb1b6b8739e335289892b931c14e808aa005fe912d604f8a1
+generated: "2024-06-10T15:05:23.727118321Z"
