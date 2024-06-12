@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "moodle-update-helper-job-{{ .Values.global.moodle_image_tag | lower }}"
+  name: "{{ .Release.Name }}-update-helper-job-{{ .Values.global.moodle_image_tag | lower }}"
   namespace: {{ .Values.global.namespace }}
 spec:
   ttlSecondsAfterFinished: 80000
@@ -13,19 +13,19 @@ spec:
           claimName: moodle-moodle
       - name: {{ .Release.Name }}-update-helper-job-script
         configMap:
-          name: moodle-update-helper-job-script
+          name: {{ .Release.Name }}-update-helper-job-script
         # 711 in decimal is 457
           defaultMode: 457
-      serviceAccountName: moodle-update-helper-job
-      serviceAccount: moodle-update-helper-job
+      serviceAccountName: {{ .Release.Name }}-update-helper-job
+      serviceAccount: {{ .Release.Name }}-update-helper-job
       containers:
-      - name: moodle-update-helper-job
-        image: schulcloud/infra-tools:4.0.3
+      - name: {{ .Release.Name }}-update-helper-job
+        image: schulcloud/{{ .Values.infratools_image_tag }}
         command:
           - /bin/sh
           - -c
         args:
-          - /scripts/moodle-update-helper-job-script
+          - /scripts/{{ .Release.Name }}-update-helper-job-script
         volumeMounts:
         - name: moodle-data
           mountPath: /volumes/moodle
@@ -33,6 +33,6 @@ spec:
         - name: moodle-data
           mountPath: /volumes/moodledata
           subPath: moodledata
-        - name: moodle-update-helper-job-script
+        - name: {{ .Release.Name }}-update-helper-job-script
           mountPath: /scripts/
       restartPolicy: Never

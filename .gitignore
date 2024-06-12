@@ -7,3 +7,6 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+
+# Local test files
+tmp/
