@@ -20,13 +20,13 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 
 unsuspend(){
     echo "=== Unsuspending moodle cronjob ==="
-    kubectl patch cronjobs moodle-{{ .Values.global.namespace }}-cronjob-php-script -n {{ .Values.global.namespace }} -p '{"spec" : {"suspend" : false }}'
+    kubectl patch cronjobs moodle-{{ .Release.Namespace }}-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : false }}'
 }
 
 trap "unsuspend" EXIT
 
 # get current available replicas (availableReplicas because we don't want the new Moodle pod from the RollingUpdate)
-replicas=$(kubectl get deployment -n {{ .Values.global.namespace }} moodle -o=jsonpath='{.status.availableReplicas}')
+replicas=$(kubectl get deployment -n {{ .Release.Namespace }} moodle -o=jsonpath='{.status.availableReplicas}')
 if [[ $replicas -eq 0 ]]
 then 
     replicas=1
@@ -51,22 +51,22 @@ getMoodleVersion(){
 scaleUpOnBackupFailure(){
     touch /volumes/moodledata/UpdateFailed
     rm -f /volumes/moodledata/climaintenance.html
-    kubectl scale deployment/moodle --replicas=$replicas -n {{ .Values.global.namespace }}
+    kubectl scale deployment/moodle --replicas=$replicas -n {{ .Release.Namespace }}
     exit 1
 }
 
 scaleUpOnInstallationFailure(){
     touch /volumes/moodledata/UpdateFailed
     rm -f /volumes/moodledata/climaintenance.html
-    helm upgrade --reuse-values --set livenessProbe.enabled=true --set readinessProbe.enabled=true moodle bitnami/moodle --version {{ .Values.moodle_chart_version }} --namespace {{ .Values.global.namespace }}
+    helm upgrade --reuse-values --set livenessProbe.enabled=true --set readinessProbe.enabled=true moodle bitnami/moodle --version {{ .Values.moodle_chart_version }} --namespace {{ .Release.Namespace }}
     sleep 10
-    kubectl scale deployment/moodle --replicas=$replicas -n {{ .Values.global.namespace }}
+    kubectl scale deployment/moodle --replicas=$replicas -n {{ .Release.Namespace }}
     exit 1
 }
 
 #Suspend the cronjob to avoid errors due to missing moodle
 echo "=== Suspending moodle cronjob ==="
-kubectl patch cronjobs moodle-{{ .Values.global.namespace }}-cronjob-php-script -n {{ .Values.global.namespace }} -p '{"spec" : {"suspend" : true }}'
+kubectl patch cronjobs moodle-{{ .Release.Namespace }}-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : true }}'
 
 echo "=== Starting waiting period for CliUpdate from Moodle Pod ==="
 for i in {0..1001..2}
@@ -85,16 +85,16 @@ do
 done
 
 echo "=== Scale Moodle Deployment to 0 replicas for update operation ==="
-kubectl scale deployment/moodle --replicas=0 -n {{ .Values.global.namespace }}
+kubectl scale deployment/moodle --replicas=0 -n {{ .Release.Namespace }}
 sleep 10
 
 #Backup job gets started here if stage == prod, otherwise skip full backup
 if [ {{ .Values.global.stage }} == "prod" ]
 then
     #Delete moodle-update-backup-job in case it already exists
-    kubectl delete job moodle-update-backup-job -n {{ .Values.global.namespace }}
+    kubectl delete job moodle-update-backup-job -n {{ .Release.Namespace }}
     sleep 1
-    kubectl create job moodle-update-backup-job --from=cronjob.batch/moodle-backup-cronjob-backup -n {{ .Values.global.namespace }}
+    kubectl create job moodle-update-backup-job --from=cronjob.batch/moodle-backup-cronjob-backup -n {{ .Release.Namespace }}
 
     #Wait for the Backup job to finish
     echo "=== Starting waiting period for full Backup  ==="
@@ -122,10 +122,10 @@ else
 fi
 
 echo "=== Turn off liveness probe ==="
-helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle --wait bitnami/moodle --version {{ .Values.moodle_chart_version }} --namespace {{ .Values.global.namespace }}
+helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle --wait bitnami/moodle --version {{ .Values.moodle_chart_version }} --namespace {{ .Release.Namespace }}
 sleep 10
 echo "=== Scale back to 1 replica to continue the Update ==="
-kubectl scale deployment/moodle --replicas=1 -n {{ .Values.global.namespace }}
+kubectl scale deployment/moodle --replicas=1 -n {{ .Release.Namespace }}
 
 echo "=== Waiting for Pod to install the Update ==="
 for j in {0..1200..2}
@@ -141,10 +141,10 @@ do
     sleep 300
     echo "=== Restore functionality ==="
     echo "=== Turn liveness & readiness probe back on again ==="
-    helm upgrade --reuse-values --set livenessProbe.enabled=true --set readinessProbe.enabled=true moodle bitnami/moodle --version {{ .Values.moodle_chart_version }} --namespace {{ .Values.global.namespace }}
+    helm upgrade --reuse-values --set livenessProbe.enabled=true --set readinessProbe.enabled=true moodle bitnami/moodle --version {{ .Values.moodle_chart_version }} --namespace {{ .Release.Namespace }}
     sleep 10
     echo "=== Scale replicas to previous amount ==="
-    kubectl scale deployment/moodle --replicas=$replicas -n {{ .Values.global.namespace }}
+    kubectl scale deployment/moodle --replicas=$replicas -n {{ .Release.Namespace }}
     getMoodleVersion
     sleep 1
     exit 0

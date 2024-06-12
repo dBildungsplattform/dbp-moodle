@@ -4,14 +4,14 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: "{{ .Release.Name }}-duply"
-  namespace: "{{ .Values.global.namespace }}"
+  namespace: "{{ .Release.Namespace }}"
 data:
   conf: |-
     GPG_KEYS_ENC="{{ .Values.backup.backup_gpg_key_names }}"
     GPG_KEY_SIGN="disabled"
     GPG_OPTS="--pinentry-mode loopback --trust-model always"
     GPG="/usr/bin/gpg"
-    TARGET="boto3+s3://{{ .Values.backup.s3_bucket_name }}/{{ .Values.backup.cluster_name }}/{{ .Values.global.namespace }}/"
+    TARGET="boto3+s3://{{ .Values.backup.s3_bucket_name }}/{{ .Values.backup.cluster_name }}/{{ .Release.Namespace }}/"
     SOURCE='/'
     MAX_AGE=6M
     MAX_FULLBKP_AGE=1W

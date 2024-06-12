@@ -8,5 +8,5 @@ dependencies:
 - name: cronjob
   repository: file://charts/backup-cronjob
   version: 0.1.0
-digest: sha256:976a6f5c3f5cecdeb1b6b8739e335289892b931c14e808aa005fe912d604f8a1
-generated: "2024-06-10T15:05:23.727118321Z"
+digest: sha256:569a88362adabfdccaf2a5e89671519b6e2c86f18a2910d540dbf114789b9600
+generated: "2024-06-12T12:23:22.338709356Z"

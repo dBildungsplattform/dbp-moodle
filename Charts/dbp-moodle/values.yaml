@@ -18,12 +18,10 @@ backup: #How to enable the serviceaccounts like we did previously with the tag?
 global:
   name: infra
   stage: infra
-  namespace: "infra-02"
   kubectl_version: "1.28.7"
   moodle_image_tag: 4.1.10-debian-12-r5
 
 database:
-  type: mariadb # Options: mariadb, postgresql
   mariadb:
     enabled: false
     host_name: moodle-mariadb
@@ -93,39 +91,6 @@ redis:
     existingSecret: moodle
     existingSecretPasswordKey: redis-password
     usePasswordFileFromSecret: true
-
-#mariadb helm chart values 
-# mariadb:
-#   enabled: true
-
-#postgresql helm chart values 
-# postgresql:
-#   enabled: true
-#   global:
-#     storageClass: "nfs-client"
-#   image:
-#     tag: "{{ moodle_postgresql_image_tag }}"
-#   auth:
-#     username: "{{ moodle_postgresql_username }}"
-#     database: moodle
-#     existingSecret: moodle
-#     secretKeys:
-#       adminPasswordKey: PGSQL_POSTGRES_PASSWORD
-#       userPasswordKey: "{{ moodle_db_password_key }}"
-#   metrics:
-#     enabled: true
-#     serviceMonitor:
-#       enabled: true
-#   primary:
-#     extendedConfiguration: |
-#       max_connections = 800
-#     resources:
-#       requests:
-#         cpu: "{{ moodle_db_requests_cpu }}"
-#         memory: "{{ moodle_db_requests_memory }}"
-#       limits:
-#         cpu: "{{ moodle_db_limit_cpu }}"
-#         memory: "{{ moodle_db_limit_memory }}"
 
 tags:
   database: true

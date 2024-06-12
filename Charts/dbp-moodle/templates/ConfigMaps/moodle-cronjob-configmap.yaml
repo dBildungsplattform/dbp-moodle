@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-cronjob-php
-  namespace: {{ .Values.global.namespace }}
+  namespace: {{ .Release.Namespace }}
 data:
   moodle-cronjob-script: |-
 {{ tpl ( .Files.Get "scripts/moodleCronjobScript.sh" ) . | nindent 4 }}

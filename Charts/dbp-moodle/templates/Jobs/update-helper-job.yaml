@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: "{{ .Release.Name }}-update-helper-job-{{ .Values.global.moodle_image_tag | lower }}"
-  namespace: {{ .Values.global.namespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   ttlSecondsAfterFinished: 80000
   template:
@@ -10,7 +10,7 @@ spec:
       volumes:
       - name: moodle-data
         persistentVolumeClaim:
-          claimName: moodle-moodle
+          claimName: {{ .Release.Name }}-data
       - name: {{ .Release.Name }}-update-helper-job-script
         configMap:
           name: {{ .Release.Name }}-update-helper-job-script

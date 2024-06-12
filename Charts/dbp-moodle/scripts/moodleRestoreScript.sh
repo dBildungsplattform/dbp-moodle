@@ -26,14 +26,14 @@ chmod +x kubectl
 mv ./kubectl /usr/local/bin/kubectl
 
 # get current replicas and scale down deployment
-replicas=$(kubectl get deployment -n {{ .Values.global.namespace }} moodle -o=jsonpath='{.status.replicas}')
+replicas=$(kubectl get deployment -n {{ .Release.Namespace }} moodle -o=jsonpath='{.status.replicas}')
 if [ $replicas -eq 0 ]
 then 
 replicas=1
 fi
 echo "=== Scale Moodle Deployment to 0 replicas for restore operation ==="
 echo "=== Current replicas detected: $replicas ==="
-kubectl scale deployment/moodle --replicas=0 -n {{ .Values.global.namespace }}
+kubectl scale deployment/moodle --replicas=0 -n {{ .Release.Namespace }}
 
 # restore
 cd /etc/duply/default
@@ -91,7 +91,7 @@ PGPASSWORD="$POSTGRESQL_PASSWORD" psql -U postgres -h moodle-postgres-postgresql
 echo "=== Finish Restore ==="
 
 echo "=== Scaling deployment replicas to $replicas ==="
-kubectl scale deployment/moodle --replicas=$replicas -n {{ .Values.global.namespace }}
+kubectl scale deployment/moodle --replicas=$replicas -n {{ .Release.Namespace }}
 sleep 2
-scaledTo=$(kubectl get deployment -n {{ .Values.global.namespace }} moodle -o=jsonpath='{.status.replicas}')
+scaledTo=$(kubectl get deployment -n {{ .Release.Namespace }} moodle -o=jsonpath='{.status.replicas}')
 echo "=== Deployment scaled to: $scaledTo ==="
