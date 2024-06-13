@@ -12,27 +12,29 @@ dependencies:
 #   condition: redisEnabled
 #   version: "19.1.0"
 #   repository: https://charts.bitnami.com/bitnami
+#   condition: redisEnabled
   #moodle_redis_endpoint: moodle-session-cache-redis-master
   #moodle_redis_port: 6379
   #moodle_redis_password: "{{ lookup('dbildungscloud.onepwd.onepwd', secret_name=moodle_secret, vault=vault, field='redis-password', session_shorthand='ansible-run', credentials=op_credentials) }}"
   - name: mariadb
     version: "18.0.5"
     repository: https://charts.bitnami.com/bitnami
-    condition: database.mariadb.enabled
+    condition: mariadb.enabled
     tag: database
   - name: postgresql
     version: "12.0.0"
     repository: https://charts.bitnami.com/bitnami
-    condition: database.postgresql.enabled
+    condition: postgresql.enabled
     tag: database
   - name: cronjob
     alias: backup-cronjob
     version: 0.1.0
     repository: "file://charts/backup-cronjob"
     condition: backup.backup_enabled
-# - name: moodle
-#   version: "14.3.2"
-#   repository: https://charts.bitnami.com/bitnami
+  - name: moodle
+    version: "14.3.2"
+    repository: https://charts.bitnami.com/bitnami
+    alias: bitnamimoodle
 # - name: etherpad-postgresql
 #   condition: postgresql.enabled
 #   version: "12.1.15"

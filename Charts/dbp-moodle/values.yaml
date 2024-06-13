@@ -1,5 +1,8 @@
 #general moodle helm chart values
 redisEnabled: true
+enableMoodleLogging: false
+#Moodle Debugging is not safe for production
+enableMoodleDebug: false
 restore: false
 moodle_pvc_name: moodle-moodle
 moodle_pvc_size: 8Gi
@@ -21,54 +24,140 @@ global:
   moodle_image_tag: 4.1.10-debian-12-r5
   infratools_image_tag: 4.0.3
 
-database:
+bitnamimoodle:
+  persistence:
+    existingClaim: "moodle-moodle"
+  global:
+    storageClass: "nfs-client"
+  image:
+    registry: ghcr.io
+    repository: dbildungsplattform/moodle
+    tag: "4.1.10-debian-12-r5"
+    pullPolicy: Always
+    debug: false
+  moodleSiteName: "Moodle"
+  moodleUsername: admin
+  moodleEmail: devops@dbildungscloud.de
+  moodleLang: "de"
+  allowEmptyPassword: false
+  extraEnvVarsSecret: moodle
+  existingSecret: moodle
+  extraEnvVars:
+    - name: PHP_POST_MAX_SIZE
+      value: 200M
+    - name: PHP_UPLOAD_MAX_FILESIZE
+      value: 200M
+    - name: PHP_MAX_INPUT_VARS
+      value: "5000"
+    - name: MOODLE_PLUGINS
+      valueFrom:
+        configMapKeyRef:
+          name: moodle-plugins
+          key: plugin_list
+    - name: ENABLE_KALTURA
+      value: "true"
+  resources:
+    requests:
+      cpu: 300m
+      memory: 512Mi
+    limits:
+      cpu: 6
+      memory: 3Gi
   mariadb:
     enabled: false
-    host_name: moodle-mariadb
-    values:
-      global:
-        storageClass: "nfs-client"
-      image:
-        tag: "11.3.2-debian-12-r5"
-      auth:
-        username: "moodle"
-        database: moodle
-        existingSecret: moodle
-        rootPassword: "moodle"
-        password: "password"
-      metrics:
-        enabled: true
-        serviceMonitor:
-          enabled: true
-      primary:
-        resources:
-          requests:
-            cpu: 250m
-            memory: 256Mi
-          limits:
-            cpu: 9
-            memory: 3Gi
-
-  postgresql:
+  externalDatabase:
+    existingSecret: moodle
+    type: "mariadb"
+    host: "moodle-mariadb"
+    port: 3306
+    user: moodle
+    database: moodle
+    password: "moodle"
+  service:
+    type: ClusterIP
+  ingress:
     enabled: true
+    hostname: "infra.moodle-01.prod.dbildungsplattform.de"
+    tls: true
+    annotations:
+      cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
+      nginx.ingress.kubernetes.io/proxy-connect-timeout: "30s"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "20s"
+      nginx.ingress.kubernetes.io/proxy-body-size: "200M"
+  metrics:
+    enabled: true
+    service:
+      type: ClusterIP
+    resources: # We need those resources so the Horizontal Pod Autoscaler for moodle can read the moodle cpu consumption correctly
+      requests:
+        cpu: 10m
+        memory: 16Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+  extraVolumeMounts:
+    - name: moodle-config
+      readOnly: true
+      mountPath: /moodleconfig
+  extraVolumes:
+    - name: moodle-config
+      secret:
+        secretName: moodle-config
+        items:
+          - key: config.php
+            path: config.php
+          - key: php.ini
+            path: php.ini
+        defaultMode: 0644
+
+mariadb:
+  enabled: true
+  host_name: moodle-mariadb
+  values:
+    global:
+      storageClass: "nfs-client"
     image:
-      tag: 14.8.0-debian-11-r0
+      tag: "11.3.2-debian-12-r5"
     auth:
-      username: ""
-      database: "moodle"
+      username: "moodle"
+      database: moodle
       existingSecret: ""
-      secretKeys:
-        adminPasswordKey: ""
-        userPasswordKey: ""
+      rootPassword: "moodle"
+      password: "moodle"
     metrics:
       enabled: true
       serviceMonitor:
         enabled: true
+    primary:
+      resources:
+        requests:
+          cpu: 250m
+          memory: 256Mi
+        limits:
+          cpu: 9
+          memory: 3Gi
+
+postgresql:
+  enabled: false
+  image:
+    tag: 14.8.0-debian-11-r0
+  auth:
+    username: ""
+    database: "moodle"
+    existingSecret: ""
+    secretKeys:
+      adminPasswordKey: ""
+      userPasswordKey: ""
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
 
 
 
 # Horizontal Pod Autoscaling Values
 moodle_hpa:
+  deployment_name_ref: "moodle"
   enabled: false
   # Moodle Autoscaling Values
   min_replicas: 1
@@ -84,110 +173,109 @@ moodle_hpa:
 #redis helm chart values
 redis:
   architecture: standalone
-  sentinel:
-    enabled: false
   auth:
     enabled: true
-    existingSecret: moodle
-    existingSecretPasswordKey: redis-password
+    password: ""
+    existingSecret: ""
+    existingSecretPasswordKey: ""
     usePasswordFileFromSecret: true
 
 
-backup-cronjob:
-  image:
-    tag: 4.0.3
-  clusterRole:
-    create: true
-    rules:
-      - apiGroups: [""]
-        resources: ["pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
-      - apiGroups: ["apps"]
-        resources: ["deployments", "replicasets"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
-      - apiGroups: ["networking.k8s.io"]
-        resources: ["ingresses"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
-      - apiGroups: ["batch"]
-        resources: ["cronjobs", "jobs"]
-        verbs: ["get", "patch", "update", "list", "delete"]
-  serviceAccount:
-    name: "moodle-backup"
-  env:
-    - name: POSTGRESQL_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: moodle
-          key: PGSQL_POSTGRES_PASSWORD
-    #This is required for the MariaDB backup to securely hand over the password in the script
-    - name: MARIADB_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: moodle
-          key: mariadb-password
-    - name: AWS_ACCESS_KEY_ID
-      valueFrom:
-        secretKeyRef:
-          name: moodle-backup-s3
-          key: s3_access_key
-    - name: AWS_SECRET_ACCESS_KEY
-      valueFrom:
-        secretKeyRef:
-          name: moodle-backup-s3
-          key: s3_access_secret
-    - name: S3_BACKUP_REGION_URL
-      valueFrom:
-        secretKeyRef:
-          name: moodle-backup-s3
-          key: s3_endpoint_url
-  extraVolumeMounts:
-    - name: moodle-backup-script
-      mountPath: /scripts/
-    - name: moodle-pvc-data
-      mountPath: /mountData
-    - name: duply
-      mountPath: /etc/duply/default/
-  extraVolumes:
-    - name: moodle-pvc-data
-      persistentVolumeClaim:
-        claimName: moodle-moodle
-    - name: moodle-backup-script
-      configMap:
-        name: moodle-backup-script
-      # 711 in decimal is 457
-        defaultMode: 457
-    - name: duply
-      projected:
-        sources:
-          - configMap:
-              name: moodle-duply
-              items:
-                - key: conf
-                  path: conf
-                - key: exclude
-                  path: exclude
-          - secret:
-              name: moodle-backup-gpg-keys
-        defaultMode: 420
-  resources:
-    limits:
-      cpu: 2000m
-      memory: 4Gi
-    requests:
-      cpu: 500m
-      memory: 1Gi
-  jobs:
-    - name: backup
-      schedule: "0 3 * * *"
-      failedJobsHistoryLimit: 1
-      successfulJobsHistoryLimit: 1
-      command:
-        - /bin/sh
-        - -c
-      args:
-        - /scripts/backup-script
+# backup-cronjob:
+#   image:
+#     tag: 4.0.3
+#   clusterRole:
+#     create: true
+#     rules:
+#       - apiGroups: [""]
+#         resources: ["pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments"]
+#         verbs: ["get", "list", "create", "delete", "patch", "update"]
+#       - apiGroups: ["apps"]
+#         resources: ["deployments", "replicasets"]
+#         verbs: ["get", "list", "create", "delete", "patch", "update"]
+#       - apiGroups: ["networking.k8s.io"]
+#         resources: ["ingresses"]
+#         verbs: ["get", "list", "create", "delete", "patch", "update"]
+#       - apiGroups: ["batch"]
+#         resources: ["cronjobs", "jobs"]
+#         verbs: ["get", "patch", "update", "list", "delete"]
+#   serviceAccount:
+#     name: "moodle-backup"
+#   env:
+#     - name: POSTGRESQL_PASSWORD
+#       valueFrom:
+#         secretKeyRef:
+#           name: moodle
+#           key: PGSQL_POSTGRES_PASSWORD
+#     #This is required for the MariaDB backup to securely hand over the password in the script
+#     - name: MARIADB_PASSWORD
+#       valueFrom:
+#         secretKeyRef:
+#           name: moodle
+#           key: mariadb-password
+#     - name: AWS_ACCESS_KEY_ID
+#       valueFrom:
+#         secretKeyRef:
+#           name: moodle-backup-s3
+#           key: s3_access_key
+#     - name: AWS_SECRET_ACCESS_KEY
+#       valueFrom:
+#         secretKeyRef:
+#           name: moodle-backup-s3
+#           key: s3_access_secret
+#     - name: S3_BACKUP_REGION_URL
+#       valueFrom:
+#         secretKeyRef:
+#           name: moodle-backup-s3
+#           key: s3_endpoint_url
+#   extraVolumeMounts:
+#     - name: moodle-backup-script
+#       mountPath: /scripts/
+#     - name: moodle-pvc-data
+#       mountPath: /mountData
+#     - name: duply
+#       mountPath: /etc/duply/default/
+#   extraVolumes:
+#     - name: moodle-pvc-data
+#       persistentVolumeClaim:
+#         claimName: moodle-moodle
+#     - name: moodle-backup-script
+#       configMap:
+#         name: moodle-backup-script
+#       # 711 in decimal is 457
+#         defaultMode: 457
+#     - name: duply
+#       projected:
+#         sources:
+#           - configMap:
+#               name: moodle-duply
+#               items:
+#                 - key: conf
+#                   path: conf
+#                 - key: exclude
+#                   path: exclude
+#           - secret:
+#               name: moodle-backup-gpg-keys
+#         defaultMode: 420
+#   resources:
+#     limits:
+#       cpu: 2000m
+#       memory: 4Gi
+#     requests:
+#       cpu: 500m
+#       memory: 1Gi
+#   jobs:
+#     - name: backup
+#       schedule: "0 3 * * *"
+#       failedJobsHistoryLimit: 1
+#       successfulJobsHistoryLimit: 1
+#       command:
+#         - /bin/sh
+#         - -c
+#       args:
+#         - /scripts/backup-script
 
-moodle:
+dbpMoodle:
   updateHelper:
     create: true
     rules:
