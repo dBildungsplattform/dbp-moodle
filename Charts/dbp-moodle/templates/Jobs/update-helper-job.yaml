@@ -1,3 +1,4 @@
+{{- if .Values.moodle.updateHelper.create -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -20,7 +21,7 @@ spec:
       serviceAccount: {{ .Release.Name }}-update-helper-job
       containers:
       - name: {{ .Release.Name }}-update-helper-job
-        image: schulcloud/{{ .Values.infratools_image_tag }}
+        image: schulcloud/{{ .Values.global.infratools_image_tag }}
         command:
           - /bin/sh
           - -c
@@ -36,3 +37,4 @@ spec:
         - name: {{ .Release.Name }}-update-helper-job-script
           mountPath: /scripts/
       restartPolicy: Never
+{{- end }}
