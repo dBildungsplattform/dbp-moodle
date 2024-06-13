@@ -4,5 +4,5 @@ metadata:
   name: {{ .Release.Name }}-cronjob-php
   namespace: {{ .Release.Namespace }}
 data:
-  moodle-cronjob-script: |-
+  cronjob-script: |-
 {{ tpl ( .Files.Get "scripts/moodleCronjobScript.sh" ) . | nindent 4 }}

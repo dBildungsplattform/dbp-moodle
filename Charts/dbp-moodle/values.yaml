@@ -93,6 +93,99 @@ redis:
     usePasswordFileFromSecret: true
 
 
+backup-cronjob:
+  image:
+    tag: 4.0.3
+  clusterRole:
+    create: true
+    rules:
+      - apiGroups: [""]
+        resources: ["pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments"]
+        verbs: ["get", "list", "create", "delete", "patch", "update"]
+      - apiGroups: ["apps"]
+        resources: ["deployments", "replicasets"]
+        verbs: ["get", "list", "create", "delete", "patch", "update"]
+      - apiGroups: ["networking.k8s.io"]
+        resources: ["ingresses"]
+        verbs: ["get", "list", "create", "delete", "patch", "update"]
+      - apiGroups: ["batch"]
+        resources: ["cronjobs", "jobs"]
+        verbs: ["get", "patch", "update", "list", "delete"]
+  serviceAccount:
+    name: "moodle-backup"
+  env:
+    - name: POSTGRESQL_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: moodle
+          key: PGSQL_POSTGRES_PASSWORD
+    #This is required for the MariaDB backup to securely hand over the password in the script
+    - name: MARIADB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: moodle
+          key: mariadb-password
+    - name: AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          name: moodle-backup-s3
+          key: s3_access_key
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: moodle-backup-s3
+          key: s3_access_secret
+    - name: S3_BACKUP_REGION_URL
+      valueFrom:
+        secretKeyRef:
+          name: moodle-backup-s3
+          key: s3_endpoint_url
+  extraVolumeMounts:
+    - name: moodle-backup-script
+      mountPath: /scripts/
+    - name: moodle-pvc-data
+      mountPath: /mountData
+    - name: duply
+      mountPath: /etc/duply/default/
+  extraVolumes:
+    - name: moodle-pvc-data
+      persistentVolumeClaim:
+        claimName: moodle-moodle
+    - name: moodle-backup-script
+      configMap:
+        name: moodle-backup-script
+      # 711 in decimal is 457
+        defaultMode: 457
+    - name: duply
+      projected:
+        sources:
+          - configMap:
+              name: moodle-duply
+              items:
+                - key: conf
+                  path: conf
+                - key: exclude
+                  path: exclude
+          - secret:
+              name: moodle-backup-gpg-keys
+        defaultMode: 420
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  jobs:
+    - name: backup
+      schedule: "0 3 * * *"
+      failedJobsHistoryLimit: 1
+      successfulJobsHistoryLimit: 1
+      command:
+        - /bin/sh
+        - -c
+      args:
+        - /scripts/backup-script
 
 moodle:
   updateHelper:
