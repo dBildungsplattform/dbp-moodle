@@ -10,7 +10,7 @@ spec:
       volumes:
       - name: moodle-data
         persistentVolumeClaim:
-          claimName: moodle-moodle
+          claimName: {{ .Values.moodle_pvc_name }}
       - name: moodle-restore-script
         configMap:
           name: moodle-restore-script

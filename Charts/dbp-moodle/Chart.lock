@@ -5,8 +5,6 @@ dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 12.0.0
-- name: backup-cronjob
+- name: cronjob
   repository: file://charts/backup-cronjob
   version: 0.1.0
-digest: sha256:f5b0ef466a7ff6705155bce17e2a1aa0d8b10571ee9a393d13b0ae78f5cbb425
-generated: "2024-06-13T07:34:03.813314518Z"

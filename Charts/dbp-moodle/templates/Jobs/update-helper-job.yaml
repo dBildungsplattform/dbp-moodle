@@ -1,4 +1,4 @@
-{{- if .Values.moodle.updateHelper.create -}}
+{{- if .Values.dbpMoodle.updateHelper.create -}}
 apiVersion: batch/v1
 kind: Job
 metadata:

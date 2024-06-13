@@ -1,4 +1,4 @@
-{{- if .Values.moodle.updateHelper.create -}}
+{{- if .Values.dbpMoodle.updateHelper.create -}}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:

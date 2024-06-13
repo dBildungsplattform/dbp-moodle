@@ -1,8 +1,8 @@
-{{- if .Values.moodle.updateHelper.create -}}
+{{- if .Values.dbpMoodle.updateHelper.create -}}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: "{{ .Release.Name }}-update-helper-job"
 rules:
-  {{- toYaml .Values.moodle.updateHelper.rules | nindent 2 }}
+  {{- toYaml .Values.dbpMoodle.updateHelper.rules | nindent 2 }}
 {{- end }}
