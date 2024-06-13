@@ -1,7 +1,6 @@
 #general moodle helm chart values
 redisEnabled: true
 restore: false
-infratools_image_tag: 4.0.3
 moodle_pvc_name: moodle-moodle
 moodle_pvc_size: 8Gi
 moodle_chart_version: 14.3.2
@@ -20,6 +19,7 @@ global:
   stage: infra
   kubectl_version: "1.28.7"
   moodle_image_tag: 4.1.10-debian-12-r5
+  infratools_image_tag: 4.0.3
 
 database:
   mariadb:
