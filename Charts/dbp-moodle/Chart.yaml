@@ -26,6 +26,7 @@ dependencies:
     condition: database.postgresql.enabled
     tag: database
   - name: cronjob
+    alias: backup-cronjob
     version: 0.1.0
     repository: "file://charts/backup-cronjob"
     condition: backup.backup_enabled
