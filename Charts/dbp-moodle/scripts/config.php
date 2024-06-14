@@ -4,22 +4,22 @@ unset($CFG);
 global $CFG;
 $CFG = new stdClass();
 
-$CFG->dbtype    = '{{ .Values.moodle.externalDatabase.type }}';
+$CFG->dbtype    = {{ .Values.moodle.externalDatabase.type }};
 $CFG->dblibrary = 'native';
-$CFG->dbhost    = '{{ .Values.moodle.externalDatabase.host }}';
-$CFG->dbname    = '{{ .Values.moodle.externalDatabase.database }}';
-$CFG->dbuser    = '{{ .Values.moodle.externalDatabase.user }}';
-$CFG->dbpass    = '{{ .Values.moodle.externalDatabase.password }}';
+$CFG->dbhost    = {{ .Values.moodle.externalDatabase.host }};
+$CFG->dbname    = {{ .Values.moodle.externalDatabase.database }};
+$CFG->dbuser    = {{ .Values.moodle.externalDatabase.user }};
+$CFG->dbpass    = {{ .Values.moodle.externalDatabase.password }};
 $CFG->prefix    = 'mdl_';
 $CFG->dboptions = array (
   'dbpersist' => 0,
-  'dbport' => '{{ .Values.moodle.externalDatabase.port }}',
+  'dbport' => {{ .Values.moodle.externalDatabase.port }},
   'dbsocket' => '',
 );
 
-$_SERVER['HTTP_HOST'] = '{{ .Values.moodle.moodle_hostname }}';
+$_SERVER['HTTP_HOST'] = {{ .Values.global.moodle_hostname }};
 
-$CFG->wwwroot   = 'https://{{ .Values.moodle.moodle_hostname }}';
+$CFG->wwwroot   = 'https://{{ .Values.global.moodle_hostname }}';
 
 $CFG->dataroot  = '/bitnami/moodledata';
 $CFG->admin     = 'admin';
@@ -56,7 +56,7 @@ $CFG->debug = 32767;                // === DEBUG_DEVELOPER - NOT FOR PRODUCTION 
 $CFG->debugdisplay = 1;             // NOT FOR PRODUCTION SERVERS!
 $CFG->debugpageinfo = 1;
 $CFG->perfdebug = 7;
-{{ else if not enableDebug }}
+{{ else }}
 $CFG->debug = 0;
 $CFG->debugdisplay = 0;
 $CFG->debugpageinfo = 0;
