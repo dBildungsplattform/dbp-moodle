@@ -11,6 +11,7 @@ serviceAccount:
   create: true
 
 backup: #How to enable the serviceaccounts like we did previously with the tag?
+  backup_enabled: false
   backup_gpg_key_names: dbpinfra
   s3_bucket_name: default
   cluster_name: default
@@ -22,9 +23,10 @@ global:
   stage: infra
   kubectl_version: "1.28.7"
   moodle_image_tag: 4.1.10-debian-12-r5
+  moodle_hostname: "infra.moodle-01.prod.dbildungsplattform.de"
   infratools_image_tag: 4.0.3
 
-bitnamimoodle:
+moodle:
   persistence:
     existingClaim: "moodle-moodle"
   global:
@@ -55,7 +57,7 @@ bitnamimoodle:
           name: moodle-plugins
           key: plugin_list
     - name: ENABLE_KALTURA
-      value: "true"
+      value: "false"
   resources:
     requests:
       cpu: 300m
@@ -67,12 +69,12 @@ bitnamimoodle:
     enabled: false
   externalDatabase:
     existingSecret: moodle
-    type: "mariadb"
-    host: "moodle-mariadb"
-    port: 3306
+    type: "pgsql"
+    host: "moodle-postgresql"
+    port: 5432
     user: moodle
     database: moodle
-    password: "moodle"
+    password: mariadb-password
   service:
     type: ClusterIP
   ingress:
@@ -110,7 +112,7 @@ bitnamimoodle:
             path: php.ini
         defaultMode: 0644
 
-mariadb:
+mariadbvalues:
   enabled: false
   global:
     storageClass: "nfs-client"
@@ -135,20 +137,30 @@ mariadb:
         memory: 3Gi
 
 postgresql:
-  enabled: false
+  enabled: true
   image:
     tag: 14.8.0-debian-11-r0
   auth:
-    username: ""
+    username: "moodle"
     database: "moodle"
-    existingSecret: ""
+    existingSecret: "moodle"
     secretKeys:
-      adminPasswordKey: ""
-      userPasswordKey: ""
+      adminPasswordKey: "PGSQL_POSTGRES_PASSWORD"
+      userPasswordKey: "mariadb-password"
   metrics:
     enabled: true
     serviceMonitor:
       enabled: true
+  primary:
+    extendedConfiguration: |
+      max_connections = 800
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: 9
+        memory: 3Gi
 
 
 
