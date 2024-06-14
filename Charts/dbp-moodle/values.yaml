@@ -42,8 +42,8 @@ moodle:
   moodleEmail: devops@dbildungscloud.de
   moodleLang: "de"
   allowEmptyPassword: false
-  extraEnvVarsSecret: moodle
-  existingSecret: moodle
+  extraEnvVarsSecret: helm-moodle
+  existingSecret: "helm-moodle"
   extraEnvVars:
     - name: PHP_POST_MAX_SIZE
       value: 200M
@@ -68,7 +68,7 @@ moodle:
   mariadb:
     enabled: false
   externalDatabase:
-    existingSecret: moodle
+    existingSecret: "helm-moodle"
     type: "pgsql"
     host: "moodle-postgresql"
     port: 5432
@@ -143,7 +143,7 @@ postgresql:
   auth:
     username: "moodle"
     database: "moodle"
-    existingSecret: "moodle"
+    existingSecret: "helm-moodle"
     secretKeys:
       adminPasswordKey: "PGSQL_POSTGRES_PASSWORD"
       userPasswordKey: "mariadb-password"
@@ -214,13 +214,13 @@ backup-cronjob:
     - name: POSTGRESQL_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: moodle
+          name: helm-moodle
           key: PGSQL_POSTGRES_PASSWORD
     #This is required for the MariaDB backup to securely hand over the password in the script
     - name: MARIADB_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: moodle
+          name: helm-moodle
           key: mariadb-password
     - name: AWS_ACCESS_KEY_ID
       valueFrom:

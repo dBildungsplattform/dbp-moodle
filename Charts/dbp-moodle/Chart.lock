@@ -1,7 +1,7 @@
 dependencies:
 - name: mariadb
   repository: https://charts.bitnami.com/bitnami
-  version: 18.0.5
+  version: 18.2.2
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 12.0.0
@@ -11,5 +11,5 @@ dependencies:
 - name: moodle
   repository: https://charts.bitnami.com/bitnami
   version: 14.3.2
-digest: sha256:984f90f5530baca869e0ac98ea5e7b4d6d8c0e6b439e65e005ad3cd1fd0d3fc9
-generated: "2024-06-13T14:16:31.359964503Z"
+digest: sha256:39f03fe7b2eb2e1630c1972df7e3c4022848be7f0fe6b0c681f548ba2974aba3
+generated: "2024-06-14T12:01:38.609703232Z"
