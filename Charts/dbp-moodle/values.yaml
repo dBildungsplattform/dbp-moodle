@@ -36,7 +36,7 @@ moodle:
     repository: dbildungsplattform/moodle
     tag: "4.1.10-debian-12-r5"
     pullPolicy: Always
-    debug: false
+    debug: true
   moodleSiteName: "Moodle"
   moodleUsername: admin
   moodleEmail: devops@dbildungscloud.de
@@ -69,7 +69,7 @@ moodle:
     enabled: false
   externalDatabase:
     type: "mariadb"
-    host: "moodle-mariadb"
+    host: "mariadb"
     port: 3306
     user: moodle
     database: moodle
