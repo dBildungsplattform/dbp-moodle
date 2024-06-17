@@ -70,7 +70,7 @@ moodle:
   externalDatabase:
     type: "mariadb"
     host: "moodle-mariadb"
-    port: 5432
+    port: 3306
     user: moodle
     database: moodle
     password: moodle
