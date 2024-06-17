@@ -4,12 +4,12 @@ unset($CFG);
 global $CFG;
 $CFG = new stdClass();
 
-$CFG->dbtype    = {{ .Values.moodle.externalDatabase.type }};
+$CFG->dbtype    = '{{ .Values.moodle.externalDatabase.type }}';
 $CFG->dblibrary = 'native';
-$CFG->dbhost    = {{ .Values.moodle.externalDatabase.host }};
-$CFG->dbname    = {{ .Values.moodle.externalDatabase.database }};
-$CFG->dbuser    = {{ .Values.moodle.externalDatabase.user }};
-$CFG->dbpass    = {{ .Values.moodle.externalDatabase.password }};
+$CFG->dbhost    = '{{ .Values.moodle.externalDatabase.host }}';
+$CFG->dbname    = '{{ .Values.moodle.externalDatabase.database }}';
+$CFG->dbuser    = '{{ .Values.moodle.externalDatabase.user }}';
+$CFG->dbpass    = '{{ .Values.moodle.externalDatabase.password }}';
 $CFG->prefix    = 'mdl_';
 $CFG->dboptions = array (
   'dbpersist' => 0,
@@ -17,7 +17,7 @@ $CFG->dboptions = array (
   'dbsocket' => '',
 );
 
-$_SERVER['HTTP_HOST'] = {{ .Values.global.moodle_hostname }};
+$_SERVER['HTTP_HOST'] = '{{ .Values.global.moodle_hostname }}';
 
 $CFG->wwwroot   = 'https://{{ .Values.global.moodle_hostname }}';
 
@@ -42,14 +42,14 @@ $CFG->session_redis_compressor = 'none';
 
 require_once(__DIR__ . '/lib/setup.php');
 
-{{ if .Values.enableMoodleLogging }}
+{{ if .Values.dbpMoodle.moodle.logging }}
 define('MDL_PERF'  , true);
 define('MDL_PERFDB'  , true);
 define('MDL_PERFTOLOG'  , true); //OK for production
 {{ end }}
 
 
-{{ if .Values.enableMoodleDebug }}
+{{ if .Values.dbpMoodle.moodle.debug }}
 @error_reporting(E_ALL | E_STRICT); // NOT FOR PRODUCTION SERVERS!
 @ini_set('display_errors', '1');    // NOT FOR PRODUCTION SERVERS!
 $CFG->debug = 32767;                // === DEBUG_DEVELOPER - NOT FOR PRODUCTION SERVERS!
