@@ -23,7 +23,7 @@ global:
   stage: infra
   kubectl_version: "1.28.7"
   moodle_image_tag: 4.1.10-debian-12-r5
-  moodle_hostname: "infra.moodle-01.prod.dbildungsplattform.de"
+  moodle_hostname: "infra2.moodle-01.prod.dbildungsplattform.de"
   infratools_image_tag: 4.0.3
 
 moodle:
@@ -42,7 +42,7 @@ moodle:
   moodleEmail: devops@dbildungscloud.de
   moodleLang: "de"
   allowEmptyPassword: false
-  extraEnvVarsSecret: helm-moodle
+  extraEnvVarsSecret: "helm-moodle"
   existingSecret: "helm-moodle"
   extraEnvVars:
     - name: PHP_POST_MAX_SIZE
@@ -68,18 +68,18 @@ moodle:
   mariadb:
     enabled: false
   externalDatabase:
-    existingSecret: "helm-moodle"
-    type: "pgsql"
-    host: "moodle-postgresql"
+    type: "mariadb"
+    host: "moodle-mariadb"
     port: 5432
     user: moodle
     database: moodle
-    password: mariadb-password
+    password: moodle
+    existingSecret: "helm-moodle"
   service:
     type: ClusterIP
   ingress:
     enabled: true
-    hostname: "infra.moodle-01.prod.dbildungsplattform.de"
+    hostname: "infra2.moodle-01.prod.dbildungsplattform.de"
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
@@ -112,32 +112,32 @@ moodle:
             path: php.ini
         defaultMode: 0644
 
-mariadbvalues:
-  enabled: false
-  global:
-    storageClass: "nfs-client"
-  image:
-    tag: "11.3.2-debian-12-r5"
-  auth:
-    username: "moodle"
-    database: "moodle"
-    rootPassword: "moodle"
-    password: "moodle"
-  metrics:
-    enabled: true
-    serviceMonitor:
-      enabled: true
-  primary:
-    resources:
-      requests:
-        cpu: 250m
-        memory: 256Mi
-      limits:
-        cpu: 9
-        memory: 3Gi
+# mariadb:
+#   enabled: false
+#   global:
+#     storageClass: "nfs-client"
+#   image:
+#     tag: "11.3.2-debian-12-r5"
+#   auth:
+#     username: "moodle"
+#     database: "moodle"
+#     rootPassword: "moodle"
+#     password: "moodle"
+#   metrics:
+#     enabled: true
+#     serviceMonitor:
+#       enabled: true
+#   primary:
+#     resources:
+#       requests:
+#         cpu: 250m
+#         memory: 256Mi
+#       limits:
+#         cpu: 9
+#         memory: 3Gi
 
 postgresql:
-  enabled: true
+  enabled: false
   image:
     tag: 14.8.0-debian-11-r0
   auth:
