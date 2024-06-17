@@ -68,13 +68,13 @@ moodle:
   mariadb:
     enabled: false
   externalDatabase:
-    existingSecret: "helm-moodle"
-    type: "pgsql"
-    host: "moodle-postgresql"
-    port: 5432
+    existingSecret: moodle
+    type: "mariadb"
+    host: "mariadb"
+    port: 3306
     user: moodle
     database: moodle
-    password: mariadb-password
+    password: moodle
   service:
     type: ClusterIP
   ingress:
@@ -137,7 +137,7 @@ mariadbvalues:
         memory: 3Gi
 
 postgresql:
-  enabled: true
+  enabled: false
   image:
     tag: 14.8.0-debian-11-r0
   auth:
