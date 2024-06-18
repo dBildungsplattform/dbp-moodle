@@ -27,10 +27,10 @@ $CFG->directorypermissions = 02775;
 
 {{- if .Values.redisEnabled }}
 $CFG->session_handler_class = '\core\session\redis';
-$CFG->session_redis_host = '{{ .Values.moodle.moodle_redis_endpoint }}';
+$CFG->session_redis_host = '{{ .Values.moodle_redis_endpoint }}';
 $CFG->session_redis_port = 6379;
 $CFG->session_redis_database = 0;
-$CFG->session_redis_auth = '{{ .Values.moodle.moodle_redis_password }}';
+$CFG->session_redis_auth = '{{ .Values.moodle_redis_password }}';
 $CFG->session_redis_prefix = 'mdl_';
 $CFG->session_redis_acquire_lock_timeout = 60;
 $CFG->session_redis_acquire_lock_warn = 0;

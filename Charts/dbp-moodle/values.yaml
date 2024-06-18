@@ -23,7 +23,7 @@ global:
   stage: infra
   kubectl_version: "1.28.7"
   moodle_image_tag: 4.1.10-debian-12-r5
-  moodle_hostname: "infra2.moodle-01.prod.dbildungsplattform.de"
+  moodle_hostname: "moodle.dbpinfra-dev-moodle-01.dbildungsplattform.de"
   infratools_image_tag: 4.0.3
 
 moodle:
@@ -42,8 +42,8 @@ moodle:
   moodleEmail: devops@dbildungscloud.de
   moodleLang: "de"
   allowEmptyPassword: false
-  extraEnvVarsSecret: "helm-moodle"
-  existingSecret: "helm-moodle"
+  extraEnvVarsSecret: "moodle"
+  existingSecret: "moodle"
   extraEnvVars:
     - name: PHP_POST_MAX_SIZE
       value: 200M
@@ -69,17 +69,17 @@ moodle:
     enabled: false
   externalDatabase:
     type: "mariadb"
-    host: "mariadb"
+    host: "moodle-mariadb"
     port: 3306
     user: moodle
     database: moodle
     password: moodle
-    existingSecret: "helm-moodle"
+    existingSecret: "moodle"
   service:
     type: ClusterIP
   ingress:
     enabled: true
-    hostname: "infra2.moodle-01.prod.dbildungsplattform.de"
+    hostname: "moodle.dbpinfra-dev-moodle-01.dbildungsplattform.de"
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
@@ -112,29 +112,29 @@ moodle:
             path: php.ini
         defaultMode: 0644
 
-# mariadb:
-#   enabled: false
-#   global:
-#     storageClass: "nfs-client"
-#   image:
-#     tag: "11.3.2-debian-12-r5"
-#   auth:
-#     username: "moodle"
-#     database: "moodle"
-#     rootPassword: "moodle"
-#     password: "moodle"
-#   metrics:
-#     enabled: true
-#     serviceMonitor:
-#       enabled: true
-#   primary:
-#     resources:
-#       requests:
-#         cpu: 250m
-#         memory: 256Mi
-#       limits:
-#         cpu: 9
-#         memory: 3Gi
+mariadb:
+  enabled: true
+  global:
+    storageClass: "nfs-client"
+  image:
+    tag: "11.3.2-debian-12-r5"
+  auth:
+    username: "moodle"
+    database: "moodle"
+    rootPassword: "moodle"
+    password: "moodle"
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+  primary:
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: 9
+        memory: 3Gi
 
 postgresql:
   enabled: false
@@ -143,7 +143,7 @@ postgresql:
   auth:
     username: "moodle"
     database: "moodle"
-    existingSecret: "helm-moodle"
+    existingSecret: "moodle"
     secretKeys:
       adminPasswordKey: "PGSQL_POSTGRES_PASSWORD"
       userPasswordKey: "mariadb-password"
@@ -167,10 +167,10 @@ postgresql:
 # Horizontal Pod Autoscaling Values
 moodle_hpa:
   deployment_name_ref: "moodle"
-  enabled: false
+  enabled: true
   # Moodle Autoscaling Values
   min_replicas: 1
-  max_replicas: 3
+  max_replicas: 4
   average_cpu_utilization: 50
   # The up and downscaling values to have more control over the speed moodle will be scaled
   scaledown_value: 25 # The max amount in percent to scale in one step per cooldown period
@@ -180,13 +180,16 @@ moodle_hpa:
 
 
 #redis helm chart values
+moodle_redis_endpoint: "moodle-redis-master"
+moodle_redis_port: 6379
+moodle_redis_password: "moodle"
 redis:
   architecture: standalone
   auth:
     enabled: true
     password: ""
-    existingSecret: ""
-    existingSecretPasswordKey: ""
+    existingSecret: "moodle"
+    existingSecretPasswordKey: "redis-password"
     usePasswordFileFromSecret: true
 
 
@@ -214,13 +217,13 @@ backup-cronjob:
     - name: POSTGRESQL_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: helm-moodle
+          name: moodle
           key: PGSQL_POSTGRES_PASSWORD
     #This is required for the MariaDB backup to securely hand over the password in the script
     - name: MARIADB_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: helm-moodle
+          name: moodle
           key: mariadb-password
     - name: AWS_ACCESS_KEY_ID
       valueFrom:
