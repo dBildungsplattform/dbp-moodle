@@ -1,5 +1,4 @@
-{{- $backupEnabled := include "stage-backup-enabled" . -}}
-{{- if $backupEnabled }}
+{{- if include "dbpMoodle.stageBackupEnabled" . }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -7,7 +6,7 @@ metadata:
   namespace: "{{ .Release.Namespace }}"
 data:
   conf: |-
-    GPG_KEYS_ENC="{{ .Values.backup.backup_gpg_key_names }}"
+    GPG_KEYS_ENC="{{ .Values.backup.gpg_key_names }}"
     GPG_KEY_SIGN="disabled"
     GPG_OPTS="--pinentry-mode loopback --trust-model always"
     GPG="/usr/bin/gpg"

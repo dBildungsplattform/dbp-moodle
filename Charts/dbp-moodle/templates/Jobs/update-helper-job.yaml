@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "{{ .Release.Name }}-update-helper-job-{{ .Values.global.moodle_image_tag | lower }}"
+  name: "{{ .Release.Name }}-update-helper-job-{{ .Values.moodle.image.tag | lower }}"
   namespace: {{ .Release.Namespace }}
 spec:
   ttlSecondsAfterFinished: 80000
@@ -15,8 +15,7 @@ spec:
       - name: {{ .Release.Name }}-update-helper-job-script
         configMap:
           name: {{ .Release.Name }}-update-helper-job-script
-        # 711 in decimal is 457
-          defaultMode: 457
+          defaultMode: 0711
       serviceAccountName: {{ .Release.Name }}-update-helper-job
       serviceAccount: {{ .Release.Name }}-update-helper-job
       containers:

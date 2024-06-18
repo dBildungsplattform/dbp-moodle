@@ -1,4 +1,4 @@
-{{- if and (.Values.restore) (eq .Values.restore "true") }}
+{{- if .Values.dbpMoodle.restore }}
 apiVersion: batch/v1
 kind: Job
 metadata:

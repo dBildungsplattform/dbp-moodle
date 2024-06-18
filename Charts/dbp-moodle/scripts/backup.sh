@@ -33,7 +33,7 @@ function clean_up() {
         rm -f /mountData/moodledata/climaintenance.html
 
         echo "=== Turn on liveness and readiness probe ==="
-        helm upgrade --reuse-values --set livenessProbe.enabled=true --set readinessProbe.enabled=true moodle bitnami/moodle --version {{ .Values.moodle_chart_version }} --namespace {{ .Release.Namespace }}
+        helm upgrade --reuse-values --set livenessProbe.enabled=true --set readinessProbe.enabled=true moodle bitnami/moodle --namespace {{ .Release.Namespace }}
 
         echo "=== Unsuspending moodle cronjob ==="
         kubectl patch cronjobs moodle-{{ .Release.Namespace }}-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : false }}'
@@ -68,7 +68,7 @@ then
     kubectl patch cronjobs moodle-{{ .Release.Namespace }}-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : true }}'
 
     echo "=== Turn off liveness and readiness probe ==="
-    helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle --wait bitnami/moodle --version {{ .Values.moodle_chart_version }} --namespace {{ .Release.Namespace }}
+    helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle --wait bitnami/moodle --namespace {{ .Release.Namespace }}
     
     kubectl rollout status deployment/moodle
 

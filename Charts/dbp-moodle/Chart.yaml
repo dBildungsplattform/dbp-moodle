@@ -9,10 +9,9 @@ appVersion: "1.16.0"
 #https://helm.sh/docs/topics/charts/
 dependencies:
 # - name: redis
-#   condition: redisEnabled
 #   version: "19.1.0"
 #   repository: https://charts.bitnami.com/bitnami
-#   condition: redisEnabled
+#   condition: redis.enabled
   #moodle_redis_endpoint: moodle-session-cache-redis-master
   #moodle_redis_port: 6379
   #moodle_redis_password: "{{ lookup('dbildungscloud.onepwd.onepwd', secret_name=moodle_secret, vault=vault, field='redis-password', session_shorthand='ansible-run', credentials=op_credentials) }}"
@@ -28,7 +27,7 @@ dependencies:
     alias: backup-cronjob
     version: 0.1.0
     repository: "file://charts/backup-cronjob"
-    condition: backup.backup_enabled
+    condition: backup.enabled
   - name: moodle
     version: "14.3.2"
     repository: https://charts.bitnami.com/bitnami

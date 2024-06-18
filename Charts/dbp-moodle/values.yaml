@@ -1,49 +1,70 @@
-#general moodle helm chart values
-redisEnabled: true
-enableMoodleLogging: false
-#Moodle Debugging is not safe for production
-enableMoodleDebug: false
-restore: false
-moodle_pvc_name: moodle-moodle
-moodle_pvc_size: 8Gi
-moodle_chart_version: 14.3.2
-serviceAccount:
-  create: true
-
-backup: #How to enable the serviceaccounts like we did previously with the tag?
-  backup_enabled: false
-  backup_gpg_key_names: dbpinfra
-  s3_bucket_name: default
-  cluster_name: default
-  endpoint: https://s3-eu-central-2.ionoscloud.com #s3 region Berlin endpoint
-
-
 global:
   name: infra
   stage: infra
   kubectl_version: "1.28.7"
-  moodle_image_tag: 4.1.10-debian-12-r5
-  moodle_hostname: "infra2.moodle-01.prod.dbildungsplattform.de"
   infratools_image_tag: 4.0.3
+  storageClass: "nfs-client"
+
+serviceAccount:
+  create: false
+
+backup: #How to enable the serviceaccounts like we did previously with the tag?
+  enabled: false
+  gpg_key_names: dbpinfra
+  s3_bucket_name: default
+  cluster_name: default
+  endpoint: https://s3-eu-central-2.ionoscloud.com #s3 region Berlin endpoint
+
+dbpMoodle:
+  logging: false
+  debug: false # Moodle Debugging is not safe for production
+  restore: false
+  updateHelper:
+    create: true
+    rules:
+      - apiGroups: [""]
+        resources: ["pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments"]
+        verbs: ["get", "list", "create", "delete", "patch", "update"]
+      - apiGroups: ["apps"]
+        resources: ["deployments", "replicasets", "deployments/scale"]
+        verbs: ["get", "list", "create", "delete", "patch", "update"]
+      - apiGroups: ["networking.k8s.io"]
+        resources: ["ingresses"]
+        verbs: ["get", "list", "create", "delete", "patch", "update"]
+      - apiGroups: ["batch"]
+        resources: ["cronjobs", "jobs"]
+        verbs: ["get", "list", "create", "delete", "patch", "update"]
+      - apiGroups: ["autoscaling"]
+        resources: ["horizontalpodautoscalers"]
+        verbs: ["get", "list", "create", "patch", "update"]
+
+
+infratools:
+  repository: schulcloud
+  image_tag: 4.0.3
+
+external_pvc:
+  enabled: false
+  name: "moodle-data"
+  size: "8Gi"
+  storage_class: "nfs-client"
+  accessModes: ["ReadWriteOnce"]
+  annotations: 
+    "helm.sh/resource-policy": "keep"
 
 moodle:
-  persistence:
-    existingClaim: "moodle-moodle"
-  global:
-    storageClass: "nfs-client"
   image:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
     tag: "4.1.10-debian-12-r5"
     pullPolicy: Always
     debug: true
+  moodleSkipInstall: false
   moodleSiteName: "Moodle"
+  moodleLang: "de"
   moodleUsername: admin
   moodleEmail: devops@dbildungscloud.de
-  moodleLang: "de"
   allowEmptyPassword: false
-  extraEnvVarsSecret: "helm-moodle"
-  existingSecret: "helm-moodle"
   extraEnvVars:
     - name: PHP_POST_MAX_SIZE
       value: 200M
@@ -58,6 +79,15 @@ moodle:
           key: plugin_list
     - name: ENABLE_KALTURA
       value: "false"
+  extraEnvVarsSecret: "helm-moodle"
+  existingSecret: "helm-moodle"
+  persistence:
+    # existingClaim: "moodle-data"
+
+    enabled: true
+    storageClass: "nfs-client"
+    annotations:
+      "helm.sh/resource-policy": "keep"
   resources:
     requests:
       cpu: 300m
@@ -79,7 +109,7 @@ moodle:
     type: ClusterIP
   ingress:
     enabled: true
-    hostname: "infra2.moodle-01.prod.dbildungsplattform.de"
+    hostname: "moodle2.dbpinfra-dev-moodle-01.dbildungsplattform.de"
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
@@ -162,8 +192,6 @@ postgresql:
         cpu: 9
         memory: 3Gi
 
-
-
 # Horizontal Pod Autoscaling Values
 moodle_hpa:
   deployment_name_ref: "moodle"
@@ -178,9 +206,9 @@ moodle_hpa:
   scaleup_value: 50
   scaleup_cooldown: 15
 
-
 #redis helm chart values
 redis:
+  enabled: false
   architecture: standalone
   auth:
     enabled: true
@@ -188,7 +216,6 @@ redis:
     existingSecret: ""
     existingSecretPasswordKey: ""
     usePasswordFileFromSecret: true
-
 
 backup-cronjob:
   image:
@@ -247,7 +274,7 @@ backup-cronjob:
   extraVolumes:
     - name: moodle-pvc-data
       persistentVolumeClaim:
-        claimName: moodle-moodle
+        claimName: "moodle-data"
     - name: moodle-backup-script
       configMap:
         name: moodle-backup-script
@@ -282,23 +309,3 @@ backup-cronjob:
         - -c
       args:
         - /scripts/backup-script
-
-dbpMoodle:
-  updateHelper:
-    create: true
-    rules:
-      - apiGroups: [""]
-        resources: ["pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
-      - apiGroups: ["apps"]
-        resources: ["deployments", "replicasets", "deployments/scale"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
-      - apiGroups: ["networking.k8s.io"]
-        resources: ["ingresses"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
-      - apiGroups: ["batch"]
-        resources: ["cronjobs", "jobs"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
-      - apiGroups: ["autoscaling"]
-        resources: ["horizontalpodautoscalers"]
-        verbs: ["get", "list", "create", "patch", "update"]

@@ -17,15 +17,15 @@ $CFG->dboptions = array (
   'dbsocket' => '',
 );
 
-$_SERVER['HTTP_HOST'] = '{{ .Values.global.moodle_hostname }}';
+$_SERVER['HTTP_HOST'] = '{{ .Values.moodle.ingress.hostname }}';
 
-$CFG->wwwroot   = 'https://{{ .Values.global.moodle_hostname }}';
+$CFG->wwwroot   = 'https://{{ .Values.moodle.ingress.hostname }}';
 
 $CFG->dataroot  = '/bitnami/moodledata';
 $CFG->admin     = 'admin';
 $CFG->directorypermissions = 02775;
 
-{{- if .Values.redisEnabled }}
+{{- if .Values.redis.enabled }}
 $CFG->session_handler_class = '\core\session\redis';
 $CFG->session_redis_host = '{{ .Values.moodle.moodle_redis_endpoint }}';
 $CFG->session_redis_port = 6379;
@@ -42,14 +42,14 @@ $CFG->session_redis_compressor = 'none';
 
 require_once(__DIR__ . '/lib/setup.php');
 
-{{ if .Values.dbpMoodle.moodle.logging }}
+{{ if .Values.dbpMoodle.logging }}
 define('MDL_PERF'  , true);
 define('MDL_PERFDB'  , true);
 define('MDL_PERFTOLOG'  , true); //OK for production
 {{ end }}
 
 
-{{ if .Values.dbpMoodle.moodle.debug }}
+{{ if .Values.dbpMoodle.debug }}
 @error_reporting(E_ALL | E_STRICT); // NOT FOR PRODUCTION SERVERS!
 @ini_set('display_errors', '1');    // NOT FOR PRODUCTION SERVERS!
 $CFG->debug = 32767;                // === DEBUG_DEVELOPER - NOT FOR PRODUCTION SERVERS!
