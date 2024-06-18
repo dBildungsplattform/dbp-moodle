@@ -212,9 +212,9 @@ moodle_hpa:
   scaleup_value: 50
   scaleup_cooldown: 15
 
-#redis helm chart values
+# redis helm chart values
 redis:
-  enabled: false
+  enabled: true
   architecture: standalone
   auth:
     enabled: true
