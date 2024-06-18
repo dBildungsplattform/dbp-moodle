@@ -8,17 +8,18 @@ appVersion: "1.16.0"
 #https://levelup.gitconnected.com/helm-dependencies-1907facbe410
 #https://helm.sh/docs/topics/charts/
 dependencies:
-# - name: redis
-#   version: "19.1.0"
-#   repository: https://charts.bitnami.com/bitnami
-#   condition: redis.enabled
+  - name: redis
+    condition: redisEnabled
+    version: "19.5.3"
+    repository: https://charts.bitnami.com/bitnami
+    condition: redisEnabled
   #moodle_redis_endpoint: moodle-session-cache-redis-master
   #moodle_redis_port: 6379
   #moodle_redis_password: "{{ lookup('dbildungscloud.onepwd.onepwd', secret_name=moodle_secret, vault=vault, field='redis-password', session_shorthand='ansible-run', credentials=op_credentials) }}"
-  # - name: mariadb
-  #   version: "18.2.2"
-  #   repository: https://charts.bitnami.com/bitnami
-  #   condition: mariadb.enabled
+  - name: mariadb
+    version: "18.2.2"
+    repository: https://charts.bitnami.com/bitnami
+    condition: mariadb.enabled
   - name: postgresql
     version: "12.0.0"
     repository: https://charts.bitnami.com/bitnami
@@ -29,7 +30,7 @@ dependencies:
     repository: "file://charts/backup-cronjob"
     condition: backup.enabled
   - name: moodle
-    version: "14.3.2"
+    version: "22.2.7"
     repository: https://charts.bitnami.com/bitnami
 #    alias: bitnamimoodletest
 # - name: etherpad-postgresql
