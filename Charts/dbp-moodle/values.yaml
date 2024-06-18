@@ -85,8 +85,8 @@ moodle:
           key: plugin_list
     - name: ENABLE_KALTURA
       value: "false"
-  extraEnvVarsSecret: "helm-moodle"
-  existingSecret: "helm-moodle"
+  extraEnvVarsSecret: "moodle"
+  existingSecret: "moodle"
   persistence:
     # existingClaim: "moodle-data"
 
@@ -110,12 +110,12 @@ moodle:
     user: moodle
     database: moodle
     password: moodle
-    existingSecret: "helm-moodle"
+    existingSecret: "moodle"
   service:
     type: ClusterIP
   ingress:
     enabled: true
-    hostname: "moodle2.dbpinfra-dev-moodle-01.dbildungsplattform.de"
+    hostname: "moodle.dbpinfra-dev-moodle-01.dbildungsplattform.de"
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
@@ -179,7 +179,7 @@ postgresql:
   auth:
     username: "moodle"
     database: "moodle"
-    existingSecret: "helm-moodle"
+    existingSecret: "moodle"
     secretKeys:
       adminPasswordKey: "PGSQL_POSTGRES_PASSWORD"
       userPasswordKey: "mariadb-password"
@@ -219,7 +219,7 @@ redis:
   auth:
     enabled: true
     password: ""
-    existingSecret: "helm-moodle"
+    existingSecret: "moodle"
     existingSecretPasswordKey: "redis-password"
     usePasswordFileFromSecret: true
 
@@ -247,13 +247,13 @@ backup-cronjob:
     - name: POSTGRESQL_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: helm-moodle
+          name: moodle
           key: PGSQL_POSTGRES_PASSWORD
     #This is required for the MariaDB backup to securely hand over the password in the script
     - name: MARIADB_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: helm-moodle
+          name: moodle
           key: mariadb-password
     - name: AWS_ACCESS_KEY_ID
       valueFrom:
