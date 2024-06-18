@@ -1,3 +1,4 @@
+{{- if .Values.dbpMoodle.update_process }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -6,3 +7,4 @@ metadata:
 data:
   {{ .Release.Name }}-update-helper-job-script: |-
 {{ tpl ( .Files.Get "scripts/moodleUpdateHelperJobScript.sh" ) . | indent 4 }}
+{{- end }}

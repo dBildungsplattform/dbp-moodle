@@ -1,3 +1,4 @@
+{{- if .Values.dbpMoodle.update_process }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -23,3 +24,4 @@ data:
     block_dash#blocks/dash
     tool_certificate#admin/tool/certificate
     mod_coursecertificate#mod/coursecertificate
+{{- end }}
