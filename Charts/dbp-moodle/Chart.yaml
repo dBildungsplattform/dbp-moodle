@@ -8,30 +8,40 @@ dependencies:
   - name: moodle
     version: "22.2.7"
     repository: https://charts.bitnami.com/bitnami
+
   - name: redis
-    condition: redis.enabled
     version: "19.5.3"
     repository: https://charts.bitnami.com/bitnami
     condition: redis.enabled
+
   - name: mariadb
     version: "18.2.2"
     repository: https://charts.bitnami.com/bitnami
     condition: mariadb.enabled
+
   - name: postgresql
-    version: "12.0.0"
+    version: "15.5.7"
     repository: https://charts.bitnami.com/bitnami
     condition: postgresql.enabled
+
   - name: cronjob
     alias: backup-cronjob
     version: 0.1.0
     repository: "file://charts/backup-cronjob"
     condition: backup.enabled
 
-# - name: etherpad-postgresql
-#   condition: postgresql.enabled
-#   version: "12.1.15"
-#   repository: https://charts.bitnami.com/bitnami
-# - name: etherpad-lite
+  - name: postgresql
+    version: "15.5.7"
+    repository: https://charts.bitnami.com/bitnami
+    alias: etherpad-postgresql
+    condition: etherpad.enabled
+
+  - name: etherpad
+    version: 0.1.0
+    repository: "file://charts/etherpad"
+    alias: etherpad-lite
+    condition: etherpad.enabled
+
 # - name: sql-exporter
 
 #Include tasks for sc-serviceaccounts.yml
