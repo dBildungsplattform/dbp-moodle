@@ -17,10 +17,26 @@ false
 {{- end -}}
 {{- end -}}
 
-{{- define "dbpMoodle.secret.defaulting" -}}
-{{- if . -}}
-{{ . }}
-{{- else -}}
-{{ randAlphaNum 16 | quote }}
+{{- define "dbpMoodle.secrets.moodle_password" -}}
+{{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.moodle_password }}
 {{- end -}}
+
+{{- define "dbpMoodle.secrets.postgres_password" -}}
+{{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.postgres_password }}
+{{- end -}}
+
+{{- define "dbpMoodle.secrets.mariadb_password" -}}
+{{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.mariadb_password }}
+{{- end -}}
+
+{{- define "dbpMoodle.secrets.mariadb_root_password" -}}
+{{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.mariadb_root_password }}
+{{- end -}}
+
+{{- define "dbpMoodle.secrets.etherpad_postgresql_password" -}}
+{{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.etherpad_postgresql_password }}
+{{- end -}}
+
+{{- define "dbpMoodle.secrets.etherpad_api_key" -}}
+{{- default "moodle" .Values.dbpMoodle.secrets.etherpad_api_key }}
 {{- end -}}

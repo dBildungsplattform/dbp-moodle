@@ -5,7 +5,7 @@ global:
   infratools_image_tag: 4.0.3
   storageClass: "nfs-client"
 
-backup: #How to enable the serviceaccounts like we did previously with the tag?
+backup:
   enabled: false
   gpg_key_names: dbpinfra
   s3_bucket_name: default
@@ -15,8 +15,8 @@ backup: #How to enable the serviceaccounts like we did previously with the tag?
 dbpMoodle:
   logging: false
   debug: false # Moodle Debugging is not safe for production
-  restore: false # Only to be used to restore a snapshot with the dpb-restore script
-  update_migration: # The dpb update process to migrate moodle date when Moodle versions are increased
+  restore: false # Only to be used to restore a snapshot with the dbp-restore script
+  update_migration: # The dbp update process to migrate moodle date when Moodle versions are increased
     enabled: false
 
   redis:
@@ -24,16 +24,14 @@ dbpMoodle:
     port: 6379
     password: "moodle"
 
-  # secrets:
-  #   mariadb-password: ""
-  #   mariadb-password:
-  #   mariadb-root-password:
-  #   redis-password:
-  #   moodle-password:
-  #   password:
-  #   username:
-  #   etherpad-postgresql-password:
-  #   etherpad-api-key:
+  secrets:
+    useExistingSecret: true
+    moodle_password: "moodle"
+    postgres_password: "moodle"
+    mariadb_password: "moodle"
+    mariadb_root_password: "moodle"
+    etherpad_postgresql_password: "moodle"
+    etherpad_api_key: "moodle"
 
   updateHelper:
     rules:
@@ -72,7 +70,7 @@ moodle:
     repository: dbildungsplattform/moodle
     tag: "4.1.10-debian-12-r5"
     pullPolicy: Always
-    debug: true
+    debug: false
   moodleSkipInstall: false
   moodleSiteName: "Moodle"
   moodleLang: "de"
@@ -122,7 +120,7 @@ moodle:
     type: ClusterIP
   ingress:
     enabled: true
-    hostname: "moodle2.dbpinfra-dev-moodle-01.dbildungsplattform.de"
+    hostname: "moodle.dbpinfra-dev-moodle-01.dbildungsplattform.de"
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
@@ -182,7 +180,7 @@ mariadb:
 postgresql:
   enabled: false
   image:
-    tag: 14.8.0-debian-11-r0
+    tag: "14.8.0-debian-11-r0"
   auth:
     username: "moodle"
     database: "moodle"
@@ -199,11 +197,11 @@ postgresql:
       max_connections = 800
     resources:
       requests:
-        cpu: 250m
-        memory: 256Mi
+        cpu: "250m"
+        memory: "256Mi"
       limits:
         cpu: 9
-        memory: 3Gi
+        memory: "3Gi"
 
 # Horizontal Pod Autoscaling Values
 moodle_hpa:
@@ -222,7 +220,7 @@ moodle_hpa:
 # redis helm chart values
 redis:
   enabled: true
-  architecture: standalone
+  architecture: "standalone"
   auth:
     enabled: true
     password: "moodle"
@@ -237,7 +235,7 @@ etherpad-postgresql:
     existingSecret: "moodle"
     secretKeys:
       userPasswordKey: "etherpad-postgresql-password"
-    database: etherpad
+    database: "etherpad"
   persistence:
     existingClaim: "moodle-etherpad-postgresql"
   primary:
@@ -252,50 +250,54 @@ etherpad-postgresql:
 etherpadlite:
   enabled: true
   image:
-    repository: ghcr.io/dbildungsplattform/etherpad
-    tag: 1.8.18.0
+    repository: "ghcr.io/dbildungsplattform/etherpad"
+    tag: "1.8.18.0"
   env:
-    - name: DB_TYPE
-      value: postgres
-    - name: DB_HOST
-      value: moodle-etherpad-postgresql
-    - name: DB_PORT
-      value: "5432"
-    - name: DB_NAME
-      value: etherpad
-    - name: DB_USER
-      value: etherpad
-    - name: DB_PASS
+    - name: "DB_TYPE"
+      value: "postgres"
+    - name: "DB_HOST"
+      value: "moodle-etherpad-postgresql"
+    - name: "DB_PORT"
+      value: 5432
+    - name: "DB_NAME"
+      value: "etherpad"
+    - name: "DB_USER"
+      value: "etherpad"
+    - name: "DB_PASS"
       valueFrom:
         secretKeyRef:
           name: "moodle"
           key: "etherpad-postgresql-password"
-    - name: REQUIRE_SESSION
+    - name: "REQUIRE_SESSION"
       value: "true"
+  
+
+  
+  
   volumes:
-    - name: api-key
+    - name: "api-key"
       secret:
         secretName: "moodle"
         items:
-          - key: etherpad-api-key
-            path: APIKEY.txt
+          - key: "etherpad-api-key"
+            path: "APIKEY.txt"
   volumeMounts:
-    - name: api-key
-      mountPath: /opt/etherpad-lite/APIKEY.txt
-      subPath: APIKEY.txt
+    - name: "api-key"
+      mountPath: "/opt/etherpad-lite/APIKEY.txt"
+      subPath: "APIKEY.txt"
   ingress:
     enabled: true
     annotations:
-      cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
+      cert-manager.io/cluster-issuer: "sc-cert-manager-clusterissuer-letsencrypt"
     hosts:
-      - host: "etherpad.moodle.dbpinfra-dev-moodle-01.dbildungsplattform.de"
+      - host: "etherpad.example.de"
         paths:
-          - path: /
-            pathType: Prefix
+          - path: "/"
+            pathType: "Prefix"
     tls:
-      - secretName: "etherpad.moodle.dbpinfra-dev-moodle-01.dbildungsplattform.de-tls"
+      - secretName: "etherpad.example.de-tls"
         hosts:
-          - "etherpad.moodle.dbpinfra-dev-moodle-01.dbildungsplattform.de"
+          - "etherpad.example.de"
   resources:
     requests:
       cpu: "100m"

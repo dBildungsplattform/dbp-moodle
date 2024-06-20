@@ -20,5 +20,5 @@ dependencies:
 - name: etherpad
   repository: file://charts/etherpad
   version: 0.1.0
-digest: sha256:ded44912825591af3b8f04cf8794d94815ffd5fb6deb4c6b16962f3249edb30e
-generated: "2024-06-19T14:10:59.553739669+02:00"
+digest: sha256:0bcbb8bdf12bab5529a1360b1157e36d2bd51e1d12b3ef653c61b07ba6936ce8
+generated: "2024-06-20T12:13:11.419404592Z"
