@@ -1,4 +1,4 @@
-{{- if and (.Values.dbpMoodle.updateHelper.create) (.Values.dbpMoodle.update_process) }}
+{{- if .Values.dbpMoodle.update_migration.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:

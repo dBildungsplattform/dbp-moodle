@@ -1,4 +1,4 @@
-{{- if .Values.dbpMoodle.updateHelper.create -}}
+{{- if .Values.dbpMoodle.update_migration.enabled -}}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:

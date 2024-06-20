@@ -1,4 +1,4 @@
-{{- if .Values.dbpMoodle.restore }}
+{{- if and .Values.dbpMoodle.update_migration.enabled .Values.dbpMoodle.restore }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -10,7 +10,7 @@ spec:
       volumes:
       - name: moodle-data
         persistentVolumeClaim:
-          claimName: {{ .Values.moodle_pvc_name }}
+          claimName: {{ include "dbpMoodle.moodlePvc.name" . }}
       - name: moodle-restore-script
         configMap:
           name: moodle-restore-script
@@ -32,7 +32,7 @@ spec:
       serviceAccount: moodle-restore-job
       containers:
       - name:  moodle-restore-job
-        image: schulcloud/infra-tools:{{ .Values.global.infratools_image_tag }}
+        image: schulcloud/infra-tools:{{ .Values.infratools.image_tag }}
         command:
           - /bin/sh
           - -c
