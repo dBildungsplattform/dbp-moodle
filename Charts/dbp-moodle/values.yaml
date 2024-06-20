@@ -89,7 +89,6 @@ moodle:
   existingSecret: "moodle"
   persistence:
     # existingClaim: "moodle-data"
-
     enabled: true
     storageClass: "nfs-client"
     annotations:
@@ -107,15 +106,15 @@ moodle:
     type: "mariadb"
     host: "moodle-mariadb"
     port: 3306
-    user: moodle
-    database: moodle
-    password: moodle
+    user: "moodle"
+    database: "moodle"
+    password: "moodle"
     existingSecret: "moodle"
   service:
     type: ClusterIP
   ingress:
     enabled: true
-    hostname: "moodle.dbpinfra-dev-moodle-01.dbildungsplattform.de"
+    hostname: "moodle2.dbpinfra-dev-moodle-01.dbildungsplattform.de"
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
@@ -182,7 +181,7 @@ postgresql:
     existingSecret: "moodle"
     secretKeys:
       adminPasswordKey: "PGSQL_POSTGRES_PASSWORD"
-      userPasswordKey: "mariadb-password"
+      userPasswordKey: "postgresql-password"
   metrics:
     enabled: true
     serviceMonitor:
@@ -201,7 +200,7 @@ postgresql:
 # Horizontal Pod Autoscaling Values
 moodle_hpa:
   deployment_name_ref: "moodle"
-  enabled: true
+  enabled: false
   # Moodle Autoscaling Values
   min_replicas: 1
   max_replicas: 4
@@ -218,7 +217,7 @@ redis:
   architecture: standalone
   auth:
     enabled: true
-    password: ""
+    password: "moodle"
     existingSecret: "moodle"
     existingSecretPasswordKey: "redis-password"
     usePasswordFileFromSecret: true
@@ -242,8 +241,8 @@ etherpad-postgresql:
         cpu: "1000m"
         memory: "1Gi"
 
-etherpad-lite:
-  enabled: false
+etherpadlite:
+  enabled: true
   image:
     repository: ghcr.io/dbildungsplattform/etherpad
     tag: 1.8.18.0

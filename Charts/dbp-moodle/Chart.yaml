@@ -34,13 +34,13 @@ dependencies:
     version: "15.5.7"
     repository: https://charts.bitnami.com/bitnami
     alias: etherpad-postgresql
-    condition: etherpad.enabled
+    condition: etherpadlite.enabled
 
   - name: etherpad
     version: 0.1.0
     repository: "file://charts/etherpad"
-    alias: etherpad-lite
-    condition: etherpad.enabled
+    alias: etherpadlite
+    condition: etherpadlite.enabled
 
 # - name: sql-exporter
 
