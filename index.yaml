@@ -1,0 +1,45 @@
+apiVersion: v1
+entries:
+  dbp-moodle:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-06-21T14:40:32.66034948Z"
+    dependencies:
+    - name: moodle
+      repository: https://charts.bitnami.com/bitnami
+      version: 22.2.7
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 19.5.3
+    - condition: mariadb.enabled
+      name: mariadb
+      repository: https://charts.bitnami.com/bitnami
+      version: 18.2.2
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 15.5.7
+    - alias: backup-cronjob
+      condition: backup.enabled
+      name: cronjob
+      repository: file://charts/backup-cronjob
+      version: 0.1.0
+    - alias: etherpad-postgresql
+      condition: etherpadlite.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 15.5.7
+    - alias: etherpadlite
+      condition: etherpadlite.enabled
+      name: etherpad
+      repository: file://charts/etherpad
+      version: 0.1.0
+    description: A Helm chart for dBildungsplattform Moodle including customizations
+    digest: 1fbdabadcada8c376a1bb206a66c242af1f466225b9ee8073fcd463bee88c8d0
+    name: dbp-moodle
+    type: application
+    urls:
+    - https://github.com/dBildungsplattform/dbp-moodle/releases/download/dbp-moodle-1.0.0/dbp-moodle-1.0.0.tgz
+    version: 1.0.0
+generated: "2024-06-21T14:40:32.660361683Z"
