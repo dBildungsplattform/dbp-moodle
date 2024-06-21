@@ -5,8 +5,8 @@ A [Helm Library Chart](https://helm.sh/docs/topics/library_charts/#helm) for gro
 ## TL;DR
 
 ```console
-$ helm repo add my-repo https://charts.bitnami.com/bitnami
-$ helm install moodle my-repo/dbp-moodle
+$ helm repo add moodle https://dbildungsplattform.github.io/dbp-moodle/
+$ helm install moodle moodle/dbp-moodle
 ```
 Notice: It is advised to use "moodle" as helm chart name due to naming of database configurations which are set in the default values. This can be circumvented by setting the values:
   - moodle.externalDatabase.host
