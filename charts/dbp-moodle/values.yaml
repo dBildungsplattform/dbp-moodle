@@ -60,7 +60,7 @@ external_pvc:
   name: "moodle-data"
   size: "8Gi"
   storage_class: "nfs-client"
-  accessModes: ["ReadWriteOnce"]
+  accessModes: ["ReadWriteMany"]
   annotations: 
     "helm.sh/resource-policy": "keep"
 

@@ -114,10 +114,10 @@ The following table lists the helpers available in the library which are scoped 
 | Name                     | Description  | Value               |
 | -----                    | ------------ | --------            |
 | `enabled`                |              | `false`             |
-| `name`                   |              | `"moodle-data"`     |
+| `name`                   | The Name of the external PVC to use. | `"moodle-data"`     |
 | `size`                   |              | `"8Gi"`             |
 | `storage_class`          |              | `"nfs-client"`      |
-| `accessModes`            |              | `["ReadWriteOnce"]` |
+| `accessModes`            | Because of Autoscaling and [WIP] Update Process it needs to be accessed by multiple Pods. | `["ReadWriteMany"]` |
 | `annotations."helm.sh/resource-policy"`|   | `"keep"` |
 
 ### moodle_hpa
