@@ -16,9 +16,7 @@ Notice: It is advised to use "moodle" as helm chart name due to naming of databa
 
 
 The dbp-moodle Helm Chart dependencies
- chart ull moodle application that buil
 ```yaml
-dependencies:
 dependencies:
   - name: moodle
     version: "22.2.7"
@@ -143,7 +141,7 @@ Horizontal Pod Autoscaling Values
 |---                                         |---|---|
 | `image.registry`                            ||`ghcr.io`|
 | `image.repository`                          ||`dbildungsplattform/moodle`|
-| `image.tag`                                 | The dbp Image which includes all required extensions. |`"4.1.10-debian-12-r5"`|
+| `image.tag`                                 | The dbp Image which is build for this Helm Chart. |`"4.1.10-debian-12-r5"`|
 | `image.pullPolicy`                          ||`Always`|
 | `image.debug`                               | Debug mode for more detailed Moodle installation and log output. |`false`|
 | `moodleSkipInstall`                         ||`false`|
