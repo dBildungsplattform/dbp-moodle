@@ -56,7 +56,7 @@ infratools:
   image_tag: 4.0.3
 
 external_pvc:
-  enabled: false
+  enabled: true
   name: "moodle-data"
   size: "8Gi"
   storage_class: "nfs-client"

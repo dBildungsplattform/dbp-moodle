@@ -17,6 +17,10 @@ false
 {{- end -}}
 {{- end -}}
 
+{{- define "moodle_hpa.deployment_name_ref" -}}
+{{- default "moodle" .Values.moodle_hpa.deployment_name_ref }}
+{{- end -}}
+
 {{- define "dbpMoodle.secrets.moodle_password" -}}
 {{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.moodle_password }}
 {{- end -}}

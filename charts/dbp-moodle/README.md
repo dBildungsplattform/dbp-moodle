@@ -113,7 +113,7 @@ The following table lists the helpers available in the library which are scoped 
 ### external_pvc
 | Name                     | Description  | Value               |
 | -----                    | ------------ | --------            |
-| `enabled`                |              | `false`             |
+| `enabled`                | Currently not operational. WIP     | `false`             |
 | `name`                   | The Name of the external PVC to use. | `"moodle-data"`     |
 | `size`                   |              | `"8Gi"`             |
 | `storage_class`          |              | `"nfs-client"`      |
@@ -293,8 +293,6 @@ Etherpad requires configuration to work.
 | `resources.limits.cpu`                    | | `"1000m"` |
 | `resources.limits.memory`                 | | `"1Gi"`  |
 
-## Special input schemas
-
 ## Secrets
 There is a default secret that will be created with the chart deployment, it covers all necessary secrets that cover all featurs:
 values.yaml
@@ -308,7 +306,6 @@ secrets:
   mariadb_root_password: "moodle"
   etherpad_postgresql_password: "moodle"
   etherpad_api_key: "moodle"
-  redis_password: "moodle"
 ```
 
 In case an own secret will be provided and should be used the value "useChartSecret" can be set to "false" and all existingSecret Values need to be set accordingly.
