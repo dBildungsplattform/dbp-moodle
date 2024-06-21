@@ -34,7 +34,7 @@ false
 {{- end -}}
 
 {{- define "dbpMoodle.secrets.redis_password" -}}
-{{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.redis_password }}
+{{- default (randAlphaNum 16) .Values.dbpMoodle.redis.password }}
 {{- end -}}
 
 {{- define "dbpMoodle.secrets.etherpad_postgresql_password" -}}

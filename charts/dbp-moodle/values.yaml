@@ -32,7 +32,6 @@ dbpMoodle:
     mariadb_root_password: "moodle"
     etherpad_postgresql_password: "moodle"
     etherpad_api_key: "moodle"
-    redis_password: "moodle"
 
   updateHelper:
     rules:
@@ -221,7 +220,7 @@ moodle_hpa:
 
 # redis helm chart values
 redis:
-  enabled: true
+  enabled: false
   architecture: "standalone"
   auth:
     enabled: true
