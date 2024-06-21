@@ -1,0 +1,10 @@
+{{- if .Values.backup.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-backup-script
+  namespace: {{ .Release.Namespace }}
+data:
+  backup-script: |-
+{{ tpl ( .Files.Get "scripts/backup.sh" ) . | indent 4 }}
+{{- end }}

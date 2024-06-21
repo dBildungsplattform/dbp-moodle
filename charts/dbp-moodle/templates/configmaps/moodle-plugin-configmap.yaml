@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: moodle-plugins
+  namespace: {{ .Release.Namespace }}
+data:
+  plugin_list: |-
+    mod_etherpadlite#mod/etherpadlite
+    mod_hvp#mod/hvp
+    mod_groupselect#mod/groupselect
+    mod_jitsi#mod/jitsi
+    mod_pdfannotator#mod/pdfannotator
+    mod_skype#mod/skype
+    mod_zoom#mod/zoom
+    mod_booking#mod/booking
+    mod_reengagement#mod/reengagement
+    mod_unilabel#mod/unilabel
+    format_remuiformat#course/format/remuiformat
+    format_tiles#course/format/tiles
+    format_topcoll#course/format/topcoll
+    auth_oidc#auth/oidc
+    auth_saml2#auth/saml2
+    block_dash#blocks/dash
+    tool_certificate#admin/tool/certificate
+    mod_coursecertificate#mod/coursecertificate

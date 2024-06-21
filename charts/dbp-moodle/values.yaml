@@ -1,0 +1,399 @@
+global:
+  name: infra
+  stage: infra
+  kubectl_version: "1.28.7"
+  infratools_image_tag: 4.0.3
+  storageClass: "nfs-client"
+
+backup:
+  enabled: false
+  gpg_key_names: dbpinfra
+  s3_bucket_name: default
+  cluster_name: default
+  endpoint: https://s3-eu-central-2.ionoscloud.com #s3 region Berlin endpoint
+
+dbpMoodle:
+  logging: false
+  debug: false # Moodle Debugging is not safe for production
+  restore: false # Only to be used to restore a snapshot with the dbp-restore script
+  update_migration: # The dbp update process to migrate moodle date when Moodle versions are increased
+    enabled: false
+
+  redis:
+    host : "moodle-redis-master"
+    port: 6379
+    password: "moodle"
+
+  secrets:
+    useChartSecret: true
+    moodle_password: "moodle"
+    postgres_password: "moodle"
+    mariadb_password: "moodle"
+    mariadb_root_password: "moodle"
+    etherpad_postgresql_password: "moodle"
+    etherpad_api_key: "moodle"
+
+  updateHelper:
+    rules:
+      - apiGroups: [""]
+        resources: ["pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments"]
+        verbs: ["get", "list", "create", "delete", "patch", "update"]
+      - apiGroups: ["apps"]
+        resources: ["deployments", "replicasets", "deployments/scale"]
+        verbs: ["get", "list", "create", "delete", "patch", "update"]
+      - apiGroups: ["networking.k8s.io"]
+        resources: ["ingresses"]
+        verbs: ["get", "list", "create", "delete", "patch", "update"]
+      - apiGroups: ["batch"]
+        resources: ["cronjobs", "jobs"]
+        verbs: ["get", "list", "create", "delete", "patch", "update"]
+      - apiGroups: ["autoscaling"]
+        resources: ["horizontalpodautoscalers"]
+        verbs: ["get", "list", "create", "patch", "update"]
+
+infratools:
+  repository: schulcloud
+  image_tag: 4.0.3
+
+external_pvc:
+  enabled: true
+  name: "moodle-data"
+  size: "8Gi"
+  storage_class: "nfs-client"
+  accessModes: ["ReadWriteMany"]
+  annotations: 
+    "helm.sh/resource-policy": "keep"
+
+moodle:
+  image:
+    registry: ghcr.io
+    repository: dbildungsplattform/moodle
+    tag: "4.1.10-debian-12-r5"
+    pullPolicy: Always
+    debug: false
+  moodleSkipInstall: false
+  moodleSiteName: "Moodle"
+  moodleLang: "de"
+  moodleUsername: admin
+  moodleEmail: devops@dbildungscloud.de
+  allowEmptyPassword: false
+  extraEnvVars:
+    - name: PHP_POST_MAX_SIZE
+      value: 200M
+    - name: PHP_UPLOAD_MAX_FILESIZE
+      value: 200M
+    - name: PHP_MAX_INPUT_VARS
+      value: "5000"
+    - name: MOODLE_PLUGINS
+      valueFrom:
+        configMapKeyRef:
+          name: moodle-plugins
+          key: plugin_list
+    - name: ENABLE_KALTURA
+      value: "false"
+  extraEnvVarsSecret: "moodle"
+  existingSecret: "moodle"
+  persistence:
+    # existingClaim: "moodle-data"
+    enabled: true
+    storageClass: "nfs-client"
+    annotations:
+      "helm.sh/resource-policy": "keep"
+  resources:
+    requests:
+      cpu: 300m
+      memory: 512Mi
+    limits:
+      cpu: 6
+      memory: 3Gi
+  mariadb:
+    enabled: false
+  externalDatabase:
+    type: "mariadb"
+    host: "moodle-mariadb"
+    port: 3306
+    user: "moodle"
+    database: "moodle"
+    password: "moodle"
+    existingSecret: "moodle"
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    hostname: "moodle.example.de"
+    tls: true
+    annotations:
+      cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
+      nginx.ingress.kubernetes.io/proxy-connect-timeout: "30s"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "20s"
+      nginx.ingress.kubernetes.io/proxy-body-size: "200M"
+  metrics:
+    enabled: true
+    service:
+      type: ClusterIP
+    resources: # We need those resources so the Horizontal Pod Autoscaler for moodle can read the moodle cpu consumption correctly
+      requests:
+        cpu: 10m
+        memory: 16Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+  extraVolumeMounts:
+    - name: moodle-config
+      readOnly: true
+      mountPath: /moodleconfig
+  extraVolumes:
+    - name: moodle-config
+      secret:
+        secretName: moodle-config
+        items:
+          - key: config.php
+            path: config.php
+          - key: php.ini
+            path: php.ini
+        defaultMode: 0644
+
+mariadb:
+  enabled: true
+  global:
+    storageClass: "nfs-client"
+  image:
+    tag: "11.3.2-debian-12-r5"
+  auth:
+    username: "moodle"
+    database: "moodle"
+    rootPassword: "moodle"
+    password: "moodle"
+    existingSecret: "moodle"
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+  primary:
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: 9
+        memory: 3Gi
+
+postgresql:
+  enabled: false
+  image:
+    tag: "14.8.0-debian-11-r0"
+  auth:
+    username: "moodle"
+    database: "moodle"
+    existingSecret: "moodle"
+    secretKeys:
+      adminPasswordKey: "PGSQL_POSTGRES_PASSWORD"
+      userPasswordKey: "postgresql-password"
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+  primary:
+    extendedConfiguration: |
+      max_connections = 800
+    resources:
+      requests:
+        cpu: "250m"
+        memory: "256Mi"
+      limits:
+        cpu: 9
+        memory: "3Gi"
+
+# Horizontal Pod Autoscaling Values
+moodle_hpa:
+  deployment_name_ref: "moodle"
+  enabled: false
+  # Moodle Autoscaling Values
+  min_replicas: 1
+  max_replicas: 4
+  average_cpu_utilization: 50
+  # The up and downscaling values to have more control over the speed moodle will be scaled
+  scaledown_value: 25 # The max amount in percent to scale in one step per cooldown period
+  scaledown_cooldown: 60
+  scaleup_value: 50
+  scaleup_cooldown: 15
+
+# redis helm chart values
+redis:
+  enabled: false
+  architecture: "standalone"
+  auth:
+    enabled: true
+    existingSecret: "moodle"
+    existingSecretPasswordKey: "redis-password"
+    usePasswordFileFromSecret: true
+
+etherpad-postgresql:
+  auth:
+    enablePostgresUser: false
+    username: etherpad
+    existingSecret: "moodle"
+    secretKeys:
+      userPasswordKey: "etherpad-postgresql-password"
+    database: "etherpad"
+  persistence:
+    existingClaim: "moodle-etherpad-postgresql"
+  primary:
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "128Mi"
+      limits:
+        cpu: "1000m"
+        memory: "1Gi"
+
+etherpadlite:
+  enabled: true
+  image:
+    repository: "ghcr.io/dbildungsplattform/etherpad"
+    tag: "1.8.18.0"
+  env:
+    - name: DB_TYPE
+      value: "postgres"
+    - name: DB_HOST
+      value: "moodle-etherpad-postgresql"
+    - name: DB_PORT
+      value: "5432"
+    - name: DB_NAME
+      value: "etherpad"
+    - name: DB_USER
+      value: "etherpad"
+    - name: DB_PASS
+      valueFrom:
+        secretKeyRef:
+          name: "moodle"
+          key: "etherpad-postgresql-password"
+    - name: REQUIRE_SESSION
+      value: "true"
+  
+  
+  volumes:
+    - name: "api-key"
+      secret:
+        secretName: "moodle"
+        items:
+          - key: "etherpad-api-key"
+            path: "APIKEY.txt"
+  volumeMounts:
+    - name: "api-key"
+      mountPath: "/opt/etherpad-lite/APIKEY.txt"
+      subPath: "APIKEY.txt"
+  ingress:
+    enabled: true
+    annotations:
+      cert-manager.io/cluster-issuer: "sc-cert-manager-clusterissuer-letsencrypt"
+    hosts:
+      - host: "etherpad.example.de"
+        paths:
+          - path: "/"
+            pathType: "Prefix"
+    tls:
+      - secretName: "etherpad.example.de-tls"
+        hosts:
+          - "etherpad.example.de"
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1Gi"
+
+
+backup-cronjob:
+  image:
+    tag: 4.0.3
+  clusterRole:
+    create: false
+    rules:
+      - apiGroups: [""]
+        resources: ["pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments"]
+        verbs: ["get", "list", "create", "delete", "patch", "update"]
+      - apiGroups: ["apps"]
+        resources: ["deployments", "replicasets"]
+        verbs: ["get", "list", "create", "delete", "patch", "update"]
+      - apiGroups: ["networking.k8s.io"]
+        resources: ["ingresses"]
+        verbs: ["get", "list", "create", "delete", "patch", "update"]
+      - apiGroups: ["batch"]
+        resources: ["cronjobs", "jobs"]
+        verbs: ["get", "patch", "update", "list", "delete"]
+  serviceAccount:
+    name: "moodle-backup"
+  env:
+    - name: POSTGRESQL_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: moodle
+          key: PGSQL_POSTGRES_PASSWORD
+    #This is required for the MariaDB backup to securely hand over the password in the script
+    - name: MARIADB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: moodle
+          key: mariadb-password
+    - name: AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          name: moodle-backup-s3
+          key: s3_access_key
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: moodle-backup-s3
+          key: s3_access_secret
+    - name: S3_BACKUP_REGION_URL
+      valueFrom:
+        secretKeyRef:
+          name: moodle-backup-s3
+          key: s3_endpoint_url
+  extraVolumeMounts:
+    - name: moodle-backup-script
+      mountPath: /scripts/
+    - name: moodle-pvc-data
+      mountPath: /mountData
+    - name: duply
+      mountPath: /etc/duply/default/
+  extraVolumes:
+    - name: moodle-pvc-data
+      persistentVolumeClaim:
+        claimName: "moodle-data"
+    - name: moodle-backup-script
+      configMap:
+        name: moodle-backup-script
+        defaultMode: 0711
+    - name: duply
+      projected:
+        sources:
+          - configMap:
+              name: moodle-duply
+              items:
+                - key: conf
+                  path: conf
+                - key: exclude
+                  path: exclude
+          - secret:
+              name: moodle-backup-gpg-keys
+        defaultMode: 0644
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  jobs:
+    - name: backup
+      schedule: "0 3 * * *"
+      failedJobsHistoryLimit: 1
+      successfulJobsHistoryLimit: 1
+      command:
+        - /bin/sh
+        - -c
+      args:
+        - /scripts/backup-script

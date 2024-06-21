@@ -1,0 +1,35 @@
+{{- if .Values.moodle_hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-autoscaler
+  namespace: {{ .Release.Namespace }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "moodle_hpa.deployment_name_ref" . }}
+  minReplicas: {{ .Values.moodle_hpa.min_replicas }}
+  maxReplicas: {{ .Values.moodle_hpa.max_replicas }}
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.moodle_hpa.average_cpu_utilization }}
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      selectPolicy: Max
+      policies:
+        - type: Percent
+          value: {{ .Values.moodle_hpa.scaleup_value }}
+          periodSeconds: {{ .Values.moodle_hpa.scaleup_cooldown }}
+    scaleDown:
+      selectPolicy: Max
+      policies:
+        - type: Percent
+          value: {{ .Values.moodle_hpa.scaledown_value }}
+          periodSeconds: {{ .Values.moodle_hpa.scaledown_cooldown }}
+{{- end }}

@@ -1,0 +1,10 @@
+{{- if and .Values.dbpMoodle.update_migration.enabled .Values.dbpMoodle.restore }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-restore-script
+  namespace: {{ .Release.Namespace }}
+data:
+  restore-script: |-
+{{ tpl ( .Files.Get "scripts/moodleRestoreScript.sh" ) . | nindent 4 }}
+{{- end }}

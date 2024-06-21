@@ -1,0 +1,82 @@
+{{- if .Values.dbpMoodle.restore }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-restore-job"
+  namespace: {{ .Release.Namespace }}
+spec:
+  template:
+    spec:
+      volumes:
+      - name: moodle-data
+        persistentVolumeClaim:
+          claimName: {{ include "dbpMoodle.moodlePvc.name" . }}
+      - name: moodle-restore-script
+        configMap:
+          name: moodle-restore-script
+          defaultMode: 0711
+      - name: duply
+        projected:
+          sources:
+            - configMap:
+                name: moodle-duply
+                items:
+                  - key: conf
+                    path: conf
+                  - key: exclude
+                    path: exclude
+            - secret:
+                name: moodle-backup-gpg-keys
+          defaultMode: 0644
+      serviceAccountName: moodle-restore-job
+      serviceAccount: moodle-restore-job
+      containers:
+      - name:  moodle-restore-job
+        image: schulcloud/infra-tools:{{ .Values.infratools.image_tag }}
+        command:
+          - /bin/sh
+          - -c
+        args:
+          - /scripts/restore-script
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 16Gi
+          requests:
+            cpu: 1000m
+            memory: 8Gi
+        volumeMounts:
+        - name: moodle-data
+          mountPath: /bitnami/moodle
+          subPath: moodle
+        - name: moodle-data
+          mountPath: /bitnami/moodledata
+          subPath: moodledata
+        - name: moodle-restore-script
+          mountPath: /scripts/
+        - name: duply
+          mountPath: /etc/duply/default/
+        env:
+        - name: POSTGRESQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: moodle
+              key: PGSQL_POSTGRES_PASSWORD
+        - name: MARIADB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: moodle
+              key: mariadb-password
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: moodle-backup-s3
+              key: s3_access_key
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: moodle-backup-s3
+              key: s3_access_secret
+      restartPolicy: Never
+  backoffLimit: 4
+{{- end }}
