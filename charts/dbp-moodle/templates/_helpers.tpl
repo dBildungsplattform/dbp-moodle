@@ -1,5 +1,5 @@
 {{- define "dbpMoodle.stageBackupEnabled" -}}
-{{- if or (eq .Values.global.stage "prod") (eq .Values.global.name "infra") -}}
+{{- if and (or (eq .Values.global.stage "prod") (eq .Values.global.name "infra")) ( .Values.backup.enabled ) -}}
 true
 {{- else -}}
 false
@@ -31,6 +31,10 @@ false
 
 {{- define "dbpMoodle.secrets.mariadb_root_password" -}}
 {{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.mariadb_root_password }}
+{{- end -}}
+
+{{- define "dbpMoodle.secrets.redis_password" -}}
+{{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.redis_password }}
 {{- end -}}
 
 {{- define "dbpMoodle.secrets.etherpad_postgresql_password" -}}

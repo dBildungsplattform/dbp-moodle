@@ -25,13 +25,14 @@ dbpMoodle:
     password: "moodle"
 
   secrets:
-    useExistingSecret: true
+    useChartSecret: true
     moodle_password: "moodle"
     postgres_password: "moodle"
     mariadb_password: "moodle"
     mariadb_root_password: "moodle"
     etherpad_postgresql_password: "moodle"
     etherpad_api_key: "moodle"
+    redis_password: "moodle"
 
   updateHelper:
     rules:
@@ -120,7 +121,7 @@ moodle:
     type: ClusterIP
   ingress:
     enabled: true
-    hostname: "moodle.dbpinfra-dev-moodle-01.dbildungsplattform.de"
+    hostname: "moodle.example.de"
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
@@ -164,6 +165,7 @@ mariadb:
     database: "moodle"
     rootPassword: "moodle"
     password: "moodle"
+    existingSecret: "moodle"
   metrics:
     enabled: true
     serviceMonitor:
@@ -223,7 +225,6 @@ redis:
   architecture: "standalone"
   auth:
     enabled: true
-    password: "moodle"
     existingSecret: "moodle"
     existingSecretPasswordKey: "redis-password"
     usePasswordFileFromSecret: true
@@ -253,25 +254,23 @@ etherpadlite:
     repository: "ghcr.io/dbildungsplattform/etherpad"
     tag: "1.8.18.0"
   env:
-    - name: "DB_TYPE"
+    - name: DB_TYPE
       value: "postgres"
-    - name: "DB_HOST"
+    - name: DB_HOST
       value: "moodle-etherpad-postgresql"
-    - name: "DB_PORT"
-      value: 5432
-    - name: "DB_NAME"
+    - name: DB_PORT
+      value: "5432"
+    - name: DB_NAME
       value: "etherpad"
-    - name: "DB_USER"
+    - name: DB_USER
       value: "etherpad"
-    - name: "DB_PASS"
+    - name: DB_PASS
       valueFrom:
         secretKeyRef:
           name: "moodle"
           key: "etherpad-postgresql-password"
-    - name: "REQUIRE_SESSION"
+    - name: REQUIRE_SESSION
       value: "true"
-  
-
   
   
   volumes:
@@ -311,7 +310,7 @@ backup-cronjob:
   image:
     tag: 4.0.3
   clusterRole:
-    create: true
+    create: false
     rules:
       - apiGroups: [""]
         resources: ["pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments"]

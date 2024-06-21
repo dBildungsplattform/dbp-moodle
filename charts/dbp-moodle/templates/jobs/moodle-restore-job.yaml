@@ -1,4 +1,4 @@
-{{- if and .Values.dbpMoodle.update_migration.enabled .Values.dbpMoodle.restore }}
+{{- if .Values.dbpMoodle.restore }}
 apiVersion: batch/v1
 kind: Job
 metadata:

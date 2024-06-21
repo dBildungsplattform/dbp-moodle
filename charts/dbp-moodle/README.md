@@ -83,7 +83,7 @@ The following table lists the helpers available in the library which are scoped 
 | `gpg_key_names`       |              | `"dbpinfra"`     |
 | `s3_bucket_name`      |              | `"default"`      |
 | `cluster_name`        |              | `"default"`      |
-| `endpoint.url`        |              | `"moodle.dbpinfra-dev-moodle-01.dbildungsplattform.de"` |
+| `endpoint.url`        |              | `"moodle.example.de"` |
 
 ### dbpMoodle
 | Name                                   | Description  | Value        |
@@ -95,7 +95,7 @@ The following table lists the helpers available in the library which are scoped 
 | `redis.host`                           | | `"moodle-redis-master`"|
 | `redis.port`                           | | `6379` |
 | `redis.password`                       | | `"moodle"` |
-| `secrets.useExistingSecret`            | | `true` |
+| `secrets.useChartSecret`               | If set to true the secret will be created with given values. | `true` |
 | `updateHelper.rules`                   | [WIP] Set permissions for the updateHelper that is created when `update_migration.enabled=true`| `[...]` |
 | `secrets.moodle_password`              | | `randAlphaNum 16` |
 | `secrets.postgres_password`            | | `randAlphaNum 16` |
@@ -207,6 +207,7 @@ Horizontal Pod Autoscaling Values
 | `auth.database`                           || `"moodle"` |
 | `auth.rootPassword`                       || `"moodle"` |
 | `auth.password`                           || `"moodle"` |
+| `auth.existingSecret`                     || `"moodle"` |
 | `metrics.enabled`                         || `true` |
 | `metrics.serviceMonitor.enabled`          || `true` |
 | `primary.resources.requests.cpu`          || `"250m" ` |
@@ -235,7 +236,7 @@ Horizontal Pod Autoscaling Values
 ### redis
 | Name                                    | Description  | Value        |
 | -----                                   | ------------ | --------     |
-| `enabled`                                 || `true` |
+| `enabled`                                 || `false` |
 | `architecture`                            || `"standalone"` |
 | `auth.enabled`                            || `true` |
 | `auth.password`                           || `"moodle"` |
@@ -258,6 +259,7 @@ Horizontal Pod Autoscaling Values
 | `primary.resources.limits.memory`       |              | `"1Gi"` |
 
 ### etherpadlite
+Etherpad requires configuration to work.
 | Name                                      | Description  | Value        |
 | -----                                     | ------------ | --------     |
 | `enabled`                                 | | `true `|
@@ -299,13 +301,14 @@ values.yaml
 
 ```yaml
 secrets:
-  useExistingSecret: false
+  useChartSecret: true
   moodle_password: "moodle"
   postgres_password: "moodle"
   mariadb_password: "moodle"
   mariadb_root_password: "moodle"
   etherpad_postgresql_password: "moodle"
   etherpad_api_key: "moodle"
+  redis_password: "moodle"
 ```
 
-In case an own secret will be provided and should be used the value "useExistingSecret" can be set to "true" and all existingSecret Values need to be set accordingly.
+In case an own secret will be provided and should be used the value "useChartSecret" can be set to "false" and all existingSecret Values need to be set accordingly.
