@@ -71,32 +71,28 @@ update_plugins() {
         install_kaltura
     fi
 
-    # update moodle plugin list
-    (cd /bitnami/moodle; php /moosh/moosh.php plugin-list > /dev/null)
-
-    plugin_version="$image_major.$image_minor"
-    nameRegEx="([0-9a-zA-Z_]*)+\#"
-    pathRegEx="\#+([0-9a-zA-Z_/]*)"
+    MOODLE_PATH="/bitnami/moodle"
+    PLUGIN_ZIP_PATH="/tmp/plugins"
 
     for plugin in $MOODLE_PLUGINS
     do
-    # Get plugin name from the list <pluginName>#<pluginPath>
-        plugin_path="NoValue"
-        plugin_name="NoValue"
-        if [[ $plugin =~ $pathRegEx ]]; then
-            plugin_path=${BASH_REMATCH[1]}
-        fi
-        if [[ $plugin =~ $nameRegEx ]]; then
-            plugin_name=${BASH_REMATCH[1]}
-        fi
-        printf 'Looking for "%s" (%s)... ' "$plugin_name" "$plugin_version"
-        if [[ ! -d "$old_version_data_path"/$plugin_path ]]; then
-            printf "Not found. Skipping\n"
-            continue
-        fi
-        printf "Found! Starting install\n"
-        (cd /bitnami/moodle; php /moosh/moosh.php plugin-install "$plugin_name")
+        type=$(echo $plugin | cut -d'_' -f1)
+        echo "Installing plugin $plugin of type $type"
+
+        #Correct paths according to types that are named different than their paths
+        if [ "$type" = "format" ]
+        then
+            type="course/format"
+        elif [ "$type" = "block" ]
+            type="blocks"
+        end
+        unzip $PLUGIN_ZIP_PATH/$plugin.zip -d $MOODLE_PATH/$type/$plugin
     done
+
+    rm -r "$PLUGIN_ZIP_PATH"
+
+    # Run Moodle upgrade
+    php "$MOODLE_PATH"/admin/cli/upgrade.php --non-interactive
 }
 
 ### Start of main ###

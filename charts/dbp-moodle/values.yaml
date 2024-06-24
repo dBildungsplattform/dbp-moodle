@@ -19,6 +19,12 @@ dbpMoodle:
   update_migration: # The dbp update process to migrate moodle date when Moodle versions are increased
     enabled: false
 
+  plugins:
+    enabled: false
+    plugin_list: 
+      - mod_hvp
+      - mod_etherpad
+
   redis:
     host : "moodle-redis-master"
     port: 6379
