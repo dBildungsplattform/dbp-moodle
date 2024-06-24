@@ -3,7 +3,7 @@ name: dbp-moodle
 description: A Helm chart for dBildungsplattform Moodle including customizations
 type: application
 version: 1.0.0
-appVersion: "1.16.0"
+appVersion: "4.1.10"
 dependencies:
   - name: moodle
     version: "22.2.7"
