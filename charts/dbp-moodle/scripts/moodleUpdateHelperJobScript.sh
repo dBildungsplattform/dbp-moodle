@@ -64,6 +64,10 @@ scaleUpOnInstallationFailure(){
     exit 1
 }
 
+handleFreshInstall(){
+    #TODO
+}
+
 #Suspend the cronjob to avoid errors due to missing moodle
 echo "=== Suspending moodle cronjob ==="
 kubectl patch cronjobs moodle-{{ .Release.Namespace }}-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : true }}'
@@ -75,6 +79,12 @@ do
     then
     echo "=== CliUpdate file found, starting Update process ==="
     break
+    elif [ -a /volumes/moodledata/FreshInstall ]
+    then
+    echo "=== FreshInstall file found, starting first Plugin installation ==="
+    #TODO
+    handleFreshInstall
+    exit 0
     elif [ $i -gt 998 ]
     then
     echo "=== Waited for set duration but no Update is required ==="

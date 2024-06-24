@@ -1,4 +1,4 @@
-{{- if .Values.dbpMoodle.update_migration.enabled }}
+{{- if .Values.dbpMoodle.update_process.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -20,7 +20,7 @@ spec:
       serviceAccount: {{ .Release.Name }}-update-helper-job
       containers:
       - name: {{ .Release.Name }}-update-helper-job
-        image: schulcloud/{{ .Values.global.infratools_image_tag }}
+        image: schulcloud/infra-tools:{{ .Values.global.infratools_image_tag }}
         command:
           - /bin/sh
           - -c

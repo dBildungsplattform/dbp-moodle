@@ -16,11 +16,20 @@ dbpMoodle:
   logging: false
   debug: false # Moodle Debugging is not safe for production
   restore: false # Only to be used to restore a snapshot with the dbp-restore script
-  update_migration: # The dbp update process to migrate moodle date when Moodle versions are increased
-    enabled: false
+
+  # The dbp update process to migrate moodle date when Moodle versions are increased
+  update_process:
+    enabled: true
+    external_pvc:
+      name: "moodle-data"
+      size: "8Gi"
+      storage_class: "nfs-client"
+      accessModes: ["ReadWriteOnce"]
+      annotations: 
+        "helm.sh/resource-policy": "keep"
 
   plugins:
-    enabled: false
+    enabled: true
     plugin_list: 
       - mod_hvp
       - mod_etherpad
@@ -61,20 +70,11 @@ infratools:
   repository: schulcloud
   image_tag: 4.0.3
 
-external_pvc:
-  enabled: true
-  name: "moodle-data"
-  size: "8Gi"
-  storage_class: "nfs-client"
-  accessModes: ["ReadWriteMany"]
-  annotations: 
-    "helm.sh/resource-policy": "keep"
-
 moodle:
   image:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
-    tag: "4.1.10-debian-12-r5"
+    tag: "DBP-807-latest"  #"4.1.10-debian-12-r5"
     pullPolicy: Always
     debug: false
   moodleSkipInstall: false
@@ -126,7 +126,7 @@ moodle:
     type: ClusterIP
   ingress:
     enabled: true
-    hostname: "moodle.example.de"
+    hostname: "moodle.dbpinfra-dev-moodle-01.dbildungsplattform.de"
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
@@ -254,7 +254,7 @@ etherpad-postgresql:
         memory: "1Gi"
 
 etherpadlite:
-  enabled: true
+  enabled: false
   image:
     repository: "ghcr.io/dbildungsplattform/etherpad"
     tag: "1.8.18.0"

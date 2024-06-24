@@ -1,4 +1,4 @@
-{{- if .Values.dbpMoodle.update_migration.enabled }}
+{{- if .Values.dbpMoodle.update_process.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
