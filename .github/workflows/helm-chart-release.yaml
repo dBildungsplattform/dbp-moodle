@@ -1,8 +1,8 @@
 name: Release Charts
-on:
+on: 
   push:
     tags:
-      - '[0-9]+.[0-9]+.[0-9]+*'
+      - 'dbp-moodle-[0-9]+.[0-9]+.[0-9]+-WIP'
 
 jobs:
   release:
