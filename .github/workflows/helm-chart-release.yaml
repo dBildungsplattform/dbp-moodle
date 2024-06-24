@@ -1,5 +1,5 @@
 name: Release Charts
-on: 
+on:
   push:
     tags:
       - 'dbp-moodle-[0-9]+.[0-9]+.[0-9]+-WIP'
