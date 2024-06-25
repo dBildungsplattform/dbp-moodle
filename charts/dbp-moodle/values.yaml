@@ -32,7 +32,7 @@ dbpMoodle:
     enabled: true
     plugin_list: 
       - mod_hvp
-      - mod_etherpad
+      - mod_booking
 
   redis:
     host : "moodle-redis-master"

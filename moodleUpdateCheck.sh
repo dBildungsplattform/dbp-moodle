@@ -72,7 +72,7 @@ update_plugins() {
     fi
 
     MOODLE_PATH="/bitnami/moodle"
-    PLUGIN_ZIP_PATH="/tmp/plugins"
+    PLUGIN_ZIP_PATH="/plugins"
 
     for plugin in $MOODLE_PLUGINS
     do
@@ -86,6 +86,10 @@ update_plugins() {
         elif [ "$type" = "block" ]
         then
             type="blocks"
+        end
+        elif [ "$type" = "tool" ]
+        then
+            type="admin/tool"
         end
         unzip $PLUGIN_ZIP_PATH/$plugin.zip -d $MOODLE_PATH/$type/$plugin
     done

@@ -5,7 +5,8 @@ USER root
 
 COPY entrypoint.sh /entrypoint.sh
 COPY moodleUpdateCheck.sh /moodleUpdateCheck.sh
-RUN chmod +x /entrypoint.sh /moodleUpdateCheck.sh && \
+COPY downloadPlugins.sh.sh /tmp/downloadPlugins.sh
+RUN chmod +x /entrypoint.sh /moodleUpdateCheck.sh /tmp/downloadPlugins.sh && \
 apt-get update && apt-get upgrade -y && \
 apt-get install -y curl gpg unzip autoconf php-dev php-redis && \
 rm -rf /var/lib/apt/lists/*
@@ -20,5 +21,7 @@ mkdir /.moosh && \
 chmod 774 /.moosh &&\
 cd /moosh/ && \
 composer install
+
+RUN /tmp/downloadPlugins.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
