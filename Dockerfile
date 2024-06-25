@@ -14,7 +14,7 @@ COPY phpRedisInstall.sh /tmp/phpRedisInstall.sh
 RUN chmod +x /tmp/phpRedisInstall.sh
 RUN /tmp/phpRedisInstall.sh
 
-RUN curl -L https://github.com/tmuras/moosh/archive/refs/tags/1.14.tar.gz -o moosh.tar.gz && \
+RUN curl -L https://github.com/tmuras/moosh/archive/refs/tags/1.21.tar.gz -o moosh.tar.gz && \
 mkdir moosh/ && tar -xzvf moosh.tar.gz -C moosh/ --strip-components=1 && \
 mkdir /.moosh && \
 chmod 774 /.moosh &&\

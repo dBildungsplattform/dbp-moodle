@@ -65,7 +65,10 @@ scaleUpOnInstallationFailure(){
 }
 
 handleFreshInstall(){
-    #TODO
+    touch /bitnami/moodledata/UpdatePlugins
+    #readyness check of the Moodle installation
+    sleep 400
+    kubectl rollout restart deployment moodle -n {{ .Release.Namespace }}
 }
 
 #Suspend the cronjob to avoid errors due to missing moodle
@@ -82,7 +85,6 @@ do
     elif [ -a /volumes/moodledata/FreshInstall ]
     then
     echo "=== FreshInstall file found, starting first Plugin installation ==="
-    #TODO
     handleFreshInstall
     exit 0
     elif [ $i -gt 998 ]
