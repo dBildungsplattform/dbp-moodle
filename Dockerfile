@@ -1,5 +1,13 @@
 # First stage: Prepare Plugins
 FROM php:7.4-cli AS prepare
+USER root
+
+COPY downloadPlugins.sh /tmp/downloadPlugins.sh
+
+RUN mkdir /temp && \
+chmod +x /tmp/downloadPlugins.sh && \
+apt-get update && apt-get upgrade -y && \
+apt-get install unzip php-dev
 
 RUN curl -L https://github.com/tmuras/moosh/archive/refs/tags/1.21.tar.gz -o moosh.tar.gz && \
 mkdir moosh/ && tar -xzvf moosh.tar.gz -C moosh/ --strip-components=1 && \
@@ -8,12 +16,7 @@ chmod 774 /.moosh &&\
 cd /moosh/ && \
 composer install
 
-COPY downloadPlugins.sh /tmp/downloadPlugins.sh
-
-RUN mkdir /temp && \
-chmod +x /tmp/downloadPlugins.sh && \
-apt-get update && apt-get upgrade -y && \
-/tmp/downloadPlugins.sh
+RUN /tmp/downloadPlugins.sh
 
 
 # This Dockerfile starts the entrypoint script to evaluate if a new moodle version exists and an update should be started.
