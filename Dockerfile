@@ -7,7 +7,8 @@ COPY downloadPlugins.sh /tmp/downloadPlugins.sh
 RUN mkdir /temp && \
 chmod +x /tmp/downloadPlugins.sh && \
 apt-get update && apt-get upgrade -y && \
-apt-get install -y curl gpg unzip autoconf
+apt-get install -y curl gpg unzip autoconf && \
+rm -rf /var/lib/apt/lists/*
 
 RUN curl -L https://github.com/tmuras/moosh/archive/refs/tags/1.21.tar.gz -o moosh.tar.gz && \
 mkdir moosh/ && tar -xzvf moosh.tar.gz -C moosh/ --strip-components=1 && \
