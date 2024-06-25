@@ -1,5 +1,5 @@
 # First stage: Prepare Plugins
-FROM php:7.4-cli AS prepare
+FROM php:8.2-cli AS prepare
 USER root
 
 COPY downloadPlugins.sh /tmp/downloadPlugins.sh
@@ -7,7 +7,7 @@ COPY downloadPlugins.sh /tmp/downloadPlugins.sh
 RUN mkdir /temp && \
 chmod +x /tmp/downloadPlugins.sh && \
 apt-get update && apt-get upgrade -y && \
-apt-get install unzip php-dev
+apt-get install curl gpg unzip autoconf
 
 RUN curl -L https://github.com/tmuras/moosh/archive/refs/tags/1.21.tar.gz -o moosh.tar.gz && \
 mkdir moosh/ && tar -xzvf moosh.tar.gz -C moosh/ --strip-components=1 && \
