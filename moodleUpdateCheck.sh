@@ -84,6 +84,7 @@ update_plugins() {
         then
             type="course/format"
         elif [ "$type" = "block" ]
+        then
             type="blocks"
         end
         unzip $PLUGIN_ZIP_PATH/$plugin.zip -d $MOODLE_PATH/$type/$plugin
