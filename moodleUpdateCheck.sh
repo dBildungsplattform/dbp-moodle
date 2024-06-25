@@ -86,11 +86,10 @@ update_plugins() {
         elif [ "$type" = "block" ]
         then
             type="blocks"
-        end
         elif [ "$type" = "tool" ]
         then
             type="admin/tool"
-        end
+        fi
         unzip $PLUGIN_ZIP_PATH/$plugin.zip -d $MOODLE_PATH/$type/$plugin
     done
 
