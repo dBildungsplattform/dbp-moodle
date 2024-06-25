@@ -22,6 +22,7 @@ chmod 774 /.moosh &&\
 cd /moosh/ && \
 composer install
 
-RUN /tmp/downloadPlugins.sh
+RUN mkdir /plugins && \
+/tmp/downloadPlugins.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
