@@ -65,7 +65,7 @@ scaleUpOnInstallationFailure(){
 }
 
 handleFreshInstall(){
-    touch /bitnami/moodledata/UpdatePlugins
+    touch /volumes/moodledata/UpdatePlugins
     #readyness check of the Moodle installation
     sleep 400
     kubectl rollout restart deployment moodle -n {{ .Release.Namespace }}

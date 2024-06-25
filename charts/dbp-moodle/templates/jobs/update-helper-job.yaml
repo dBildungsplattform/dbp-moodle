@@ -11,7 +11,7 @@ spec:
       volumes:
       - name: moodle-data
         persistentVolumeClaim:
-          claimName: {{ .Release.Name }}-data
+          claimName: moodle-moodle
       - name: {{ .Release.Name }}-update-helper-job-script
         configMap:
           name: {{ .Release.Name }}-update-helper-job-script
