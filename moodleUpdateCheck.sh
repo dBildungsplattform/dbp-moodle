@@ -76,6 +76,7 @@ update_plugins() {
 
     for plugin in $MOODLE_PLUGINS
     do
+        pluginname=$(echo $plugin | cut -d'_' -f2)
         type=$(echo $plugin | cut -d'_' -f1)
         echo "Installing plugin $plugin of type $type"
 
@@ -90,10 +91,10 @@ update_plugins() {
         then
             type="admin/tool"
         fi
-        unzip $PLUGIN_ZIP_PATH/$plugin.zip -d $MOODLE_PATH/$type/$plugin
+        unzip $PLUGIN_ZIP_PATH/$plugin.zip -d $MOODLE_PATH/$type/$pluginname
     done
 
-    rm -r "$PLUGIN_ZIP_PATH"
+    #rm -r "$PLUGIN_ZIP_PATH"
 
     # Run Moodle upgrade
     php "$MOODLE_PATH"/admin/cli/upgrade.php --non-interactive
