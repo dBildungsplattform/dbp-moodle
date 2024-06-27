@@ -67,10 +67,10 @@ scaleUpOnInstallationFailure(){
 handleFreshInstall(){
     if [ -z "{{ .Values.dbpMoodle.plugins.plugin_list }}" ]; then
         echo "=== Helm value pluginList is empty, stopping update helper job ==="
-        rm FreshInstall
+        rm /volumes/moodledata/FreshInstall
     else
         echo "=== Helm value pluginList is not empty, waiting for moodle to install ==="
-        rm FreshInstall
+        rm /volumes/moodledata/FreshInstall
         touch /volumes/moodledata/UpdatePlugins
         # readyness check of the Moodle installation
         sleep 400
