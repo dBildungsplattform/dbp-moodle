@@ -30,9 +30,8 @@ dbpMoodle:
 
   plugins:
     enabled: true
-    plugin_list: 
+    plugin_list:
       - mod_hvp
-      - mod_booking
 
   redis:
     host : "moodle-redis-master"

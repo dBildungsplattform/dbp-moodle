@@ -94,7 +94,7 @@ update_plugins() {
         unzip $PLUGIN_ZIP_PATH/$plugin.zip -d $MOODLE_PATH/$type/$pluginname
 
         # Run Moodle DB upgrade
-        php $MOODLE_PATH/admin/cli/upgrade.php --non-interactive
+        php $MOODLE_PATH/admin/cli/upgrade.php --non-interactive --verbose-settings
     done
 
     #rm -r "$PLUGIN_ZIP_PATH"
