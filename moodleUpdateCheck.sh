@@ -92,12 +92,12 @@ update_plugins() {
             type="admin/tool"
         fi
         unzip $PLUGIN_ZIP_PATH/$plugin.zip -d $MOODLE_PATH/$type/$pluginname
+
+        # Run Moodle DB upgrade
+        php "$MOODLE_PATH"/admin/cli/upgrade.php --non-interactive
     done
 
     #rm -r "$PLUGIN_ZIP_PATH"
-
-    # Run Moodle upgrade
-    php "$MOODLE_PATH"/admin/cli/upgrade.php --non-interactive
 }
 
 ### Start of main ###

@@ -65,10 +65,19 @@ scaleUpOnInstallationFailure(){
 }
 
 handleFreshInstall(){
-    touch /volumes/moodledata/UpdatePlugins
-    #readyness check of the Moodle installation
-    sleep 400
-    kubectl rollout restart deployment moodle -n {{ .Release.Namespace }}
+    if [ -z "{{ .Values.dbpMoodle.plugins.plugin_list }}" ]; then
+        echo "=== Helm value pluginList is empty, stopping update helper job ==="
+        rm FreshInstall
+    else
+        echo "=== Helm value pluginList is not empty, waiting for moodle to install ==="
+        rm FreshInstall
+        touch /volumes/moodledata/UpdatePlugins
+        # readyness check of the Moodle installation
+        sleep 400
+        kubectl scale deployment/moodle -n {{ .Release.Namespace }} --replicas=0
+        sleep 20
+        kubectl scale deployment/moodle -n {{ .Release.Namespace }} --replicas=1
+    fi
 }
 
 #Suspend the cronjob to avoid errors due to missing moodle
