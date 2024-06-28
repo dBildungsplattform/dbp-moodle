@@ -64,6 +64,32 @@ install_kaltura(){
     printf "===${GRN} Kaltura plugin successfully installed ${NC}===\n"
 }
 
+# Not tested yet!
+install_plugin_dependencies(){
+
+    for dependency in $1
+    do
+        MOODLE_PATH="/bitnami/moodle"
+
+        if [ "$type" = "format" ]
+        then
+            type="course/format"
+        elif [ "$type" = "block" ]
+        then
+            type="blocks"
+        elif [ "$type" = "tool" ]
+        then
+            type="admin/tool"
+        fi
+
+        mv /tmp/plugins/$dependency $MOODLE_PATH/$type/$dependency
+
+        # Run Moodle DB upgrade
+        php $MOODLE_PATH/admin/cli/upgrade.php --non-interactive
+
+    done
+}
+
 update_plugins() {
     rm -f "$update_plugins_path"
     if [[ $ENABLE_KALTURA == "True" ]]; then
@@ -87,7 +113,24 @@ update_plugins() {
         type=$(echo $plugin | cut -d'_' -f1)
         echo "Installing plugin $plugin of type $type"
 
-        #Correct paths according to types that are named different than their paths
+        # TODO check dependencies in the version.php of the new plugin and install it prior to the plugin.
+        # Can we install the plugin + all it's dependencie sin one step or need to do each one by one?
+        unzip $PLUGIN_ZIP_PATH/$plugin.zip -d /tmp/plugins/
+        file="/tmp/plugins/$pluginname/version.php"
+        
+        # Creates list of all found dependencies in format:  "dependency_name: version \n"
+        dependencies_with_versions=$(awk '/\$plugin->dependencies = \[/{flag=1; next} /\];/{flag=0} flag {print}' "$file" | sed "s/['\",]//g" | sed 's/^[ \t]*//;s/[ \t]*$//')
+        echo "Dependencies found:"
+        echo "$dependencies_with_versions" | awk -F' =>' '{print $1 ": " $2}'
+
+        # Cuts of the version and only uses the plugin name from here
+        dependency_names=$(echo "$dependencies_with_versions" | awk -F' =>' '{print $1}' | tr '\n' ' ')
+
+        # TODO handle here the installation of the found plugin dependencies and continue with the main plugin afterwards
+        # Test if the list gets handled correctly here
+        install_plugin_dependencies $dependency_names
+
+        # Correct paths according to types that are named different than their paths
         if [ "$type" = "format" ]
         then
             type="course/format"
@@ -98,11 +141,11 @@ update_plugins() {
         then
             type="admin/tool"
         fi
-        unzip $PLUGIN_ZIP_PATH/$plugin.zip -d /tmp/plugins/
+        
         mv /tmp/plugins/$pluginname $MOODLE_PATH/$type/$pluginname
 
         # Run Moodle DB upgrade
-        php $MOODLE_PATH/admin/cli/upgrade.php --non-interactive --verbose-settings
+        php $MOODLE_PATH/admin/cli/upgrade.php --non-interactive
     done
 
     #rm -r "$PLUGIN_ZIP_PATH"
