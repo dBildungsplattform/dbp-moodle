@@ -83,7 +83,7 @@ update_plugins() {
 
     for plugin in $MOODLE_PLUGINS
     do
-        pluginname=$(echo $plugin | cut -d'_' -f2)
+        pluginname=$(echo $plugin | cut -d'_' -f2-)
         type=$(echo $plugin | cut -d'_' -f1)
         echo "Installing plugin $plugin of type $type"
 

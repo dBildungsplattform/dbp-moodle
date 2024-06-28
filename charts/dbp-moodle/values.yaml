@@ -32,6 +32,8 @@ dbpMoodle:
     enabled: true
     plugin_list:
       - mod_hvp
+      - local_wunderbyte_table
+      - mod_booking
 
   redis:
     host : "moodle-redis-master"
