@@ -74,11 +74,11 @@ update_plugins() {
     MOODLE_PATH="/bitnami/moodle"
     PLUGIN_ZIP_PATH="/plugins"
 
-    if [ ! -d  "/plugins/tmp/" ]; then
-        mkdir /plugins/tmp/
+    if [ ! -d  "/tmp/plugins/" ]; then
+        mkdir /tmp/plugins/
     else
-        rm -rf /plugins/tmp/
-        mkdir /plugins/tmp/
+        rm -rf /tmp/plugins/
+        mkdir /tmp/plugins/
     fi
 
     for plugin in $MOODLE_PLUGINS
@@ -98,8 +98,8 @@ update_plugins() {
         then
             type="admin/tool"
         fi
-        unzip $PLUGIN_ZIP_PATH/$plugin.zip -d /plugins/tmp/
-        mv /plugins/tmp/$pluginname $MOODLE_PATH/$type/$pluginname
+        unzip $PLUGIN_ZIP_PATH/$plugin.zip -d /tmp/plugins/
+        mv /tmp/plugins/$pluginname $MOODLE_PATH/$type/$pluginname
 
         # Run Moodle DB upgrade
         php $MOODLE_PATH/admin/cli/upgrade.php --non-interactive --verbose-settings
