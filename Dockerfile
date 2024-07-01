@@ -28,4 +28,5 @@ composer install
 RUN mkdir /plugins && \
 /tmp/downloadPlugins.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
+# commented to test manually
+# ENTRYPOINT ["/entrypoint.sh"]
