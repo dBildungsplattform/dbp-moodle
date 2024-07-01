@@ -19,7 +19,7 @@ dbpMoodle:
 
   # The dbp update process to migrate moodle date when Moodle versions are increased
   update_process:
-    enabled: true
+    enabled: false
     external_pvc:
       name: "moodle-data"
       size: "8Gi"
@@ -72,12 +72,17 @@ infratools:
   image_tag: 4.0.3
 
 moodle:
+  livenessProbe:
+    enabled: false
+  readinessProbe:
+    enabled:
+      false
   image:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
     tag: "DBP-000-latest"  #"4.1.10-debian-12-r5"
     pullPolicy: Always
-    debug: false
+    debug: true
   moodleSkipInstall: false
   moodleSiteName: "Moodle"
   moodleLang: "de"
