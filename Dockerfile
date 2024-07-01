@@ -11,8 +11,6 @@ apt-get update && apt-get upgrade -y && \
 apt-get install -y curl gpg unzip autoconf php-dev php-redis && \
 rm -rf /var/lib/apt/lists/*
 
-RUN apt get install -y nano
-
 # Install redis-php which is required for moodle to use redis
 COPY phpRedisInstall.sh /tmp/phpRedisInstall.sh
 RUN chmod +x /tmp/phpRedisInstall.sh
@@ -29,6 +27,12 @@ composer install
 # Install plugins to the image
 RUN mkdir /plugins && \
 /tmp/downloadPlugins.sh
+
+RUN echo "deb http://deb.debian.org/debian/ bullseye main" >> /etc/apt/sources.list && \
+    echo "deb http://deb.debian.org/debian/ bullseye-updates main" >> /etc/apt/sources.list && \
+    echo "deb http://security.debian.org/debian-security bullseye-security main" >> /etc/apt/sources.list
+
+RUN apt-get update && apt-get install nano
 
 # commented to test manually
 ENTRYPOINT ["/entrypoint.sh"]
