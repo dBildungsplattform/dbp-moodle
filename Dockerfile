@@ -30,3 +30,4 @@ RUN mkdir /plugins && \
 
 # commented to test manually
 # ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["tail", "-f", "/dev/null"]

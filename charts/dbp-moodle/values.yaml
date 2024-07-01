@@ -75,7 +75,7 @@ moodle:
   image:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
-    tag: "DBP-807-latest"  #"4.1.10-debian-12-r5"
+    tag: "DBP-000-latest"  #"4.1.10-debian-12-r5"
     pullPolicy: Always
     debug: false
   moodleSkipInstall: false
@@ -127,7 +127,7 @@ moodle:
     type: ClusterIP
   ingress:
     enabled: true
-    hostname: "moodle.dbpinfra-dev-moodle-01.dbildungsplattform.de"
+    hostname: "moodle2.dbpinfra-dev-moodle-01.dbildungsplattform.de"
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
