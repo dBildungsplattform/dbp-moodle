@@ -7,6 +7,8 @@ NC='\033[0m' # No Color
 
 cur_image_version="$APP_VERSION"
 
+moodle_path="/bitnami/moodle"
+
 # indicator files
 update_plugins_path="/bitnami/moodledata/UpdatePlugins"
 update_failed_path="/bitnami/moodledata/UpdateFailed"
@@ -69,23 +71,18 @@ install_plugin_dependencies(){
 
     for dependency in $1
     do
-        MOODLE_PATH="/bitnami/moodle"
-
-        if [ "$type" = "format" ]
-        then
+        if [ "$type" = "format" ]; then
             type="course/format"
-        elif [ "$type" = "block" ]
-        then
+        elif [ "$type" = "block" ]; then
             type="blocks"
-        elif [ "$type" = "tool" ]
-        then
+        elif [ "$type" = "tool" ]; then
             type="admin/tool"
         fi
 
-        mv /tmp/plugins/$dependency $MOODLE_PATH/$type/$dependency
+        mv /tmp/plugins/$dependency $moodle_path/$type/$dependency
 
         # Run Moodle DB upgrade
-        php $MOODLE_PATH/admin/cli/upgrade.php --non-interactive
+        php $moodle_path/admin/cli/upgrade.php --non-interactive
 
     done
 }
@@ -97,18 +94,15 @@ update_plugins() {
         install_kaltura
     fi
 
-    MOODLE_PATH="/bitnami/moodle"
+    moodle_path="/bitnami/moodle"
     PLUGIN_ZIP_PATH="/plugins"
 
-    if [ ! -d  "/tmp/plugins/" ]; then
-        mkdir /tmp/plugins/
-    else
+    if [ -d "/tmp/plugins/" ]; then
         rm -rf /tmp/plugins/
-        mkdir /tmp/plugins/
     fi
+    mkdir /tmp/plugins/
 
-    for plugin in $MOODLE_PLUGINS
-    do
+    for plugin in $MOODLE_PLUGINS; do
         pluginname=$(echo $plugin | cut -d'_' -f2-)
         type=$(echo $plugin | cut -d'_' -f1)
         echo "Installing plugin $plugin of type $type"
@@ -131,21 +125,18 @@ update_plugins() {
         install_plugin_dependencies $dependency_names
 
         # Correct paths according to types that are named different than their paths
-        if [ "$type" = "format" ]
-        then
+        if [ "$type" = "format" ]; then
             type="course/format"
-        elif [ "$type" = "block" ]
-        then
+        elif [ "$type" = "block" ]; then
             type="blocks"
-        elif [ "$type" = "tool" ]
-        then
+        elif [ "$type" = "tool" ]; then
             type="admin/tool"
         fi
         
-        mv /tmp/plugins/$pluginname $MOODLE_PATH/$type/$pluginname
+        mv /tmp/plugins/$pluginname $moodle_path/$type/$pluginname
 
         # Run Moodle DB upgrade
-        php $MOODLE_PATH/admin/cli/upgrade.php --non-interactive
+        php $moodle_path/admin/cli/upgrade.php --non-interactive
     done
 
     #rm -r "$PLUGIN_ZIP_PATH"
@@ -198,7 +189,7 @@ if [[ $LINE =~ $REGEX ]]; then
 fi
 
 # Is needed to check for success inside the container at the end
-pre_update_version="$installed_version";
+pre_update_version="$installed_version"
 printf "The new Moodle Image version is %s\n" "$APP_VERSION"
 
 # Do version check
