@@ -4,5 +4,11 @@ metadata:
   name: moodle-plugins
   namespace: {{ .Release.Namespace }}
 data:
-  plugin_list: "{{ .Values.dbpMoodle.plugins.plugin_list | join " " }}"
-    
+  moodle-plugin-list.sh: |
+    PLUGINS=(
+  {{- range $key, $plugin := .Values.dbpMoodle.plugins.plugin_list }}
+    {{- if $plugin.enabled }}
+      "{{ $key }}:{{ $plugin.fullname }}:{{ $plugin.install_dir }}"
+    {{- end }}
+  {{- end }}
+    )
