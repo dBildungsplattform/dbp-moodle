@@ -7,10 +7,10 @@ COPY entrypoint.sh /entrypoint.sh
 COPY moodleUpdateCheck.sh /moodleUpdateCheck.sh
 COPY downloadPlugins.sh /tmp/downloadPlugins.sh
 COPY installPlugins.sh /tmp/installPlugins.sh
-RUN chmod +x /entrypoint.sh /moodleUpdateCheck.sh /tmp/downloadPlugins.sh && \
-apt-get update && apt-get upgrade -y && \
-apt-get install -y curl gpg unzip autoconf php-dev php-redis && \
-rm -rf /var/lib/apt/lists/*
+RUN chmod +x /entrypoint.sh /moodleUpdateCheck.sh /tmp/downloadPlugins.sh /tmp/installPlugins.sh && \
+    apt-get update && apt-get upgrade -y && \
+    apt-get install -y curl gpg unzip autoconf php-dev php-redis && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install redis-php which is required for moodle to use redis
 COPY phpRedisInstall.sh /tmp/phpRedisInstall.sh
