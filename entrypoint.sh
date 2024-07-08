@@ -14,7 +14,6 @@ else
     printf "Check /bitnami/moodledata/moodleUpdateCheck.log\n"
 fi
 
-wait $!
 # move config files and start bitnami entrypoint
 if [[ -f /bitnami/moodle/version.php && -d "/bitnami/moodle/" && -d "/opt/bitnami/php/etc/conf.d/" ]]; then
     printf "=== Starting bitnami/moodle entrypoint ===\n"
