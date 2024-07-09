@@ -9,9 +9,6 @@ data:
     {{- if .Values.dbpMoodle.plugins.booking.enabled }}
       wunderbyte_table:local_wunderbyte_table:local/wunderbyte_table
     {{- end}}
-    {{- if .Values.dbpMoodle.plugins.boost_union.enabled }}
-      boost:theme_boost:theme/boost
-    {{- end}}
     {{- if or .Values.dbpMoodle.plugins.certificate.enabled .Values.dbpMoodle.plugins.coursecertificate.enabled }}
       certificate:tool_certificate:admin/tool/certificate
     {{- end}}
