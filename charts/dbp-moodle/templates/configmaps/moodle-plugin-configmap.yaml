@@ -7,75 +7,75 @@ data:
   # contains plugin dependencies first, followed by enabled plugins
   moodle-plugin-list.sh: |
     {{- if .Values.dbpMoodle.plugins.booking.enabled }}
-      "wunderbyte_table:local_wunderbyte_table:local/wunderbyte_table"
+      wunderbyte_table:local_wunderbyte_table:local/wunderbyte_table
     {{- end}}
 
     {{- if .Values.dbpMoodle.plugins.etherpadlite.enabled }}
-      "etherpadlite:mod_etherpadlite:mod/etherpadlite"
+      etherpadlite:mod_etherpadlite:mod/etherpadlite
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.hvp.enabled }}
-      "hvp:mod_hvp:mod/hvp"
+      hvp:mod_hvp:mod/hvp
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.groupselect.enabled }}
-      "groupselect:mod_groupselect:mod/groupselect"
+      groupselect:mod_groupselect:mod/groupselect
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.jitsi.enabled }}
-      "jitsi:mod_jitsi:mod/jitsi"
+      jitsi:mod_jitsi:mod/jitsi
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.pdfannotator.enabled }}
-      "pdfannotator:mod_pdfannotator:mod/pdfannotator"
+      pdfannotator:mod_pdfannotator:mod/pdfannotator
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.tiles.enabled }}
-      "tiles:ormat_tile:ourse/format/tiles"
+      tiles:ormat_tile:ourse/format/tiles
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.skype.enabled }}
-      "skype:mod_skype:mod/skype"
+      skype:mod_skype:mod/skype
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.zoom.enabled }}
-      "zoom:mod_zoom:mod/zoom"
+      zoom:mod_zoom:mod/zoom
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.booking.enabled }}
-      "booking:mod_booking:mod/booking"
+      booking:mod_booking:mod/booking
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.reengagement.enabled }}
-      "reengagement:mod_reengagement:mod/reengagement"
+      reengagement:mod_reengagement:mod/reengagement
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.unilabel.enabled }}
-      "unilabel:mod_unilabel:mod/unilabel"
+      unilabel:mod_unilabel:mod/unilabel
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.geogebra.enabled }}
-      "geogebra:mod_geogebra:mod/geogebra"
+      geogebra:mod_geogebra:mod/geogebra
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.remuiformat.enabled }}
-      "remuiformat:format_remuiformat:course/format/remuiformat"
+      remuiformat:format_remuiformat:course/format/remuiformat
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.tiles.enabled }}
-      "tiles:format_tiles:course/format/tiles"
+      tiles:format_tiles:course/format/tiles
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.topcoll.enabled }}
-      "topcoll:format_topcoll:course/format/topcoll"
+      topcoll:format_topcoll:course/format/topcoll
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.oidc.enabled }}
-      "oidc:auth_oidc:auth/oidc"
+      oidc:auth_oidc:auth/oidc
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.saml2.enabled }}
-      "saml2:auth_saml2:auth/saml2"
+      saml2:auth_saml2:auth/saml2
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.dash.enabled }}
-      "dash:block_dash:blocks/dash"
+      dash:block_dash:blocks/dash
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.sharing_cart.enabled }}
-      "sharing_cart:block_sharing_cart:blocks/sharing_cart"
+      sharing_cart:block_sharing_cart:blocks/sharing_cart
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.xp.enabled }}
-      "xp:block_xp:blocks/xp"
+      xp:block_xp:blocks/xp
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.certificate.enabled }}
-      "certificate:tool_certificate:admin/tool/certificate"
+      certificate:tool_certificate:admin/tool/certificate
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.coursecertificate.enabled }}
-      "coursecertificate:mod_coursecertificate:mod/coursecertificate"
+      coursecertificate:mod_coursecertificate:mod/coursecertificate
     {{- end}}
     {{- if .Values.dbpMoodle.plugins.boost_union.enabled }}
-      "boost_union:theme_boost_union:theme/boost_union"
+      boost_union:theme_boost_union:theme/boost_union
     {{- end}}
