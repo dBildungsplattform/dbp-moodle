@@ -27,24 +27,21 @@ trap "unsuspend" EXIT
 
 # get current available replicas (availableReplicas because we don't want the new Moodle pod from the RollingUpdate)
 replicas=$(kubectl get deployment -n {{ .Release.Namespace }} moodle -o=jsonpath='{.status.availableReplicas}')
-if [[ $replicas -eq 0 ]]
-then 
+if [[ $replicas -eq 0 ]]; then 
     replicas=1
 fi
 echo "=== Current replicas detected: $replicas ==="
 
 getMoodleVersion(){
-    if [ -f /volumes/moodle/version.php ]
-    then
-    LINE=$(grep release /volumes/moodle/version.php)
-    REGEX="release\s*=\s*'([0-9]+\.[0-9]+\.[0-9]+)"
-    if [[ $LINE =~ $REGEX ]]
-    then
-        echo "=== The newly installed Moodle version is: ${BASH_REMATCH[1]} ==="
-    fi
+    if [ -f /volumes/moodle/version.php ]; then
+        LINE=$(grep release /volumes/moodle/version.php)
+        REGEX="release\s*=\s*'([0-9]+\.[0-9]+\.[0-9]+)"
+        if [[ $LINE =~ $REGEX ]]; then
+            echo "=== The newly installed Moodle version is: ${BASH_REMATCH[1]} ==="
+        fi
     else
-    echo "=== No Moodle Version found ==="
-    exit 1
+        echo "=== No Moodle Version found ==="
+        exit 1
     fi
 }
 
