@@ -28,97 +28,54 @@ dbpMoodle:
       annotations: 
         "helm.sh/resource-policy": "keep"
 
+  enable_plugin_install: true
   plugins:
-    enabled: true
-    plugin_list:
-      etherpadlite:
-        enabled: false
-        fullname: "mod_etherpadlite"
-        install_dir: "mod/etherpadlite"
-      hvp:
-        enabled: true
-        fullname: "mod_hvp"
-        install_dir: "mod/hvp"
-      groupselect:
-        enabled: false
-        fullname: "mod_groupselect"
-        install_dir: "mod/groupselect"
-      jitsi:
-        enabled: false
-        fullname: "mod_jitsi"
-        install_dir: "mod/jitsi"
-      pdfannotator:
-        enabled: false
-        fullname: "mod_pdfannotator"
-        install_dir: "mod/pdfannotator"
-      skype:
-        enabled: false
-        fullname: "mod_skype"
-        install_dir: "mod/skype"
-      zoom:
-        enabled: false
-        fullname: "mod_zoom"
-        install_dir: "mod/zoom"
-      booking:
-        enabled: true
-        fullname: "mod_booking"
-        install_dir: "mod/booking"
-      reengagement:
-        enabled: false
-        fullname: "mod_reengagement"
-        install_dir: "mod/reengagement"
-      unilabel:
-        enabled: false
-        fullname: "mod_unilabel"
-        install_dir: "mod/unilabel"
-      geogebra:
-        enabled: false
-        fullname: "mod_geogebra"
-        install_dir: "mod/geogebra"
-      remuiformat:
-        enabled: false
-        fullname: "format_remuiformat"
-        install_dir: "course/format/remuiformat"
-      tiles:
-        enabled: false
-        fullname: "format_tiles"
-        install_dir: "course/format/tiles"
-      topcoll:
-        enabled: false
-        fullname: "format_topcoll"
-        install_dir: "course/format/topcoll"
-      oidc:
-        enabled: false
-        fullname: "auth_oidc"
-        install_dir: "auth/oidc"
-      saml2:
-        enabled: false
-        fullname: "auth_saml2"
-        install_dir: "auth/saml2"
-      dash:
-        enabled: false
-        fullname: "block_dash"
-        install_dir: "blocks/dash"
-      sharing_cart:
-        enabled: false
-        fullname: "block_sharing_cart"
-        install_dir: "blocks/sharing_cart"
-      xp:
-        enabled: false
-        fullname: "block_xp"
-        install_dir: "blocks/xp"
-      certificate:
-        enabled: false
-        fullname: "tool_certificate"
-        install_dir: "admin/tool/certificate"
-      coursecertificate:
-        enabled: false
-        fullname: "mod_coursecertificate"
-        install_dir: mod/coursecertificate"
-      boost_union:
-        enabled: false
-        fullname: "theme_boost_union"
-        install_dir: "theme/boost_union"
+    etherpadlite:
+      enabled: false
+    hvp:
+      enabled: true
+    groupselect:
+      enabled: false
+    jitsi:
+      enabled: false
+    pdfannotator:
+      enabled: false
+    tiles:
+      enabled: true
+    skype:
+      enabled: false
+    zoom:
+      enabled: false
+    booking:
+      enabled: true
+    reengagement:
+      enabled: false
+    unilabel:
+      enabled: false
+    geogebra:
+      enabled: false
+    remuiformat:
+      enabled: false
+    tiles:
+      enabled: false
+    topcoll:
+      enabled: false
+    oidc:
+      enabled: false
+    saml2:
+      enabled: false
+    dash:
+      enabled: false
+    sharing_cart:
+      enabled: false
+    xp:
+      enabled: false
+    certificate:
+      enabled: false
+    coursecertificate:
+      enabled: false
+    boost_union:
+      enabled: false
 
   redis:
     host : "moodle-redis-master"
