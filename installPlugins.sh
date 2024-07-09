@@ -61,10 +61,13 @@ install_plugins() {
         unzip -q "${plugin_zip_path}/${plugin_fullname}.zip" -d /tmp/plugins/
         mkdir -p "${moodle_path}/${plugin_path}"
         mv "/tmp/plugins/${plugin_name}"/* "${moodle_path}/${plugin_path}"
+
+        # Run Moodle DB upgrade
+        php $moodle_path/admin/cli/upgrade.php --non-interactive
     done
 
-    # Run Moodle DB upgrade
-    php $moodle_path/admin/cli/upgrade.php --non-interactive
+    # # Run Moodle DB upgrade
+    # php $moodle_path/admin/cli/upgrade.php --non-interactive
     #rm -rf "$plugin_zip_path"
 }
 
