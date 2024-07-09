@@ -30,7 +30,7 @@ bitnamiSetup() {
 # /moodleUpdateCheck.sh 2>&1 | tee -a "/bitnami/moodledata/moodleUpdateCheck.log"
 # EXIT_CODE=${PIPESTATUS[0]}
 
-if [[ ! -d "/bitnami/moodle/" && ! -f "/bitnami/moodle/version.php" && ! -d "/opt/bitnami/php/etc/conf.d/" ]]; then
+if [[ ! -d "/bitnami/moodle/" || ! -f "/bitnami/moodle/version.php" || ! -d "/opt/bitnami/php/etc/conf.d/" ]]; then
     bitnamiSetup
 fi
 
