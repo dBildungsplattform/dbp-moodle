@@ -68,6 +68,5 @@ install_plugins() {
 }
 
 install_plugins
-printf "=== ${GRN}Finished Plugin Install${NC}, removing maintenance status and exiting update ===\n"
 rm -f "$maintenance_html_path"
 exit 0
