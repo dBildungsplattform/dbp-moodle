@@ -25,9 +25,6 @@ data:
     {{- if .Values.dbpMoodle.plugins.pdfannotator.enabled }}
       pdfannotator:mod_pdfannotator:mod/pdfannotator
     {{- end}}
-    {{- if .Values.dbpMoodle.plugins.tiles.enabled }}
-      tiles:ormat_tile:ourse/format/tiles
-    {{- end}}
     {{- if .Values.dbpMoodle.plugins.skype.enabled }}
       skype:mod_skype:mod/skype
     {{- end}}
