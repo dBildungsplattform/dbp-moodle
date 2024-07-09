@@ -31,7 +31,7 @@ install_kaltura(){
         return 1
     fi
     printf "\tUnpacking Kaltura\n"
-    unzip "$kaltura_save_path" -d "/bitnami/moodle/"
+    unzip -q "$kaltura_save_path" -d "/bitnami/moodle/"
     printf "\tInstalling Kaltura\n"
     php /bitnami/moodle/admin/cli/upgrade.php --non-interactive
     printf "\tDeleting install artifacts\n"
@@ -58,7 +58,7 @@ install_plugins() {
         plugin_path="${parts[2]}"
         
         printf 'Installing plugin %s (%s) to path "%s"\n' "$plugin_name" "$plugin_fullname" "$plugin_path"
-        unzip "${plugin_zip_path}/${plugin_fullname}.zip" -d /tmp/plugins/
+        unzip -q "${plugin_zip_path}/${plugin_fullname}.zip" -d /tmp/plugins/
         mkdir -p "${moodle_path}/${plugin_path}"
         mv "/tmp/plugins/${plugin_name}"/* "${moodle_path}/${plugin_path}"
     done
