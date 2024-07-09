@@ -56,8 +56,6 @@ dbpMoodle:
       enabled: false
     remuiformat:
       enabled: false
-    tiles:
-      enabled: false
     topcoll:
       enabled: false
     oidc:
