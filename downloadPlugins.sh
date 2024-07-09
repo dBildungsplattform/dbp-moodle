@@ -4,6 +4,8 @@ php /moosh/moosh.php plugin-list
 
 # Dependencies
 php /moosh/moosh.php plugin-download -v 4.1 local_wunderbyte_table # Dependency of mod_booking
+php /moosh/moosh.php plugin-download -v 4.1 theme_boost # Dependency of theme_boost_union
+php /moosh/moosh.php plugin-download -v 4.1 tool_certificate # Dependency of mod_coursecertificate
 
 # Plugins
 php /moosh/moosh.php plugin-download -v 4.1 mod_etherpadlite
@@ -25,6 +27,5 @@ php /moosh/moosh.php plugin-download -v 4.1 auth_saml2
 php /moosh/moosh.php plugin-download -v 4.1 block_dash
 php /moosh/moosh.php plugin-download -v 4.1 block_sharing_cart
 php /moosh/moosh.php plugin-download -v 4.1 block_xp
-php /moosh/moosh.php plugin-download -v 4.1 tool_certificate
 php /moosh/moosh.php plugin-download -v 4.1 mod_coursecertificate
 php /moosh/moosh.php plugin-download -v 4.1 theme_boost_union
