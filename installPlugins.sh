@@ -9,6 +9,7 @@ cur_image_version="$APP_VERSION"
 
 moodle_path="/bitnami/moodle"
 plugin_zip_path="/plugins"
+plugin_unzip_path="/tmp/plugins/"
 
 # indicator files
 update_plugins_path="/bitnami/moodledata/UpdatePlugins"
@@ -46,10 +47,10 @@ install_plugins() {
         install_kaltura
     fi
 
-    if [ -d "/tmp/plugins/" ]; then
-        rm -rf /tmp/plugins/
+    if [ -d "$plugin_unzip_path" ]; then
+        rm -rf "$plugin_unzip_path"
     fi
-    mkdir /tmp/plugins/
+    mkdir "$plugin_unzip_path"
 
     for plugin in $MOODLE_PLUGINS; do
         IFS=':' read -r -a parts <<< "$plugin"
@@ -59,17 +60,14 @@ install_plugins() {
         plugin_parent_path=$(dirname "$plugin_path")
         
         printf 'Installing plugin %s (%s) to path "%s"\n' "$plugin_name" "$plugin_fullname" "$plugin_path"
-        unzip -q "${plugin_zip_path}/${plugin_fullname}.zip" -d /tmp/plugins/
+        unzip -q "${plugin_zip_path}/${plugin_fullname}.zip" -d "$plugin_unzip_path"
         mkdir -p "${moodle_path}/${plugin_path}"
-        mv "/tmp/plugins/${plugin_name}" "${moodle_path}/${plugin_parent_path}/"
-
-        # Run Moodle DB upgrade
+        mv "${plugin_unzip_path}${plugin_name}" "${moodle_path}/${plugin_parent_path}/"
     done
 
+    # Run Moodle DB upgrade
     php $moodle_path/admin/cli/upgrade.php --non-interactive
-    # # Run Moodle DB upgrade
-    # php $moodle_path/admin/cli/upgrade.php --non-interactive
-    #rm -rf "$plugin_zip_path"
+    rm -rf "$plugin_zip_path"
 }
 
 install_plugins
