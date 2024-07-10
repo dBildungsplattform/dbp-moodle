@@ -67,7 +67,7 @@ install_plugins() {
 
     printf 'Running Moodle upgrade to load plugins\n'
     php $moodle_path/admin/cli/upgrade.php --non-interactive
-    rm -rf "$plugin_zip_path"
+    rm -rf "$plugin_unzip_path"
 }
 
 install_plugins
