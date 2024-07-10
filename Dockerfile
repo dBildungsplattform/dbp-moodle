@@ -31,5 +31,4 @@ COPY phpRedisInstall.sh /tmp/phpRedisInstall.sh
 RUN chmod +x /tmp/phpRedisInstall.sh
 RUN /tmp/phpRedisInstall.sh
 
-# ENTRYPOINT ["/entrypoint.sh"]
-ENTRYPOINT ["tail", "-f", "/dev/null"]
+ENTRYPOINT ["/entrypoint.sh"]
