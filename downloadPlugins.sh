@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /plugins
+cd /plugins || exit
 php /moosh/moosh.php plugin-list
 
 # Dependencies
