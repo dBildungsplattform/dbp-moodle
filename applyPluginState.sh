@@ -5,8 +5,6 @@ RED='\033[0;31m'
 GRN='\033[0;32m'
 NC='\033[0m' # No Color
 
-cur_image_version="$APP_VERSION"
-
 moodle_path="/bitnami/moodle"
 plugin_zip_path="/plugins"
 plugin_unzip_path="/tmp/plugins/"
@@ -17,10 +15,12 @@ update_failed_path="/bitnami/moodledata/UpdateFailed"
 update_cli_path="/bitnami/moodledata/CliUpdate"
 maintenance_html_path="/bitnami/moodledata/climaintenance.html"
 
-# data folders
-new_version_data_path="/bitnami/moodledata/updated-moodle"
-old_version_data_path="/bitnami/moodledata/moodle-backup"
-
+last_plugin=""
+cleanup_failed_install() {
+    if [[ -n "$last_plugin" ]]; then
+        rm -rf "$last_plugin"
+    fi
+}
 
 install_kaltura(){
     local kaltura_url="https://moodle.org/plugins/download.php/29483/Kaltura_Video_Package_moodle41_2022112803.zip"
@@ -40,8 +40,29 @@ install_kaltura(){
     printf "===${GRN} Kaltura plugin successfully installed ${NC}===\n"
 }
 
-install_plugins() {
+install_plugin() {
+    local plugin_name
+    local plugin_fullname
+    local plugin_path
+
+    plugin_name="$1"
+    plugin_fullname="$2"
+    plugin_path="$3"
+
+    unzip -q "${plugin_zip_path}/${plugin_fullname}.zip" -d "$plugin_unzip_path"
+    mkdir -p "${moodle_path}/${plugin_path}"
+    mv "${plugin_unzip_path}${plugin_name}" "${moodle_path}/${plugin_parent_path}/"
+}
+
+uninstall_plugin() {
+    local plugin_fullname
+    plugin_fullname="$1"
+    /moosh/moosh.php plugin-uninstall "$plugin_fullname"
+}
+
+main() {
     rm -f "$update_plugins_path"
+
     if [[ $ENABLE_KALTURA == "True" ]]; then
         printf "=== Kaltura Flag enabled, installing Kaltura plugin ===\n"
         install_kaltura
@@ -57,19 +78,40 @@ install_plugins() {
         plugin_name="${parts[0]}"
         plugin_fullname="${parts[1]}"
         plugin_path="${parts[2]}"
+        plugin_enabled="${parts[3]}"
+
         plugin_parent_path=$(dirname "$plugin_path")
-        
-        printf 'Installing plugin %s (%s) to path "%s"\n' "$plugin_name" "$plugin_fullname" "$plugin_path"
-        unzip -q "${plugin_zip_path}/${plugin_fullname}.zip" -d "$plugin_unzip_path"
-        mkdir -p "${moodle_path}/${plugin_path}"
-        mv "${plugin_unzip_path}${plugin_name}" "${moodle_path}/${plugin_parent_path}/"
+        full_path="${moodle_path}${plugin_path}"
+
+        plugin_installed="false"
+        if [ -d "$full_path" ]; then
+            plugin_installed="true"
+        fi
+
+        if [[ "$plugin_enabled" == "$plugin_installed" ]]; then
+            continue
+        fi 
+
+        last_plugin="$full_path"
+        if [[ "$plugin_enabled" == "true" ]]; then
+            printf 'Installing plugin %s (%s) to path "%s"\n' "$plugin_name" "$plugin_fullname" "$plugin_path"
+            install_plugin "$plugin_name" "$plugin_fullname" "$plugin_path"
+        elif [[ "$plugin_enabled" == "false" ]]; then
+            printf 'Uninstalling plugin %s (%s) from path "%s"\n' "$plugin_name" "$plugin_fullname" "$plugin_path"
+            uninstall_plugin "$plugin_name" "$plugin_fullname" "$plugin_path"
+        else
+            printf 'Unexpected value for plugin_enabled: "%s". Expecting "true/false". Exiting...\n' "$plugin_enabled"
+            exit 1
+        fi
+        last_plugin=""
     done
 
     printf 'Running Moodle upgrade to load plugins\n'
     php $moodle_path/admin/cli/upgrade.php --non-interactive
+
     rm -rf "$plugin_unzip_path"
+    rm -f "$maintenance_html_path"
 }
 
-install_plugins
-rm -f "$maintenance_html_path"
-exit 0
+trap cleanup_failed_install
+main
