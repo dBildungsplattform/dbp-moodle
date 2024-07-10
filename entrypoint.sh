@@ -39,7 +39,7 @@ fi
 /bin/cp /moodleconfig/php.ini /opt/bitnami/php/etc/conf.d/php.ini
 
 MODULE=dbp info "Starting plugin installation"
-/tmp/installPlugins.sh
+/tmp/applyPluginState.sh
 MODULE=dbp info "Finished Plugin Install"
 
 # touch /bitnami/moodledata/FreshInstall
