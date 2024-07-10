@@ -23,8 +23,8 @@ RUN mkdir /plugins && \
 
 COPY entrypoint.sh /entrypoint.sh
 COPY moodleUpdateCheck.sh /moodleUpdateCheck.sh
-COPY installPlugins.sh /tmp/installPlugins.sh
-RUN chmod +x /entrypoint.sh /moodleUpdateCheck.sh /tmp/installPlugins.sh 
+COPY applyPluginState.sh /tmp/applyPluginState.sh
+RUN chmod +x /entrypoint.sh /moodleUpdateCheck.sh /tmp/applyPluginState.sh 
 
 # Install redis-php which is required for moodle to use redis
 COPY phpRedisInstall.sh /tmp/phpRedisInstall.sh
