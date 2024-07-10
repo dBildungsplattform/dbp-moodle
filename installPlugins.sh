@@ -56,11 +56,12 @@ install_plugins() {
         plugin_name="${parts[0]}"
         plugin_fullname="${parts[1]}"
         plugin_path="${parts[2]}"
+        plugin_parent_path=$(dirname "$plugin_path")
         
         printf 'Installing plugin %s (%s) to path "%s"\n' "$plugin_name" "$plugin_fullname" "$plugin_path"
         unzip -q "${plugin_zip_path}/${plugin_fullname}.zip" -d /tmp/plugins/
         mkdir -p "${moodle_path}/${plugin_path}"
-        mv "/tmp/plugins/${plugin_name}"/* "${moodle_path}/${plugin_path}"
+        mv "/tmp/plugins/${plugin_name}" "${moodle_path}/${plugin_parent_path}/"
 
         # Run Moodle DB upgrade
     done
