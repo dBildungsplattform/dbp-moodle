@@ -113,5 +113,5 @@ main() {
     rm -f "$maintenance_html_path"
 }
 
-trap cleanup_failed_install
+trap cleanup_failed_install ERR
 main
