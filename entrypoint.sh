@@ -15,7 +15,7 @@ set -o pipefail
 
 MODULE=dbp info "** Starting Moodle **"
 
-bitnamiSetup() {
+startBitnamiSetup() {
     print_welcome_page
     info "** Starting Bitnami Moodle setup **"
     /opt/bitnami/scripts/"$(web_server_type)"/setup.sh
@@ -27,16 +27,18 @@ bitnamiSetup() {
     MODULE=dbp info "** Bitnami Moodle setup finished! **"
 }
 
-if true || [[ ! -d "/bitnami/moodle/" || ! -f "/bitnami/moodle/version.php" || ! -d "/opt/bitnami/php/etc/conf.d/" ]]; then
-    MODULE=dbp info "** No existing installation found **"
-    bitnamiSetup
-else 
-    MODULE=dbp info "** Existing installation found **"
-    MODULE=dbp info "** Starting Moodle Update Check **"
-    # /moodleUpdateCheck.sh 2>&1 | tee -a "/bitnami/moodledata/moodleUpdateCheck.log"
-    # EXIT_CODE=${PIPESTATUS[0]}
-    MODULE=dbp info "** Update Check finished! **"
-fi
+# if true || [[ ! -d "/bitnami/moodle/" || ! -f "/bitnami/moodle/version.php" || ! -d "/opt/bitnami/php/etc/conf.d/" ]]; then
+
+# Bitnami setup now always runs.
+# Can handle new version and existing version.
+# TODO: check if it can handle existing lower version. e.g. skript is moodle 4.1.11 and existing is 4.1.10
+startBitnamiSetup
+
+MODULE=dbp info "** Starting Moodle Update Check **"
+# /moodleUpdateCheck.sh 2>&1 | tee -a "/bitnami/moodledata/moodleUpdateCheck.log"
+# EXIT_CODE=${PIPESTATUS[0]}
+MODULE=dbp info "** Update Check finished! **"
+# 
 
 MODULE=dbp info "Replacing config files with ours"
 /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
