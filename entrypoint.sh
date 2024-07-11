@@ -13,7 +13,7 @@ set -o pipefail
 . /opt/bitnami/scripts/liblog.sh
 . /opt/bitnami/scripts/libwebserver.sh
 
-info "** Starting Moodle **"
+MODULE=dbp info "** Starting Moodle **"
 
 bitnamiSetup() {
     print_welcome_page
@@ -27,7 +27,7 @@ bitnamiSetup() {
     MODULE=dbp info "** Bitnami Moodle setup finished! **"
 }
 
-if [[ ! -d "/bitnami/moodle/" || ! -f "/bitnami/moodle/version.php" || ! -d "/opt/bitnami/php/etc/conf.d/" ]]; then
+if true || [[ ! -d "/bitnami/moodle/" || ! -f "/bitnami/moodle/version.php" || ! -d "/opt/bitnami/php/etc/conf.d/" ]]; then
     MODULE=dbp info "** No existing installation found **"
     bitnamiSetup
 else 
