@@ -13,28 +13,32 @@ set -o pipefail
 . /opt/bitnami/scripts/liblog.sh
 . /opt/bitnami/scripts/libwebserver.sh
 
-printf "=== Starting moodleUpdateCheck ===\n"
+info "** Starting Moodle **"
 
 bitnamiSetup() {
     print_welcome_page
-    info "** Starting Moodle setup **"
+    info "** Starting Bitnami Moodle setup **"
     /opt/bitnami/scripts/"$(web_server_type)"/setup.sh
     /opt/bitnami/scripts/php/setup.sh
     /opt/bitnami/scripts/mysql-client/setup.sh
     /opt/bitnami/scripts/postgresql-client/setup.sh
     /opt/bitnami/scripts/moodle/setup.sh
     /post-init.sh
-    info "** Moodle setup finished! **"
+    MODULE=dbp info "** Bitnami Moodle setup finished! **"
 }
 
-# /moodleUpdateCheck.sh 2>&1 | tee -a "/bitnami/moodledata/moodleUpdateCheck.log"
-# EXIT_CODE=${PIPESTATUS[0]}
-
 if [[ ! -d "/bitnami/moodle/" || ! -f "/bitnami/moodle/version.php" || ! -d "/opt/bitnami/php/etc/conf.d/" ]]; then
+    MODULE=dbp info "** No existing installation found **"
     bitnamiSetup
+else 
+    MODULE=dbp info "** Existing installation found **"
+    MODULE=dbp info "** Starting Moodle Update Check **"
+    # /moodleUpdateCheck.sh 2>&1 | tee -a "/bitnami/moodledata/moodleUpdateCheck.log"
+    # EXIT_CODE=${PIPESTATUS[0]}
+    MODULE=dbp info "** Update Check finished! **"
 fi
 
-# replace config with ours
+MODULE=dbp info "Replacing config files with ours"
 /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
 /bin/cp /moodleconfig/php.ini /opt/bitnami/php/etc/conf.d/php.ini
 
@@ -43,6 +47,6 @@ MODULE=dbp info "Starting plugin installation"
 MODULE=dbp info "Finished Plugin Install"
 
 # touch /bitnami/moodledata/FreshInstall
-MODULE=dbp info "Finished all preperations! Starting Webserver"
 
+MODULE=dbp info "Finished all preperations! Starting Webserver"
 /opt/bitnami/scripts/moodle/run.sh
