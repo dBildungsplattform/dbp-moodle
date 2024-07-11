@@ -15,10 +15,10 @@ update_failed_path="/bitnami/moodledata/UpdateFailed"
 update_cli_path="/bitnami/moodledata/CliUpdate"
 maintenance_html_path="/bitnami/moodledata/climaintenance.html"
 
-last_plugin=""
+last_installed_plugin=""
 cleanup_failed_install() {
-    if [[ -n "$last_plugin" ]]; then
-        rm -rf "$last_plugin"
+    if [[ -n "$last_installed_plugin" ]]; then
+        rm -rf "$last_installed_plugin"
     fi
 }
 
@@ -95,27 +95,28 @@ main() {
             continue
         fi 
 
-        last_plugin="$full_path"
         if [[ "$plugin_enabled" == "true" ]]; then
-            printf 'Installing plugin %s (%s) to path "%s"\n' "$plugin_name" "$plugin_fullname" "$plugin_path"
+            last_installed_plugin="$full_path"
+            MODULE="dbp-plugins" info  'Installing plugin %s (%s) to path "%s"\n' "$plugin_name" "$plugin_fullname" "$plugin_path"
             install_plugin "$plugin_name" "$plugin_fullname" "$plugin_path"
+            last_installed_plugin=""
             plugin_state_changed=true
 
         elif [[ "$plugin_enabled" == "false" ]]; then
-            printf 'Uninstalling plugin %s (%s) from path "%s"\n' "$plugin_name" "$plugin_fullname" "$plugin_path"
+            MODULE="dbp-plugins" info  'Uninstalling plugin %s (%s) from path "%s"\n' "$plugin_name" "$plugin_fullname" "$plugin_path"
             uninstall_plugin "$plugin_name" "$plugin_fullname" "$plugin_path"
             plugin_state_changed=true
         else
-            printf 'Unexpected value for plugin_enabled: "%s". Expecting "true/false". Exiting...\n' "$plugin_enabled"
+            MODULE="dbp-plugins" info  'Unexpected value for plugin_enabled: "%s". Expecting "true/false". Exiting...\n' "$plugin_enabled"
             exit 1
         fi
-        last_plugin=""
     done
+    echo $plugin_state_changed
     if [ "$plugin_state_changed" = true ]; then
-        printf 'Running Moodle upgrade to load plugins\n'
+        MODULE="dbp-plugins" info 'Running Moodle upgrade to reload plugins\n'
         php $moodle_path/admin/cli/upgrade.php --non-interactive
     else
-        printf 'No plugin state change found.\n'
+        MODULE="dbp-plugins" info 'No plugin state change found.\n'
     fi
     rm -rf "$plugin_unzip_path"
     rm -f "$maintenance_html_path" # TODO move this to entrypoint probably
