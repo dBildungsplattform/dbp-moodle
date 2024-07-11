@@ -106,25 +106,25 @@ main() {
 
         if [[ "$plugin_enabled" == "true" ]]; then
             last_installed_plugin="$full_path"
-            MODULE="dbp-plugins" info  'Installing plugin %s (%s) to path "%s"\n' "$plugin_name" "$plugin_fullname" "$plugin_path"
+            MODULE="dbp-plugins" info "Installing plugin ${plugin_name} (${plugin_fullname}) to path \"${plugin_path}\""
             install_plugin "$plugin_name" "$plugin_fullname" "$plugin_path"
             last_installed_plugin=""
             plugin_state_changed=true
 
         elif [[ "$plugin_enabled" == "false" ]]; then
-            MODULE="dbp-plugins" info  'Uninstalling plugin %s (%s) from path "%s"\n' "$plugin_name" "$plugin_fullname" "$plugin_path"
+            MODULE="dbp-plugins" info "Uninstalling plugin ${plugin_name} (${plugin_fullname}) from path \"${plugin_path}\""
             uninstall_plugin "$plugin_name" "$plugin_fullname" "$plugin_path"
             plugin_state_changed=true
         else
-            MODULE="dbp-plugins" info  'Unexpected value for plugin_enabled: "%s". Expecting "true/false". Exiting...\n' "$plugin_enabled"
+            MODULE="dbp-plugins" info 'Unexpected value for plugin_enabled: "%s". Expecting "true/false". Exiting...' "$plugin_enabled"
             exit 1
         fi
     done
     if [ "$plugin_state_changed" = true ]; then
-        MODULE="dbp-plugins" info 'Running Moodle upgrade to reload plugins\n'
+        MODULE="dbp-plugins" info 'Running Moodle upgrade to reload plugins'
         php $moodle_path/admin/cli/upgrade.php --non-interactive
     else
-        MODULE="dbp-plugins" info 'No plugin state change found.\n'
+        MODULE="dbp-plugins" info 'No plugin state change found.'
     fi
     rm -rf "$plugin_unzip_path"
     rm -f "$maintenance_html_path" # TODO move this to entrypoint probably
