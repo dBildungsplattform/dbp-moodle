@@ -57,7 +57,8 @@ install_plugin() {
 uninstall_plugin() {
     local plugin_fullname
     plugin_fullname="$1"
-    /moosh/moosh.php plugin-uninstall "$plugin_fullname"
+    # do cd in subshell, to not have this skript change dir
+    (cd /bitnami/moodle && /moosh/moosh.php plugin-uninstall "$plugin_fullname")
 }
 
 main() {
