@@ -84,6 +84,8 @@ main() {
         plugin_parent_path=$(dirname "$plugin_path")
         full_path="${moodle_path}/${plugin_path}"
 
+        plugin_state_changed=-1
+
         plugin_installed="false"
         if [ -d "$full_path" ]; then
             plugin_installed="true"
@@ -97,21 +99,26 @@ main() {
         if [[ "$plugin_enabled" == "true" ]]; then
             printf 'Installing plugin %s (%s) to path "%s"\n' "$plugin_name" "$plugin_fullname" "$plugin_path"
             install_plugin "$plugin_name" "$plugin_fullname" "$plugin_path"
+            plugin_state_changed=0
+
         elif [[ "$plugin_enabled" == "false" ]]; then
             printf 'Uninstalling plugin %s (%s) from path "%s"\n' "$plugin_name" "$plugin_fullname" "$plugin_path"
             uninstall_plugin "$plugin_name" "$plugin_fullname" "$plugin_path"
+            plugin_state_changed=0
         else
             printf 'Unexpected value for plugin_enabled: "%s". Expecting "true/false". Exiting...\n' "$plugin_enabled"
             exit 1
         fi
         last_plugin=""
     done
-
-    printf 'Running Moodle upgrade to load plugins\n'
-    php $moodle_path/admin/cli/upgrade.php --non-interactive
-
+    if [ "$plugin_state_changed" -eq "0" ]; then
+        printf 'Running Moodle upgrade to load plugins\n'
+        php $moodle_path/admin/cli/upgrade.php --non-interactive
+    else
+        printf 'No plugin state change found.\n'
+    fi
     rm -rf "$plugin_unzip_path"
-    rm -f "$maintenance_html_path"
+    rm -f "$maintenance_html_path" # TODO move this to entrypoint probably
 }
 
 trap cleanup_failed_install ERR
