@@ -111,7 +111,7 @@ main() {
         fi
         last_plugin=""
     done
-    if [ "$plugin_state_changed" -eq "0" ]; then
+    if [ "$plugin_state_changed" -ne "0" ]; then
         printf 'Running Moodle upgrade to load plugins\n'
         php $moodle_path/admin/cli/upgrade.php --non-interactive
     else
