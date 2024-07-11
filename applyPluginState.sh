@@ -130,5 +130,5 @@ main() {
     rm -f "$maintenance_html_path" # TODO move this to entrypoint probably
 }
 
-trap cleanup_failed_install ERR
+# trap cleanup_failed_install ERR
 main
