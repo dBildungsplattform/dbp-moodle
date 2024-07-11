@@ -81,7 +81,7 @@ main() {
         plugin_enabled="${parts[3]}"
 
         plugin_parent_path=$(dirname "$plugin_path")
-        full_path="${moodle_path}${plugin_path}"
+        full_path="${moodle_path}/${plugin_path}"
 
         plugin_installed="false"
         if [ -d "$full_path" ]; then
