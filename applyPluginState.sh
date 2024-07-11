@@ -99,12 +99,12 @@ main() {
         if [[ "$plugin_enabled" == "true" ]]; then
             printf 'Installing plugin %s (%s) to path "%s"\n' "$plugin_name" "$plugin_fullname" "$plugin_path"
             install_plugin "$plugin_name" "$plugin_fullname" "$plugin_path"
-            plugin_state_changed=0
+            plugin_state_changed=true
 
         elif [[ "$plugin_enabled" == "false" ]]; then
             printf 'Uninstalling plugin %s (%s) from path "%s"\n' "$plugin_name" "$plugin_fullname" "$plugin_path"
             uninstall_plugin "$plugin_name" "$plugin_fullname" "$plugin_path"
-            plugin_state_changed=0
+            plugin_state_changed=true
         else
             printf 'Unexpected value for plugin_enabled: "%s". Expecting "true/false". Exiting...\n' "$plugin_enabled"
             exit 1
