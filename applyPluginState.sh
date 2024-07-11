@@ -82,6 +82,8 @@ main() {
     fi
     mkdir "$plugin_unzip_path"
 
+    plugin_state_changed=false
+
     for plugin in $MOODLE_PLUGINS; do
         IFS=':' read -r -a parts <<< "$plugin"
         plugin_name="${parts[0]}"
@@ -92,7 +94,6 @@ main() {
         plugin_parent_path=$(dirname "$plugin_path")
         full_path="${moodle_path}/${plugin_path}"
 
-        plugin_state_changed=false
 
         plugin_installed="false"
         if [ -d "$full_path" ]; then
@@ -119,7 +120,6 @@ main() {
             exit 1
         fi
     done
-    echo $plugin_state_changed
     if [ "$plugin_state_changed" = true ]; then
         MODULE="dbp-plugins" info 'Running Moodle upgrade to reload plugins\n'
         php $moodle_path/admin/cli/upgrade.php --non-interactive

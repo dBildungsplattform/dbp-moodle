@@ -6,7 +6,7 @@ USER root
 COPY downloadPlugins.sh /tmp/downloadPlugins.sh
 RUN chmod +x /tmp/downloadPlugins.sh && \
     apt-get update && apt-get upgrade -y && \
-    apt-get install -y curl gpg unzip autoconf php-dev php-redis && \
+    apt-get install -y nano curl gpg unzip autoconf php-dev php-redis && \
     rm -rf /var/lib/apt/lists/*
 
 # Install moosh for plugin management
