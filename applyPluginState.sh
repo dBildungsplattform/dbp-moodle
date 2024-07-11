@@ -84,7 +84,7 @@ main() {
         plugin_parent_path=$(dirname "$plugin_path")
         full_path="${moodle_path}/${plugin_path}"
 
-        plugin_state_changed=-1
+        plugin_state_changed=false
 
         plugin_installed="false"
         if [ -d "$full_path" ]; then
@@ -111,7 +111,7 @@ main() {
         fi
         last_plugin=""
     done
-    if [ "$plugin_state_changed" -ne "0" ]; then
+    if [ "$plugin_state_changed" = true ]; then
         printf 'Running Moodle upgrade to load plugins\n'
         php $moodle_path/admin/cli/upgrade.php --non-interactive
     else
