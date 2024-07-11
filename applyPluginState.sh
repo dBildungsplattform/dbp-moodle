@@ -1,5 +1,13 @@
 #!/bin/bash
-set -e
+
+set -o errexit
+set -o nounset
+set -o pipefail
+# set -o xtrace # Uncomment this line for debugging purposes
+
+# Load Moodle environment
+. /opt/bitnami/scripts/liblog.sh
+
 
 RED='\033[0;31m'
 GRN='\033[0;32m'
