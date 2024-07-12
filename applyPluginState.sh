@@ -139,17 +139,9 @@ main() {
             exit 1
         fi
     done
-
-    # echo "${plugin_uninstall_list[*]}"
-    # if [ ${#plugin_uninstall_list[@]} -gt 0 ]; then
-    #     plugin_uninstall_list_string=$(IFS=,; echo "${plugin_uninstall_list[*]}")
-    #     MODULE="dbp-plugins" info "Uninstalling plugin(s): ${plugin_uninstall_list_string}"
-    #     # upgrade_if_pending
-    #     uninstall_plugins "$plugin_uninstall_list_string"
-    # fi
     
     upgrade_if_pending
-
+    
     if [ "$anychange" = false ]; then
         MODULE="dbp-plugins" info 'No plugin state change detected.'
     fi
