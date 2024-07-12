@@ -59,26 +59,32 @@ install_plugin() {
 
     unzip -q "${plugin_zip_path}/${plugin_fullname}.zip" -d "$plugin_unzip_path"
     mkdir -p "${moodle_path}/${plugin_path}"
-    mv "${plugin_unzip_path}${plugin_name}" "${moodle_path}/${plugin_parent_path}/"
+    mv "${plugin_unzip_path}${plugin_name}" "${moodle_path}/${plugin_parent_path:?}/"
 }
 
 uninstall_plugin() {
     local plugin_fullname
+    local plugin_path
     plugin_fullname="$1"
+    plugin_path="$2"
     # do cd in subshell, to not have this skript change dir
-    (cd "$moodle_path" && php /moosh/moosh.php plugin-uninstall "$plugin_fullname")
+    # (cd "$moodle_path" && php /moosh/moosh.php plugin-uninstall "$plugin_fullname")+
+    php "${moodle_path}/admin/cli/uninstall_plugins.php" --plugins="$plugin_fullname" --run
+    rm -rf "${moodle_path:?}/${plugin_path:?}"
 }
 
 upgrade_if_pending() {
     set +o errexit
-    php "${moodle_path}/admin/cli/upgrade.php" --non-interactive --is-pending > /dev/null
+    php "${moodle_path}/admin/cli/upgrade.php" --is-pending > /dev/null 2>&1
+
     EXIT_CODE=$?
     set -o errexit
-    echo "$EXIT_CODE"
     # If an upgrade is needed it exits with an error code of 2 so it distinct from other types of errors.
     if [ $EXIT_CODE -eq 2 ]; then
         MODULE="dbp-plugins" info 'Running Moodle upgrade'
         php "${moodle_path}/admin/cli/upgrade.php" --non-interactive
+    else
+        MODULE="dbp-plugins" info 'No upgrade needed'
     fi
 }
 
@@ -108,7 +114,6 @@ main() {
         full_path="${moodle_path}/${plugin_path}"
 
         plugin_installed=false
-        # plugin_uninstall_list=()
 
         if [ -d "$full_path" ]; then
             plugin_installed=true
@@ -126,9 +131,8 @@ main() {
             anychange=true
 
         elif [ "$plugin_enabled" = false ]; then
-            upgrade_if_pending
             MODULE="dbp-plugins" info "Uninstalling plugin ${plugin_name} (${plugin_fullname}) from path \"${plugin_path}\""
-            uninstall_plugin "$plugin_fullname"
+            uninstall_plugin "$plugin_fullname" "$plugin_path"
             anychange=true
         else
             MODULE="dbp-plugins" info 'Unexpected value for plugin_enabled: "%s". Expecting "true/false". Exiting...' "$plugin_enabled"
@@ -136,6 +140,14 @@ main() {
         fi
     done
 
+    # echo "${plugin_uninstall_list[*]}"
+    # if [ ${#plugin_uninstall_list[@]} -gt 0 ]; then
+    #     plugin_uninstall_list_string=$(IFS=,; echo "${plugin_uninstall_list[*]}")
+    #     MODULE="dbp-plugins" info "Uninstalling plugin(s): ${plugin_uninstall_list_string}"
+    #     # upgrade_if_pending
+    #     uninstall_plugins "$plugin_uninstall_list_string"
+    # fi
+    
     upgrade_if_pending
 
     if [ "$anychange" = false ]; then
