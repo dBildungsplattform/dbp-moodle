@@ -6,20 +6,23 @@ USER root
 COPY downloadPlugins.sh /tmp/downloadPlugins.sh
 RUN chmod +x /tmp/downloadPlugins.sh && \
     apt-get update && apt-get upgrade -y && \
-    apt-get install -y nano curl gpg unzip autoconf php-dev php-redis && \
+    apt-get install -y nano && \
+    apt-get install -y curl gpg unzip autoconf php-dev php-redis && \
     rm -rf /var/lib/apt/lists/*
 
 # Install moosh for plugin management
 RUN curl -L https://github.com/tmuras/moosh/archive/refs/tags/1.21.tar.gz -o moosh.tar.gz && \
-mkdir moosh/ && tar -xzvf moosh.tar.gz -C moosh/ --strip-components=1 && \
-mkdir /.moosh && \
-chmod 774 /.moosh &&\
-cd /moosh/ && \
-composer install
+    mkdir moosh/ && tar -xzvf moosh.tar.gz -C moosh/ --strip-components=1 && \
+    mkdir /.moosh && \
+    chmod 774 /.moosh &&\
+    cd /moosh/ && \
+    composer install && \
+    ln -s /moosh/moosh.php /usr/local/bin/moosh
+
 
 # Install plugins to the image
 RUN mkdir /plugins && \
-/tmp/downloadPlugins.sh
+    /tmp/downloadPlugins.sh
 
 COPY entrypoint.sh /entrypoint.sh
 COPY moodleUpdateCheck.sh /moodleUpdateCheck.sh

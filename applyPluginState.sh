@@ -3,7 +3,7 @@
 set -o errexit
 set -o nounset
 set -o pipefail
-# set -o xtrace # Uncomment this line for debugging purposes
+set -o xtrace # Uncomment this line for debugging purposes
 
 # Load Moodle environment
 . /opt/bitnami/scripts/liblog.sh
@@ -66,7 +66,7 @@ uninstall_plugin() {
     local plugin_fullname
     plugin_fullname="$1"
     # do cd in subshell, to not have this skript change dir
-    (cd /bitnami/moodle && /moosh/moosh.php plugin-uninstall "$plugin_fullname")
+    (cd "$moodle_path" && php /moosh/moosh.php plugin-uninstall "$plugin_fullname")
 }
 
 main() {
@@ -82,7 +82,7 @@ main() {
     fi
     mkdir "$plugin_unzip_path"
 
-    plugin_state_changed=false
+    new_plugin_installed=false
 
     for plugin in $MOODLE_PLUGINS; do
         IFS=':' read -r -a parts <<< "$plugin"
@@ -94,34 +94,35 @@ main() {
         plugin_parent_path=$(dirname "$plugin_path")
         full_path="${moodle_path}/${plugin_path}"
 
+        plugin_installed=false
+        # plugin_uninstall_list=()
 
-        plugin_installed="false"
         if [ -d "$full_path" ]; then
-            plugin_installed="true"
+            plugin_installed=true
         fi
 
-        if [[ "$plugin_enabled" == "$plugin_installed" ]]; then
+        if [ "$plugin_enabled" = "$plugin_installed" ]; then
             continue
-        fi 
+        fi
 
-        if [[ "$plugin_enabled" == "true" ]]; then
+        if [ "$plugin_enabled" = true ]; then
             last_installed_plugin="$full_path"
             MODULE="dbp-plugins" info "Installing plugin ${plugin_name} (${plugin_fullname}) to path \"${plugin_path}\""
             install_plugin "$plugin_name" "$plugin_fullname" "$plugin_path"
             last_installed_plugin=""
-            plugin_state_changed=true
+            new_plugin_installed=true
 
-        elif [[ "$plugin_enabled" == "false" ]]; then
+        elif [ "$plugin_enabled" = false ]; then
+            # plugin_uninstall_list+=("$plugin_fullname")
             MODULE="dbp-plugins" info "Uninstalling plugin ${plugin_name} (${plugin_fullname}) from path \"${plugin_path}\""
-            uninstall_plugin "$plugin_name" "$plugin_fullname" "$plugin_path"
-            plugin_state_changed=true
+            uninstall_plugin "$plugin_fullname"
         else
             MODULE="dbp-plugins" info 'Unexpected value for plugin_enabled: "%s". Expecting "true/false". Exiting...' "$plugin_enabled"
             exit 1
         fi
     done
-    if [ "$plugin_state_changed" = true ]; then
-        MODULE="dbp-plugins" info 'Running Moodle upgrade to reload plugins'
+    if [ "$new_plugin_installed" = true ]; then
+        MODULE="dbp-plugins" info 'Running Moodle upgrade to load new plugins'
         php $moodle_path/admin/cli/upgrade.php --non-interactive
     else
         MODULE="dbp-plugins" info 'No plugin state change found.'
