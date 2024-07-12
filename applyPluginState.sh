@@ -3,7 +3,7 @@
 set -o errexit
 set -o nounset
 set -o pipefail
-set -o xtrace # Uncomment this line for debugging purposes
+# set -o xtrace # Uncomment this line for debugging purposes
 
 # Load Moodle environment
 . /opt/bitnami/scripts/liblog.sh
@@ -69,6 +69,19 @@ uninstall_plugin() {
     (cd "$moodle_path" && php /moosh/moosh.php plugin-uninstall "$plugin_fullname")
 }
 
+upgrade_if_pending() {
+    set +o errexit
+    php "${moodle_path}/admin/cli/upgrade.php" --non-interactive --is-pending > /dev/null
+    EXIT_CODE=$?
+    set -o errexit
+    echo "$EXIT_CODE"
+    # If an upgrade is needed it exits with an error code of 2 so it distinct from other types of errors.
+    if [ $EXIT_CODE -eq 2 ]; then
+        MODULE="dbp-plugins" info 'Running Moodle upgrade'
+        php "${moodle_path}/admin/cli/upgrade.php" --non-interactive
+    fi
+}
+
 main() {
     rm -f "$update_plugins_path"
 
@@ -82,7 +95,7 @@ main() {
     fi
     mkdir "$plugin_unzip_path"
 
-    new_plugin_installed=false
+    anychange=false
 
     for plugin in $MOODLE_PLUGINS; do
         IFS=':' read -r -a parts <<< "$plugin"
@@ -110,23 +123,26 @@ main() {
             MODULE="dbp-plugins" info "Installing plugin ${plugin_name} (${plugin_fullname}) to path \"${plugin_path}\""
             install_plugin "$plugin_name" "$plugin_fullname" "$plugin_path"
             last_installed_plugin=""
-            new_plugin_installed=true
+            anychange=true
 
         elif [ "$plugin_enabled" = false ]; then
-            # plugin_uninstall_list+=("$plugin_fullname")
+            upgrade_if_pending
             MODULE="dbp-plugins" info "Uninstalling plugin ${plugin_name} (${plugin_fullname}) from path \"${plugin_path}\""
             uninstall_plugin "$plugin_fullname"
+            anychange=true
         else
             MODULE="dbp-plugins" info 'Unexpected value for plugin_enabled: "%s". Expecting "true/false". Exiting...' "$plugin_enabled"
             exit 1
         fi
     done
-    if [ "$new_plugin_installed" = true ]; then
-        MODULE="dbp-plugins" info 'Running Moodle upgrade to load new plugins'
-        php $moodle_path/admin/cli/upgrade.php --non-interactive
-    else
-        MODULE="dbp-plugins" info 'No plugin state change found.'
+
+    upgrade_if_pending
+
+    if [ "$anychange" = false ]; then
+        MODULE="dbp-plugins" info 'No plugin state change detected.'
     fi
+
+    # clean up some files
     rm -rf "$plugin_unzip_path"
     rm -f "$maintenance_html_path" # TODO move this to entrypoint probably
 }
