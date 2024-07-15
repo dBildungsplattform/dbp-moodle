@@ -360,14 +360,7 @@ backup-cronjob:
     rules:
       - apiGroups: [""]
         resources:
-          [
-            "pods",
-            "pods/exec",
-            "secrets",
-            "persistentvolumeclaims",
-            "services",
-            "deployments",
-          ]
+          [ "pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments" ]
         verbs: ["get", "list", "create", "delete", "patch", "update"]
       - apiGroups: ["apps"]
         resources: ["deployments", "replicasets"]
