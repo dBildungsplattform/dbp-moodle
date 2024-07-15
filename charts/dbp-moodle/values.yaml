@@ -4,36 +4,11 @@ global:
   kubectl_version: "1.28.7"
   infratools_image_tag: 4.0.3
   storageClass: "nfs-client"
-
-backup:
-  enabled: false
-  gpg_key_names: dbpinfra
-  s3_bucket_name: default
-  cluster_name: default
-  endpoint: https://s3-eu-central-2.ionoscloud.com #s3 region Berlin endpoint
-
-dbpMoodle:
-  logging: false
-  debug: false # Moodle Debugging is not safe for production
-  restore: false # Only to be used to restore a snapshot with the dbp-restore script
-
-  # The dbp update process to migrate moodle date when Moodle versions are increased
-  update_process:
-    enabled: true
-    external_pvc:
-      name: "moodle-data"
-      size: "8Gi"
-      storage_class: "nfs-client"
-      accessModes: ["ReadWriteOnce"]
-      annotations: 
-        "helm.sh/resource-policy": "keep"
-
-  enable_plugin_install: true
   plugins:
     etherpadlite:
       enabled: false
     hvp:
-      enabled: true
+      enabled: false
     groupselect:
       enabled: false
     jitsi:
@@ -41,13 +16,13 @@ dbpMoodle:
     pdfannotator:
       enabled: false
     tiles:
-      enabled: true
+      enabled: false
     skype:
       enabled: false
     zoom:
       enabled: false
     booking:
-      enabled: true
+      enabled: false
     reengagement:
       enabled: false
     unilabel:
@@ -75,8 +50,33 @@ dbpMoodle:
     boost_union:
       enabled: false
 
+backup:
+  enabled: false
+  gpg_key_names: dbpinfra
+  s3_bucket_name: default
+  cluster_name: default
+  endpoint: https://s3-eu-central-2.ionoscloud.com #s3 region Berlin endpoint
+
+dbpMoodle:
+  logging: false
+  debug: false # Moodle Debugging is not safe for production
+  restore: false # Only to be used to restore a snapshot with the dbp-restore script
+
+  # The dbp update process to migrate moodle date when Moodle versions are increased
+  update_process:
+    enabled: false
+    external_pvc:
+      name: "moodle-data"
+      size: "8Gi"
+      storage_class: "nfs-client"
+      accessModes: ["ReadWriteOnce"]
+      annotations:
+        "helm.sh/resource-policy": "keep"
+
+  enable_plugin_install: true
+
   redis:
-    host : "moodle-redis-master"
+    host: "moodle-redis-master"
     port: 6379
     password: "moodle"
 
@@ -92,7 +92,15 @@ dbpMoodle:
   updateHelper:
     rules:
       - apiGroups: [""]
-        resources: ["pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments"]
+        resources:
+          [
+            "pods",
+            "pods/exec",
+            "secrets",
+            "persistentvolumeclaims",
+            "services",
+            "deployments",
+          ]
         verbs: ["get", "list", "create", "delete", "patch", "update"]
       - apiGroups: ["apps"]
         resources: ["deployments", "replicasets", "deployments/scale"]
@@ -115,7 +123,7 @@ moodle:
   image:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
-    tag: "DBP-807-latest"  #"4.1.10-debian-12-r5"
+    tag: "DBP-807-latest" #"4.1.10-debian-12-r5"
     pullPolicy: Always
     debug: false
   moodleSkipInstall: false
@@ -135,9 +143,9 @@ moodle:
       valueFrom:
         configMapKeyRef:
           name: moodle-plugins
-          key: moodle-plugin-list.sh
+          key: moodle-plugin-list
     - name: ENABLE_KALTURA
-      value: "false"
+      value: "false" #TODO still needed?
   extraEnvVarsSecret: "moodle"
   existingSecret: "moodle"
   persistence:
@@ -199,6 +207,8 @@ moodle:
           - key: php.ini
             path: php.ini
         defaultMode: 0644
+  podAnnotations:
+    moodleplugins/checksum: '{{- include "dbpMoodle.pluginConfigMap.content" . | sha256sum -}}'
 
 mariadb:
   enabled: true
@@ -317,8 +327,6 @@ etherpadlite:
           key: "etherpad-postgresql-password"
     - name: REQUIRE_SESSION
       value: "true"
-  
-  
   volumes:
     - name: "api-key"
       secret:
@@ -351,7 +359,6 @@ etherpadlite:
       cpu: "1000m"
       memory: "1Gi"
 
-
 backup-cronjob:
   image:
     tag: 4.0.3
@@ -359,7 +366,15 @@ backup-cronjob:
     create: false
     rules:
       - apiGroups: [""]
-        resources: ["pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments"]
+        resources:
+          [
+            "pods",
+            "pods/exec",
+            "secrets",
+            "persistentvolumeclaims",
+            "services",
+            "deployments",
+          ]
         verbs: ["get", "list", "create", "delete", "patch", "update"]
       - apiGroups: ["apps"]
         resources: ["deployments", "replicasets"]

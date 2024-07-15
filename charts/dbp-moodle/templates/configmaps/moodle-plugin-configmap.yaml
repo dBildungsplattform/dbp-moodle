@@ -5,27 +5,5 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   # contains plugin dependencies first, followed by enabled plugins
-  moodle-plugin-list.sh: |
-    wunderbyte_table:local_wunderbyte_table:local/wunderbyte_table: {{- .Values.dbpMoodle.plugins.booking.enabled }}
-    certificate:tool_certificate:admin/tool/certificate:            {{- or .Values.dbpMoodle.plugins.certificate.enabled .Values.dbpMoodle.plugins.coursecertificate.enabled }}
-    etherpadlite:mod_etherpadlite:mod/etherpadlite:                 {{- .Values.dbpMoodle.plugins.etherpadlite.enabled }}
-    hvp:mod_hvp:mod/hvp:                                            {{- .Values.dbpMoodle.plugins.hvp.enabled }}
-    groupselect:mod_groupselect:mod/groupselect:                    {{- .Values.dbpMoodle.plugins.groupselect.enabled }}
-    jitsi:mod_jitsi:mod/jitsi:                                      {{- .Values.dbpMoodle.plugins.jitsi.enabled }}
-    pdfannotator:mod_pdfannotator:mod/pdfannotator:                 {{- .Values.dbpMoodle.plugins.pdfannotator.enabled }}
-    skype:mod_skype:mod/skype:                                      {{- .Values.dbpMoodle.plugins.skype.enabled }}
-    zoom:mod_zoom:mod/zoom:                                         {{- .Values.dbpMoodle.plugins.zoom.enabled }}
-    booking:mod_booking:mod/booking:                                {{- .Values.dbpMoodle.plugins.booking.enabled }}
-    reengagement:mod_reengagement:mod/reengagement:                 {{- .Values.dbpMoodle.plugins.reengagement.enabled }}
-    unilabel:mod_unilabel:mod/unilabel:                             {{- .Values.dbpMoodle.plugins.unilabel.enabled }}
-    geogebra:mod_geogebra:mod/geogebra:                             {{- .Values.dbpMoodle.plugins.geogebra.enabled }}
-    remuiformat:format_remuiformat:course/format/remuiformat:       {{- .Values.dbpMoodle.plugins.remuiformat.enabled }}
-    tiles:format_tiles:course/format/tiles:                         {{- .Values.dbpMoodle.plugins.tiles.enabled }}
-    topcoll:format_topcoll:course/format/topcoll:                   {{- .Values.dbpMoodle.plugins.topcoll.enabled }}
-    oidc:auth_oidc:auth/oidc:                                       {{- .Values.dbpMoodle.plugins.oidc.enabled }}
-    saml2:auth_saml2:auth/saml2:                                    {{- .Values.dbpMoodle.plugins.saml2.enabled }}
-    dash:block_dash:blocks/dash:                                    {{- .Values.dbpMoodle.plugins.dash.enabled }}
-    sharing_cart:block_sharing_cart:blocks/sharing_cart:            {{- .Values.dbpMoodle.plugins.sharing_cart.enabled }}
-    xp:block_xp:blocks/xp:                                          {{- .Values.dbpMoodle.plugins.xp.enabled }}
-    coursecertificate:mod_coursecertificate:mod/coursecertificate:  {{- .Values.dbpMoodle.plugins.coursecertificate.enabled }}
-    boost_union:theme_boost_union:theme/boost_union:                {{- .Values.dbpMoodle.plugins.boost_union.enabled }}
+  # plugin_name:plugin_fullname:plugin_install_path:plugin_enabled
+  moodle-plugin-list: {{ include "dbpMoodle.pluginConfigMap.content" . | nindent 4 }}
