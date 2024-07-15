@@ -10,7 +10,6 @@ cur_image_version="$APP_VERSION"
 moodle_path="/bitnami/moodle"
 
 # indicator files
-update_plugins_path="/bitnami/moodledata/UpdatePlugins"
 update_failed_path="/bitnami/moodledata/UpdateFailed"
 update_cli_path="/bitnami/moodledata/CliUpdate"
 maintenance_html_path="/bitnami/moodledata/climaintenance.html"
