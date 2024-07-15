@@ -8,7 +8,6 @@ NC='\033[0m' # No Color
 cur_image_version="$APP_VERSION"
 
 moodle_path="/bitnami/moodle"
-plugin_zip_path="/plugins"
 
 # indicator files
 update_plugins_path="/bitnami/moodledata/UpdatePlugins"
@@ -40,64 +39,12 @@ cleanup() {
     printf "=== Deleting Moodle download folder ===\n"
     rm -rf "$new_version_data_path"
     rm -f /bitnami/moodledata/moodle.tgz
-    if ! [ -f "$update_plugins_path" ]; then
-        printf "=== Disabling maintenance mode and signaling that update process is finished ===\n"
-        rm -f "$maintenance_html_path"
-    else
-        printf "=== Plugin update remaining, update DB and installing plugins in new Pod ===\n"
-    fi
-    rm -f "$update_cli_path"
 }
 
-install_kaltura(){
-    local kaltura_url="https://moodle.org/plugins/download.php/29483/Kaltura_Video_Package_moodle41_2022112803.zip"
-    local kaltura_save_path="/bitnami/moodle/kaltura.zip"
-    curl "$kaltura_url" --output "$kaltura_save_path"
-    if [ ! -f "$kaltura_save_path" ]; then
-        printf "===${RED} Kaltura could not be downloaded, please check for correct Kaltura Url and try again ${NC}===\n"
-        printf "\tCurrent kaltura url: %s\n" "$kaltura_url"
-        return 1
-    fi
-    printf "\tUnpacking Kaltura\n"
-    unzip "$kaltura_save_path" -d "/bitnami/moodle/"
-    printf "\tInstalling Kaltura\n"
-    php /bitnami/moodle/admin/cli/upgrade.php --non-interactive
-    printf "\tDeleting install artifacts\n"
-    rm "$kaltura_save_path"
-    printf "===${GRN} Kaltura plugin successfully installed ${NC}===\n"
-}
 
-install_plugins() {
-    rm -f "$update_plugins_path"
-    if [[ $ENABLE_KALTURA == "True" ]]; then
-        printf "=== Kaltura Flag enabled, installing Kaltura plugin ===\n"
-        install_kaltura
-    fi
-
-    if [ -d "/tmp/plugins/" ]; then
-        rm -rf /tmp/plugins/
-    fi
-    mkdir /tmp/plugins/
-
-    for plugin in $MOODLE_PLUGINS; do
-        IFS=':' read -r -a parts <<< "$plugin"
-        plugin_name="${parts[0]}"
-        plugin_fullname="${parts[1]}"
-        plugin_path="${parts[2]}"
-        
-        printf 'Installing plugin %s (%s) to path "%s"\n' "$plugin_name" "$plugin_fullname" "$plugin_path"
-        unzip "${plugin_zip_path}/${plugin_fullname}.zip" -d /tmp/plugins/
-        mv "/tmp/plugins/${plugin_name}" "${moodle_path}/${plugin_path}"
-    done
-
-    # Run Moodle DB upgrade, which loads plugins
-    # is once at the end enough, or do this after each
-    php $moodle_path/admin/cli/upgrade.php --non-interactive
-    #rm -rf "$plugin_zip_path"
-}
 
 ### Start of main ###
-# Get Version number for download Link and reuse for later plugin update
+# Get Version number for download link
 major_regex="\s*([0-9])+\."
 minor_regex="\.([0-9]*)\."
 if [[ $cur_image_version =~ $major_regex ]]; then
@@ -119,22 +66,14 @@ if [ -f "$update_failed_path" ]; then
     exit 1
 fi
 
-if [ -f "$update_plugins_path" ]; then
-    printf "=== UpdatePlugins File found, starting plugin installation ===\n"
-    install_plugins
-    printf "===${GRN} Finished UpdatePlugins, removing maintenance status and exiting update ${NC}===\n"
-    rm -f "$maintenance_html_path"
-    exit 0
-fi
-
 # Get the current installed version
 installed_version="0.0.0"
-if [ ! -f /bitnami/moodle/version.php ]; then
+if [ ! -f "${moodle_path}/version.php" ]; then
     printf "=== No installed Moodle version detected, exiting update ===\n"
     printf "Normal start of bitnami moodle after this will do a fresh install\n"
     exit 0
 fi
-LINE=$(grep release /bitnami/moodle/version.php)
+LINE=$(grep release "${moodle_path}/version.php")
 REGEX="release\s*=\s*'([0-9]+\.[0-9]*+\.[0-9]*)"
 if [[ $LINE =~ $REGEX ]]; then
     printf "Installed Moodle version: %s\n" "${BASH_REMATCH[1]}"
@@ -163,7 +102,7 @@ if ! [ -f "$maintenance_html_path" ]; then
         rm -r "$old_version_data_path"
     fi
     mkdir -p "$old_version_data_path"
-    cp -rp /bitnami/moodle/* "$old_version_data_path"
+    cp -rp "${moodle_path}/"* "$old_version_data_path"
 else
     printf "=== Maintenance Mode already active, skipping internal backup ===\n"
 fi
@@ -201,29 +140,21 @@ else
     printf "Unpacking it to %s\n" "$new_version_data_path"
     tar -xzf /bitnami/moodledata/moodle.tgz -C "$new_version_data_path" --strip 1
 fi
-sleep 2
+sleep 2 #TODO ???
 
-printf "=== Setting permissions right  ===\n"
+printf "=== Setting current user as owner for moodledata  ===\n"
 chown -R 1001:root /bitnami/moodledata/*
 printf "=== Deleting old Moodle ===\n"
-rm -rf /bitnami/moodle/*
+rm -rf "${moodle_path:?}"/*
 printf "=== Copying new Moodle to folder ===\n"
-cp -rp ${new_version_data_path}/* /bitnami/moodle/
-
-# Checks for the Moodle Plugin List
-if [[ -n $MOODLE_PLUGINS ]]; then
-    printf "=== Creating UpdatePlugins to trigger plugin installation ===\n"
-    touch "$update_plugins_path"
-else
-    printf "=== ${RED}MOODLE_PLUGINS environment variable missing${NC}, skipping plugin copy step ===\n"
-fi
+cp -rp ${new_version_data_path}/* ${moodle_path}/
 
 # If success
 # Get the new installed version
 printf "=== Checking newly installed downloaded Moodle version ===\n"
 post_update_version="0.0.0"
-if [ -f /bitnami/moodle/version.php ]; then
-    LINE=$(grep release /bitnami/moodle/version.php)
+if [ -f "${moodle_path}/version.php" ]; then
+    LINE=$(grep release "${moodle_path}/version.php")
     REGEX="release\s*=\s*'([0-9]+\.[0-9]+\.[0-9]+)"
     if [[ $LINE =~ $REGEX ]]; then
         printf "New Installed Moodle version: %s\n" "${BASH_REMATCH[1]}"
@@ -232,14 +163,14 @@ if [ -f /bitnami/moodle/version.php ]; then
 else
     # If no moodle Version was found we fall back to previous version
     printf "===${RED} Update failed${NC}, no Moodle version detected. Falling back to old version ===\n"
-    cp -rp /bitnami/moodledata/moodle-backup/* /bitnami/moodle/ && printf "=== Old moodle version restored to folder ===\n"
+    cp -rp /bitnami/moodledata/moodle-backup/* "${moodle_path}/" && printf "=== Old moodle version restored to folder ===\n"
     touch "$update_failed_path"
     sleep 5
     exit 1
 fi
 
 if [ "$post_update_version" == "$cur_image_version" ]; then
-    /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
+    /bin/cp -p /moodleconfig/config.php "${moodle_path}/config.php"
     printf "===${GRN} Update to new version %s successful! ${NC}===\n" "$post_update_version"
     printf "=== Starting cleanup ===\n"
     cleanup
