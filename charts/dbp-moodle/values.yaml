@@ -93,14 +93,7 @@ dbpMoodle:
     rules:
       - apiGroups: [""]
         resources:
-          [
-            "pods",
-            "pods/exec",
-            "secrets",
-            "persistentvolumeclaims",
-            "services",
-            "deployments",
-          ]
+          [ "pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments" ]
         verbs: ["get", "list", "create", "delete", "patch", "update"]
       - apiGroups: ["apps"]
         resources: ["deployments", "replicasets", "deployments/scale"]
@@ -123,7 +116,7 @@ moodle:
   image:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
-    tag: "DBP-807-latest" #"4.1.10-debian-12-r5"
+    tag: "4.1.11-debian-12-r0"
     pullPolicy: Always
     debug: false
   moodleSkipInstall: false

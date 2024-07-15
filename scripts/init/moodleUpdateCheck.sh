@@ -69,7 +69,6 @@ fi
 installed_version="0.0.0"
 if [ ! -f "${moodle_path}/version.php" ]; then
     printf "=== No installed Moodle version detected, exiting update ===\n"
-    printf "Normal start of bitnami moodle after this will do a fresh install\n"
     exit 0
 fi
 LINE=$(grep release "${moodle_path}/version.php")
