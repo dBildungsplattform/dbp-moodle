@@ -87,6 +87,7 @@ do_step() {
 
     # there is always a rerun to ensure idempotence is working
     MOODLE_PLUGINS="$plugin_string" ENABLE_KALTURA=false /scripts/applyPluginState.sh
+    printf "################# re-run #################\n"
     MOODLE_PLUGINS="$plugin_string" ENABLE_KALTURA=false /scripts/applyPluginState.sh
 }
 
