@@ -120,3 +120,5 @@ do_step -i -1
 
 print_step "Uninstall all"
 do_step -1
+
+printf "All checks finished successfully"
