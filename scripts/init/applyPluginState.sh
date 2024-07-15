@@ -139,9 +139,10 @@ main() {
         fi
     done
     
-    upgrade_if_pending
     
-    if [ "$anychange" = false ]; then
+    if [ "$anychange" = true ]; then
+        upgrade_if_pending
+    else
         MODULE="dbp-plugins" info 'No plugin state change detected.'
     fi
 
