@@ -15,6 +15,9 @@ COPY scripts/init/applyPluginState.sh /scripts/applyPluginState.sh
 
 RUN chmod +x /scripts/entrypoint.sh /scripts/moodleUpdateCheck.sh /scripts/applyPluginState.sh /scripts/downloadPlugins.sh /scripts/phpRedisInstall.sh
 
+COPY scripts/test/test-plugin-install-uninstall.sh /scripts/test-plugin-install-uninstall.sh
+RUN if [[ "$DEBUG" = true ]]; then chmod +x /scripts/test-plugin-install-uninstall.sh; fi
+
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y curl gpg unzip autoconf php-dev php-redis; \
     [[ "$DEBUG" = true ]] && apt-get install -y nano; \
@@ -30,11 +33,9 @@ RUN curl -L https://github.com/tmuras/moosh/archive/refs/tags/1.21.tar.gz -o moo
     ln -s /moosh/moosh.php /usr/local/bin/moosh
 
 # Install plugins to the image
-RUN /scripts/downloadPlugins.sh
-RUN if [[ "$DEBUG" = false ]]; then rm /scripts/downloadPlugins.sh; fi
+RUN /scripts/downloadPlugins.sh && if [[ "$DEBUG" = false ]]; then rm /scripts/downloadPlugins.sh; fi
 
 # Install redis-php which is required for moodle to use redis
-RUN /scripts/phpRedisInstall.sh
-RUN if [[ "$DEBUG" = false ]]; then rm /scripts/phpRedisInstall.sh; fi
+RUN /scripts/phpRedisInstall.sh && if [[ "$DEBUG" = false ]]; then rm /scripts/phpRedisInstall.sh; fi
 
 ENTRYPOINT ["/scripts/entrypoint.sh"]
