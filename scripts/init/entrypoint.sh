@@ -35,8 +35,8 @@ startBitnamiSetup() {
 startBitnamiSetup
 
 MODULE=dbp info "** Starting Moodle Update Check **"
-# /scripts/moodleUpdateCheck.sh 2>&1 | tee -a "/bitnami/moodledata/moodleUpdateCheck.log"
-# EXIT_CODE=${PIPESTATUS[0]}
+/scripts/moodleUpdateCheck.sh 2>&1 | tee -a "/bitnami/moodledata/moodleUpdateCheck.log"
+
 MODULE=dbp info "** Update Check finished! **"
 # 
 
