@@ -2,36 +2,39 @@
 FROM bitnami/moodle:4.1.10-debian-12-r5
 RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen
 USER root
+ARG DEBUG=${DEBUG:-false}
 
-COPY downloadPlugins.sh /tmp/downloadPlugins.sh
-RUN chmod +x /tmp/downloadPlugins.sh && \
-    apt-get update && apt-get upgrade -y && \
-    apt-get install -y nano && \
-    apt-get install -y curl gpg unzip autoconf php-dev php-redis && \
+RUN mkdir /scripts /plugins
+
+COPY scripts/install/downloadPlugins.sh /scripts/downloadPlugins.sh
+COPY scripts/install/phpRedisInstall.sh /scripts/phpRedisInstall.sh
+
+COPY scripts/init/entrypoint.sh /scripts/entrypoint.sh
+COPY scripts/init/moodleUpdateCheck.sh /scripts/moodleUpdateCheck.sh
+COPY scripts/init/applyPluginState.sh /scripts/applyPluginState.sh
+
+RUN chmod +x /scripts/entrypoint.sh /scripts/moodleUpdateCheck.sh /scripts/applyPluginState.sh /scripts/downloadPlugins.sh /scripts/phpRedisInstall.sh
+
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y curl gpg unzip autoconf php-dev php-redis; \
+    [[ "$DEBUG" = true ]] && apt-get install -y nano; \
     rm -rf /var/lib/apt/lists/*
 
 # Install moosh for plugin management
 RUN curl -L https://github.com/tmuras/moosh/archive/refs/tags/1.21.tar.gz -o moosh.tar.gz && \
-    mkdir moosh/ && tar -xzvf moosh.tar.gz -C moosh/ --strip-components=1 && \
+    mkdir /moosh && tar -xzvf moosh.tar.gz -C moosh/ --strip-components=1 && \
     mkdir /.moosh && \
     chmod 774 /.moosh &&\
     cd /moosh/ && \
     composer install && \
     ln -s /moosh/moosh.php /usr/local/bin/moosh
 
-
 # Install plugins to the image
-RUN mkdir /plugins && \
-    /tmp/downloadPlugins.sh
-
-COPY entrypoint.sh /entrypoint.sh
-COPY moodleUpdateCheck.sh /moodleUpdateCheck.sh
-COPY applyPluginState.sh /tmp/applyPluginState.sh
-RUN chmod +x /entrypoint.sh /moodleUpdateCheck.sh /tmp/applyPluginState.sh 
+RUN /scripts/downloadPlugins.sh
+RUN if [[ "$DEBUG" = false ]]; then rm /scripts/downloadPlugins.sh; fi
 
 # Install redis-php which is required for moodle to use redis
-COPY phpRedisInstall.sh /tmp/phpRedisInstall.sh
-RUN chmod +x /tmp/phpRedisInstall.sh
-RUN /tmp/phpRedisInstall.sh
+RUN /scripts/phpRedisInstall.sh
+RUN if [[ "$DEBUG" = false ]]; then rm /scripts/phpRedisInstall.sh; fi
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/scripts/entrypoint.sh"]

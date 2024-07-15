@@ -8,6 +8,7 @@ NC='\033[0m' # No Color
 cur_image_version="$APP_VERSION"
 
 moodle_path="/bitnami/moodle"
+plugin_zip_path="/plugins"
 
 # indicator files
 update_plugins_path="/bitnami/moodledata/UpdatePlugins"
@@ -66,36 +67,12 @@ install_kaltura(){
     printf "===${GRN} Kaltura plugin successfully installed ${NC}===\n"
 }
 
-# Not tested yet!
-install_plugin_dependencies(){
-
-    for dependency in $1
-    do
-        if [ "$type" = "format" ]; then
-            type="course/format"
-        elif [ "$type" = "block" ]; then
-            type="blocks"
-        elif [ "$type" = "tool" ]; then
-            type="admin/tool"
-        fi
-
-        mv /tmp/plugins/$dependency $moodle_path/$type/$dependency
-
-        # Run Moodle DB upgrade
-        php $moodle_path/admin/cli/upgrade.php --non-interactive
-
-    done
-}
-
-update_plugins() {
+install_plugins() {
     rm -f "$update_plugins_path"
     if [[ $ENABLE_KALTURA == "True" ]]; then
         printf "=== Kaltura Flag enabled, installing Kaltura plugin ===\n"
         install_kaltura
     fi
-
-    moodle_path="/bitnami/moodle"
-    PLUGIN_ZIP_PATH="/plugins"
 
     if [ -d "/tmp/plugins/" ]; then
         rm -rf /tmp/plugins/
@@ -103,43 +80,20 @@ update_plugins() {
     mkdir /tmp/plugins/
 
     for plugin in $MOODLE_PLUGINS; do
-        pluginname=$(echo $plugin | cut -d'_' -f2-)
-        type=$(echo $plugin | cut -d'_' -f1)
-        echo "Installing plugin $plugin of type $type"
-
-        # TODO check dependencies in the version.php of the new plugin and install it prior to the plugin.
-        # Can we install the plugin + all it's dependencie sin one step or need to do each one by one?
-        unzip $PLUGIN_ZIP_PATH/$plugin.zip -d /tmp/plugins/
-        file="/tmp/plugins/$pluginname/version.php"
+        IFS=':' read -r -a parts <<< "$plugin"
+        plugin_name="${parts[0]}"
+        plugin_fullname="${parts[1]}"
+        plugin_path="${parts[2]}"
         
-        # Creates list of all found dependencies in format:  "dependency_name: version \n"
-        dependencies_with_versions=$(awk '/\$plugin->dependencies = \[/{flag=1; next} /\];/{flag=0} flag {print}' "$file" | sed "s/['\",]//g" | sed 's/^[ \t]*//;s/[ \t]*$//')
-        echo "Dependencies found:"
-        echo "$dependencies_with_versions" | awk -F' =>' '{print $1 ": " $2}'
-
-        # Cuts of the version and only uses the plugin name from here
-        dependency_names=$(echo "$dependencies_with_versions" | awk -F' =>' '{print $1}' | tr '\n' ' ')
-
-        # TODO handle here the installation of the found plugin dependencies and continue with the main plugin afterwards
-        # Test if the list gets handled correctly here
-        install_plugin_dependencies $dependency_names
-
-        # Correct paths according to types that are named different than their paths
-        if [ "$type" = "format" ]; then
-            type="course/format"
-        elif [ "$type" = "block" ]; then
-            type="blocks"
-        elif [ "$type" = "tool" ]; then
-            type="admin/tool"
-        fi
-        
-        mv /tmp/plugins/$pluginname $moodle_path/$type/$pluginname
-
-        # Run Moodle DB upgrade
-        php $moodle_path/admin/cli/upgrade.php --non-interactive
+        printf 'Installing plugin %s (%s) to path "%s"\n' "$plugin_name" "$plugin_fullname" "$plugin_path"
+        unzip "${plugin_zip_path}/${plugin_fullname}.zip" -d /tmp/plugins/
+        mv "/tmp/plugins/${plugin_name}" "${moodle_path}/${plugin_path}"
     done
 
-    #rm -r "$PLUGIN_ZIP_PATH"
+    # Run Moodle DB upgrade, which loads plugins
+    # is once at the end enough, or do this after each
+    php $moodle_path/admin/cli/upgrade.php --non-interactive
+    #rm -rf "$plugin_zip_path"
 }
 
 ### Start of main ###
@@ -167,8 +121,7 @@ fi
 
 if [ -f "$update_plugins_path" ]; then
     printf "=== UpdatePlugins File found, starting plugin installation ===\n"
-    sleep 5
-    update_plugins
+    install_plugins
     printf "===${GRN} Finished UpdatePlugins, removing maintenance status and exiting update ${NC}===\n"
     rm -f "$maintenance_html_path"
     exit 0

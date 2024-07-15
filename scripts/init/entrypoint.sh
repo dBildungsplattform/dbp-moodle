@@ -35,7 +35,7 @@ startBitnamiSetup() {
 startBitnamiSetup
 
 MODULE=dbp info "** Starting Moodle Update Check **"
-# /moodleUpdateCheck.sh 2>&1 | tee -a "/bitnami/moodledata/moodleUpdateCheck.log"
+# /scripts/moodleUpdateCheck.sh 2>&1 | tee -a "/bitnami/moodledata/moodleUpdateCheck.log"
 # EXIT_CODE=${PIPESTATUS[0]}
 MODULE=dbp info "** Update Check finished! **"
 # 
@@ -45,7 +45,7 @@ MODULE=dbp info "Replacing config files with ours"
 /bin/cp /moodleconfig/php.ini /opt/bitnami/php/etc/conf.d/php.ini
 
 MODULE=dbp info "Starting plugin installation"
-/tmp/applyPluginState.sh
+/scripts/applyPluginState.sh
 MODULE=dbp info "Finished Plugin Install"
 
 # touch /bitnami/moodledata/FreshInstall

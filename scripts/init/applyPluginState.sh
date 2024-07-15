@@ -67,8 +67,7 @@ uninstall_plugin() {
     local plugin_path
     plugin_fullname="$1"
     plugin_path="$2"
-    # do cd in subshell, to not have this skript change dir
-    # (cd "$moodle_path" && php /moosh/moosh.php plugin-uninstall "$plugin_fullname")+
+
     php "${moodle_path}/admin/cli/uninstall_plugins.php" --plugins="$plugin_fullname" --run
     rm -rf "${moodle_path:?}/${plugin_path:?}"
 }

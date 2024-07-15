@@ -1,6 +1,6 @@
 #!/bin/bash
-cd /plugins || exit
-php /moosh/moosh.php plugin-list
+cd /plugins || exit 1
+php /moosh/moosh.php plugin-list > /dev/null
 
 # Dependencies
 php /moosh/moosh.php plugin-download -v 4.1 local_wunderbyte_table # Dependency of mod_booking
