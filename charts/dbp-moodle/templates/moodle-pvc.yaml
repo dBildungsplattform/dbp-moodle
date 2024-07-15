@@ -1,22 +1,22 @@
-{{- if .Values.dbpMoodle.update_process.enabled -}}
+{{- if .Values.dbpMoodle.update_migration.enabled -}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   annotations:
-    {{- with .Values.dbpMoodle.update_process.external_pvc.annotations }}
+    {{- with .Values.dbpMoodle.update_migration.external_pvc.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-  name: "{{ .Values.dbpMoodle.update_process.external_pvc.name }}"
+  name: "{{ .Values.dbpMoodle.update_migration.external_pvc.name }}"
   namespace: "{{ .Release.Namespace }}"
 spec:
-  storageClassName: "{{ .Values.dbpMoodle.update_process.external_pvc.storage_class }}"
+  storageClassName: "{{ .Values.dbpMoodle.update_migration.external_pvc.storage_class }}"
   accessModes:
-  {{- if not (empty .Values.dbpMoodle.update_process.external_pvc.accessModes) }}
-  {{- range .Values.dbpMoodle.update_process.external_pvc.accessModes }}
+  {{- if not (empty .Values.dbpMoodle.update_migration.external_pvc.accessModes) }}
+  {{- range .Values.dbpMoodle.update_migration.external_pvc.accessModes }}
     - {{ . | quote }}
   {{- end }}
   {{- end }}
   resources:
     requests:
-      storage: "{{ .Values.dbpMoodle.update_process.external_pvc.size }}"
+      storage: "{{ .Values.dbpMoodle.update_migration.external_pvc.size }}"
 {{- end }}

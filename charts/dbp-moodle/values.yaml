@@ -63,7 +63,7 @@ dbpMoodle:
   restore: false # Only to be used to restore a snapshot with the dbp-restore script
 
   # The dbp update process to migrate moodle date when Moodle versions are increased
-  update_process:
+  update_migration:
     enabled: false
     external_pvc:
       name: "moodle-data"
