@@ -9,9 +9,9 @@
 # - install plugin & uninstall at the same time (& rerun)
 # - install plugin & uninstall multiple at the same time (& rerun)
 
-# set -o errexit
+set -o errexit
 # set -o nounset
-# set -o pipefail
+set -o pipefail
 
 plugin_base_list=$(cat <<EOF
 wunderbyte_table:local_wunderbyte_table:local/wunderbyte_table
