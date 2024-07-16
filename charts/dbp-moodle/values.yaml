@@ -92,8 +92,7 @@ dbpMoodle:
   updateHelper:
     rules:
       - apiGroups: [""]
-        resources:
-          [ "pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments" ]
+        resources: ["pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments"]
         verbs: ["get", "list", "create", "delete", "patch", "update"]
       - apiGroups: ["apps"]
         resources: ["deployments", "replicasets", "deployments/scale"]
@@ -168,7 +167,7 @@ moodle:
     type: ClusterIP
   ingress:
     enabled: true
-    hostname: "moodle.dbpinfra-dev-moodle-01.dbildungsplattform.de"
+    hostname: "moodle.example.de"
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
@@ -298,7 +297,7 @@ etherpad-postgresql:
         memory: "1Gi"
 
 etherpadlite:
-  enabled: false
+  enabled: true
   image:
     repository: "ghcr.io/dbildungsplattform/etherpad"
     tag: "1.8.18.0"
@@ -359,8 +358,7 @@ backup-cronjob:
     create: false
     rules:
       - apiGroups: [""]
-        resources:
-          [ "pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments" ]
+        resources: ["pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments"]
         verbs: ["get", "list", "create", "delete", "patch", "update"]
       - apiGroups: ["apps"]
         resources: ["deployments", "replicasets"]
