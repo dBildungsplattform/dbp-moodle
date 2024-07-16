@@ -43,7 +43,7 @@ cleanup() {
 
 
 ### Start of main ###
-# Get Version number for download link
+# Get Version number for download
 major_regex="\s*([0-9])+\."
 minor_regex="\.([0-9]*)\."
 if [[ $cur_image_version =~ $major_regex ]]; then
