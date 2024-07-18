@@ -108,7 +108,7 @@ applyKalturaState() {
 
     for dir in "${kaltura_dirs[@]}"; do
         if [ ! -d "${moodle_path}/${dir}" ]; then mkdir -p "${moodle_path}/${dir}"; fi
-        mv "${plugin_zip_path}/kaltura/${dir}/"* "${moodle_path}/${dir}"/
+        mv "${plugin_unzip_path}/kaltura/${dir}/"* "${moodle_path}/${dir}"/
     done
 }
 
