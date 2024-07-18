@@ -26,7 +26,7 @@ RUN curl -L https://github.com/tmuras/moosh/archive/refs/tags/1.21.tar.gz -o moo
 RUN mkdir /plugins && /downloadPlugins.sh
 
 # Install redis-php which is required for moodle to use redis
-# RUN /phpRedisInstall.sh
+# RUN /scripts/phpRedisInstall.sh
 
 # Stage 2: Production stage
 FROM bitnami/moodle:4.1.11-debian-12-r0
@@ -54,6 +54,6 @@ RUN apt-get update && apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists/*
 
 # Install redis-php which is required for moodle to use redis
-RUN /phpRedisInstall.sh
+RUN /scripts/phpRedisInstall.sh
 
 ENTRYPOINT ["/scripts/entrypoint.sh"]
