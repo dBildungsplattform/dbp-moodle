@@ -8,6 +8,7 @@ COPY scripts/install/downloadPlugins.sh /downloadPlugins.sh
 
 RUN chmod +x /downloadPlugins.sh
 
+# TODO: is autoconf still needed?
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y curl gpg jq autoconf php-dev php-redis && \
     rm -rf /var/lib/apt/lists/*
@@ -47,7 +48,6 @@ COPY scripts/test/test-plugin-install-uninstall.sh /scripts/test-plugin-install-
 RUN chmod +x /scripts/entrypoint.sh /scripts/moodleUpdateCheck.sh /scripts/applyPluginState.sh /phpRedisInstall.sh
 RUN if [[ "$DEBUG" = true ]]; then chmod +x /scripts/test-plugin-install-uninstall.sh; fi
 
-# autoconf ?
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y curl unzip; \
     [[ "$DEBUG" = true ]] && apt-get install -y nano; \
