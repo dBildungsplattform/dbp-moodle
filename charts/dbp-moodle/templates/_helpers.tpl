@@ -50,12 +50,9 @@ false
 {{- end -}}
 
 {{- define "dbpMoodle.pluginConfigMap.content" -}}
-# kaltura is installed straight into install, so empty dir
 kaltura:kaltura:: {{- .Values.global.plugins.kaltura.enabled }}
-# dependencies
 wunderbyte_table:local_wunderbyte_table:local/wunderbyte_table: {{- .Values.global.plugins.booking.enabled }}
 certificate:tool_certificate:admin/tool/certificate:            {{- or .Values.global.plugins.certificate.enabled .Values.global.plugins.coursecertificate.enabled }}
-# plugins
 etherpadlite:mod_etherpadlite:mod/etherpadlite:                 {{- .Values.global.plugins.etherpadlite.enabled }}
 hvp:mod_hvp:mod/hvp:                                            {{- .Values.global.plugins.hvp.enabled }}
 groupselect:mod_groupselect:mod/groupselect:                    {{- .Values.global.plugins.groupselect.enabled }}
