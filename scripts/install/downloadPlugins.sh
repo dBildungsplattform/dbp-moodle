@@ -1,9 +1,5 @@
 #!/bin/bash
 
-set -o errexit
-set -o nounset
-set -o pipefail
-
 download_kaltura() {
     local target_version="$1"
     latest_tag="$(curl -s https://api.github.com/repos/kaltura/moodle_plugin/releases | jq -r '.[].tag_name' | grep "$target_version" | head -1)"
