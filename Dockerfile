@@ -10,7 +10,7 @@ COPY scripts/install/phpRedisInstall.sh /phpRedisInstall.sh
 RUN chmod +x /downloadPlugins.sh /phpRedisInstall.sh
 
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y curl wget gpg jq autoconf php-dev php-redis && \
+    apt-get install -y curl gpg jq autoconf php-dev php-redis && \
     rm -rf /var/lib/apt/lists/*
 
 # Install moosh for plugin management
@@ -49,6 +49,5 @@ RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y curl unzip; \
     [[ "$DEBUG" = true ]] && apt-get install -y nano; \
     rm -rf /var/lib/apt/lists/*
-    
 
 ENTRYPOINT ["/scripts/entrypoint.sh"]
