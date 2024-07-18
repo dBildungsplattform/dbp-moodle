@@ -106,10 +106,10 @@ do_step 2 3
 print_step "Uninstall all (etherpadlite, hvp)"
 do_step -1 
 
-print_step "Preperation: install groupselect"
+print_step "preparation: install groupselect"
 do_step 4
 
-print_step "Preperation: uninstall groupselect & install jitsi"
+print_step "preparation: uninstall groupselect & install jitsi"
 do_step 5 
 
 print_step "Cleanup: uninstall jitsi"
