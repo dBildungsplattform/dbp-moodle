@@ -83,7 +83,7 @@ applyKalturaState() {
         "mod/kalvidassign"
     )
 
-    unzip -q "${plugin_zip_path}/kaltura.zip" -d "$plugin_unzip_path"
+    unzip -q "${plugin_zip_path}/kaltura.zip" -d "$plugin_unzip_path/kaltura"
 
     installed_dirs=0
     for dir in "${kaltura_dirs[@]}"; do
@@ -110,6 +110,7 @@ applyKalturaState() {
         if [ ! -d "${moodle_path}/${dir}" ]; then mkdir -p "${moodle_path}/${dir}"; fi
         mv "${plugin_unzip_path}/kaltura/${dir}/"* "${moodle_path}/${dir}"/
     done
+    rm -rf "${plugin_unzip_path}/kaltura/"
 }
 
 main() {
