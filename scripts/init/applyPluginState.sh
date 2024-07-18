@@ -88,7 +88,9 @@ applyKalturaState() {
     installed_dirs=0
     for dir in "${kaltura_dirs[@]}"; do
         if [ -d "${moodle_path}/${dir}" ]; then
+            set +o errexit
             ((installed_dirs++))
+            set -o errexit
         fi
     done
 
@@ -103,7 +105,7 @@ applyKalturaState() {
         exit 1
     fi
     
-    if [ "$target_state" = "$current_state" ]; then return; fi
+    if [ "$target_state" = "$current_state" ]; then echo 0; return; fi
 
     if [ "$target_state" = true ]; then
         MODULE="dbp-plugins" info "Installing plugin Kaltura"
@@ -111,13 +113,13 @@ applyKalturaState() {
             if [ ! -d "${moodle_path}/${dir}" ]; then mkdir -p "${moodle_path}/${dir}"; fi
             mv "${plugin_unzip_path}/kaltura/${dir}/"* "${moodle_path}/${dir}"/
         done
-        MODULE="dbp-plugins" info "Kaltura installed successfully"
+        echo 1
     elif [ "$target_state" = false ]; then
         MODULE="dbp-plugins" info "Uninstalling plugin Kaltura"
         for dir in "${kaltura_dirs[@]}"; do
             rm -rf "${moodle_path:?}/${dir:?}"
-            MODULE="dbp-plugins" info "Kaltura installed successfully"
         done
+        echo -1
     else
         MODULE="dbp-plugins" error "Unexpected value for plugin_target_state: \"$target_state\". Expecting \"true/false\". Exiting..."
         exit 1
@@ -147,7 +149,10 @@ main() {
         plugin_cur_state=false
         
         if [[ "$plugin_name" == "kaltura" ]]; then
-            applyKalturaState "$plugin_target_state"
+            change_value="$(applyKalturaState "$plugin_target_state")"
+            if [ "$change_value" -ne 0 ]; then
+                anychange=true
+            fi
             continue
         fi
 
