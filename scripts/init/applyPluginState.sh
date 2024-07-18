@@ -51,7 +51,6 @@ uninstall_plugin() {
     fi
     php "${moodle_path}/admin/cli/uninstall_plugins.php" --plugins="$plugin_fullname" --run
     rm -rf "${moodle_path:?}/${plugin_path:?}"
-    rm -rf "${moodle_path:?}/"
 }
 
 upgrade_if_pending() {
