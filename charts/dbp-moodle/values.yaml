@@ -5,6 +5,8 @@ global:
   infratools_image_tag: 4.0.3
   storageClass: "nfs-client"
   plugins:
+    kaltura:
+      enabled: true
     etherpadlite:
       enabled: false
     hvp:

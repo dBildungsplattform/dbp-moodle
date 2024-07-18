@@ -31,21 +31,8 @@ cleanup_failed_install() {
 }
 
 install_kaltura(){
-    local kaltura_url="https://moodle.org/plugins/download.php/29483/Kaltura_Video_Package_moodle41_2022112803.zip"
-    local kaltura_save_path="/bitnami/moodle/kaltura.zip"
-    curl "$kaltura_url" --output "$kaltura_save_path"
-    if [ ! -f "$kaltura_save_path" ]; then
-        printf "===${RED} Kaltura could not be downloaded, please check for correct Kaltura Url and try again ${NC}===\n"
-        printf "\tCurrent kaltura url: %s\n" "$kaltura_url"
-        return 1
-    fi
-    printf "\tUnpacking Kaltura\n"
-    unzip -q "$kaltura_save_path" -d "/bitnami/moodle/"
-    printf "\tInstalling Kaltura\n"
+    unzip -q "${plugin_zip_path}/kaltura.zip" -d "/bitnami/moodle/"
     php /bitnami/moodle/admin/cli/upgrade.php --non-interactive
-    printf "\tDeleting install artifacts\n"
-    rm "$kaltura_save_path"
-    printf "===${GRN} Kaltura plugin successfully installed ${NC}===\n"
 }
 
 install_plugin() {
@@ -62,14 +49,24 @@ install_plugin() {
     mv "${plugin_unzip_path}${plugin_name}" "${moodle_path}/${plugin_parent_path:?}/"
 }
 
+uninstall_kaltura() {
+    # unfortunately kaltura is spread out over multiple directories so our usual approach does not work
+    echo "TBD"
+}
+
 uninstall_plugin() {
     local plugin_fullname
     local plugin_path
     plugin_fullname="$1"
     plugin_path="$2"
 
+    if [[ "$plugin_fullname" == "kaltura" ]]; then 
+        uninstall_kaltura
+        return
+    fi
     php "${moodle_path}/admin/cli/uninstall_plugins.php" --plugins="$plugin_fullname" --run
     rm -rf "${moodle_path:?}/${plugin_path:?}"
+    rm -rf "${moodle_path:?}/"
 }
 
 upgrade_if_pending() {
