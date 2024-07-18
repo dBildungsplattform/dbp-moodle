@@ -10,7 +10,7 @@ RUN chmod +x /downloadPlugins.sh
 
 # TODO: is autoconf still needed?
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y curl gpg jq autoconf php-dev php-redis && \
+    apt-get install -y curl gpg jq && \
     rm -rf /var/lib/apt/lists/*
 
 # Install moosh for plugin management
@@ -49,11 +49,11 @@ RUN chmod +x /scripts/entrypoint.sh /scripts/moodleUpdateCheck.sh /scripts/apply
 RUN if [[ "$DEBUG" = true ]]; then chmod +x /scripts/test-plugin-install-uninstall.sh; fi
 
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y curl unzip; \
+    apt-get install -y curl unzip autoconf php-dev php-redis; \
     [[ "$DEBUG" = true ]] && apt-get install -y nano; \
     rm -rf /var/lib/apt/lists/*
 
 # Install redis-php which is required for moodle to use redis
-RUN /scripts/phpRedisInstall.sh
+RUN /phpRedisInstall.sh
 
 ENTRYPOINT ["/scripts/entrypoint.sh"]
