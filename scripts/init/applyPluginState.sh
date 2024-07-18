@@ -34,7 +34,7 @@ install_plugin() {
     plugin_fullname="$2"
     plugin_path="$3"
 
-    unzip -q "${plugin_zip_path}/${plugin_fullname}.zip" 
+    unzip -q "${plugin_zip_path}/${plugin_fullname}.zip" -d "$plugin_unzip_path"
     mkdir -p "${moodle_path}/${plugin_path}"
     mv "${plugin_unzip_path}${plugin_name}" "${moodle_path}/${plugin_parent_path:?}/"
 }
