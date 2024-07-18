@@ -98,19 +98,30 @@ applyKalturaState() {
     elif [ "$installed_dirs" -eq "${#kaltura_dirs[@]}" ]; then
         current_state=true
     else
-        info "Kaltura current state is: ${current_state}. Found ${installed_dirs}/${#kaltura_dirs[@]} dirs"
-        error "Kaltura is partially installed. Can not continue from inconsistent state."
-
+        MODULE="dbp-plugins" error "Kaltura current state is: ${current_state}. Found ${installed_dirs}/${#kaltura_dirs[@]} dirs"
+        MODULE="dbp-plugins" error "Kaltura is partially installed. Can not continue from inconsistent state."
         exit 1
     fi
+    
+    if [ "$target_state" = "$current_state" ]; then return; fi
 
-    info "Kaltura current state is: ${current_state}. Found ${installed_dirs}/${#kaltura_dirs[@]} dirs"
-
-    for dir in "${kaltura_dirs[@]}"; do
-        if [ ! -d "${moodle_path}/${dir}" ]; then mkdir -p "${moodle_path}/${dir}"; fi
-        mv "${plugin_unzip_path}/kaltura/${dir}/"* "${moodle_path}/${dir}"/
-    done
-    rm -rf "${plugin_unzip_path}/kaltura/"
+    if [ "$target_state" = true ]; then
+        MODULE="dbp-plugins" info "Installing plugin Kaltura"
+        for dir in "${kaltura_dirs[@]}"; do
+            if [ ! -d "${moodle_path}/${dir}" ]; then mkdir -p "${moodle_path}/${dir}"; fi
+            mv "${plugin_unzip_path}/kaltura/${dir}/"* "${moodle_path}/${dir}"/
+        done
+        MODULE="dbp-plugins" info "Kaltura installed successfully"
+    elif [ "$target_state" = false ]; then
+        MODULE="dbp-plugins" info "Uninstalling plugin Kaltura"
+        for dir in "${kaltura_dirs[@]}"; do
+            rm -rf "${moodle_path:?}/${dir:?}"
+            MODULE="dbp-plugins" info "Kaltura installed successfully"
+        done
+    else
+        MODULE="dbp-plugins" error "Unexpected value for plugin_target_state: \"$target_state\". Expecting \"true/false\". Exiting..."
+        exit 1
+    fi
 }
 
 main() {
@@ -160,7 +171,7 @@ main() {
             uninstall_plugin "$plugin_fullname" "$plugin_path"
             anychange=true
         else
-            MODULE="dbp-plugins" info 'Unexpected value for plugin_target_state: "%s". Expecting "true/false". Exiting...' "$plugin_target_state"
+            MODULE="dbp-plugins" error "Unexpected value for plugin_target_state: \"$plugin_target_state\". Expecting \"true/false\". Exiting..."
             exit 1
         fi
     done
