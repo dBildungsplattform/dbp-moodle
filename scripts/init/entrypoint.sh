@@ -57,7 +57,7 @@ printSystemStatus
 startBitnamiSetup
 
 MODULE=dbp info "** Starting Moodle Update Check **"
-/scripts/moodleUpdateCheck.sh
+/scripts/updateCheck.sh
 
 MODULE=dbp info "Start Bitnami setup script after checking for proper version"
 /opt/bitnami/scripts/moodle/setup.sh
