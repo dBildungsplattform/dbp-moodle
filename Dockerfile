@@ -4,10 +4,11 @@ FROM bitnami/moodle:4.1.11-debian-12-r0 AS build
 USER root
 ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.1.11"}
 
+COPY scripts/install/downloadMoodle.sh /downloadMoodle.sh
 COPY scripts/install/downloadPlugins.sh /downloadPlugins.sh
 # COPY scripts/install/phpRedisInstall.sh /phpRedisInstall.sh
 
-RUN chmod +x /downloadPlugins.sh
+RUN chmod +x /downloadMoodle.sh /downloadPlugins.sh
 
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y curl gpg jq && \
@@ -22,6 +23,8 @@ RUN curl -L https://github.com/tmuras/moosh/archive/refs/tags/1.21.tar.gz -o moo
     composer install && \
     ln -s /moosh/moosh.php /usr/local/bin/moosh
 
+RUN /downloadMoodle.sh
+
 # Install plugins to the image
 RUN mkdir /plugins && /downloadPlugins.sh
 
@@ -34,6 +37,7 @@ ARG DEBUG=${DEBUG:-true} # TODO change back after dev
 
 RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen
 
+COPY --from=build "/moodle-${MOODLE_VERSION}.tgz" "/moodle-${MOODLE_VERSION}.tgz"
 COPY --from=build /moosh /moosh
 COPY --from=build /plugins /plugins
 
