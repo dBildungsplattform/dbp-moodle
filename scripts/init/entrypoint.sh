@@ -13,7 +13,21 @@ set -o nounset
 . /opt/bitnami/scripts/liblog.sh
 . /opt/bitnami/scripts/libwebserver.sh
 
-MODULE=dbp info "** Starting Moodle **"
+maintenance_html_path="/bitnami/moodledata/climaintenance.html"
+update_in_progress_path="/bitnami/moodledata/UpdateInProgress"
+update_failed_path="/bitnami/moodledata/UpdateFailed"
+
+printSystemStatus() {
+    if [[ -e $maintenance_html_path ]]; then
+        MODULE=dbp warn "climaintenance.html file exists."
+    fi
+    if [[ -e $update_in_progress_path ]]; then
+        MODULE=dbp warn "UpdateInProgress file exists."
+    fi
+    if [[ -e $update_failed_path ]]; then
+        MODULE=dbp error "UpdateFailed file exists!"
+    fi
+}
 
 startBitnamiSetup() {
     print_welcome_page
@@ -27,7 +41,8 @@ startBitnamiSetup() {
     MODULE=dbp info "** Bitnami Moodle setup finished! **"
 }
 
-# if true || [[ ! -d "/bitnami/moodle/" || ! -f "/bitnami/moodle/version.php" || ! -d "/opt/bitnami/php/etc/conf.d/" ]]; then
+MODULE=dbp info "** Starting Moodle **"
+printSystemStatus
 
 # Bitnami setup now always runs.
 # Can handle new version and existing version.
