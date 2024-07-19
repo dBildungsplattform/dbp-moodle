@@ -8,11 +8,6 @@ set -o pipefail
 # Load Moodle environment
 . /opt/bitnami/scripts/liblog.sh
 
-
-RED='\033[0;31m'
-GRN='\033[0;32m'
-NC='\033[0m' # No Color
-
 moodle_path="/bitnami/moodle"
 plugin_zip_path="/plugins"
 plugin_unzip_path="/tmp/plugins/"
@@ -30,11 +25,6 @@ cleanup_failed_install() {
     fi
 }
 
-install_kaltura(){
-    unzip -q "${plugin_zip_path}/kaltura.zip" -d "/bitnami/moodle/"
-    php /bitnami/moodle/admin/cli/upgrade.php --non-interactive
-}
-
 install_plugin() {
     local plugin_name
     local plugin_fullname
@@ -49,11 +39,6 @@ install_plugin() {
     mv "${plugin_unzip_path}${plugin_name}" "${moodle_path}/${plugin_parent_path:?}/"
 }
 
-uninstall_kaltura() {
-    # unfortunately kaltura is spread out over multiple directories so our usual approach does not work
-    echo "TBD"
-}
-
 uninstall_plugin() {
     local plugin_fullname
     local plugin_path
@@ -66,7 +51,6 @@ uninstall_plugin() {
     fi
     php "${moodle_path}/admin/cli/uninstall_plugins.php" --plugins="$plugin_fullname" --run
     rm -rf "${moodle_path:?}/${plugin_path:?}"
-    rm -rf "${moodle_path:?}/"
 }
 
 upgrade_if_pending() {
@@ -84,13 +68,65 @@ upgrade_if_pending() {
     fi
 }
 
+applyKalturaState() {
+    target_state="$1"
+    kaltura_dirs=(
+        "blocks/kalturamediagallery"
+        "filter/kaltura"
+        "lib/editor/atto/plugins/kalturamedia"
+        "lib/editor/tiny/plugins/kalturamedia"
+        "local/kaltura"
+        "local/kalturamediagallery"
+        "local/mymedia"
+        "mod/kalvidres"
+        "mod/kalvidassign"
+    )
+
+    unzip -q "${plugin_zip_path}/kaltura.zip" -d "$plugin_unzip_path/kaltura"
+
+    installed_dirs=0
+    for dir in "${kaltura_dirs[@]}"; do
+        if [ -d "${moodle_path}/${dir}" ]; then
+            set +o errexit
+            ((installed_dirs++))
+            set -o errexit
+        fi
+    done
+
+    current_state=error
+    if [ "$installed_dirs" -eq 0 ]; then
+        current_state=false
+    elif [ "$installed_dirs" -eq "${#kaltura_dirs[@]}" ]; then
+        current_state=true
+    else
+        MODULE="dbp-plugins" error "Kaltura current state is: ${current_state}. Found ${installed_dirs}/${#kaltura_dirs[@]} dirs"
+        MODULE="dbp-plugins" error "Kaltura is partially installed. Can not continue from inconsistent state."
+        exit 1
+    fi
+    
+    if [ "$target_state" = "$current_state" ]; then echo 0; return; fi
+
+    if [ "$target_state" = true ]; then
+        MODULE="dbp-plugins" info "Installing plugin Kaltura"
+        for dir in "${kaltura_dirs[@]}"; do
+            if [ ! -d "${moodle_path}/${dir}" ]; then mkdir -p "${moodle_path}/${dir}"; fi
+            mv "${plugin_unzip_path}/kaltura/${dir}/"* "${moodle_path}/${dir}"/
+        done
+        echo 1
+    elif [ "$target_state" = false ]; then
+        MODULE="dbp-plugins" info "Uninstalling plugin Kaltura"
+        for dir in "${kaltura_dirs[@]}"; do
+            rm -rf "${moodle_path:?}/${dir:?}"
+        done
+        echo -1
+    else
+        MODULE="dbp-plugins" error "Unexpected value for plugin_target_state: \"$target_state\". Expecting \"true/false\". Exiting..."
+        exit 1
+    fi
+}
+
 main() {
     rm -f "$update_plugins_path"
-
-    if [[ $ENABLE_KALTURA == "True" ]]; then
-        printf "=== Kaltura Flag enabled, installing Kaltura plugin ===\n"
-        install_kaltura
-    fi
 
     if [ -d "$plugin_unzip_path" ]; then
         rm -rf "$plugin_unzip_path"
@@ -104,34 +140,42 @@ main() {
         plugin_name="${parts[0]}"
         plugin_fullname="${parts[1]}"
         plugin_path="${parts[2]}"
-        plugin_enabled="${parts[3]}"
+        plugin_target_state="${parts[3]}"
 
         plugin_parent_path=$(dirname "$plugin_path")
         full_path="${moodle_path}/${plugin_path}"
 
-        plugin_installed=false
-
-        if [ -d "$full_path" ]; then
-            plugin_installed=true
-        fi
-
-        if [ "$plugin_enabled" = "$plugin_installed" ]; then
+        plugin_cur_state=false
+        
+        if [[ "$plugin_name" == "kaltura" ]]; then
+            change_value="$(applyKalturaState "$plugin_target_state")"
+            if [ "$change_value" -ne 0 ]; then
+                anychange=true
+            fi
             continue
         fi
 
-        if [ "$plugin_enabled" = true ]; then
+        if [ -d "$full_path" ]; then
+            plugin_cur_state=true
+        fi
+
+        if [ "$plugin_target_state" = "$plugin_cur_state" ]; then
+            continue
+        fi
+
+        if [ "$plugin_target_state" = true ]; then
             last_installed_plugin="$full_path"
             MODULE="dbp-plugins" info "Installing plugin ${plugin_name} (${plugin_fullname}) to path \"${plugin_path}\""
             install_plugin "$plugin_name" "$plugin_fullname" "$plugin_path"
             last_installed_plugin=""
             anychange=true
 
-        elif [ "$plugin_enabled" = false ]; then
+        elif [ "$plugin_target_state" = false ]; then
             MODULE="dbp-plugins" info "Uninstalling plugin ${plugin_name} (${plugin_fullname}) from path \"${plugin_path}\""
             uninstall_plugin "$plugin_fullname" "$plugin_path"
             anychange=true
         else
-            MODULE="dbp-plugins" info 'Unexpected value for plugin_enabled: "%s". Expecting "true/false". Exiting...' "$plugin_enabled"
+            MODULE="dbp-plugins" error "Unexpected value for plugin_target_state: \"$plugin_target_state\". Expecting \"true/false\". Exiting..."
             exit 1
         fi
     done

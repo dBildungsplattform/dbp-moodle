@@ -50,5 +50,5 @@ MODULE=dbp info "Finished Plugin Install"
 
 # touch /bitnami/moodledata/FreshInstall
 
-MODULE=dbp info "Finished all preperations! Starting Webserver"
+MODULE=dbp info "Finished all preparations! Starting Webserver"
 /opt/bitnami/scripts/moodle/run.sh

@@ -14,6 +14,7 @@ set -o errexit
 set -o pipefail
 
 plugin_base_list=$(cat <<EOF
+kaltura:kaltura:
 wunderbyte_table:local_wunderbyte_table:local/wunderbyte_table
 certificate:tool_certificate:admin/tool/certificate
 etherpadlite:mod_etherpadlite:mod/etherpadlite
@@ -95,22 +96,22 @@ print_step "Testing do nothing if none enabled"
 do_step -1
 
 print_step "Install etherpadlite"
-do_step 2 
+do_step 3
 
 print_step "Uninstall etherpadlite"
 do_step -1 
 
 print_step "Install etherpadlite, hvp"
-do_step 2 3 
+do_step 3 4
 
 print_step "Uninstall all (etherpadlite, hvp)"
 do_step -1 
 
-print_step "Preperation: install groupselect"
-do_step 4
+print_step "preparation: install groupselect"
+do_step 5
 
-print_step "Preperation: uninstall groupselect & install jitsi"
-do_step 5 
+print_step "preparation: uninstall groupselect & install jitsi"
+do_step 6
 
 print_step "Cleanup: uninstall jitsi"
 do_step -1

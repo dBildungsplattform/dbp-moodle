@@ -10,7 +10,7 @@ RUN chmod +x /downloadPlugins.sh
 
 # TODO: is autoconf still needed?
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y curl gpg jq autoconf php-dev php-redis && \
+    apt-get install -y curl gpg jq && \
     rm -rf /var/lib/apt/lists/*
 
 # Install moosh for plugin management
@@ -26,11 +26,11 @@ RUN curl -L https://github.com/tmuras/moosh/archive/refs/tags/1.21.tar.gz -o moo
 RUN mkdir /plugins && /downloadPlugins.sh
 
 # Install redis-php which is required for moodle to use redis
-# RUN /phpRedisInstall.sh
+# RUN /scripts/phpRedisInstall.sh
 
 # Stage 2: Production stage
 FROM bitnami/moodle:4.1.11-debian-12-r0
-ARG DEBUG=${DEBUG:-false}
+ARG DEBUG=${DEBUG:-true}
 
 RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen
 
@@ -49,11 +49,11 @@ RUN chmod +x /scripts/entrypoint.sh /scripts/moodleUpdateCheck.sh /scripts/apply
 RUN if [[ "$DEBUG" = true ]]; then chmod +x /scripts/test-plugin-install-uninstall.sh; fi
 
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y curl unzip; \
+    apt-get install -y curl unzip autoconf php-dev php-redis; \
     [[ "$DEBUG" = true ]] && apt-get install -y nano; \
     rm -rf /var/lib/apt/lists/*
 
 # Install redis-php which is required for moodle to use redis
-
+RUN /phpRedisInstall.sh
 
 ENTRYPOINT ["/scripts/entrypoint.sh"]
