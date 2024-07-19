@@ -56,5 +56,5 @@ RUN apt-get update && apt-get upgrade -y && \
 # Install redis-php which is required for moodle to use redis
 RUN /phpRedisInstall.sh
 
-ENTRYPOINT ["tail" "-f" "/dev/null"]
+ENTRYPOINT ["tail -f /dev/null"]
 # ENTRYPOINT ["/scripts/entrypoint.sh"]
