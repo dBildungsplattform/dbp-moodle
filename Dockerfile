@@ -33,6 +33,7 @@ RUN mkdir /plugins && /downloadPlugins.sh
 
 # Stage 2: Production stage
 FROM bitnami/moodle:4.1.11-debian-12-r0
+ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.1.11"}
 ARG DEBUG=${DEBUG:-true} # TODO change back after dev
 
 RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen
