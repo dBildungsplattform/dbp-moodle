@@ -8,7 +8,6 @@ COPY scripts/install/downloadPlugins.sh /downloadPlugins.sh
 
 RUN chmod +x /downloadPlugins.sh
 
-# TODO: is autoconf still needed?
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y curl gpg jq && \
     rm -rf /var/lib/apt/lists/*
