@@ -30,7 +30,7 @@ RUN mkdir /plugins && /downloadPlugins.sh
 
 # Stage 2: Production stage
 FROM bitnami/moodle:4.1.11-debian-12-r0
-ARG DEBUG=${DEBUG:-false}
+ARG DEBUG=${DEBUG:-false} # TODO change back after dev
 
 RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen
 
@@ -57,4 +57,4 @@ RUN apt-get update && apt-get upgrade -y && \
 RUN /phpRedisInstall.sh
 
 CMD ["tail", "-f", "/dev/null"]
-# ENTRYPOINT ["/scripts/entrypoint.sh"]
+# ENTRYPOINT ["/scripts/entrypoint.sh"]g
