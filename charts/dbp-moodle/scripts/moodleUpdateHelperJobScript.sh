@@ -27,24 +27,21 @@ trap "unsuspend" EXIT
 
 # get current available replicas (availableReplicas because we don't want the new Moodle pod from the RollingUpdate)
 replicas=$(kubectl get deployment -n {{ .Release.Namespace }} moodle -o=jsonpath='{.status.availableReplicas}')
-if [[ $replicas -eq 0 ]]
-then 
+if [[ $replicas -eq 0 ]]; then 
     replicas=1
 fi
 echo "=== Current replicas detected: $replicas ==="
 
 getMoodleVersion(){
-    if [ -f /volumes/moodle/version.php ]
-    then
-    LINE=$(grep release /volumes/moodle/version.php)
-    REGEX="release\s*=\s*'([0-9]+\.[0-9]+\.[0-9]+)"
-    if [[ $LINE =~ $REGEX ]]
-    then
-        echo "=== The newly installed Moodle version is: ${BASH_REMATCH[1]} ==="
-    fi
+    if [ -f /volumes/moodle/version.php ]; then
+        LINE=$(grep release /volumes/moodle/version.php)
+        REGEX="release\s*=\s*'([0-9]+\.[0-9]+\.[0-9]+)"
+        if [[ $LINE =~ $REGEX ]]; then
+            echo "=== The newly installed Moodle version is: ${BASH_REMATCH[1]} ==="
+        fi
     else
-    echo "=== No Moodle Version found ==="
-    exit 1
+        echo "=== No Moodle Version found ==="
+        exit 1
     fi
 }
 
@@ -64,6 +61,22 @@ scaleUpOnInstallationFailure(){
     exit 1
 }
 
+handleFreshInstall(){
+    if [ -z "{{ .Values.dbpMoodle.plugins.plugin_list }}" ]; then
+        echo "=== Helm value pluginList is empty, stopping update helper job ==="
+        rm /volumes/moodledata/FreshInstall
+    else
+        echo "=== Helm value pluginList is not empty, waiting for moodle to install ==="
+        rm /volumes/moodledata/FreshInstall
+        touch /volumes/moodledata/UpdatePlugins
+        # readyness check of the Moodle installation
+        sleep 400
+        kubectl scale deployment/moodle -n {{ .Release.Namespace }} --replicas=0
+        sleep 20
+        kubectl scale deployment/moodle -n {{ .Release.Namespace }} --replicas=1
+    fi
+}
+
 #Suspend the cronjob to avoid errors due to missing moodle
 echo "=== Suspending moodle cronjob ==="
 kubectl patch cronjobs moodle-{{ .Release.Namespace }}-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : true }}'
@@ -75,6 +88,11 @@ do
     then
     echo "=== CliUpdate file found, starting Update process ==="
     break
+    elif [ -a /volumes/moodledata/FreshInstall ]
+    then
+    echo "=== FreshInstall file found, starting first Plugin installation ==="
+    handleFreshInstall
+    exit 0
     elif [ $i -gt 998 ]
     then
     echo "=== Waited for set duration but no Update is required ==="

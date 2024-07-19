@@ -4,6 +4,53 @@ global:
   kubectl_version: "1.28.7"
   infratools_image_tag: 4.0.3
   storageClass: "nfs-client"
+  moodlePlugins:
+    kaltura:
+      enabled: false
+    etherpadlite:
+      enabled: false
+    hvp:
+      enabled: false
+    groupselect:
+      enabled: false
+    jitsi:
+      enabled: false
+    pdfannotator:
+      enabled: false
+    tiles:
+      enabled: false
+    skype:
+      enabled: false
+    zoom:
+      enabled: false
+    booking:
+      enabled: false
+    reengagement:
+      enabled: false
+    unilabel:
+      enabled: false
+    geogebra:
+      enabled: false
+    remuiformat:
+      enabled: false
+    topcoll:
+      enabled: false
+    oidc:
+      enabled: false
+    saml2:
+      enabled: false
+    dash:
+      enabled: false
+    sharing_cart:
+      enabled: false
+    xp:
+      enabled: false
+    certificate:
+      enabled: false
+    coursecertificate:
+      enabled: false
+    boost_union:
+      enabled: false
 
 backup:
   enabled: false
@@ -16,11 +63,22 @@ dbpMoodle:
   logging: false
   debug: false # Moodle Debugging is not safe for production
   restore: false # Only to be used to restore a snapshot with the dbp-restore script
-  update_migration: # The dbp update process to migrate moodle date when Moodle versions are increased
+
+  # The dbp update process to migrate moodle date when Moodle versions are increased
+  update_migration:
     enabled: false
+    external_pvc:
+      name: "moodle-data"
+      size: "8Gi"
+      storage_class: "nfs-client"
+      accessModes: ["ReadWriteOnce"]
+      annotations:
+        "helm.sh/resource-policy": "keep"
+
+  enable_plugin_install: true
 
   redis:
-    host : "moodle-redis-master"
+    host: "moodle-redis-master"
     port: 6379
     password: "moodle"
 
@@ -55,20 +113,11 @@ infratools:
   repository: schulcloud
   image_tag: 4.0.3
 
-external_pvc:
-  enabled: true
-  name: "moodle-data"
-  size: "8Gi"
-  storage_class: "nfs-client"
-  accessModes: ["ReadWriteMany"]
-  annotations: 
-    "helm.sh/resource-policy": "keep"
-
 moodle:
   image:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
-    tag: "4.1.10-debian-12-r5"
+    tag: "4.1.11-debian-12-r0"
     pullPolicy: Always
     debug: false
   moodleSkipInstall: false
@@ -88,9 +137,7 @@ moodle:
       valueFrom:
         configMapKeyRef:
           name: moodle-plugins
-          key: plugin_list
-    - name: ENABLE_KALTURA
-      value: "false"
+          key: moodle-plugin-list
   extraEnvVarsSecret: "moodle"
   existingSecret: "moodle"
   persistence:
@@ -152,6 +199,8 @@ moodle:
           - key: php.ini
             path: php.ini
         defaultMode: 0644
+  podAnnotations:
+    moodleplugins/checksum: '{{- include "dbpMoodle.pluginConfigMap.content" . | sha256sum -}}'
 
 mariadb:
   enabled: true
@@ -248,7 +297,7 @@ etherpad-postgresql:
         memory: "1Gi"
 
 etherpadlite:
-  enabled: true
+  enabled: false
   image:
     repository: "ghcr.io/dbildungsplattform/etherpad"
     tag: "1.8.18.0"
@@ -270,8 +319,6 @@ etherpadlite:
           key: "etherpad-postgresql-password"
     - name: REQUIRE_SESSION
       value: "true"
-  
-  
   volumes:
     - name: "api-key"
       secret:
@@ -303,7 +350,6 @@ etherpadlite:
     limits:
       cpu: "1000m"
       memory: "1Gi"
-
 
 backup-cronjob:
   image:

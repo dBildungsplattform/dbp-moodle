@@ -141,7 +141,7 @@ Horizontal Pod Autoscaling Values
 |---                                         |---|---|
 | `image.registry`                            ||`ghcr.io`|
 | `image.repository`                          ||`dbildungsplattform/moodle`|
-| `image.tag`                                 | The dbp Image which is build for this Helm Chart. |`"4.1.10-debian-12-r5"`|
+| `image.tag`                                 | The dbp Image which is build for this Helm Chart. |`"4.1.11-debian-12-r0"`|
 | `image.pullPolicy`                          ||`Always`|
 | `image.debug`                               | Debug mode for more detailed Moodle installation and log output. |`false`|
 | `moodleSkipInstall`                         ||`false`|

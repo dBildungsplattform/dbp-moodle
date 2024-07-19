@@ -1,8 +1,8 @@
 {{- if .Values.dbpMoodle.update_migration.enabled -}}
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
 metadata:
-  name: "{{ .Release.Name }}-update-helper-job-{{ .Release.Namespace }}"
+  name: "{{ .Release.Name }}-update-helper-job"
 rules:
   {{- toYaml .Values.dbpMoodle.updateHelper.rules | nindent 2 }}
 {{- end }}
