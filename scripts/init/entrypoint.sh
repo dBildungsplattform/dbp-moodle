@@ -13,6 +13,9 @@ set -o nounset
 . /opt/bitnami/scripts/liblog.sh
 . /opt/bitnami/scripts/libwebserver.sh
 
+moodle_path="/bitnami/moodle"
+moodle_backup_path="/bitnami/moodledata/moodle-backup"
+
 maintenance_html_path="/bitnami/moodledata/climaintenance.html"
 update_in_progress_path="/bitnami/moodledata/UpdateInProgress"
 update_failed_path="/bitnami/moodledata/UpdateFailed"
@@ -29,6 +32,10 @@ printSystemStatus() {
     fi
 }
 
+restoreLocalBackup() {
+    cp -rp "${moodle_backup_path}/"* "${moodle_path}/"
+}
+
 startBitnamiSetup() {
     print_welcome_page
     info "** Starting Bitnami Moodle setup **"
@@ -36,7 +43,7 @@ startBitnamiSetup() {
     /opt/bitnami/scripts/php/setup.sh
     /opt/bitnami/scripts/mysql-client/setup.sh
     /opt/bitnami/scripts/postgresql-client/setup.sh
-    /opt/bitnami/scripts/moodle/setup.sh
+    # /opt/bitnami/scripts/moodle/setup.sh
     /post-init.sh
     MODULE=dbp info "** Bitnami Moodle setup finished! **"
 }
@@ -50,10 +57,11 @@ printSystemStatus
 startBitnamiSetup
 
 MODULE=dbp info "** Starting Moodle Update Check **"
-/scripts/moodleUpdateCheck.sh 2>&1 | tee -a "/bitnami/moodledata/moodleUpdateCheck.log"
+/scripts/moodleUpdateCheck.sh
 
-MODULE=dbp info "** Update Check finished! **"
-# 
+MODULE=dbp info "Start Bitnami setup script after checking for proper version"
+/opt/bitnami/scripts/moodle/setup.sh
+/post-init.sh
 
 MODULE=dbp info "Replacing config files with ours"
 /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
