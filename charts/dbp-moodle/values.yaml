@@ -6,7 +6,7 @@ global:
   storageClass: "nfs-client"
   moodlePlugins:
     kaltura:
-      enabled: true
+      enabled: false
     etherpadlite:
       enabled: false
     hvp:
@@ -138,8 +138,6 @@ moodle:
         configMapKeyRef:
           name: moodle-plugins
           key: moodle-plugin-list
-    - name: ENABLE_KALTURA
-      value: "false" #TODO still needed?
   extraEnvVarsSecret: "moodle"
   existingSecret: "moodle"
   persistence:
@@ -299,7 +297,7 @@ etherpad-postgresql:
         memory: "1Gi"
 
 etherpadlite:
-  enabled: true
+  enabled: false
   image:
     repository: "ghcr.io/dbildungsplattform/etherpad"
     tag: "1.8.18.0"
