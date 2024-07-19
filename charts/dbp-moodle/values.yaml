@@ -4,9 +4,9 @@ global:
   kubectl_version: "1.28.7"
   infratools_image_tag: 4.0.3
   storageClass: "nfs-client"
-  plugins:
+  moodlePlugins:
     kaltura:
-      enabled: true
+      enabled: false
     etherpadlite:
       enabled: false
     hvp:
@@ -116,8 +116,8 @@ infratools:
 moodle:
   image:
     registry: ghcr.io
-    repository: "dbildungsplattform/moodle"
-    tag: DBP-807-latest # "4.1.11-debian-12-r0"
+    repository: dbildungsplattform/moodle
+    tag: "4.1.11-debian-12-r0"
     pullPolicy: Always
     debug: false
   moodleSkipInstall: false
@@ -167,8 +167,7 @@ moodle:
     type: ClusterIP
   ingress:
     enabled: true
-    hostname: "moodle2.dbpinfra-dev-moodle-02.dbildungsplattform.de"
-
+    hostname: "moodle.example.de"
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
