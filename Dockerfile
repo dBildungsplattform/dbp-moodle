@@ -2,7 +2,7 @@
 # Stage 1: Build stage
 FROM bitnami/moodle:4.1.9-debian-12-r8 AS build
 USER root
-ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.1.10"}
+ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.1.9"}
 
 COPY scripts/install/downloadPlugins.sh /downloadPlugins.sh
 # COPY scripts/install/phpRedisInstall.sh /phpRedisInstall.sh
