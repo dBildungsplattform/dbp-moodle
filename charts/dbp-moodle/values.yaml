@@ -4,7 +4,7 @@ global:
   kubectl_version: "1.28.7"
   infratools_image_tag: 4.0.3
   storageClass: "nfs-client"
-  plugins:
+  moodlePlugins:
     kaltura:
       enabled: true
     etherpadlite:
