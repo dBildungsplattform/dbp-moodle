@@ -69,7 +69,7 @@ startBitnamiSetup
 if [[ ! -f "$update_failed_path" ]]; then
     MODULE=dbp info "** Starting Moodle Update Check **"
     if /scripts/updateCheck.sh; then
-        MODULE=dbp info "Finished Plugin Install"
+        MODULE=dbp info "Finished Update Check"
     else
         MODULE=dbp error "Update failed! Continuing with previously installed moodle.."
         setStatusFile "$update_failed_path" true
