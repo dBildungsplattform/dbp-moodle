@@ -114,10 +114,16 @@ infratools:
   image_tag: 4.0.3
 
 moodle:
+  # livenessProbe:
+  #   enabled: false
+  # readinessProbe:
+  #   enabled: false
   image:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
-    tag: "4.1.11-debian-12-r0"
+    # tag: "4.1.10-chart-test"
+    tag: "4.1.11-chart-test"
+    # tag: "dbp-812-latest"
     pullPolicy: Always
     debug: false
   moodleSkipInstall: false
@@ -167,7 +173,7 @@ moodle:
     type: ClusterIP
   ingress:
     enabled: true
-    hostname: "moodle.example.de"
+    hostname: "moodle2.dbpinfra-dev-moodle-01.dbildungsplattform.de"
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
