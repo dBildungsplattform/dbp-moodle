@@ -31,7 +31,7 @@ compare_semver() {
         echo "0"
     elif [[ "$v1" > "$v2" ]]; then
         echo "1"
-    else
+    elif [[ "$v1" < "$v2" ]]; then
         echo "-1"
     fi
 }
@@ -65,11 +65,11 @@ main() {
     installed_version="$(get_installed_moodle_version)"
     image_version="$APP_VERSION"
 
-    comp_result="$(compare_semver "$installed_version" "$image_version")"
-    if [[ -z "$comp_result" ]]; then
+    if [[ -z "$installed_version" ]]; then
         MODULE="dbp-update" info "No installed Moodle version detected, continuing with fresh install"
         exit 0
     fi
+    comp_result="$(compare_semver "$installed_version" "$image_version")"
     
     if [[ "$comp_result" == 0 ]]; then
         MODULE="dbp-update" info "Installed version ${installed_version} is same as image version ${image_version}"
