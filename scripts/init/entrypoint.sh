@@ -88,7 +88,7 @@ MODULE=dbp info "Replacing config files with ours"
 
 if [[ ! -f "$plugin_state_failed_path" ]]; then
     MODULE=dbp info "Starting plugin installation"
-    if /scripts/applyPluginState.sh; then
+    if /scripts/pluginCheck.sh; then
         MODULE=dbp info "Finished Plugin Install"
     else
         MODULE=dbp error "Plugin check failed! Continuing to start webserver with possibly compromised plugins"
