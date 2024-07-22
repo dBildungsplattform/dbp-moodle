@@ -10,10 +10,9 @@ moodle_path="/bitnami/moodle"
 new_moodle_unpack_path="/bitnami/moodledata/updated-moodle"
 moodle_backup_path="/bitnami/moodledata/moodle-backup"
 
-update_failed_path="/bitnami/moodledata/UpdateFailed"
-
-indicateError() {
-    touch "$update_failed_path"
+onErrorRestoreBackup() {
+    mv "${moodle_path}" "${moodle_path}-failed"
+    cp -rp "${moodle_backup_path}" "${moodle_path}"
 }
 
 cleanup() {
@@ -71,7 +70,7 @@ main() {
         MODULE="dbp-update" info "Installed version ${installed_version} is same as image version ${image_version}."
         exit 0
     fi
-    MODULE="dbp-update" info "Upgrading installed version ${installed_version} to ${image_version}"
+    MODULE="dbp-update" info "Starting update of installed version ${installed_version} to ${image_version}"
     MODULE="dbp-update" info "Creating local backup"
     create_backup
     MODULE="dbp-update" info "Unpacking new moodle version"
@@ -87,6 +86,6 @@ main() {
     cp -rp ${new_moodle_unpack_path}/* ${moodle_path}/
 }
 
-trap indicateError ERR
+trap onErrorRestoreBackup ERR
 trap cleanup EXIT
 main
