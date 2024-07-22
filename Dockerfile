@@ -11,7 +11,7 @@ COPY scripts/install/downloadPlugins.sh /downloadPlugins.sh
 RUN chmod +x /downloadMoodle.sh /downloadPlugins.sh
 
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y curl gpg jq && \
+    apt-get install -y curl wget gpg jq && \
     rm -rf /var/lib/apt/lists/*
 
 # Install moosh for plugin management
