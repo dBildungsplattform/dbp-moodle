@@ -72,7 +72,7 @@ main() {
     fi
     
     if [[ "$comp_result" == 0 ]]; then
-        MODULE="dbp-update" info "Installed version ${installed_version} is same as image version ${image_version}."
+        MODULE="dbp-update" info "Installed version ${installed_version} is same as image version ${image_version}"
         exit 0
     fi
     MODULE="dbp-update" info "Starting update of installed version ${installed_version} to ${image_version}"
