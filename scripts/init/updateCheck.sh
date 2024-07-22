@@ -53,6 +53,7 @@ create_backup() {
 }
 
 unpack_new_version() {
+    local image_version="$1"
     if [ -d "$new_moodle_unpack_path" ]; then
         rm -rf "$new_moodle_unpack_path"
     fi
@@ -74,13 +75,15 @@ main() {
     MODULE="dbp-update" info "Creating local backup"
     create_backup
     MODULE="dbp-update" info "Unpacking new moodle version"
-    unpack_new_version
+    unpack_new_version "$image_version"
 
     # TODO test if i can leave this commented out since this script already runs as user 1001 it shouldnt be needed... maybe?
     # MODULE="dbp-update" info "Configure current user as owner of /bitnami/moodledata/"
     # chown -R 1001:root /bitnami/moodledata/*
 
-    MODULE="dbp-update" info "Removing old Moodle (${installed_version})"
+    if [[ -n "$installed_version" ]]; then
+        MODULE="dbp-update" info "Removing old Moodle (${installed_version})"
+    fi
     rm -rf "${moodle_path:?}"/*
     MODULE="dbp-update" info "Installing new Moodle (${image_version})"
     cp -rp ${new_moodle_unpack_path}/* ${moodle_path}/
