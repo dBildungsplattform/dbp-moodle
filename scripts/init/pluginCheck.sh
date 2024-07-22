@@ -157,6 +157,7 @@ main() {
             change_value="$(applyKalturaState "$plugin_target_state")"
             if [ "$change_value" -ne 0 ]; then
                 anychange=true
+                echo "Kaltura produced change :|"
             fi
             continue
         fi
