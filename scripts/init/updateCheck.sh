@@ -38,10 +38,9 @@ compare_semver() {
 
 get_installed_moodle_version() {
     if [ ! -f "${moodle_path}/version.php" ]; then
-        MODULE="dbp-update" info "No installed Moodle version detected, seems to be fresh install"
-        exit 0
+        return
     fi
-    echo installed_ver="$(grep release "${moodle_path}/version.php" | grep -oP '\d+\.\d+\.\d+')"
+    grep release "${moodle_path}/version.php" | grep -oP '\d+\.\d+\.\d+'
 }
 
 create_backup() {
@@ -67,6 +66,11 @@ main() {
     image_version="$APP_VERSION"
 
     comp_result="$(compare_semver "$installed_version" "$image_version")"
+    if [ ! -f "${moodle_path}/version.php" ]; then
+        MODULE="dbp-update" info "No installed Moodle version detected, continuing with fresh install"
+        exit 0
+    fi
+    
     if [[ "$comp_result" == 0 ]]; then
         MODULE="dbp-update" info "Installed version ${installed_version} is same as image version ${image_version}."
         exit 0
