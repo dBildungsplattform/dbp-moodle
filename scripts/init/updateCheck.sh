@@ -66,7 +66,7 @@ main() {
     image_version="$APP_VERSION"
 
     comp_result="$(compare_semver "$installed_version" "$image_version")"
-    if [ ! -f "${moodle_path}/version.php" ]; then
+    if [[ -z "$comp_result" ]]; then
         MODULE="dbp-update" info "No installed Moodle version detected, continuing with fresh install"
         exit 0
     fi
@@ -75,7 +75,13 @@ main() {
         MODULE="dbp-update" info "Installed version ${installed_version} is same as image version ${image_version}"
         exit 0
     fi
-    MODULE="dbp-update" info "Starting update of installed version ${installed_version} to ${image_version}"
+    
+    if [[ "$comp_result" == 1 ]]; then
+        MODULE="dbp-update" info "Starting update of installed version ${installed_version} to ${image_version}"
+    else
+        MODULE="dbp-update" warn "Starting downgrade of installed version ${installed_version} to ${image_version}"
+        MODULE="dbp-update" warn "This may not work and leave the database in an inconsistent state"
+    fi
     MODULE="dbp-update" info "Creating local backup"
     create_backup
     MODULE="dbp-update" info "Unpacking new moodle version"
