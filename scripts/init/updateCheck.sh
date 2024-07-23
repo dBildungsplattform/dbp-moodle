@@ -30,9 +30,9 @@ compare_semver() {
     if [[ "$v1" == "$v2" ]]; then
         echo "0"
     elif [[ "$v1" > "$v2" ]]; then
-        echo "1"
-    elif [[ "$v1" < "$v2" ]]; then
         echo "-1"
+    elif [[ "$v1" < "$v2" ]]; then
+        echo "1"
     fi
 }
 
@@ -58,6 +58,21 @@ unpack_new_version() {
     fi
     mkdir "$new_moodle_unpack_path"
     tar -xzf "/moodle-${image_version}.tgz" -C "$new_moodle_unpack_path" --strip 1
+}
+
+upgrade_if_pending() {
+    set +o errexit
+    php "${moodle_path}/admin/cli/upgrade.php" --is-pending > /dev/null 2>&1
+
+    EXIT_CODE=$?
+    set -o errexit
+    # If an upgrade is needed it exits with an error code of 2 so it distinct from other types of errors.
+    if [ $EXIT_CODE -eq 2 ]; then
+        MODULE="dbp-plugins" info 'Running Moodle upgrade'
+        php "${moodle_path}/admin/cli/upgrade.php" --non-interactive
+    else
+        MODULE="dbp-update" info 'No upgrade needed'
+    fi
 }
 
 main() {
@@ -97,6 +112,8 @@ main() {
     rm -rf "${moodle_path:?}"/*
     MODULE="dbp-update" info "Installing new Moodle (${image_version})"
     cp -rp ${new_moodle_unpack_path}/* ${moodle_path}/
+    
+    upgrade_if_pending
 }
 
 trap onErrorRestoreBackup ERR
