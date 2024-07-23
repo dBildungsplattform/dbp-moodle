@@ -33,10 +33,10 @@ function clean_up() {
         rm -f /mountData/moodledata/climaintenance.html
 
         echo "=== Turn on liveness and readiness probe ==="
-        helm upgrade --reuse-values --set livenessProbe.enabled=true --set readinessProbe.enabled=true moodle bitnami/moodle --namespace {{ .Release.Namespace }}
+        helm upgrade --reuse-values --set moodle.livenessProbe.enabled=true --set moodle.readinessProbe.enabled=true moodle dbp-moodle --namespace {{ .Release.Namespace }}
 
         echo "=== Unsuspending moodle cronjob ==="
-        kubectl patch cronjobs moodle-{{ .Release.Namespace }}-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : false }}'
+        kubectl patch cronjobs moodle-moodle-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : false }}'
     elif [ $exit_code -eq 0 ]
     then
     echo "=== Update Backup was successful with exit code $exit_code ==="
@@ -65,10 +65,10 @@ if ! [ -a /mountData/moodledata/CliUpdate ]
 then
     #Suspend the cronjob to avoid errors due to missing moodle
     echo "=== Suspending moodle cronjob ==="
-    kubectl patch cronjobs moodle-{{ .Release.Namespace }}-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : true }}'
+    kubectl patch cronjobs moodle-moodle-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : true }}'
 
     echo "=== Turn off liveness and readiness probe ==="
-    helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle --wait bitnami/moodle --namespace {{ .Release.Namespace }}
+    helm upgrade --reuse-values --set moodle.livenessProbe.enabled=false --set moodle.readinessProbe.enabled=false moodle --wait dbp-moodle --namespace {{ .Release.Namespace }}
     
     kubectl rollout status deployment/moodle
 
