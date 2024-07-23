@@ -1,4 +1,4 @@
-name: Release Charts
+name: Release DBP Moodle Chart
 on:
   push:
     tags:
