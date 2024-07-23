@@ -53,11 +53,20 @@ global:
       enabled: false
 
 backup:
-  enabled: false
-  gpg_key_names: dbpinfra
-  s3_bucket_name: default
-  cluster_name: default
-  endpoint: https://s3-eu-central-2.ionoscloud.com #s3 region Berlin endpoint
+  enabled: true
+  gpg_key_names: 
+  gpgkeys:
+    gpgkey.dbpinfra.pub.asc: 
+      
+    gpgkey.dbpinfra.sec.asc: 
+      
+  s3_bucket_name: 
+  cluster_name: 
+  endpoint: 
+  secrets:
+    s3_access_key: 
+    s3_access_secret: 
+    s3_endpoint_url: 
 
 dbpMoodle:
   logging: false
@@ -67,13 +76,6 @@ dbpMoodle:
   # The dbp update process to migrate moodle date when Moodle versions are increased
   update_migration:
     enabled: false
-    external_pvc:
-      name: "moodle-data"
-      size: "8Gi"
-      storage_class: "nfs-client"
-      accessModes: ["ReadWriteOnce"]
-      annotations:
-        "helm.sh/resource-policy": "keep"
 
   enable_plugin_install: true
 
@@ -81,6 +83,15 @@ dbpMoodle:
     host: "moodle-redis-master"
     port: 6379
     password: "moodle"
+
+  external_pvc:
+    enabled: true
+    name: "moodle-data"
+    size: "8Gi"
+    storage_class: "nfs-client"
+    accessModes: ["ReadWriteOnce"]
+    annotations:
+      "helm.sh/resource-policy": "keep"
 
   secrets:
     useChartSecret: true
@@ -141,7 +152,7 @@ moodle:
   extraEnvVarsSecret: "moodle"
   existingSecret: "moodle"
   persistence:
-    # existingClaim: "moodle-data"
+    existingClaim: "moodle-data"
     enabled: true
     storageClass: "nfs-client"
     annotations:
@@ -201,6 +212,36 @@ moodle:
         defaultMode: 0644
   podAnnotations:
     moodleplugins/checksum: '{{- include "dbpMoodle.pluginConfigMap.content" . | sha256sum -}}'
+
+moodle-cronjob:
+  clusterRole:
+    create: true
+    rules:
+      - apiGroups: [""]
+        resources: ["pods", "pods/exec"]
+        verbs: ["get", "list", "create"]
+  jobs:
+    - name: php-script
+      schedule: "* * * * *"
+      concurrencyPolicy: Forbid
+      failedJobsHistoryLimit: 1
+      successfulJobsHistoryLimit: 1
+      backoffLimit: 1
+      restartPolicy: Never
+      command:
+        - /bin/sh
+        - -c
+      args:
+        - /scripts/cronjob-script
+      extraVolumeMounts:
+        - name: moodle-cronjob-php
+          mountPath: /scripts/
+      extraVolumes:
+        - name: moodle-cronjob-php
+          configMap:
+            name: moodle-cronjob-php
+          # 711 in decimal is 457
+            defaultMode: 457
 
 mariadb:
   enabled: true
@@ -355,7 +396,7 @@ backup-cronjob:
   image:
     tag: 4.0.3
   clusterRole:
-    create: false
+    create: true
     rules:
       - apiGroups: [""]
         resources: ["pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments"]
@@ -372,12 +413,6 @@ backup-cronjob:
   serviceAccount:
     name: "moodle-backup"
   env:
-    - name: POSTGRESQL_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: moodle
-          key: PGSQL_POSTGRES_PASSWORD
-    #This is required for the MariaDB backup to securely hand over the password in the script
     - name: MARIADB_PASSWORD
       valueFrom:
         secretKeyRef:
