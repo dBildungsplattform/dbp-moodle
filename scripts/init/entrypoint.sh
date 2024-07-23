@@ -46,6 +46,21 @@ setStatusFile() {
     fi
 }
 
+upgrade_if_pending() {
+    set +o errexit
+    php "${moodle_path}/admin/cli/upgrade.php" --is-pending > /dev/null 2>&1
+
+    EXIT_CODE=$?
+    set -o errexit
+    # If an upgrade is needed it exits with an error code of 2 so it distinct from other types of errors.
+    if [ $EXIT_CODE -eq 2 ]; then
+        MODULE="dbp-plugins" info 'Running Moodle upgrade'
+        php "${moodle_path}/admin/cli/upgrade.php" --non-interactive
+    else
+        MODULE="dbp-update" info 'No upgrade needed'
+    fi
+}
+
 startBitnamiSetup() {
     print_welcome_page
     info "Starting Bitnami Moodle setup"
@@ -81,11 +96,13 @@ fi
 MODULE=dbp info "Start Bitnami setup script after checking for proper version"
 /opt/bitnami/scripts/moodle/setup.sh
 /post-init.sh
+upgrade_if_pending
 
 MODULE=dbp info "Replacing config files with ours"
 /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
 /bin/cp /moodleconfig/php.ini /opt/bitnami/php/etc/conf.d/php.ini
 
+upgrade_if_pending
 if [[ ! -f "$plugin_state_failed_path" ]]; then
     MODULE=dbp info "Starting plugin installation"
     if /scripts/pluginCheck.sh; then
@@ -97,6 +114,7 @@ if [[ ! -f "$plugin_state_failed_path" ]]; then
 else
     MODULE=dbp warn "Plugin check failed previously. Skipping plugin check..."
 fi
+
 
 MODULE=dbp info "Finished all preparations! Starting Webserver"
 /opt/bitnami/scripts/moodle/run.sh
