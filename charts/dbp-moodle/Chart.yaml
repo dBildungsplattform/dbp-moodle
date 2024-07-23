@@ -25,6 +25,11 @@ dependencies:
     condition: postgresql.enabled
 
   - name: cronjob
+    alias: moodle-cronjob
+    version: 0.1.0
+    repository: "file://charts/backup-cronjob"
+
+  - name: cronjob
     alias: backup-cronjob
     version: 0.1.0
     repository: "file://charts/backup-cronjob"
