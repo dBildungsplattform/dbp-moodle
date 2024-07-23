@@ -48,17 +48,17 @@ setStatusFile() {
 
 startBitnamiSetup() {
     print_welcome_page
-    info "** Starting Bitnami Moodle setup **"
+    info "Starting Bitnami Moodle setup"
     /opt/bitnami/scripts/"$(web_server_type)"/setup.sh
     /opt/bitnami/scripts/php/setup.sh
     /opt/bitnami/scripts/mysql-client/setup.sh
     /opt/bitnami/scripts/postgresql-client/setup.sh
     # /opt/bitnami/scripts/moodle/setup.sh
     /post-init.sh
-    MODULE=dbp info "** Bitnami Moodle setup finished! **"
+    MODULE=dbp info "Bitnami Moodle setup finished"
 }
 
-MODULE=dbp info "** Starting Moodle **"
+MODULE=dbp info "Starting Moodle"
 printSystemStatus
 
 # Bitnami setup now always runs.
@@ -67,7 +67,7 @@ printSystemStatus
 startBitnamiSetup
 
 if [[ ! -f "$update_failed_path" ]]; then
-    MODULE=dbp info "** Starting Moodle Update Check **"
+    MODULE=dbp info "Starting Moodle Update Check"
     if /scripts/updateCheck.sh; then
         MODULE=dbp info "Finished Update Check"
     else
