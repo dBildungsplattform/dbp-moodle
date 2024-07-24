@@ -79,8 +79,9 @@ main() {
     if [[ "$comp_result" == 1 ]]; then
         MODULE="dbp-update" info "Starting update of installed version ${installed_version} to ${image_version}"
     else
-        MODULE="dbp-update" warn "Starting downgrade of installed version ${installed_version} to ${image_version}"
-        MODULE="dbp-update" warn "This may not work and leave the database in an inconsistent state"
+        MODULE="dbp-update" error "Preventing attempted downgrade of installed version ${installed_version} to ${image_version}!"
+        MODULE="dbp-update" error "Exiting update..."
+        exit 1
     fi
     MODULE="dbp-update" info "Creating local backup"
     create_backup

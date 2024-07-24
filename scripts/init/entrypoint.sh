@@ -57,7 +57,7 @@ upgrade_if_pending() {
         MODULE="dbp-plugins" info 'Running Moodle upgrade'
         php "${moodle_path}/admin/cli/upgrade.php" --non-interactive
     else
-        MODULE="dbp-update" info 'No upgrade needed'
+        MODULE="dbp" info 'No upgrade needed'
     fi
 }
 
@@ -103,7 +103,7 @@ MODULE=dbp info "Replacing config files with ours"
 /bin/cp /moodleconfig/php.ini /opt/bitnami/php/etc/conf.d/php.ini
 
 upgrade_if_pending
-if [[ ! -f "$plugin_state_failed_path" ]]; then
+if [[ ! -f "$update_failed_path" ]] && [[ ! -f "$plugin_state_failed_path" ]]; then
     MODULE=dbp info "Starting plugin installation"
     if /scripts/pluginCheck.sh; then
         MODULE=dbp info "Finished Plugin Install"
@@ -112,7 +112,7 @@ if [[ ! -f "$plugin_state_failed_path" ]]; then
         setStatusFile "$plugin_state_failed_path" true
     fi
 else
-    MODULE=dbp warn "Plugin check failed previously. Skipping plugin check..."
+    MODULE=dbp warn "Update or Plugin check failed previously. Skipping plugin check..."
 fi
 
 
