@@ -114,16 +114,13 @@ infratools:
   image_tag: 4.0.3
 
 moodle:
-  # livenessProbe:
-  #   enabled: false
-  # readinessProbe:
-  #   enabled: false
+  updateStrategy:
+    type: RollingUpdate
   image:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
-    # tag: "4.1.10-chart-test"
-    tag: "4.1.11-chart-test"
-    # tag: "dbp-812-latest"
+    tag: "4.1.10-chart-test"
+    # tag: "4.1.11-chart-test"
     pullPolicy: Always
     debug: false
   moodleSkipInstall: false
@@ -206,6 +203,7 @@ moodle:
             path: php.ini
         defaultMode: 0644
   podAnnotations:
+    moodle/image: '{{- .Values.image.repository -}}:{{- .Values.image.tag -}}'
     moodleplugins/checksum: '{{- include "dbpMoodle.pluginConfigMap.content" . | sha256sum -}}'
 
 mariadb:

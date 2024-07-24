@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: update-strategy-job
+  annotations:
+    "helm.sh/hook": post-upgrade
+spec:
+  template:
+    spec:
+      containers:
+        - name: post-upgrade-adapt-update-strategy
+          image: bitnami/kubectl:latest
+          command: ["/bin/sh", "/scripts/post-upgrade-adaptUpdateStrategy.sh"]
+          volumeMounts:
+            - name: script-volume
+              mountPath: /scripts
+              subPath: post-upgrade-adaptUpdateStrategy.sh
+      restartPolicy: Never
+      volumes:
+        - name: script-volume
+          configMap:
+            name: adapt-update-strategy-scripts
