@@ -6,6 +6,9 @@ then
     mkdir -p /backup
 fi
 
+readiness_probe_file="/tmp/readinessprobe.json"
+liveness_probe_file="/tmp/livenessprobe.json"
+
 curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null
 echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
 curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyrings/helm.gpg > /dev/null
@@ -33,7 +36,11 @@ function clean_up() {
         rm -f /mountData/moodledata/climaintenance.html
 
         echo "=== Turn on liveness and readiness probe ==="
-        helm upgrade --reuse-values --set moodle.livenessProbe.enabled=true --set moodle.readinessProbe.enabled=true moodle dbildungsplattform/{{ .Chart.Name }} --version {{ .Chart.Version }} --namespace {{ .Release.Namespace }}
+        if [ -e "${readiness_probe_file}" ] && [ -s "${readiness_probe_file}" ] && [ -e "${liveness_probe_file}" ] && [ -s "${liveness_probe_file}" ] ; then
+            kubectl patch deployment moodle -n -n {{ .Release.Namespace }} --type=json -p="[{\"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/readinessProbe\", \"value\": $(cat ${readiness_probe_file})}, {\"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/livenessProbe\", \"value\": $(cat ${liveness_probe_file})}]"
+        else
+            echo "Unable to turn on liveness and readiness probes. Either the readiness_probe_file or the liveness_probe_file does not exist or is empty."
+        fi
 
         echo "=== Unsuspending moodle cronjob ==="
         kubectl patch cronjobs moodle-moodle-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : false }}'
@@ -69,8 +76,10 @@ then
     kubectl patch cronjobs moodle-moodle-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : true }}'
 
     echo "=== Turn off liveness and readiness probe ==="
-    helm upgrade --reuse-values --set moodle.livenessProbe.enabled=false --set moodle.readinessProbe.enabled=false moodle --wait dbildungsplattform/{{ .Chart.Name }} --version {{ .Chart.Version }} --namespace {{ .Release.Namespace }}
-    
+    kubectl get deployment moodle -n {{ .Release.Namespace }} -o jsonpath="{.spec.template.spec.containers[0].readinessProbe}" > ${readiness_probe_file}
+    kubectl get deployment moodle -n {{ .Release.Namespace }} -o jsonpath="{.spec.template.spec.containers[0].livenessProbe}" > ${liveness_probe_file}
+    kubectl patch deployment moodle -n {{ .Release.Namespace }} --type=json -p="[{'op': 'remove', 'path': '/spec/template/spec/containers/0/readinessProbe'}, {'op': 'remove', 'path': '/spec/template/spec/containers/0/livenessProbe'}]"
+
     kubectl rollout status deployment/moodle
 
     #Wait for running Jobs to finish to avoid errors
