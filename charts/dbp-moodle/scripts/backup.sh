@@ -33,7 +33,7 @@ function clean_up() {
         rm -f /mountData/moodledata/climaintenance.html
 
         echo "=== Turn on liveness and readiness probe ==="
-        helm upgrade --reuse-values --set moodle.livenessProbe.enabled=true --set moodle.readinessProbe.enabled=true moodle dbp-moodle/{{ .Chart.Name }} --version {{ .Chart.Version }} --namespace {{ .Release.Namespace }}
+        helm upgrade --reuse-values --set moodle.livenessProbe.enabled=true --set moodle.readinessProbe.enabled=true moodle dbildungsplattform/{{ .Chart.Name }} --version {{ .Chart.Version }} --namespace {{ .Release.Namespace }}
 
         echo "=== Unsuspending moodle cronjob ==="
         kubectl patch cronjobs moodle-moodle-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : false }}'
@@ -58,7 +58,8 @@ curl -LO https://dl.k8s.io/release/v{{ .Values.global.kubectl_version }}/bin/lin
 chmod +x kubectl
 mv ./kubectl /usr/local/bin/kubectl
 apt-get -y install helm
-helm repo add dbp-moodle https://dbildungsplattform.github.io/dbp-moodle/
+helm repo add dbildungsplattform https://dbildungsplattform.github.io/helm-charts-registry/
+helm repo update
 
 #If the Backup is done for the Update it skips the preparation because the Update Helper already did this
 if ! [ -a /mountData/moodledata/CliUpdate ]
@@ -68,7 +69,7 @@ then
     kubectl patch cronjobs moodle-moodle-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : true }}'
 
     echo "=== Turn off liveness and readiness probe ==="
-    helm upgrade --reuse-values --set moodle.livenessProbe.enabled=false --set moodle.readinessProbe.enabled=false moodle --wait dbp-moodle/{{ .Chart.Name }} --version {{ .Chart.Version }} --namespace {{ .Release.Namespace }}
+    helm upgrade --reuse-values --set moodle.livenessProbe.enabled=false --set moodle.readinessProbe.enabled=false moodle --wait dbildungsplattform/{{ .Chart.Name }} --version {{ .Chart.Version }} --namespace {{ .Release.Namespace }}
     
     kubectl rollout status deployment/moodle
 
