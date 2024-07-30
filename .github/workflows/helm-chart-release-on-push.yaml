@@ -6,30 +6,27 @@ on:
       - 'main'
 
 jobs:
-  release:
-    runs-on: ubuntu-latest
+  build_image_on_push:
+    name: "Publish image and scan with trivy"
+    if: ${{ github.event_name == 'push' }}
     permissions:
-      contents: write
       packages: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  #v4.1.1
-        with:
-          fetch-depth: 0
+      security-events: write
+      contents: read
+    uses: dBildungsplattform/dbp-github-workflows/.github/workflows/image-publish-trivy.yaml@7
+    with:
+      image_name: "moodle"
+      run_trivy_scan: false
+      image_tag_generation: ticket_from_branch
+      add_latest_tag: false
+      container_registry: "ghcr.io"
+      fail_on_vulnerabilites: false
+      report_location: "Dockerfile"
 
-      - name: Configure Git
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-
-      - name: Add Helm dependencies
-        run: helm repo add bitnami https://charts.bitnami.com/bitnami
-
-      - name: Run chart-releaser
-        uses: helm/chart-releaser-action@a917fd15b20e8b64b94d9158ad54cd6345335584   #v1.6.0
-        with:
-          charts_dir: charts
-          skip_existing: false
-          mark_as_latest: false
-        env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+  release_helm:
+    uses: dBildungsplattform/dbp-github-workflows/.github/workflows/chart-release.yaml@5
+    secrets: inherit
+    with:
+      chart_name: dbp-moodle
+      helm_chart_version_generation: ticket_from_branch_timestamp
+      image_tag_generation: ticket_from_branch
