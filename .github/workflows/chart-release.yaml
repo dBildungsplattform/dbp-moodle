@@ -1,0 +1,157 @@
+# Packages the helm chart and pushes it to the helm-charts-registry where it gets released
+# Options for generated helm chart versions:
+# helm_chart_version_generation: "chart_yaml" The version specified in the Chart.yaml is used
+# helm_chart_version_generation: "specified" The version specified with chart_version is used
+# helm_chart_version_generation: "ticket_from_branch_short_hash" The version is generated as 0.0.0-<ticket from branch name>-<short commit hash>
+# helm_chart_version_generation: "short_hash" The version is generated as 0.0.1-<short commit hash>
+# helm_chart_version_generation: "ticket_from_branch_timestamp" The version is generated as 0.0.0-<ticket from branch name>-<timestamp with format YYYYMMDD-HHMM>
+# helm_chart_version_generation: "timestamp" The version is generated as 0.0.1-<timestamp with format YYYYMMDD-HHMM>
+name: Release helm chart
+
+on:
+  workflow_call:
+    inputs:
+      chart_path:
+        type: string
+        description: "Path to charts"
+        required: false
+        default: "./charts"
+      chart_name:
+        type: string
+        description: "Name of the Chart"
+        required: true
+      helm_chart_version_generation:
+        type: string
+        description: "How the chart version gets generated: chart_yaml (default), specified, ticket_from_branch_short_hash, short_hash, ticket_from_branch_timestamp, timestamp"
+        required: false
+        default: "chart_yaml"
+      helm_chart_version:
+        type: string
+        description: "Chart version (required if helm_chart_version_generation: specified)"
+        required: false
+      substitute_placeholders:
+        type: string
+        description: "Replace placeholders before chart packaging. Defined as sed command (optional)."
+        required: false
+        default: ""
+      image_tag_generation:
+        description: "Generation of the image tag: ticket_from_branch(default), commit_hash or version_git_tag, specified"
+        required: false
+        type: string
+        default: "ticket_from_branch"
+      image_tag:
+        type: string
+        description: "image tag (required if image_tag_generation: specified)"
+        required: false
+        
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 #v4.1.1
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com" 
+
+      - name: Install Helm
+        uses: azure/setup-helm@5119fcb9089d432beecbf79bb2c7915207344b78  #v3.5
+        with:
+          version: 3.12.3
+
+      - name: Helm Repository Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 #v4.1.1
+        with:
+          repository: dBildungsplattform/helm-charts-registry
+          token: ${{ secrets.HELM_CHARTS_REGISTRY_PUBLISHER }}
+          fetch-depth: 0
+          persist-credentials: true
+          ref: main
+          path: helm-charts-registry
+
+      - name: Replace placeholders
+        if: inputs.substitute_placeholders != ''
+        run:  |
+          find ${{ inputs.chart_path }}/ -type f -exec sed -i -e '${{ inputs.substitute_placeholders }}' {} \;
+
+      - name: Use ticket and commit hash as version
+        if: ${{ inputs.helm_chart_version_generation == 'ticket_from_branch_short_hash' }}
+        run: |
+          short_sha=`echo ${GITHUB_SHA} | cut -c1-7`
+          regex='^([[:alpha:]]+?-[[:digit:]]+)'
+          [[ $GITHUB_REF_NAME =~ $regex ]]
+          lowercase_ticket=$(echo ${BASH_REMATCH[1]} | tr [A-Z] [a-z])
+          echo "chart_version=0.0.0-${lowercase_ticket}-${short_sha}" >> $GITHUB_ENV
+  
+      - name: Use commit hash as version
+        if: ${{ inputs.helm_chart_version_generation == 'short_hash' }}
+        run: |
+          short_sha=`echo ${GITHUB_SHA} | cut -c1-7`
+          echo "chart_version=0.0.1-${short_sha}" >> $GITHUB_ENV  
+      
+      - name: Use ticket and timestamp as version
+        if: ${{ inputs.helm_chart_version_generation == 'ticket_from_branch_timestamp' }}
+        run: |
+          timestamp=`echo $(date +'%Y%m%d-%H%M')`
+          regex='^([[:alpha:]]+?-[[:digit:]]+)'
+          [[ $GITHUB_REF_NAME =~ $regex ]]
+          lowercase_ticket=$(echo ${BASH_REMATCH[1]} | tr [A-Z] [a-z])
+          echo "chart_version=0.0.0-${lowercase_ticket}-${timestamp}" >> $GITHUB_ENV
+
+      - name: Use timestamp as version
+        if: ${{ inputs.helm_chart_version_generation == 'timestamp' }}
+        run: |
+          timestamp=`echo $(date +'%Y%m%d-%H%M')`
+          echo "chart_version=0.0.1-${timestamp}" >> $GITHUB_ENV
+
+      - name: Use specified chart version
+        if: ${{ inputs.helm_chart_version_generation == 'specified' }}
+        run: |
+          echo "chart_version=${{ inputs.helm_chart_version }}" >> $GITHUB_ENV
+
+      - name: Determine Image Tag
+        run: |
+          if [[ "${{ inputs.image_tag_generation }}" == 'ticket_from_branch' ]]; then
+            regex='^([[:alpha:]]+?-[[:digit:]]+)'
+            if [[ $GITHUB_REF_NAME =~ $regex ]]; then
+              image_tag="${BASH_REMATCH[1]}"
+            else
+            echo "::error::Couldn't extract ticket from branch $GITHUB_REF_NAME. The branch name should begin with a ticket (e.g. SPSH-1234-test-name)"
+              exit 1
+            fi
+          elif [[ "${{ inputs.image_tag_generation }}" == 'commit_hash' ]]; then
+            image_tag="sha-$(echo ${GITHUB_SHA} | cut -c1-7)"
+          elif [[ "${{ inputs.image_tag_generation }}" == 'specified' ]]; then
+            image_tag="${{ inputs.image_tag }}"
+          fi
+          echo "image_tag=$image_tag" >> $GITHUB_ENV
+
+      - name: Add Helm dependencies
+        run: helm repo add bitnami https://charts.bitnami.com/bitnami
+
+      - name: Update Helm Chart Dependencies
+        run: helm dependency update ${{ inputs.chart_path }}/${{ inputs.chart_name }}
+
+      - name: Prepare Helm Chart
+        run:  |
+          helm package ${{ inputs.chart_path }}/${{ inputs.chart_name }} -d helm-charts-registry --app-version ${{ env.image_tag }} ${{ inputs.helm_chart_version_generation != 'chart_yaml' && '--version $chart_version' || '' }}
+          cd helm-charts-registry
+          if [ -d "automation/${{ inputs.chart_name }}" ]; then rm -r automation/${{ inputs.chart_name }}; fi
+          tar -xzf ${{ inputs.chart_name }}*.tgz
+          mv ${{ inputs.chart_name }} automation/${{ inputs.chart_name }}
+
+      - name: Push Helm Chart
+        env:
+          GITHUB_TOKEN: ${{ secrets.HELM_CHARTS_REGISTRY_PUBLISHER }}
+        run: |
+          git config --global user.email "${{ inputs.chart_name }}@dbildungsplattform.de"
+          git config --global user.name "${{ inputs.chart_name }}-gha"
+          cd helm-charts-registry/automation
+          git add ${{ inputs.chart_name }}
+          git commit -m "${{ inputs.chart_name }}"
+          git push origin main  

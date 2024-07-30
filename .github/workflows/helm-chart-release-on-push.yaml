@@ -23,7 +23,7 @@ jobs:
       fail_on_vulnerabilites: false
 
   release_helm:
-    uses: dBildungsplattform/dbp-github-workflows/.github/workflows/chart-release.yaml@5
+    uses: ./.github/workflows/chart-release.yaml
     secrets: inherit
     with:
       chart_name: dbp-moodle
