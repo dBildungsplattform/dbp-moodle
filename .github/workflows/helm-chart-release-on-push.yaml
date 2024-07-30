@@ -21,7 +21,6 @@ jobs:
       add_latest_tag: false
       container_registry: "ghcr.io"
       fail_on_vulnerabilites: false
-      report_location: "Dockerfile"
 
   release_helm:
     uses: dBildungsplattform/dbp-github-workflows/.github/workflows/chart-release.yaml@5
