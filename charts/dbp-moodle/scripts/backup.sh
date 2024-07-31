@@ -99,7 +99,7 @@ gzip moodle_mariadb_dump_$DATE.sql
 {{ else }}
 PGPASSWORD="$POSTGRESQL_PASSWORD" pg_dump -h moodle-postgres-postgresql -p 5432 -U postgres moodle > moodle_postgresqldb_dump_$DATE.sql
 gzip moodle_postgresqldb_dump_$DATE.sql
-{{ endif }}
+{{ end }}
 
 # get moodle folder
 echo "=== start moodle directory backup ==="
