@@ -11,8 +11,6 @@ liveness_probe_file="/tmp/livenessprobe.json"
 
 curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null
 echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
-curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyrings/helm.gpg > /dev/null
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list
 apt-get update
 
 apt install duply
@@ -64,9 +62,6 @@ trap "clean_up" EXIT
 curl -LO https://dl.k8s.io/release/v{{ .Values.global.kubectl_version }}/bin/linux/amd64/kubectl
 chmod +x kubectl
 mv ./kubectl /usr/local/bin/kubectl
-apt-get -y install helm
-helm repo add dbildungsplattform https://dbildungsplattform.github.io/helm-charts-registry/
-helm repo update
 
 #If the Backup is done for the Update it skips the preparation because the Update Helper already did this
 if ! [ -a /mountData/moodledata/CliUpdate ]
