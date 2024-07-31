@@ -93,13 +93,13 @@ cd /backup
 echo "=== start DB dump ==="
 export DATE=$( date "+%Y-%m-%d" )
 
-{% if moodle_use_mariadb %}
+{{ if .Values.moodle.mariadb.enabled }}
 MYSQL_PWD="$MARIADB_PASSWORD" mysqldump -h moodle-mariadb -P 3306 -u moodle moodle > moodle_mariadb_dump_$DATE.sql
 gzip moodle_mariadb_dump_$DATE.sql
-{% else %}
+{{ else }}
 PGPASSWORD="$POSTGRESQL_PASSWORD" pg_dump -h moodle-postgres-postgresql -p 5432 -U postgres moodle > moodle_postgresqldb_dump_$DATE.sql
 gzip moodle_postgresqldb_dump_$DATE.sql
-{% endif %}
+{{ endif }}
 
 # get moodle folder
 echo "=== start moodle directory backup ==="
