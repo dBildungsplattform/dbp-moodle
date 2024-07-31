@@ -93,7 +93,7 @@ cd /backup
 echo "=== start DB dump ==="
 export DATE=$( date "+%Y-%m-%d" )
 
-{{ if .Values.moodle.mariadb.enabled }}
+{{ if .Values.mariadb.enabled }}
 MYSQL_PWD="$MARIADB_PASSWORD" mysqldump -h moodle-mariadb -P 3306 -u moodle moodle > moodle_mariadb_dump_$DATE.sql
 gzip moodle_mariadb_dump_$DATE.sql
 {{ else }}
