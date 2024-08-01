@@ -57,16 +57,20 @@ spec:
         - name: duply
           mountPath: /etc/duply/default/
         env:
+        {{- if .Values.postgresql.enabled }}
         - name: POSTGRESQL_PASSWORD
           valueFrom:
             secretKeyRef:
               name: moodle
               key: PGSQL_POSTGRES_PASSWORD
+        {{- end }}
+        {{- if .Values.mariadb.enabled }}
         - name: MARIADB_PASSWORD
           valueFrom:
             secretKeyRef:
               name: moodle
               key: mariadb-password
+        {{- end }}
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
