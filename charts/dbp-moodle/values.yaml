@@ -71,7 +71,6 @@ backup:
 dbpMoodle:
   logging: false
   debug: false # Moodle Debugging is not safe for production
-  restore: false # Only to be used to restore a snapshot with the dbp-restore script
 
   # The dbp update process to migrate moodle date when Moodle versions are increased
   update_migration:
@@ -119,6 +118,13 @@ dbpMoodle:
       - apiGroups: ["autoscaling"]
         resources: ["horizontalpodautoscalers"]
         verbs: ["get", "list", "create", "patch", "update"]
+  
+  restore:
+    enabled: false # Only to be used to restore a snapshot with the dbp-restore script
+    rules:
+      - apiGroups: ["apps"]
+        resources: ["deployments/scale", "deployments"]
+        verbs: ["get", "list", "scale", "patch"]
 
 infratools:
   repository: schulcloud
