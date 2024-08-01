@@ -52,22 +52,6 @@ global:
     boost_union:
       enabled: false
 
-backup:
-  enabled: true
-  gpg_key_names: 
-  gpgkeys:
-    gpgkey.dbpinfra.pub.asc: 
-      
-    gpgkey.dbpinfra.sec.asc: 
-      
-  s3_bucket_name: 
-  cluster_name: 
-  endpoint: 
-  secrets:
-    s3_access_key: 
-    s3_access_secret: 
-    s3_endpoint_url: 
-
 dbpMoodle:
   logging: false
   debug: false # Moodle Debugging is not safe for production
@@ -397,6 +381,20 @@ etherpadlite:
     limits:
       cpu: "1000m"
       memory: "1Gi"
+
+backup:
+  enabled: false
+  gpg_key_names: 
+  gpgkeys: 
+    gpgkey.dbpinfra.pub.asc: 
+    gpgkey.dbpinfra.sec.asc: 
+  s3_bucket_name: 
+  cluster_name: 
+  endpoint: 
+  secrets:
+    s3_access_key: 
+    s3_access_secret: 
+    s3_endpoint_url: 
 
 backup-cronjob:
   image:
