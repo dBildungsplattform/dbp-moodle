@@ -92,22 +92,28 @@ dbpMoodle:
     etherpad_api_key: "moodle"
 
   updateHelper:
+    postUpgradeDeploymentStrategy:
+      type: RollingUpdate
     rules:
-      - apiGroups: [""]
-        resources: ["pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
       - apiGroups: ["apps"]
-        resources: ["deployments", "replicasets", "deployments/scale"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
-      - apiGroups: ["networking.k8s.io"]
-        resources: ["ingresses"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
-      - apiGroups: ["batch"]
-        resources: ["cronjobs", "jobs"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
-      - apiGroups: ["autoscaling"]
-        resources: ["horizontalpodautoscalers"]
-        verbs: ["get", "list", "create", "patch", "update"]
+        resources: ["deployments"]
+        verbs: ["get", "patch"]
+
+      # - apiGroups: [""]
+      #   resources: ["pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments"]
+      #   verbs: ["get", "list", "create", "delete", "patch", "update"]
+      # - apiGroups: ["apps"]
+      #   resources: ["deployments", "replicasets", "deployments/scale"]
+      #   verbs: ["get", "list", "create", "delete", "patch", "update"]
+      # - apiGroups: ["networking.k8s.io"]
+      #   resources: ["ingresses"]
+      #   verbs: ["get", "list", "create", "delete", "patch", "update"]
+      # - apiGroups: ["batch"]
+      #   resources: ["cronjobs", "jobs"]
+      #   verbs: ["get", "list", "create", "delete", "patch", "update"]
+      # - apiGroups: ["autoscaling"]
+      #   resources: ["horizontalpodautoscalers"]
+      #   verbs: ["get", "list", "create", "patch", "update"]
 
 infratools:
   repository: schulcloud

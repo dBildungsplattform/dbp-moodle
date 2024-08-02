@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pre-upgrade-scale-down
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "1"
+spec:
+  template:
+    spec:
+      containers:
+        - name: pre-upgrade-scale-down
+          image: bitnami/kubectl:latest
+          command: ["/bin/bash", "/pre-upgrade-scale-down.sh"]
+          volumeMounts:
+            - name: script-volume
+              mountPath: /pre-upgrade-scale-down.sh
+              subPath: pre-upgrade-scale-down.sh
+      serviceAccountName: "{{ .Release.Name }}-hook-serviceaccount"
+      restartPolicy: Never
+      volumes:
+        - name: script-volume
+          configMap:
+            name: hook-scripts
+            defaultMode: 0755
+  ttlSecondsAfterFinished: 300

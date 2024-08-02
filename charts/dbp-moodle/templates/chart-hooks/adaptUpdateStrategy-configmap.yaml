@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: adapt-update-strategy-scripts
-data:
-  pre-upgrade-adaptUpdateStrategy.sh: |-
-{{ tpl ( .Files.Get "scripts/hook/pre-upgrade-adaptUpdateStrategy.sh" ) . | nindent 4 }}
-  post-upgrade-adaptUpdateStrategy.sh: |-
-{{ tpl ( .Files.Get "scripts/hook/post-upgrade-adaptUpdateStrategy.sh" ) . | nindent 4 }}

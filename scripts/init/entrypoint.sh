@@ -54,7 +54,7 @@ upgrade_if_pending() {
     set -o errexit
     # If an upgrade is needed it exits with an error code of 2 so it distinct from other types of errors.
     if [ $EXIT_CODE -eq 2 ]; then
-        MODULE="dbp-plugins" info 'Running Moodle upgrade'
+        MODULE="dbp" info 'Running Moodle upgrade'
         php "${moodle_path}/admin/cli/upgrade.php" --non-interactive
     else
         MODULE="dbp" info 'No upgrade needed'
