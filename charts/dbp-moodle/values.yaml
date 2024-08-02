@@ -125,8 +125,7 @@ moodle:
   image:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
-    tag: "4.1.10-chart-test"
-    # tag: "4.1.11-chart-test"
+    tag: "4.1.11-debian-12-r0"
     pullPolicy: Always
     debug: false
   moodleSkipInstall: false
