@@ -33,7 +33,7 @@ function clean_up() {
 
         echo "=== Turn on liveness and readiness probe ==="
         if [ -e "${readiness_probe_file}" ] && [ -s "${readiness_probe_file}" ] && [ -e "${liveness_probe_file}" ] && [ -s "${liveness_probe_file}" ] ; then
-            kubectl patch deployment moodle -n {{ .Release.Namespace }} --type=json -p="[{\"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/readinessProbe\", \"value\": $(cat ${readiness_probe_file})}, {\"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/livenessProbe\", \"value\": $(cat ${liveness_probe_file})}]"
+            kubectl patch deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} --type=json -p="[{\"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/readinessProbe\", \"value\": $(cat ${readiness_probe_file})}, {\"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/livenessProbe\", \"value\": $(cat ${liveness_probe_file})}]"
         else
             echo "Unable to turn on liveness and readiness probes. Either the readiness_probe_file or the liveness_probe_file does not exist or is empty."
         fi
@@ -67,11 +67,11 @@ if ! [ -a /mountData/moodledata/CliUpdate ]; then
     kubectl patch cronjobs moodle-moodle-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : true }}'
 
     echo "=== Turn off liveness and readiness probe ==="
-    kubectl get deployment moodle -n {{ .Release.Namespace }} -o jsonpath="{.spec.template.spec.containers[0].readinessProbe}" > ${readiness_probe_file}
-    kubectl get deployment moodle -n {{ .Release.Namespace }} -o jsonpath="{.spec.template.spec.containers[0].livenessProbe}" > ${liveness_probe_file}
-    kubectl patch deployment moodle -n {{ .Release.Namespace }} --type=json -p="[{'op': 'remove', 'path': '/spec/template/spec/containers/0/readinessProbe'}, {'op': 'remove', 'path': '/spec/template/spec/containers/0/livenessProbe'}]"
+    kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o jsonpath="{.spec.template.spec.containers[0].readinessProbe}" > ${readiness_probe_file}
+    kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o jsonpath="{.spec.template.spec.containers[0].livenessProbe}" > ${liveness_probe_file}
+    kubectl patch deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} --type=json -p="[{'op': 'remove', 'path': '/spec/template/spec/containers/0/readinessProbe'}, {'op': 'remove', 'path': '/spec/template/spec/containers/0/livenessProbe'}]"
 
-    kubectl rollout status deployment/moodle
+    kubectl rollout status deployment/{{ .Release.Name }}
 
     #Wait for running Jobs to finish to avoid errors
     echo "=== Waiting for Jobs to finish ==="
