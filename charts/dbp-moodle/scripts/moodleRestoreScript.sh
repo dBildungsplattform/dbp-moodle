@@ -1,5 +1,5 @@
 #!/bin/bash
-# create destination dir if not exists
+# Create destination dir if not exists
 set -e
 if [ ! -d /backup ]; then
     mkdir -p /backup
@@ -19,22 +19,22 @@ apt-get -y install mariadb-client
 apt-get -y install postgresql-client-14
 pg_dump -V
 
-# install kubectl
+# Install kubectl
 curl -LO https://dl.k8s.io/release/v{{ .Values.global.kubectl_version }}/bin/linux/amd64/kubectl
 chmod +x kubectl
 mv ./kubectl /usr/local/bin/kubectl
 
-# get current replicas and scale down deployment
+# Get current replicas and scale down deployment
 replicas=$(kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o=jsonpath='{.status.replicas}')
 echo "=== Current replicas detected: $replicas ==="
 if [ -z "$replicas" ] || [ "$replicas" -eq 0 ]; then 
     replicas=1
 fi
-echo "=== Scale Moodle Deployment to 0 replicas for restore operation ==="
+echo "=== Scale moodle deployment to 0 replicas for restore operation ==="
 kubectl scale deployment/{{ .Release.Name }} --replicas=0 -n {{ .Release.Namespace }}
 echo "=== After restore operation is completed will scale back to: $replicas replicas ==="
 
-# restore
+# Restore
 cd /etc/duply/default
 for cert in *.asc; do
     echo "=== Import key $cert ==="
@@ -46,22 +46,22 @@ for fpr in $(gpg --batch --no-tty --command-fd 0 --list-keys --with-colons  | aw
 done
 
 cd /bitnami/
-echo "=== Download Backup ==="
+echo "=== Download backup ==="
 duply default restore Full
 echo "=== Clear PVC ==="
 rm -rf /bitnami/moodle/*
 rm -rf /bitnami/moodle/.??*
 rm -rf /bitnami/moodledata/*
 rm -rf /bitnami/moodledata/.??*
-echo "=== Extract Backup Files ==="
+echo "=== Extract backup files ==="
 tar -xzf ./Full/backup/moodle.tar.gz -C /bitnami/
 tar -xzf ./Full/backup/moodledata.tar.gz -C /bitnami/
-echo "=== Move Backup Files ==="
+echo "=== Move backup files ==="
 mv /bitnami/mountData/moodle/* /bitnami/moodle/
 mv /bitnami/mountData/moodle/.[!.]* /bitnami/moodle/
 mv /bitnami/mountData/moodledata/* /bitnami/moodledata/
 mv /bitnami/mountData/moodledata/.[!.]* /bitnami/moodledata/
-# set Moodle user 1001
+# Set moodle user 1001
 chown -R 1001 /bitnami/moodle
 chown -R 1001 /bitnami/moodledata
 
@@ -72,7 +72,7 @@ echo "=== Clear DB ==="
 MYSQL_PWD="$MARIADB_PASSWORD" mariadb -u moodle -h moodle-mariadb --port=3306 -e "DROP DATABASE moodle;"
 MYSQL_PWD="$MARIADB_PASSWORD" mariadb -u moodle -h moodle-mariadb --port=3306 -e "CREATE DATABASE moodle;"
 {{ else }}
-# if you cant delete the DB use this command (ERROR: database "moodle" is being accessed by other users)
+# This command helps with - ERROR: database "moodle" is being accessed by other users
 PGPASSWORD="$POSTGRESQL_PASSWORD" psql -U postgres -h moodle-postgres-postgresql -c "REVOKE CONNECT ON DATABASE moodle FROM public;SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'moodle';"
 PGPASSWORD="$POSTGRESQL_PASSWORD" psql -U postgres -h moodle-postgres-postgresql -c "DROP DATABASE moodle"
 PGPASSWORD="$POSTGRESQL_PASSWORD" psql -U postgres -h moodle-postgres-postgresql -c "CREATE DATABASE moodle"
@@ -92,7 +92,7 @@ MYSQL_PWD="$MARIADB_PASSWORD" mariadb -u moodle -h moodle-mariadb moodle < moodl
 {{ else }}
 PGPASSWORD="$POSTGRESQL_PASSWORD" psql -U postgres -h moodle-postgres-postgresql moodle < moodledb_dump.sql
 {{ end }}
-echo "=== Finish Restore ==="
+echo "=== Finish restore ==="
 
 echo "=== Scaling deployment replicas to $replicas ==="
 kubectl scale deployment/{{ .Release.Name }} --replicas=$replicas -n {{ .Release.Namespace }}
