@@ -68,8 +68,9 @@ startBitnamiSetup() {
     /opt/bitnami/scripts/php/setup.sh
     /opt/bitnami/scripts/mysql-client/setup.sh
     /opt/bitnami/scripts/postgresql-client/setup.sh
-    # /opt/bitnami/scripts/moodle/setup.sh
-    /post-init.sh
+    # These lines are run later, after update check
+    # /opt/bitnami/scripts/moodle/setup.sh 
+    # /post-init.sh
     MODULE=dbp info "Bitnami Moodle setup finished"
 }
 
