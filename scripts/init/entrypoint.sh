@@ -32,7 +32,7 @@ printSystemStatus() {
         MODULE=dbp error "UpdateFailed file exists!"
     fi
     if [[ -e $plugin_state_failed_path ]]; then
-        MODULE=dbp error "UpdateFailed file exists!"
+        MODULE=dbp error "PluginsFailed file exists!"
     fi
 }
 
