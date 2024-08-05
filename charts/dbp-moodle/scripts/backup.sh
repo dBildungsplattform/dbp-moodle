@@ -17,8 +17,11 @@ apt install duply
 apt-get -y remove postgresql-client-common
 apt-get -y install ca-certificates gnupg
 apt-get install apt-transport-https --yes
+{{ if .Values.mariadb.enabled }}
 apt-get -y install mariadb-client
+{{ else }}
 apt-get -y install postgresql-client-14
+{{ end }}
 pg_dump -V
 pip install boto
 
@@ -90,10 +93,10 @@ echo "=== Start DB dump ==="
 export DATE=$( date "+%Y-%m-%d" )
 
 {{ if .Values.mariadb.enabled }}
-MYSQL_PWD="$MARIADB_PASSWORD" mysqldump -h moodle-mariadb -P 3306 -u moodle moodle > moodle_mariadb_dump_$DATE.sql
+MYSQL_PWD="$MARIADB_PASSWORD" mysqldump -h {{ .Release.Name }}-mariadb -P {{ .Values.mariadb.primary.containerPorts.mysql }} -u {{ .Values.mariadb.auth.username }} {{ .Values.mariadb.auth.database }} > moodle_mariadb_dump_$DATE.sql
 gzip moodle_mariadb_dump_$DATE.sql
 {{ else }}
-PGPASSWORD="$POSTGRESQL_PASSWORD" pg_dump -h moodle-postgres-postgresql -p 5432 -U postgres moodle > moodle_postgresqldb_dump_$DATE.sql
+PGPASSWORD="$POSTGRESQL_PASSWORD" pg_dump -h { .Release.Name }}-postgres-postgresql -p {{ .Values.postgresql.containerPorts.postgresql }} -U {{ .Values.postgresql.auth.username }} {{ .Values.postgresql.auth.database }} > moodle_postgresqldb_dump_$DATE.sql
 gzip moodle_postgresqldb_dump_$DATE.sql
 {{ end }}
 
