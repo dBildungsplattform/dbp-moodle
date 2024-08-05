@@ -78,7 +78,6 @@ printSystemStatus
 
 # Bitnami setup now always runs.
 # Can handle new version and existing version.
-# TODO: check if it can handle existing lower version. e.g. skript is moodle 4.1.11 and existing is 4.1.10
 startBitnamiSetup
 
 if [[ ! -f "$update_failed_path" ]]; then
