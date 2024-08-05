@@ -7,5 +7,5 @@ metadata:
     "helm.sh/hook-weight": "0"
     "helm.sh/hook-delete-policy": hook-succeeded
 data:
-  pre-upgrade-scale-down.sh: |-
-{{ tpl ( .Files.Get "scripts/hook/pre-upgrade-scale-down.sh" ) . | nindent 4 }}
+  moodle-update-preparation.sh: |-
+{{ tpl ( .Files.Get "scripts/hook/moodle-update-preparation.sh" ) . | nindent 4 }}

@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: pre-upgrade-scale-down
+  name: moodle-update-preparation
   annotations:
     "helm.sh/hook": pre-upgrade
     "helm.sh/hook-weight": "1"
@@ -9,13 +9,16 @@ spec:
   template:
     spec:
       containers:
-        - name: pre-upgrade-scale-down
+        - name: moodle-update-preparation
           image: bitnami/kubectl:latest
-          command: ["/bin/bash", "/pre-upgrade-scale-down.sh"]
+          command: ["/bin/bash", "/moodle-update-preparation.sh"]
+          env:
+          - name: BACKUP_ENABLED
+            value: "{{ include "dbpMoodle.stageBackupEnabled" . }}"
           volumeMounts:
             - name: script-volume
-              mountPath: /pre-upgrade-scale-down.sh
-              subPath: pre-upgrade-scale-down.sh
+              mountPath: /moodle-update-preparation.sh
+              subPath: moodle-update-preparation.sh
       serviceAccountName: "{{ .Release.Name }}-hook-serviceaccount"
       restartPolicy: Never
       volumes:
