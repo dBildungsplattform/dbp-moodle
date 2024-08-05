@@ -10,15 +10,6 @@ get_current_deployment_image() {
         grep '{{- .Values.moodle.image.repository -}}'
 }
 
-
-asd() {
-    kubectl create job moodle-update-backup-job --from=cronjob.batch/moodle-backup-cronjob-backup -n {{ .Release.Namespace }}
-    kubectl patch cronjobs moodle-{{ .Release.Namespace }}-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : true }}'
-    kubectl patch deployment <deployment-name> --type=json -p='[{"op": "remove", "path": "/spec/template/spec/containers/0/livenessProbe"}]'
-
-    # helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle --wait bitnami/moodle --namespace {{ .Release.Namespace }}
-}
-
 printf "Checking if update preparations are needed\n"
 
 new_image="{{- .Values.moodle.image.registry -}}/{{- .Values.moodle.image.repository -}}:{{- .Values.moodle.image.tag -}}"
