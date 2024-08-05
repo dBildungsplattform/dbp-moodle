@@ -143,10 +143,6 @@ moodle:
   existingSecret: "moodle"
   persistence:
     existingClaim: "moodle-data"
-    enabled: true
-    storageClass: "nfs-client"
-    annotations:
-      "helm.sh/resource-policy": "keep"
   resources:
     requests:
       cpu: 300m
