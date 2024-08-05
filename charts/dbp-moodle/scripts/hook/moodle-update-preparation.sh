@@ -26,12 +26,9 @@ printf 'Image change detected\n'
 printf 'Disabling regular cronjob to prevent failing runs\n'
 kubectl patch cronjobs moodle-"{{ .Release.Namespace }}"-cronjob-php-script -n "{{ .Release.Namespace }}" -p '{"spec" : {"suspend" : true }}'
 
-# printf 'Disabling liveness probe to prevent alerts during update\n'
-# kubectl patch deployment "deploy/{{ .Release.Name }}" --type=json -p='[{"op": "remove", "path": "/spec/template/spec/containers/0/livenessProbe"}]'
-
 printf 'Scaling deployment "{{ .Release.Name }}" to 0 replicas\n'
 kubectl patch "deploy/{{ .Release.Name }}" -n "{{ .Release.Namespace }}" -p '{"spec":{"replicas": 0}}'
 
-if [ "$BACKUP_ENABLED" == "true" ]; then
+if [ "$BACKUP_ENABLED" = true ]; then
     kubectl create job moodle-pre-update-backup-job -n "{{ .Release.Namespace }}" --from=cronjob.batch/moodle-backup-cronjob-backup
 fi
