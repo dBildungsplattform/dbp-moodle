@@ -31,4 +31,5 @@ kubectl patch "deploy/{{ .Release.Name }}" -n "{{ .Release.Namespace }}" -p '{"s
 
 if [ "$BACKUP_ENABLED" = true ]; then
     kubectl create job moodle-pre-update-backup-job -n "{{ .Release.Namespace }}" --from=cronjob.batch/moodle-backup-cronjob-backup
+    kubectl wait --for=condition=complete --timeout=10m job/moodle-pre-update-backup-job
 fi
