@@ -1,9 +1,8 @@
 #!/bin/bash
 # create destination dir if not exists
 set -e
-if [ ! -d /backup ]
-then
-mkdir -p /backup
+if [ ! -d /backup ]; then
+    mkdir -p /backup
 fi
 
 curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null
@@ -28,8 +27,7 @@ mv ./kubectl /usr/local/bin/kubectl
 # get current replicas and scale down deployment
 replicas=$(kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o=jsonpath='{.status.replicas}')
 echo "=== Current replicas detected: $replicas ==="
-if [ -z "$replicas" ] || [ "$replicas" -eq 0 ]
-then 
+if [ -z "$replicas" ] || [ "$replicas" -eq 0 ]; then 
     replicas=1
 fi
 echo "=== Scale Moodle Deployment to 0 replicas for restore operation ==="

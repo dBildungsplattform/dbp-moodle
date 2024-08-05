@@ -1,8 +1,7 @@
 #!/bin/bash
 # create destination dir if not exists
 set -e
-if [ ! -d /backup ]
-then
+if [ ! -d /backup ]; then
     mkdir -p /backup
 fi
 
@@ -27,8 +26,7 @@ pip install boto
 #If Update Backup: depending on exit code create the signal for the Update Helper Job with success or failure
 function clean_up() {
     exit_code=$?
-    if ! [ -a /mountData/moodledata/CliUpdate ]
-    then
+    if ! [ -a /mountData/moodledata/CliUpdate ]; then
         echo "=== Starting cleanup ==="
         echo "=== Stopping Maintenance Mode ==="
         rm -f /mountData/moodledata/climaintenance.html
@@ -42,8 +40,7 @@ function clean_up() {
 
         echo "=== Unsuspending moodle cronjob ==="
         kubectl patch cronjobs moodle-moodle-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : false }}'
-    elif [ $exit_code -eq 0 ]
-    then
+    elif [ $exit_code -eq 0 ]; then
     echo "=== Update Backup was successful with exit code $exit_code ==="
         rm -f /mountData/moodledata/UpdateBackupFailure
         touch /mountData/moodledata/UpdateBackupSuccess
@@ -64,8 +61,7 @@ chmod +x kubectl
 mv ./kubectl /usr/local/bin/kubectl
 
 #If the Backup is done for the Update it skips the preparation because the Update Helper already did this
-if ! [ -a /mountData/moodledata/CliUpdate ]
-then
+if ! [ -a /mountData/moodledata/CliUpdate ]; then
     #Suspend the cronjob to avoid errors due to missing moodle
     echo "=== Suspending moodle cronjob ==="
     kubectl patch cronjobs moodle-moodle-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : true }}'
@@ -107,8 +103,7 @@ tar -zcf moodle.tar.gz /mountData/moodle/
 
 # get moodledata folder
 echo "=== start moodledata directory backup ==="
-if [ -a /mountData/moodledata/CliUpdate ]
-then
+if [ -a /mountData/moodledata/CliUpdate ]; then
     #Backup during the Moodle Update Process
     tar --exclude="/mountData/moodledata/cache" --exclude="/mountData/moodledata/sessions" --exclude="/mountData/moodledata/moodle-backup" --exclude="/mountData/moodledata/CliUpdate" -zcf moodledata.tar.gz /mountData/moodledata/
 else
@@ -118,16 +113,14 @@ fi
 
 echo "=== Start duply process ==="
 cd /etc/duply/default
-for cert in *.asc
-    do
+for cert in *.asc; do
     echo "=== Import key $cert ==="
     gpg --import --batch $cert
-    done
-for fpr in $(gpg --batch --no-tty --command-fd 0 --list-keys --with-colons | awk -F: '/fpr:/ {print $10}' | sort -u); 
-    do
+done
+for fpr in $(gpg --batch --no-tty --command-fd 0 --list-keys --with-colons | awk -F: '/fpr:/ {print $10}' | sort -u); do
     echo "=== Trusts key $fpr ==="
     echo -e "5\ny\n" | gpg --batch --no-tty --command-fd 0 --expert --edit-key $fpr trust;
-    done
+done
 echo "=== Execute backup ==="
 /usr/bin/duply default backup
 /usr/bin/duply default status
