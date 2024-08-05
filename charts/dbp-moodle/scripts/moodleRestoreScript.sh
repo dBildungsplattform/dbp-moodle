@@ -26,28 +26,26 @@ chmod +x kubectl
 mv ./kubectl /usr/local/bin/kubectl
 
 # get current replicas and scale down deployment
-replicas=$(kubectl get deployment/moodle -n {{ .Release.Namespace }} -o=jsonpath='{.status.replicas}')
+replicas=$(kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o=jsonpath='{.status.replicas}')
 echo "=== Current replicas detected: $replicas ==="
 if [ -z "$replicas" ] || [ "$replicas" -eq 0 ]
 then 
     replicas=1
 fi
 echo "=== Scale Moodle Deployment to 0 replicas for restore operation ==="
-kubectl scale deployment/moodle --replicas=0 -n {{ .Release.Namespace }}
+kubectl scale deployment/{{ .Release.Name }} --replicas=0 -n {{ .Release.Namespace }}
 echo "=== After restore operation is completed will scale back to: $replicas replicas ==="
 
 # restore
 cd /etc/duply/default
-for cert in *.asc
-    do
+for cert in *.asc; do
     echo "=== Import key $cert ==="
     gpg --import --batch $cert
-    done
-for fpr in $(gpg --batch --no-tty --command-fd 0 --list-keys --with-colons  | awk -F: '/fpr:/ {print $10}' | sort -u); 
-    do
+done
+for fpr in $(gpg --batch --no-tty --command-fd 0 --list-keys --with-colons  | awk -F: '/fpr:/ {print $10}' | sort -u); do
     echo "=== Trusts key $fpr ==="
     echo -e "5\ny\n" |  gpg --batch --no-tty --command-fd 0 --expert --edit-key $fpr trust;
-    done
+done
 
 cd /bitnami/
 echo "=== Download Backup ==="
@@ -99,7 +97,7 @@ PGPASSWORD="$POSTGRESQL_PASSWORD" psql -U postgres -h moodle-postgres-postgresql
 echo "=== Finish Restore ==="
 
 echo "=== Scaling deployment replicas to $replicas ==="
-kubectl scale deployment/moodle --replicas=$replicas -n {{ .Release.Namespace }}
+kubectl scale deployment/{{ .Release.Name }} --replicas=$replicas -n {{ .Release.Namespace }}
 sleep 2
-scaledTo=$(kubectl get deployment/moodle -n {{ .Release.Namespace }} -o=jsonpath='{.status.replicas}')
+scaledTo=$(kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o=jsonpath='{.status.replicas}')
 echo "=== Deployment scaled to: $scaledTo ==="
