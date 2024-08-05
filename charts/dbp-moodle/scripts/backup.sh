@@ -13,13 +13,13 @@ echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" 
 apt-get update
 
 apt install duply
-# Install postgresql-client-14
-apt-get -y remove postgresql-client-common
+# Install mariadb-client or postgresql-client-14
 apt-get -y install ca-certificates gnupg
 apt-get install apt-transport-https --yes
 {{ if .Values.mariadb.enabled }}
 apt-get -y install mariadb-client
 {{ else }}
+apt-get -y remove postgresql-client-common
 apt-get -y install postgresql-client-14
 {{ end }}
 pg_dump -V
