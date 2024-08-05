@@ -19,7 +19,7 @@ moodle_backup_path="/bitnami/moodledata/moodle-backup"
 maintenance_html_path="/bitnami/moodledata/climaintenance.html"
 update_in_progress_path="/bitnami/moodledata/UpdateInProgress"
 update_failed_path="/bitnami/moodledata/UpdateFailed"
-plugin_state_failed_path="/bitnami/moodledata/PluginStateFailed"
+plugin_state_failed_path="/bitnami/moodledata/PluginsFailed"
 
 printSystemStatus() {
     if [[ -e $maintenance_html_path ]]; then
