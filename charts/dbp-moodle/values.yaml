@@ -230,8 +230,7 @@ moodle-cronjob:
         - name: moodle-cronjob-php
           configMap:
             name: moodle-cronjob-php
-          # 711 in decimal is 457
-            defaultMode: 457
+            defaultMode: 0711
 
 mariadb:
   enabled: true
