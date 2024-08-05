@@ -1,5 +1,5 @@
 #!/bin/bash
-# create destination dir if not exists
+# Create destination dir if not exists
 set -e
 if [ ! -d /backup ]; then
     mkdir -p /backup
@@ -22,13 +22,13 @@ apt-get -y install postgresql-client-14
 pg_dump -V
 pip install boto
 
-#Cleanup after finish only if not an Update Backup (Normal Backup has no CliUpdate file)
-#If Update Backup: depending on exit code create the signal for the Update Helper Job with success or failure
+# Cleanup after finish only if not an update backup (normal backup has no CliUpdate file)
+# If update backup: depending on exit code create the signal for the update helper job with success or failure
 function clean_up() {
     exit_code=$?
     if ! [ -a /mountData/moodledata/CliUpdate ]; then
         echo "=== Starting cleanup ==="
-        echo "=== Stopping Maintenance Mode ==="
+        echo "=== Stopping maintenance mode ==="
         rm -f /mountData/moodledata/climaintenance.html
 
         echo "=== Turn on liveness and readiness probe ==="
@@ -41,12 +41,12 @@ function clean_up() {
         echo "=== Unsuspending moodle cronjob ==="
         kubectl patch cronjobs moodle-moodle-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : false }}'
     elif [ $exit_code -eq 0 ]; then
-    echo "=== Update Backup was successful with exit code $exit_code ==="
+    echo "=== Update backup was successful with exit code $exit_code ==="
         rm -f /mountData/moodledata/UpdateBackupFailure
         touch /mountData/moodledata/UpdateBackupSuccess
         exit $exit_code
     else
-        echo "=== Update Backup failed with exit code $exit_code ==="
+        echo "=== Update backup failed with exit code $exit_code ==="
         rm -f /mountData/moodledata/UpdateBackupSuccess
         touch /mountData/moodledata/UpdateBackupFailure
         exit $exit_code
@@ -55,14 +55,14 @@ function clean_up() {
 
 trap "clean_up" EXIT
 
-# install kubectl
+# Install kubectl
 curl -LO https://dl.k8s.io/release/v{{ .Values.global.kubectl_version }}/bin/linux/amd64/kubectl
 chmod +x kubectl
 mv ./kubectl /usr/local/bin/kubectl
 
-#If the Backup is done for the Update it skips the preparation because the Update Helper already did this
+# If the backup is done for the update it skips the preparation because the update helper already did this
 if ! [ -a /mountData/moodledata/CliUpdate ]; then
-    #Suspend the cronjob to avoid errors due to missing moodle
+    # Suspend the cronjob to avoid errors due to missing moodle
     echo "=== Suspending moodle cronjob ==="
     kubectl patch cronjobs moodle-moodle-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : true }}'
 
@@ -73,20 +73,20 @@ if ! [ -a /mountData/moodledata/CliUpdate ]; then
 
     kubectl rollout status deployment/{{ .Release.Name }}
 
-    #Wait for running Jobs to finish to avoid errors
-    echo "=== Waiting for Jobs to finish ==="
+    # Wait for running jobs to finish to avoid errors
+    echo "=== Waiting for jobs to finish ==="
     sleep 30
     
-    echo "=== Starting Maintenance mode ==="
+    echo "=== Starting maintenance mode ==="
     echo '<h1>Sorry, maintenance in progress</h1>' > /mountData/moodledata/climaintenance.html
 fi
 
-echo "=== start backup ==="
+echo "=== Start backup ==="
 date +%Y%m%d_%H%M%S%Z
 
 cd /backup
-# get dump of db
-echo "=== start DB dump ==="
+# Get dump of db
+echo "=== Start DB dump ==="
 export DATE=$( date "+%Y-%m-%d" )
 
 {{ if .Values.mariadb.enabled }}
@@ -97,17 +97,17 @@ PGPASSWORD="$POSTGRESQL_PASSWORD" pg_dump -h moodle-postgres-postgresql -p 5432 
 gzip moodle_postgresqldb_dump_$DATE.sql
 {{ end }}
 
-# get moodle folder
-echo "=== start moodle directory backup ==="
+# Get moodle folder
+echo "=== Start moodle directory backup ==="
 tar -zcf moodle.tar.gz /mountData/moodle/
 
-# get moodledata folder
-echo "=== start moodledata directory backup ==="
+# Get moodledata folder
+echo "=== Start moodledata directory backup ==="
 if [ -a /mountData/moodledata/CliUpdate ]; then
-    #Backup during the Moodle Update Process
+    # Backup during the Moodle Update Process
     tar --exclude="/mountData/moodledata/cache" --exclude="/mountData/moodledata/sessions" --exclude="/mountData/moodledata/moodle-backup" --exclude="/mountData/moodledata/CliUpdate" -zcf moodledata.tar.gz /mountData/moodledata/
 else
-    #Regular scheduled daily Backup process
+    # Regular scheduled daily Backup process
     tar --exclude="/mountData/moodledata/cache" --exclude="/mountData/moodledata/sessions" -zcf moodledata.tar.gz /mountData/moodledata/
 fi
 
@@ -126,7 +126,7 @@ echo "=== Execute backup ==="
 /usr/bin/duply default status
 cd /
 rm -rf /backup
-echo "=== backup finished ==="
+echo "=== Backup finished ==="
 echo "=== Clean up old backups ==="
 /usr/bin/duply default purge --force
 date +%Y%m%d_%H%M%S%Z
