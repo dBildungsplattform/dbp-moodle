@@ -1,8 +1,5 @@
 global:
-  name: infra
-  stage: infra
   kubectl_version: "1.28.7"
-  infratools_image_tag: 4.0.3
   storageClass: "nfs-client"
   moodlePlugins:
     kaltura:
@@ -60,13 +57,14 @@ backup:
   endpoint: https://s3-eu-central-2.ionoscloud.com #s3 region Berlin endpoint
 
 dbpMoodle:
+  name: infra
+  stage: infra
   logging: false
   debug: false # Moodle Debugging is not safe for production
   restore: false # Only to be used to restore a snapshot with the dbp-restore script
 
   # The dbp update process to migrate moodle date when Moodle versions are increased
   update_migration:
-    enabled: false
     external_pvc:
       name: "moodle-data"
       size: "8Gi"
@@ -74,8 +72,6 @@ dbpMoodle:
       accessModes: ["ReadWriteOnce"]
       annotations:
         "helm.sh/resource-policy": "keep"
-
-  enable_plugin_install: true
 
   redis:
     host: "moodle-redis-master"
@@ -91,29 +87,11 @@ dbpMoodle:
     etherpad_postgresql_password: "moodle"
     etherpad_api_key: "moodle"
 
-  updateHelper:
-    postUpgradeDeploymentStrategy:
-      type: RollingUpdate
+  extended_permissions:
     rules:
       - apiGroups: ["apps"]
         resources: ["deployments"]
         verbs: ["get", "patch"]
-
-      # - apiGroups: [""]
-      #   resources: ["pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments"]
-      #   verbs: ["get", "list", "create", "delete", "patch", "update"]
-      # - apiGroups: ["apps"]
-      #   resources: ["deployments", "replicasets", "deployments/scale"]
-      #   verbs: ["get", "list", "create", "delete", "patch", "update"]
-      # - apiGroups: ["networking.k8s.io"]
-      #   resources: ["ingresses"]
-      #   verbs: ["get", "list", "create", "delete", "patch", "update"]
-      # - apiGroups: ["batch"]
-      #   resources: ["cronjobs", "jobs"]
-      #   verbs: ["get", "list", "create", "delete", "patch", "update"]
-      # - apiGroups: ["autoscaling"]
-      #   resources: ["horizontalpodautoscalers"]
-      #   verbs: ["get", "list", "create", "patch", "update"]
 
 infratools:
   repository: schulcloud
