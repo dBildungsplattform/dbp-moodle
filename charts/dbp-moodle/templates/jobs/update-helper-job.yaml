@@ -11,7 +11,7 @@ spec:
       volumes:
       - name: moodle-data
         persistentVolumeClaim:
-          claimName: {{ .Release.Name }}-data
+          claimName: {{ include "dbpMoodle.moodlePvc.name" . }}
       - name: {{ .Release.Name }}-update-helper-job-script
         configMap:
           name: {{ .Release.Name }}-update-helper-job-script

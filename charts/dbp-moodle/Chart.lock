@@ -14,11 +14,14 @@ dependencies:
 - name: cronjob
   repository: file://charts/backup-cronjob
   version: 0.1.0
+- name: cronjob
+  repository: file://charts/backup-cronjob
+  version: 0.1.0
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 15.5.7
 - name: etherpad
   repository: file://charts/etherpad
   version: 0.1.0
-digest: sha256:0bcbb8bdf12bab5529a1360b1157e36d2bd51e1d12b3ef653c61b07ba6936ce8
-generated: "2024-06-20T12:13:11.419404592Z"
+digest: sha256:a0820bedf3686afeee70b4581bfcb478c149b1b4ab2b032462d91ae1907c5c01
+generated: "2024-07-23T12:04:06.580780413Z"
