@@ -21,6 +21,12 @@ false
 {{- default "moodle" .Values.moodle_hpa.deployment_name_ref }}
 {{- end -}}
 
+{{- define "moodle_cronjob.job_name" -}}
+{{- with (index .Values.moodle_cronjob.jobs 0) -}}
+{{- .name -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "dbpMoodle.secrets.moodle_password" -}}
 {{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.moodle_password }}
 {{- end -}}
