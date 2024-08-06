@@ -21,8 +21,8 @@ false
 {{- default "moodle" .Values.moodle_hpa.deployment_name_ref }}
 {{- end -}}
 
-{{- define "moodle_cronjob.job_name" -}}
-{{- with (index .Values.moodle_cronjob.jobs 0) -}}
+{{- define "moodlecronjob.job_name" -}}
+{{- with (index .Values.moodlecronjob.jobs 0) -}}
 {{- .name -}}
 {{- end -}}
 {{- end -}}

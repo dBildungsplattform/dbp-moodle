@@ -42,7 +42,7 @@ function clean_up() {
         fi
 
         echo "=== Unsuspending moodle cronjob ==="
-        kubectl patch cronjobs moodle-moodle-cronjob-{{ include "moodle_cronjob.job_name" . }} -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : false }}'
+        kubectl patch cronjobs {{ .Release.Name }}-moodlecronjob-{{ include "moodlecronjob.job_name" . }} -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : false }}'
     elif [ $exit_code -eq 0 ]; then
     echo "=== Update backup was successful with exit code $exit_code ==="
         rm -f /mountData/moodledata/UpdateBackupFailure
@@ -67,7 +67,7 @@ mv ./kubectl /usr/local/bin/kubectl
 if ! [ -a /mountData/moodledata/CliUpdate ]; then
     # Suspend the cronjob to avoid errors due to missing moodle
     echo "=== Suspending moodle cronjob ==="
-    kubectl patch cronjobs moodle-moodle-cronjob-{{ include "moodle_cronjob.job_name" . }} -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : true }}'
+    kubectl patch cronjobs {{ .Release.Name }}-moodlecronjob-{{ include "moodlecronjob.job_name" . }} -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : true }}'
 
     echo "=== Turn off liveness and readiness probe ==="
     kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o jsonpath="{.spec.template.spec.containers[0].readinessProbe}" > ${readiness_probe_file}
