@@ -35,6 +35,3 @@ if [ "$BACKUP_ENABLED" = true ]; then
     kubectl create job moodle-pre-update-backup-job -n "{{ .Release.Namespace }}" --from=cronjob.batch/moodle-backup-cronjob-backup
     kubectl wait --for=condition=complete --timeout=10m job/moodle-pre-update-backup-job
 fi
-
-printf 'Scaling deployment "{{ .Release.Name }}" to 0 replicas again\n'
-kubectl patch "deploy/{{ .Release.Name }}" -n "{{ .Release.Namespace }}" -p '{"spec":{"replicas": 0}}'
