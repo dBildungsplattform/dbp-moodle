@@ -233,7 +233,6 @@ moodle:
   podAnnotations:
     moodleplugins/checksum: '{{- include "dbpMoodle.pluginConfigMap.content" . | sha256sum -}}'
 
-
 mariadb:
   enabled: true
   global:
