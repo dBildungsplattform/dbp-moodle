@@ -88,6 +88,13 @@ dbpMoodle:
         resources: ["deployments"]
         verbs: ["get", "patch"]
 
+  restore:
+    enabled: false # Only to be used to restore a snapshot with the dbp-restore script
+    rules:
+      - apiGroups: ["apps"]
+        resources: ["deployments/scale", "deployments"]
+        verbs: ["get", "list", "scale", "patch"]
+
 infratools:
   repository: schulcloud
   image_tag: 4.0.3
