@@ -199,7 +199,7 @@ moodle:
   podAnnotations:
     moodleplugins/checksum: '{{- include "dbpMoodle.pluginConfigMap.content" . | sha256sum -}}'
 
-moodle-cronjob:
+moodle_cronjob:
   clusterRole:
     create: true
     rules:
