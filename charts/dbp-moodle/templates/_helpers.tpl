@@ -1,5 +1,5 @@
 {{- define "dbpMoodle.stageBackupEnabled" -}}
-{{- if and (or (eq .Values.global.stage "prod") (eq .Values.global.name "infra")) ( .Values.backup.enabled ) -}}
+{{- if and (or (eq .Values.global.stage "prod") (eq .Values.global.name "infra")) ( .Values.dbpMoodle.backup.enabled ) -}}
 true
 {{- else -}}
 false

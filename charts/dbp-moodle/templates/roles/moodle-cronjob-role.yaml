@@ -1,6 +1,6 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: "{{ .Release.Name }}-php-job"
+  name: "{{ .Release.Name }}-moodle-cronjob"
 rules:
   {{- toYaml .Values.moodlecronjob.clusterRole.rules | nindent 2 }}
