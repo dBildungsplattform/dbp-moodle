@@ -373,7 +373,7 @@ moodlecronjob:
         resources: ["pods", "pods/exec"]
         verbs: ["get", "list", "create"]
   serviceAccount:
-    name: "moodle-backup-job"
+    name: "moodle-php-job"
     create: false
   jobs:
     - name: php-script
