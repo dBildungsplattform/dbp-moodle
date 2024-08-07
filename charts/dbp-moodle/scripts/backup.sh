@@ -44,7 +44,7 @@ function clean_up() {
         echo "=== Unsuspending moodle cronjob ==="
         kubectl patch cronjobs {{ .Release.Name }}-moodlecronjob-{{ include "moodlecronjob.job_name" . }} -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : false }}'
     elif [ $exit_code -eq 0 ]; then
-    echo "=== Update backup was successful with exit code $exit_code ==="
+        echo "=== Update backup was successful with exit code $exit_code ==="
         rm -f /mountData/moodledata/UpdateBackupFailure
         touch /mountData/moodledata/UpdateBackupSuccess
         exit $exit_code
