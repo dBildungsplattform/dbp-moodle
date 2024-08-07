@@ -386,7 +386,7 @@ moodlecronjob:
   clusterRole:
     create: false
   serviceAccount:
-    name: "moodle-php-job"
+    name: "moodle-moodle-cronjob"
     create: false
   jobs:
     - name: php-script
