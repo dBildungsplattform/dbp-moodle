@@ -102,13 +102,47 @@ dbpMoodle:
       - apiGroups: ["autoscaling"]
         resources: ["horizontalpodautoscalers"]
         verbs: ["get", "list", "create", "patch", "update"]
-  
+
+  backup:
+    enabled: false
+    gpg_key_names: 
+    gpgkeys:
+      gpgkey.dbpinfra.pub.asc: 
+      gpgkey.dbpinfra.sec.asc: 
+    s3_bucket_name: 
+    cluster_name: 
+    endpoint: 
+    secrets: 
+      s3_access_key: 
+      s3_access_secret: 
+      s3_endpoint_url: 
+
+    rules:
+      - apiGroups: [""]
+        resources: ["pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments"]
+        verbs: ["get", "list", "create", "delete", "patch", "update"]
+      - apiGroups: ["apps"]
+        resources: ["deployments", "replicasets"]
+        verbs: ["get", "list", "create", "delete", "patch", "update"]
+      - apiGroups: ["networking.k8s.io"]
+        resources: ["ingresses"]
+        verbs: ["get", "list", "create", "delete", "patch", "update"]
+      - apiGroups: ["batch"]
+        resources: ["cronjobs", "jobs"]
+        verbs: ["get", "patch", "update", "list", "delete"]
+
   restore:
     enabled: false # Only to be used to restore a snapshot with the dbp-restore script
     rules:
       - apiGroups: ["apps"]
         resources: ["deployments/scale", "deployments"]
         verbs: ["get", "list", "scale", "patch"]
+
+  moodlecronjob:
+    rules:
+      - apiGroups: [""]
+        resources: ["pods", "pods/exec"]
+        verbs: ["get", "list", "create"]
 
 infratools:
   repository: schulcloud
@@ -198,35 +232,6 @@ moodle:
         defaultMode: 0644
   podAnnotations:
     moodleplugins/checksum: '{{- include "dbpMoodle.pluginConfigMap.content" . | sha256sum -}}'
-
-moodlecronjob:
-  clusterRole:
-    create: true
-    rules:
-      - apiGroups: [""]
-        resources: ["pods", "pods/exec"]
-        verbs: ["get", "list", "create"]
-  jobs:
-    - name: php-script
-      schedule: "* * * * *"
-      concurrencyPolicy: Forbid
-      failedJobsHistoryLimit: 1
-      successfulJobsHistoryLimit: 1
-      backoffLimit: 1
-      restartPolicy: Never
-      command:
-        - /bin/sh
-        - -c
-      args:
-        - /scripts/cronjob-script
-      extraVolumeMounts:
-        - name: moodle-php-script
-          mountPath: /scripts/
-      extraVolumes:
-        - name: moodle-php-script
-          configMap:
-            name: moodle-php-script
-            defaultMode: 0711
 
 mariadb:
   enabled: true
@@ -377,40 +382,42 @@ etherpadlite:
       cpu: "1000m"
       memory: "1Gi"
 
-backup:
-  enabled: false
-  gpg_key_names: 
-  gpgkeys: 
-    gpgkey.dbpinfra.pub.asc: 
-    gpgkey.dbpinfra.sec.asc: 
-  s3_bucket_name: 
-  cluster_name: 
-  endpoint: 
-  secrets:
-    s3_access_key: 
-    s3_access_secret: 
-    s3_endpoint_url: 
+moodlecronjob:
+  clusterRole:
+    create: false
+  serviceAccount:
+    name: "moodle-php-job"
+    create: false
+  jobs:
+    - name: php-script
+      schedule: "* * * * *"
+      concurrencyPolicy: Forbid
+      failedJobsHistoryLimit: 1
+      successfulJobsHistoryLimit: 1
+      backoffLimit: 1
+      restartPolicy: Never
+      command:
+        - /bin/sh
+        - -c
+      args:
+        - /scripts/cronjob-script
+      extraVolumeMounts:
+        - name: moodle-php-script
+          mountPath: /scripts/
+      extraVolumes:
+        - name: moodle-php-script
+          configMap:
+            name: moodle-php-script
+            defaultMode: 0711
 
 backup-cronjob:
   image:
     tag: 4.0.3
   clusterRole:
-    create: true
-    rules:
-      - apiGroups: [""]
-        resources: ["pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
-      - apiGroups: ["apps"]
-        resources: ["deployments", "replicasets"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
-      - apiGroups: ["networking.k8s.io"]
-        resources: ["ingresses"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
-      - apiGroups: ["batch"]
-        resources: ["cronjobs", "jobs"]
-        verbs: ["get", "patch", "update", "list", "delete"]
+    create: false
   serviceAccount:
-    name: "moodle-backup"
+    name: "moodle-backup-job"
+    create: false
   env:
     - name: MARIADB_PASSWORD
       valueFrom:
