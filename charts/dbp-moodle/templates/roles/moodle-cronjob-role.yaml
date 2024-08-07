@@ -3,4 +3,4 @@ kind: Role
 metadata:
   name: "{{ .Release.Name }}-moodle-cronjob"
 rules:
-  {{- toYaml .Values.moodlecronjob.clusterRole.rules | nindent 2 }}
+  {{- toYaml .Values.dbpMoodle.moodlecronjob.rules | nindent 2 }}
