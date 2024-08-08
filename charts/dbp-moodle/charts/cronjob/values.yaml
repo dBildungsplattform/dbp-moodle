@@ -1,0 +1,128 @@
+image:
+  repository: schulcloud/infra-tools
+  pullPolicy: IfNotPresent
+  # -- Overrides the image tag whose default is the chart appVersion.
+  tag: "3.0.0"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  create: true
+  annotations: {}
+  # -- The name of the service account to use. If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+clusterRole:
+  # -- Create a clusterRole and bind it to the serviceaccount with a clusterRoleBinding
+  # (see https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
+  create: false
+  annotations: {}
+  rules: []
+    # - apiGroups: [""]
+    #   resources: ["namespaces", "configmaps", "persistentvolumeclaims", "services", "limitranges", "secrets", "pods"]
+    #   verbs: "GET"
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# -- Environment variables to be passed to all job pods
+# (see https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
+# and https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables)
+env: []
+  # - name: VARIABLE
+  #   value: value
+  # - name: VARIABLE
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: secret
+  #       key: KEY
+# -- ConfigMaps and secrets to be passed as environment variables to all job pods
+# (see https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
+# and https://kubernetes.io/docs/concepts/configuration/secret/#use-case-as-container-environment-variables)
+envFrom: []
+  # - configMapRef:
+  #     name: configmap-name
+
+
+# -- VolumeMounts to be passed to all job pods
+# (see https://kubernetes.io/docs/concepts/storage/volumes/)
+extraVolumeMounts: []
+  # - name: configmap-volume
+  #   mountPath: /etc/config
+
+# -- Volumes to be passed to all job pods
+# (see https://kubernetes.io/docs/concepts/storage/volumes/)
+extraVolumes: []
+  # - name: configmap-volume
+  #   configMap:
+  #     name: configmap-name
+  #     items:
+  #       - key: log_level
+  #         path: log_level
+
+jobs:
+    # jobs[0].name -- Not optional
+  - name: example
+    # -- Not optional
+    schedule: "*/5 * * * *"
+    concurrencyPolicy: Forbid
+    failedJobsHistoryLimit: 1
+    successfulJobsHistoryLimit: 1
+    restartPolicy: Never
+    command:
+      - /bin/sh
+      - -c
+    args:
+      - echo "foo"
+    startingDeadlineSeconds: 30
+    activeDeadlineSeconds: 300
+    backoffLimit: 3
+    completions: 5
+    parallelism: 1
+    ttlSecondsAfterFinished: 0
+    suspend: false
+    image:
+      repository: nginx
+      tag: latest
+      pullPolicy: IfNotPresent
+    # -- Additional job specific environment variables
+    env: []
+    # -- Additional job specific environment variables from configMaps or secrets
+    envFrom: []
+    podAnnotations: {}
+    resources: {}
+    # -- Additional job specific volumeMounts
+    extraVolumeMounts: []
+    # -- Additional job specific volumes
+    extraVolumes: []

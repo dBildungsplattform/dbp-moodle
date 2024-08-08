@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: 2.1.3
+description: A generic Helm chart for Kubernetes cronjobs
+name: cronjob
+type: application
+version: 0.1.0
