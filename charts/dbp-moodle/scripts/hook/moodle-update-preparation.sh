@@ -24,14 +24,14 @@ fi
 printf 'Image change detected\n'
 
 printf 'Disabling regular cronjob to prevent failing runs\n'
-kubectl patch cronjobs moodle-"{{ .Release.Namespace }}"-cronjob-php-script -n "{{ .Release.Namespace }}" -p '{"spec" : {"suspend" : true }}'
-
-# Currently scaling to 0 before and after backupis needed since moodle should be disabled before backup
-# but the backup itself scales up to 1 again after completion
-printf 'Scaling deployment "{{ .Release.Name }}" to 0 replicas\n'
-kubectl patch "deploy/{{ .Release.Name }}" -n "{{ .Release.Namespace }}" -p '{"spec":{"replicas": 0}}'
+kubectl patch cronjobs "{{ .Release.Name }}"-moodlecronjob-php-script -n "{{ .Release.Namespace }}" -p '{"spec" : {"suspend" : true }}'
 
 if [ "$BACKUP_ENABLED" = true ]; then
+    printf 'Starting pre-update backup\n'
     kubectl create job moodle-pre-update-backup-job -n "{{ .Release.Namespace }}" --from=cronjob.batch/moodle-backup-cronjob-backup
+    printf 'Waiting for backup to finish...\n'
     kubectl wait --for=condition=complete --timeout=10m job/moodle-pre-update-backup-job
 fi
+
+printf 'Scaling deployment "{{ .Release.Name }}" to 0 replicas\n'
+kubectl patch "deploy/{{ .Release.Name }}" -n "{{ .Release.Namespace }}" -p '{"spec":{"replicas": 0}}'
