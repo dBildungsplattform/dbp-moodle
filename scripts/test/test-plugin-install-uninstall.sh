@@ -87,9 +87,9 @@ do_step() {
     plugin_string="$( get_plugin_string "$@" )"
 
     # there is always a rerun to ensure idempotence is working
-    MOODLE_PLUGINS="$plugin_string" ENABLE_KALTURA=false /scripts/applyPluginState.sh
+    MOODLE_PLUGINS="$plugin_string" ENABLE_KALTURA=false /scripts/pluginCheck.sh
     printf "################# re-run #################\n"
-    MOODLE_PLUGINS="$plugin_string" ENABLE_KALTURA=false /scripts/applyPluginState.sh
+    MOODLE_PLUGINS="$plugin_string" ENABLE_KALTURA=false /scripts/pluginCheck.sh
 }
 
 print_step "Testing do nothing if none enabled"

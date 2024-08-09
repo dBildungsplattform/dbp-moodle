@@ -1,8 +1,5 @@
 global:
-  name: infra
-  stage: infra
   kubectl_version: "1.28.7"
-  infratools_image_tag: 4.0.3
   storageClass: "nfs-client"
   moodlePlugins:
     kaltura:
@@ -53,14 +50,14 @@ global:
       enabled: false
 
 dbpMoodle:
+  name: infra
+  stage: infra
   logging: false
   debug: false # Moodle Debugging is not safe for production
 
   # The dbp update process to migrate moodle date when Moodle versions are increased
   update_migration:
     enabled: false
-
-  enable_plugin_install: true
 
   redis:
     host: "moodle-redis-master"
@@ -85,24 +82,14 @@ dbpMoodle:
     etherpad_postgresql_password: "moodle"
     etherpad_api_key: "moodle"
 
-  updateHelper:
+  moodleUpdatePreparationHook:
     rules:
-      - apiGroups: [""]
-        resources: ["pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
       - apiGroups: ["apps"]
-        resources: ["deployments", "replicasets", "deployments/scale"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
-      - apiGroups: ["networking.k8s.io"]
-        resources: ["ingresses"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
+        resources: ["deployments"]
+        verbs: ["get", "patch"]
       - apiGroups: ["batch"]
         resources: ["cronjobs", "jobs"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
-      - apiGroups: ["autoscaling"]
-        resources: ["horizontalpodautoscalers"]
-        verbs: ["get", "list", "create", "patch", "update"]
-
+        verbs: ["get", "list", "create", "patch", "watch"]
   backup:
     enabled: false
     gpg_key_names: 
@@ -118,18 +105,12 @@ dbpMoodle:
       s3_endpoint_url: 
 
     rules:
-      - apiGroups: [""]
-        resources: ["pods", "pods/exec", "secrets", "persistentvolumeclaims", "services", "deployments"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
       - apiGroups: ["apps"]
-        resources: ["deployments", "replicasets"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
-      - apiGroups: ["networking.k8s.io"]
-        resources: ["ingresses"]
-        verbs: ["get", "list", "create", "delete", "patch", "update"]
+        resources: ["deployments"]
+        verbs: ["get", "patch", "list"]
       - apiGroups: ["batch"]
         resources: ["cronjobs", "jobs"]
-        verbs: ["get", "patch", "update", "list", "delete"]
+        verbs: ["get", "patch"]
 
   restore:
     enabled: false # Only to be used to restore a snapshot with the dbp-restore script
@@ -149,6 +130,8 @@ infratools:
   image_tag: 4.0.3
 
 moodle:
+  updateStrategy:
+    type: RollingUpdate
   image:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
@@ -198,7 +181,7 @@ moodle:
     type: ClusterIP
   ingress:
     enabled: true
-    hostname: "moodle.example.de"
+    hostname: "moodle2.dbpinfra-dev-moodle-01.dbildungsplattform.de"
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
@@ -231,6 +214,7 @@ moodle:
             path: php.ini
         defaultMode: 0644
   podAnnotations:
+    moodle/image: '{{- .Values.image.repository -}}:{{- .Values.image.tag -}}'
     moodleplugins/checksum: '{{- include "dbpMoodle.pluginConfigMap.content" . | sha256sum -}}'
 
 mariadb:

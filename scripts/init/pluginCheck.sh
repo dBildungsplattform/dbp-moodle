@@ -25,6 +25,12 @@ cleanup_failed_install() {
     fi
 }
 
+cleanup() {
+    if [[ -n "$plugin_unzip_path" ]]; then
+        rm -rf "$plugin_unzip_path"
+    fi
+}
+
 install_plugin() {
     local plugin_name
     local plugin_fullname
@@ -151,6 +157,7 @@ main() {
             change_value="$(applyKalturaState "$plugin_target_state")"
             if [ "$change_value" -ne 0 ]; then
                 anychange=true
+                echo "Kaltura produced change :|"
             fi
             continue
         fi
@@ -187,10 +194,9 @@ main() {
         MODULE="dbp-plugins" info 'No plugin state change detected.'
     fi
 
-    # clean up some files
-    rm -rf "$plugin_unzip_path"
     rm -f "$maintenance_html_path" # TODO move this to entrypoint probably
 }
 
 trap cleanup_failed_install ERR
+trap cleanup EXIT
 main

@@ -13,42 +13,108 @@ set -o nounset
 . /opt/bitnami/scripts/liblog.sh
 . /opt/bitnami/scripts/libwebserver.sh
 
-MODULE=dbp info "** Starting Moodle **"
+moodle_path="/bitnami/moodle"
+moodle_backup_path="/bitnami/moodledata/moodle-backup"
+
+maintenance_html_path="/bitnami/moodledata/climaintenance.html"
+update_in_progress_path="/bitnami/moodledata/UpdateInProgress"
+update_failed_path="/bitnami/moodledata/UpdateFailed"
+plugin_state_failed_path="/bitnami/moodledata/PluginsFailed"
+
+printSystemStatus() {
+    if [[ -e $maintenance_html_path ]]; then
+        MODULE=dbp warn "climaintenance.html file exists."
+    fi
+    if [[ -e $update_in_progress_path ]]; then
+        MODULE=dbp warn "UpdateInProgress file exists."
+    fi
+    if [[ -e $update_failed_path ]]; then
+        MODULE=dbp error "UpdateFailed file exists!"
+    fi
+    if [[ -e $plugin_state_failed_path ]]; then
+        MODULE=dbp error "PluginsFailed file exists!"
+    fi
+}
+
+setStatusFile() {
+    local path="$1"
+    local enable="$2"
+    if [ "$enable" = true ]; then
+        touch "$path"
+    elif [ "$enable" = false ]; then
+        rm -f "$path"
+    fi
+}
+
+upgrade_if_pending() {
+    set +o errexit
+    php "${moodle_path}/admin/cli/upgrade.php" --is-pending > /dev/null 2>&1
+
+    EXIT_CODE=$?
+    set -o errexit
+    # If an upgrade is needed it exits with an error code of 2 so it distinct from other types of errors.
+    if [ $EXIT_CODE -eq 2 ]; then
+        MODULE="dbp" info 'Running Moodle upgrade'
+        php "${moodle_path}/admin/cli/upgrade.php" --non-interactive
+    else
+        MODULE="dbp" info 'No upgrade needed'
+    fi
+}
 
 startBitnamiSetup() {
     print_welcome_page
-    info "** Starting Bitnami Moodle setup **"
+    info "Starting Bitnami Moodle setup"
     /opt/bitnami/scripts/"$(web_server_type)"/setup.sh
     /opt/bitnami/scripts/php/setup.sh
     /opt/bitnami/scripts/mysql-client/setup.sh
     /opt/bitnami/scripts/postgresql-client/setup.sh
-    /opt/bitnami/scripts/moodle/setup.sh
-    /post-init.sh
-    MODULE=dbp info "** Bitnami Moodle setup finished! **"
+    # These lines are run later, after update check
+    # /opt/bitnami/scripts/moodle/setup.sh 
+    # /post-init.sh
+    MODULE=dbp info "Bitnami Moodle setup finished"
 }
 
-# if true || [[ ! -d "/bitnami/moodle/" || ! -f "/bitnami/moodle/version.php" || ! -d "/opt/bitnami/php/etc/conf.d/" ]]; then
+MODULE=dbp info "Starting Moodle"
+printSystemStatus
 
 # Bitnami setup now always runs.
 # Can handle new version and existing version.
-# TODO: check if it can handle existing lower version. e.g. skript is moodle 4.1.11 and existing is 4.1.10
 startBitnamiSetup
 
-MODULE=dbp info "** Starting Moodle Update Check **"
-/scripts/moodleUpdateCheck.sh 2>&1 | tee -a "/bitnami/moodledata/moodleUpdateCheck.log"
+if [[ ! -f "$update_failed_path" ]]; then
+    MODULE=dbp info "Starting Moodle Update Check"
+    if /scripts/updateCheck.sh; then
+        MODULE=dbp info "Finished Update Check"
+    else
+        MODULE=dbp error "Update failed! Continuing with previously installed moodle.."
+        setStatusFile "$update_failed_path" true
+    fi
+else
+    MODULE=dbp warn "Update failed previously. Skipping update check..."
+fi
 
-MODULE=dbp info "** Update Check finished! **"
-# 
+MODULE=dbp info "Start Bitnami setup script after checking for proper version"
+/opt/bitnami/scripts/moodle/setup.sh
+/post-init.sh
+upgrade_if_pending
 
 MODULE=dbp info "Replacing config files with ours"
 /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
 /bin/cp /moodleconfig/php.ini /opt/bitnami/php/etc/conf.d/php.ini
 
-MODULE=dbp info "Starting plugin installation"
-/scripts/applyPluginState.sh
-MODULE=dbp info "Finished Plugin Install"
+upgrade_if_pending
+if [[ ! -f "$update_failed_path" ]] && [[ ! -f "$plugin_state_failed_path" ]]; then
+    MODULE=dbp info "Starting plugin installation"
+    if /scripts/pluginCheck.sh; then
+        MODULE=dbp info "Finished Plugin Install"
+    else
+        MODULE=dbp error "Plugin check failed! Continuing to start webserver with possibly compromised plugins"
+        setStatusFile "$plugin_state_failed_path" true
+    fi
+else
+    MODULE=dbp warn "Update or Plugin check failed previously. Skipping plugin check..."
+fi
 
-# touch /bitnami/moodledata/FreshInstall
 
 MODULE=dbp info "Finished all preparations! Starting Webserver"
 /opt/bitnami/scripts/moodle/run.sh

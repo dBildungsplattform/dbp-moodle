@@ -74,7 +74,7 @@ if ! [ -a /mountData/moodledata/CliUpdate ]; then
     kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o jsonpath="{.spec.template.spec.containers[0].livenessProbe}" > ${liveness_probe_file}
     kubectl patch deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} --type=json -p="[{'op': 'remove', 'path': '/spec/template/spec/containers/0/readinessProbe'}, {'op': 'remove', 'path': '/spec/template/spec/containers/0/livenessProbe'}]"
 
-    kubectl rollout status deployment/{{ .Release.Name }}
+    kubectl rollout status deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} 
 
     # Wait for running jobs to finish to avoid errors
     echo "=== Waiting for jobs to finish ==="
