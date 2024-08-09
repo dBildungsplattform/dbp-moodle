@@ -84,12 +84,12 @@ dbpMoodle:
 
   moodleUpdatePreparationHook:
     rules:
-    - apiGroups: ["apps"]
-      resources: ["deployments"]
-      verbs: ["get", "patch"]
-    - apiGroups: ["batch"]
-      resources: ["cronjobs", "jobs"]
-      verbs: ["get", "list", "create", "patch", "watch"]
+      - apiGroups: ["apps"]
+        resources: ["deployments"]
+        verbs: ["get", "patch"]
+      - apiGroups: ["batch"]
+        resources: ["cronjobs", "jobs"]
+        verbs: ["get", "list", "create", "patch", "watch"]
   backup:
     enabled: false
     gpg_key_names: 
@@ -105,25 +105,25 @@ dbpMoodle:
       s3_endpoint_url: 
 
     rules:
-    - apiGroups: ["apps"]
-      resources: ["deployments"]
-      verbs: ["get", "patch", "list"]
-    - apiGroups: ["batch"]
-      resources: ["cronjobs", "jobs"]
-      verbs: ["get", "patch"]
+      - apiGroups: ["apps"]
+        resources: ["deployments"]
+        verbs: ["get", "patch", "list"]
+      - apiGroups: ["batch"]
+        resources: ["cronjobs", "jobs"]
+        verbs: ["get", "patch"]
 
   restore:
     enabled: false # Only to be used to restore a snapshot with the dbp-restore script
     rules:
-    - apiGroups: ["apps"]
-      resources: ["deployments/scale", "deployments"]
-      verbs: ["get", "list", "scale", "patch"]
+      - apiGroups: ["apps"]
+        resources: ["deployments/scale", "deployments"]
+        verbs: ["get", "list", "scale", "patch"]
 
   moodlecronjob:
     rules:
-    - apiGroups: [""]
-      resources: ["pods", "pods/exec"]
-      verbs: ["get", "list", "create"]
+      - apiGroups: [""]
+        resources: ["pods", "pods/exec"]
+        verbs: ["get", "list", "create"]
 
 infratools:
   repository: schulcloud
@@ -145,17 +145,17 @@ moodle:
   moodleEmail: devops@dbildungscloud.de
   allowEmptyPassword: false
   extraEnvVars:
-  - name: PHP_POST_MAX_SIZE
-    value: 200M
-  - name: PHP_UPLOAD_MAX_FILESIZE
-    value: 200M
-  - name: PHP_MAX_INPUT_VARS
-    value: "5000"
-  - name: MOODLE_PLUGINS
-    valueFrom:
-      configMapKeyRef:
-        name: moodle-plugins
-        key: moodle-plugin-list
+    - name: PHP_POST_MAX_SIZE
+      value: 200M
+    - name: PHP_UPLOAD_MAX_FILESIZE
+      value: 200M
+    - name: PHP_MAX_INPUT_VARS
+      value: "5000"
+    - name: MOODLE_PLUGINS
+      valueFrom:
+        configMapKeyRef:
+          name: moodle-plugins
+          key: moodle-plugin-list
   extraEnvVarsSecret: "moodle"
   existingSecret: "moodle"
   persistence:
@@ -200,19 +200,19 @@ moodle:
         cpu: 200m
         memory: 256Mi
   extraVolumeMounts:
-  - name: moodle-config
-    readOnly: true
-    mountPath: /moodleconfig
+    - name: moodle-config
+      readOnly: true
+      mountPath: /moodleconfig
   extraVolumes:
-  - name: moodle-config
-    secret:
-      secretName: moodle-config
-      items:
-      - key: config.php
-        path: config.php
-      - key: php.ini
-        path: php.ini
-      defaultMode: 0644
+    - name: moodle-config
+      secret:
+        secretName: moodle-config
+        items:
+          - key: config.php
+            path: config.php
+          - key: php.ini
+            path: php.ini
+        defaultMode: 0644
   podAnnotations:
     moodle/image: '{{- .Values.image.repository -}}:{{- .Values.image.tag -}}'
     moodleplugins/checksum: '{{- include "dbpMoodle.pluginConfigMap.content" . | sha256sum -}}'
@@ -317,47 +317,47 @@ etherpadlite:
     repository: "ghcr.io/dbildungsplattform/etherpad"
     tag: "1.8.18.0"
   env:
-  - name: DB_TYPE
-    value: "postgres"
-  - name: DB_HOST
-    value: "moodle-etherpad-postgresql"
-  - name: DB_PORT
-    value: "5432"
-  - name: DB_NAME
-    value: "etherpad"
-  - name: DB_USER
-    value: "etherpad"
-  - name: DB_PASS
-    valueFrom:
-      secretKeyRef:
-        name: "moodle"
-        key: "etherpad-postgresql-password"
-  - name: REQUIRE_SESSION
-    value: "true"
+    - name: DB_TYPE
+      value: "postgres"
+    - name: DB_HOST
+      value: "moodle-etherpad-postgresql"
+    - name: DB_PORT
+      value: "5432"
+    - name: DB_NAME
+      value: "etherpad"
+    - name: DB_USER
+      value: "etherpad"
+    - name: DB_PASS
+      valueFrom:
+        secretKeyRef:
+          name: "moodle"
+          key: "etherpad-postgresql-password"
+    - name: REQUIRE_SESSION
+      value: "true"
   volumes:
-  - name: "api-key"
-    secret:
-      secretName: "moodle"
-      items:
-      - key: "etherpad-api-key"
-        path: "APIKEY.txt"
+    - name: "api-key"
+      secret:
+        secretName: "moodle"
+        items:
+          - key: "etherpad-api-key"
+            path: "APIKEY.txt"
   volumeMounts:
-  - name: "api-key"
-    mountPath: "/opt/etherpad-lite/APIKEY.txt"
-    subPath: "APIKEY.txt"
+    - name: "api-key"
+      mountPath: "/opt/etherpad-lite/APIKEY.txt"
+      subPath: "APIKEY.txt"
   ingress:
     enabled: true
     annotations:
       cert-manager.io/cluster-issuer: "sc-cert-manager-clusterissuer-letsencrypt"
     hosts:
-    - host: "etherpad.example.de"
-      paths:
-      - path: "/"
-        pathType: "Prefix"
+      - host: "etherpad.example.de"
+        paths:
+          - path: "/"
+            pathType: "Prefix"
     tls:
-    - secretName: "etherpad.example.de-tls"
-      hosts:
-      - "etherpad.example.de"
+      - secretName: "etherpad.example.de-tls"
+        hosts:
+          - "etherpad.example.de"
   resources:
     requests:
       cpu: "100m"
@@ -373,26 +373,26 @@ moodlecronjob:
     name: "moodle-moodle-cronjob"
     create: false
   jobs:
-  - name: php-script
-    schedule: "* * * * *"
-    concurrencyPolicy: Forbid
-    failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 1
-    backoffLimit: 1
-    restartPolicy: Never
-    command:
-    - /bin/sh
-    - -c
-    args:
-    - /scripts/cronjob-script
-    extraVolumeMounts:
-    - name: moodle-php-script
-      mountPath: /scripts/
-    extraVolumes:
-    - name: moodle-php-script
-      configMap:
-        name: moodle-php-script
-        defaultMode: 0711
+    - name: php-script
+      schedule: "* * * * *"
+      concurrencyPolicy: Forbid
+      failedJobsHistoryLimit: 1
+      successfulJobsHistoryLimit: 1
+      backoffLimit: 1
+      restartPolicy: Never
+      command:
+        - /bin/sh
+        - -c
+      args:
+        - /scripts/cronjob-script
+      extraVolumeMounts:
+        - name: moodle-php-script
+          mountPath: /scripts/
+      extraVolumes:
+        - name: moodle-php-script
+          configMap:
+            name: moodle-php-script
+            defaultMode: 0711
 
 backup-cronjob:
   image:
@@ -403,54 +403,54 @@ backup-cronjob:
     name: "moodle-backup-job"
     create: false
   env:
-  - name: MARIADB_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: moodle
-        key: mariadb-password
-  - name: AWS_ACCESS_KEY_ID
-    valueFrom:
-      secretKeyRef:
-        name: moodle-backup-s3
-        key: s3_access_key
-  - name: AWS_SECRET_ACCESS_KEY
-    valueFrom:
-      secretKeyRef:
-        name: moodle-backup-s3
-        key: s3_access_secret
-  - name: S3_BACKUP_REGION_URL
-    valueFrom:
-      secretKeyRef:
-        name: moodle-backup-s3
-        key: s3_endpoint_url
+    - name: MARIADB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: moodle
+          key: mariadb-password
+    - name: AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          name: moodle-backup-s3
+          key: s3_access_key
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: moodle-backup-s3
+          key: s3_access_secret
+    - name: S3_BACKUP_REGION_URL
+      valueFrom:
+        secretKeyRef:
+          name: moodle-backup-s3
+          key: s3_endpoint_url
   extraVolumeMounts:
-  - name: moodle-backup-script
-    mountPath: /scripts/
-  - name: moodle-pvc-data
-    mountPath: /mountData
-  - name: duply
-    mountPath: /etc/duply/default/
+    - name: moodle-backup-script
+      mountPath: /scripts/
+    - name: moodle-pvc-data
+      mountPath: /mountData
+    - name: duply
+      mountPath: /etc/duply/default/
   extraVolumes:
-  - name: moodle-pvc-data
-    persistentVolumeClaim:
-      claimName: "moodle-data"
-  - name: moodle-backup-script
-    configMap:
-      name: moodle-backup-script
-      defaultMode: 0711
-  - name: duply
-    projected:
-      sources:
-      - configMap:
-          name: moodle-duply
-          items:
-            - key: conf
-              path: conf
-            - key: exclude
-              path: exclude
-      - secret:
-          name: moodle-backup-gpg-keys
-      defaultMode: 0644
+    - name: moodle-pvc-data
+      persistentVolumeClaim:
+        claimName: "moodle-data"
+    - name: moodle-backup-script
+      configMap:
+        name: moodle-backup-script
+        defaultMode: 0711
+    - name: duply
+      projected:
+        sources:
+          - configMap:
+              name: moodle-duply
+              items:
+                - key: conf
+                  path: conf
+                - key: exclude
+                  path: exclude
+          - secret:
+              name: moodle-backup-gpg-keys
+        defaultMode: 0644
   resources:
     limits:
       cpu: 2000m
@@ -459,12 +459,12 @@ backup-cronjob:
       cpu: 500m
       memory: 1Gi
   jobs:
-  - name: backup
-    schedule: "0 3 * * *"
-    failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 1
-    command:
-    - /bin/sh
-    - -c
-    args:
-    - /scripts/backup-script
+    - name: backup
+      schedule: "0 3 * * *"
+      failedJobsHistoryLimit: 1
+      successfulJobsHistoryLimit: 1
+      command:
+        - /bin/sh
+        - -c
+      args:
+        - /scripts/backup-script
