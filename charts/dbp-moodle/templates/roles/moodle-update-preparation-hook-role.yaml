@@ -1,3 +1,4 @@
+{{ if not .Values.dbpMoodle.restore.enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -7,3 +8,4 @@ metadata:
     "helm.sh/hook-weight": "0"
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded,hook-failed
 rules: {{- toYaml .Values.dbpMoodle.hook.rules | nindent 2 }}
+{{ end }}
