@@ -82,7 +82,7 @@ dbpMoodle:
     etherpad_postgresql_password: "moodle"
     etherpad_api_key: "moodle"
 
-  hook:
+  moodleUpdatePreparationHook:
     rules:
     - apiGroups: ["apps"]
       resources: ["deployments"]
