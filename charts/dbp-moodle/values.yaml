@@ -477,9 +477,6 @@ sql-exporter:
     target:
       data_source_name: ""
       collectors: [sql_exporter_moodle]
-    # The metrics will be chosen depending on the dbtype we use (MariaDB or Postgresql)
-    # collector_files:
-    #   - "/etc/sql_exporter/collectors/sql_exporter_moodle"
     collectors:
       - collector_name: sql_exporter_moodle
         metrics:
