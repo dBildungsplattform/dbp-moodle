@@ -26,12 +26,13 @@ printf 'Image change detected\n'
 printf 'Disabling regular cronjob to prevent failing runs\n'
 kubectl patch cronjobs "{{ .Release.Name }}"-moodlecronjob-php-script -n "{{ .Release.Namespace }}" -p '{"spec" : {"suspend" : true }}'
 
+{{ if .Values.dbpMoodle.backup.enabled }}
 if [ "$BACKUP_ENABLED" = true ]; then
     printf 'Starting pre-update backup\n'
     kubectl create job moodle-pre-update-backup-job -n "{{ .Release.Namespace }}" --from=cronjob.batch/moodle-backup-cronjob-backup
     printf 'Waiting for backup to finish...\n'
     kubectl wait --for=condition=complete --timeout=10m job/moodle-pre-update-backup-job
 fi
-
+{{ end }}
 printf 'Scaling deployment "{{ .Release.Name }}" to 0 replicas\n'
 kubectl patch "deploy/{{ .Release.Name }}" -n "{{ .Release.Namespace }}" -p '{"spec":{"replicas": 0}}'
