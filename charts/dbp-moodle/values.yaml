@@ -468,3 +468,59 @@ backup-cronjob:
         - -c
       args:
         - /scripts/backup-script
+
+sql-exporter:
+  enabled: true
+  image:
+    pullPolicy: "IfNotPresent"
+  config:
+    target:
+      data_source_name: ""
+      collectors: [sql_exporter_moodle]
+    collectors:
+      - collector_name: sql_exporter_moodle
+        metrics:
+          - metric_name: sql_moodle_total_user_count
+            type: gauge
+            values: [metric]
+            help: 'Total number of registed users in this instance.'
+            query_ref: sql_moodle_total_user_count
+          - metric_name: sql_moodle_active_user_count_current_month
+            type: gauge
+            values: [metric]
+            help: 'Total number of logged in users in this instance for the current month.'
+            query_ref: sql_moodle_active_user_count_current_month
+          - metric_name: sql_moodle_active_user_count_last_30_days
+            type: gauge
+            values: [metric]
+            help: 'The amount of users logged in to moodle in the last 30 days.'
+            query_ref: sql_moodle_active_user_count_last_30_days
+          - metric_name: sql_moodle_current_login_user_count
+            type: gauge
+            values: [metric]
+            help: 'Total number of currently logged in users in this instance.'
+            query_ref: sql_moodle_current_login_user_count
+
+        queries:
+          - query_name: sql_moodle_total_user_count
+            query: |
+              SELECT COUNT(*) AS metric
+              FROM mdl_user WHERE deleted=0;
+          - query_name: sql_moodle_active_user_count_current_month
+            query: |
+              SELECT COUNT(*) AS metric
+              FROM mdl_user
+              WHERE currentlogin >= UNIX_TIMESTAMP(DATE_FORMAT(CURDATE(), '%Y-%m-01'))
+              OR lastaccess >= UNIX_TIMESTAMP(DATE_FORMAT(CURDATE(), '%Y-%m-01'));
+          - query_name: sql_moodle_active_user_count_last_30_days
+            query: |
+              SELECT COUNT(*) AS metric
+              FROM mdl_user
+              WHERE currentlogin >= UNIX_TIMESTAMP(CURRENT_DATE - INTERVAL 30 DAY)
+              OR lastaccess >= UNIX_TIMESTAMP(CURRENT_DATE - INTERVAL 30 DAY);
+          - query_name: sql_moodle_current_login_user_count
+            query: |
+              SELECT COUNT(*) AS metric
+              FROM mdl_user
+              WHERE currentlogin >= UNIX_TIMESTAMP(NOW() - INTERVAL 10 MINUTE)
+              OR lastaccess >= UNIX_TIMESTAMP(NOW() - INTERVAL 10 MINUTE);
