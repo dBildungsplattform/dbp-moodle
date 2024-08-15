@@ -62,7 +62,7 @@ dbpMoodle:
   redis:
     host: "moodle-redis-master"
     port: 6379
-    password: "moodle"
+    password: 
 
   external_pvc:
     enabled: true
@@ -74,13 +74,13 @@ dbpMoodle:
       "helm.sh/resource-policy": "keep"
 
   secrets:
-    useChartSecret: true
-    moodle_password: "moodle"
-    postgres_password: "moodle"
-    mariadb_password: "moodle"
-    mariadb_root_password: "moodle"
-    etherpad_postgresql_password: "moodle"
-    etherpad_api_key: "moodle"
+    useChartSecret: false
+    moodle_password: 
+    postgres_password: 
+    mariadb_password: 
+    mariadb_root_password: 
+    etherpad_postgresql_password: 
+    etherpad_api_key: 
 
   moodleUpdatePreparationHook:
     rules:
@@ -90,6 +90,7 @@ dbpMoodle:
       - apiGroups: ["batch"]
         resources: ["cronjobs", "jobs"]
         verbs: ["get", "list", "create", "patch", "watch"]
+  
   backup:
     enabled: false
     gpg_key_names: 
@@ -175,7 +176,6 @@ moodle:
     port: 3306
     user: "moodle"
     database: "moodle"
-    password: "moodle"
     existingSecret: "moodle"
   service:
     type: ClusterIP
@@ -226,8 +226,6 @@ mariadb:
   auth:
     username: "moodle"
     database: "moodle"
-    rootPassword: "moodle"
-    password: "moodle"
     existingSecret: "moodle"
   metrics:
     enabled: true
@@ -251,8 +249,8 @@ postgresql:
     database: "moodle"
     existingSecret: "moodle"
     secretKeys:
-      adminPasswordKey: "PGSQL_POSTGRES_PASSWORD"
-      userPasswordKey: "postgresql-password"
+      adminPasswordKey: "pgsql-admin-password"
+      userPasswordKey: "mariadb-password" # moodle expects its db password key to be mariadb-password
   metrics:
     enabled: true
     serviceMonitor:
@@ -291,25 +289,6 @@ redis:
     existingSecret: "moodle"
     existingSecretPasswordKey: "redis-password"
     usePasswordFileFromSecret: true
-
-etherpad-postgresql:
-  auth:
-    enablePostgresUser: false
-    username: etherpad
-    existingSecret: "moodle"
-    secretKeys:
-      userPasswordKey: "etherpad-postgresql-password"
-    database: "etherpad"
-  persistence:
-    existingClaim: "moodle-etherpad-postgresql"
-  primary:
-    resources:
-      requests:
-        cpu: "50m"
-        memory: "128Mi"
-      limits:
-        cpu: "1000m"
-        memory: "1Gi"
 
 etherpadlite:
   enabled: false
@@ -365,6 +344,25 @@ etherpadlite:
     limits:
       cpu: "1000m"
       memory: "1Gi"
+
+etherpad-postgresql:
+  auth:
+    enablePostgresUser: false
+    username: etherpad
+    database: "etherpad"
+    existingSecret: "moodle"
+    secretKeys:
+      userPasswordKey: "etherpad-postgresql-password"
+  persistence:
+    existingClaim: "moodle-etherpad-postgresql"
+  primary:
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "128Mi"
+      limits:
+        cpu: "1000m"
+        memory: "1Gi"
 
 moodlecronjob:
   clusterRole:
