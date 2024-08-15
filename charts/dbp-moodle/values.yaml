@@ -53,9 +53,9 @@ dbpMoodle:
   name: infra
   stage: infra
   logging: false
-  debug: false # Moodle Debugging is not safe for production
+  debug: false # Moodle debugging is not safe for production
 
-  # The dbp update process to migrate moodle date when Moodle versions are increased
+  # The dbp update process to migrate moodle data when moodle versions are increased
   update_migration:
     enabled: false
 
