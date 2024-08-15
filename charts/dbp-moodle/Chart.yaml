@@ -47,7 +47,7 @@ dependencies:
     alias: etherpadlite
     condition: etherpadlite.enabled
 
-  - name: sql-exporter
-    version: 0.6.1
-    repository: "https://burningalchemist.github.io/sql_exporter/"
-    condition: sqlexporter.enabled
+  # - name: sql-exporter
+  #   version: 0.6.1
+  #   repository: "https://burningalchemist.github.io/sql_exporter/"
+  #   condition: sqlexporter.enabled
