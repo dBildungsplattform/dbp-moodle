@@ -117,6 +117,8 @@ dbpMoodle:
 
   restore:
     enabled: false # Only to be used to restore a snapshot with the dbp-restore script
+    image_repository: schulcloud
+    image_tag: 4.0.3
     rules:
       - apiGroups: ["apps"]
         resources: ["deployments/scale", "deployments"]
@@ -141,10 +143,6 @@ dbpMoodle:
     scaledown_cooldown: 60
     scaleup_value: 50
     scaleup_cooldown: 15
-    
-infratools:
-  repository: schulcloud
-  image_tag: 4.0.3
 
 moodle:
   updateStrategy:
