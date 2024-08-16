@@ -96,14 +96,16 @@ dbpMoodle:
     gpg_key_names: 
     gpgkeys:
       gpgkey.dbpinfra.pub.asc: 
-      gpgkey.dbpinfra.sec.asc: 
+      gpgkey.dbpinfra.sec.asc:
+      existingSecret: # existing secret for gpg keys 
     s3_bucket_name: 
     cluster_name: 
     endpoint: 
     secrets: 
       s3_access_key: 
       s3_access_secret: 
-      s3_endpoint_url: 
+      s3_endpoint_url:
+      existingSecret: # existing secret for s3 secrets 
 
     rules:
       - apiGroups: ["apps"]
