@@ -17,8 +17,8 @@ false
 {{- end -}}
 {{- end -}}
 
-{{- define "moodle_hpa.deployment_name_ref" -}}
-{{- default "moodle" .Values.moodle_hpa.deployment_name_ref }}
+{{- define "dbpMoodle.hpa.deployment_name_ref" -}}
+{{- default "moodle" .Values.dbpMoodle.hpa.deployment_name_ref }}
 {{- end -}}
 
 {{- define "moodlecronjob.job_name" -}}

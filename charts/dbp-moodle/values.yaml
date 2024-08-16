@@ -127,7 +127,21 @@ dbpMoodle:
       - apiGroups: [""]
         resources: ["pods", "pods/exec"]
         verbs: ["get", "list", "create"]
-
+  
+  # Horizontal Pod Autoscaling Values
+  hpa:
+    enabled: false
+    deployment_name_ref: "moodle"
+    # Moodle Autoscaling Values
+    min_replicas: 1
+    max_replicas: 4
+    average_cpu_utilization: 50
+    # The up and downscaling values to have more control over the speed moodle will be scaled
+    scaledown_value: 25 # The max amount in percent to scale in one step per cooldown period
+    scaledown_cooldown: 60
+    scaleup_value: 50
+    scaleup_cooldown: 15
+    
 infratools:
   repository: schulcloud
   image_tag: 4.0.3
@@ -183,7 +197,7 @@ moodle:
     type: ClusterIP
   ingress:
     enabled: true
-    hostname: "moodle2.dbpinfra-dev-moodle-01.dbildungsplattform.de"
+    hostname: "example.de"
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
@@ -267,20 +281,6 @@ postgresql:
       limits:
         cpu: 9
         memory: "3Gi"
-
-# Horizontal Pod Autoscaling Values
-moodle_hpa:
-  deployment_name_ref: "moodle"
-  enabled: false
-  # Moodle Autoscaling Values
-  min_replicas: 1
-  max_replicas: 4
-  average_cpu_utilization: 50
-  # The up and downscaling values to have more control over the speed moodle will be scaled
-  scaledown_value: 25 # The max amount in percent to scale in one step per cooldown period
-  scaledown_cooldown: 60
-  scaleup_value: 50
-  scaleup_cooldown: 15
 
 # redis helm chart values
 redis:
