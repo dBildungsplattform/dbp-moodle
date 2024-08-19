@@ -62,7 +62,7 @@ dbpMoodle:
   redis:
     host: "moodle-redis-master"
     port: 6379
-    password: 
+    password: ""
 
   external_pvc:
     enabled: true
@@ -74,13 +74,13 @@ dbpMoodle:
       "helm.sh/resource-policy": "keep"
 
   secrets:
-    useChartSecret: false
-    moodle_password: 
-    postgres_password: 
-    mariadb_password: 
-    mariadb_root_password: 
-    etherpad_postgresql_password: 
-    etherpad_api_key: 
+    useChartSecret: true
+    moodle_password: ""
+    postgres_password: ""
+    mariadb_password: ""
+    mariadb_root_password: ""
+    etherpad_postgresql_password: "" 
+    etherpad_api_key: ""
 
   moodleUpdatePreparationHook:
     rules:
@@ -171,9 +171,9 @@ moodle:
   mariadb:
     enabled: false
   externalDatabase:
-    type: "mariadb"
-    host: "moodle-mariadb"
-    port: 3306
+    type: "pgsql"
+    host: "moodle-postgresql"
+    port: 5432 #3306
     user: "moodle"
     database: "moodle"
     existingSecret: "moodle"
@@ -181,7 +181,7 @@ moodle:
     type: ClusterIP
   ingress:
     enabled: true
-    hostname: "moodle2.dbpinfra-dev-moodle-01.dbildungsplattform.de"
+    hostname: "moodle3.dbpinfra-dev-moodle-01.dbildungsplattform.de"
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
@@ -218,7 +218,7 @@ moodle:
     moodleplugins/checksum: '{{- include "dbpMoodle.pluginConfigMap.content" . | sha256sum -}}'
 
 mariadb:
-  enabled: true
+  enabled: false
   global:
     storageClass: "nfs-client"
   image:
@@ -241,7 +241,7 @@ mariadb:
         memory: 3Gi
 
 postgresql:
-  enabled: false
+  enabled: true
   image:
     tag: "14.8.0-debian-11-r0"
   auth:
@@ -282,7 +282,7 @@ moodle_hpa:
 
 # redis helm chart values
 redis:
-  enabled: false
+  enabled: true
   architecture: "standalone"
   auth:
     enabled: true
