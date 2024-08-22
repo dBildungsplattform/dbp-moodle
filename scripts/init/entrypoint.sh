@@ -74,6 +74,15 @@ startBitnamiSetup() {
     MODULE=dbp info "Bitnami Moodle setup finished"
 }
 
+MODULE=dbp info "Testing Moodle non-root mode"
+cd /opt/bitnami
+sudo cp -rp ./apache{,.back}
+sudo chown root:root -R ./apache
+sudo chmod +x ./apache/bin/*
+sudo chmod +x ./apache/scripts/ctl.sh
+sudo chown bitnami:root -R ./apache/conf
+sudo chown root:root ...
+
 MODULE=dbp info "Starting Moodle"
 printSystemStatus
 
