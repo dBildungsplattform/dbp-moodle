@@ -33,7 +33,7 @@ dependencies:
     alias: backup-cronjob
     version: 0.1.0
     repository: "file://charts/cronjob"
-    condition: backup.enabled
+    condition: dbpMoodle.backup.enabled
 
   - name: postgresql
     version: "15.5.7"
