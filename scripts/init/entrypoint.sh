@@ -76,12 +76,12 @@ startBitnamiSetup() {
 
 MODULE=dbp info "Testing Moodle non-root mode"
 cd /opt/bitnami
-sudo cp -rp ./apache{,.back}
-sudo chown root:root -R ./apache
-sudo chmod +x ./apache/bin/*
-sudo chmod +x ./apache/scripts/ctl.sh
-sudo chown bitnami:root -R ./apache/conf
-sudo chown root:root ...
+cp -rp ./apache{,.back}
+chown root:root -R ./apache
+chmod +x ./apache/bin/*
+chmod +x ./apache/scripts/ctl.sh
+chown bitnami:root -R ./apache/conf
+chown root:root ...
 
 MODULE=dbp info "Enter sleep period for testing"
 sleep 500
