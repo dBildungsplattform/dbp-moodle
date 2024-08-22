@@ -136,7 +136,7 @@ moodle:
   image:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
-    tag: "4.1.11-debian-12-r0"
+    tag: DBP-950 #"4.1.11-debian-12-r0" 
     pullPolicy: Always
     debug: false
   moodleSkipInstall: false
@@ -177,6 +177,7 @@ moodle:
     user: "moodle"
     database: "moodle"
     existingSecret: "moodle"
+    password: ""
   service:
     type: ClusterIP
   ingress:
@@ -216,6 +217,15 @@ moodle:
   podAnnotations:
     moodle/image: '{{- .Values.image.repository -}}:{{- .Values.image.tag -}}'
     moodleplugins/checksum: '{{- include "dbpMoodle.pluginConfigMap.content" . | sha256sum -}}'
+  containerSecurityContext:
+    enabled: true
+    runAsGroup: 1001
+    runAsNonRoot: true
+  podSecurityContext:
+    enabled: true
+  containerPorts:
+    http: 8080
+    https: 8443
 
 mariadb:
   enabled: false
