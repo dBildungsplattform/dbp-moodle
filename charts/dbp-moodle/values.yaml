@@ -62,7 +62,7 @@ dbpMoodle:
   redis:
     host: "moodle-redis-master"
     port: 6379
-    password: 
+    password: ""
 
   external_pvc:
     enabled: true
@@ -75,12 +75,12 @@ dbpMoodle:
 
   secrets:
     useChartSecret: false
-    moodle_password: 
-    postgres_password: 
-    mariadb_password: 
-    mariadb_root_password: 
-    etherpad_postgresql_password: 
-    etherpad_api_key: 
+    moodle_password: ""
+    postgres_password: ""
+    mariadb_password: ""
+    mariadb_root_password: ""
+    etherpad_postgresql_password: ""
+    etherpad_api_key: ""
 
   moodleUpdatePreparationHook:
     rules:
@@ -93,19 +93,19 @@ dbpMoodle:
   
   backup:
     enabled: false
-    gpg_key_names: 
+    gpg_key_names: ""
     gpgkeys:
-      gpgkey.dbpinfra.pub.asc: 
-      gpgkey.dbpinfra.sec.asc:
-      existingSecret: # existing secret for gpg keys 
-    s3_bucket_name: 
-    cluster_name: 
-    endpoint: 
+      gpgkey.dbpinfra.pub.asc: ""
+      gpgkey.dbpinfra.sec.asc: ""
+      existingSecret: "" # existing secret for gpg keys 
+    s3_bucket_name: ""
+    cluster_name: ""
+    endpoint: ""
     secrets: 
-      s3_access_key: 
-      s3_access_secret: 
-      s3_endpoint_url:
-      existingSecret: # existing secret for s3 secrets 
+      s3_access_key: ""
+      s3_access_secret: ""
+      s3_endpoint_url: ""
+      existingSecret: "" # existing secret for s3 secrets 
 
     rules:
       - apiGroups: ["apps"]
@@ -161,9 +161,9 @@ moodle:
   allowEmptyPassword: false
   extraEnvVars:
     - name: PHP_POST_MAX_SIZE
-      value: 200M
+      value: "200M"
     - name: PHP_UPLOAD_MAX_FILESIZE
-      value: 200M
+      value: "200M"
     - name: PHP_MAX_INPUT_VARS
       value: "5000"
     - name: MOODLE_PLUGINS
