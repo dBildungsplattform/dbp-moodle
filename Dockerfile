@@ -61,6 +61,6 @@ RUN apt-get update && apt-get upgrade -y && \
 # Install redis-php which is required for moodle to use redis
 RUN /phpRedisInstall.sh
 
-RUN chown /opt/bitnami -R 1001:root
+RUN chown 1001:root -R /opt/bitnami
 
 ENTRYPOINT ["/scripts/entrypoint.sh"]
