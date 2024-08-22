@@ -26,5 +26,5 @@ dependencies:
 - name: sql-exporter
   repository: https://burningalchemist.github.io/sql_exporter/
   version: 0.6.1
-digest: sha256:cd46916cfa3202fe1f1649009ebd22354b3303a5eae0f2c3d5f882dfe9a7f0e1
-generated: "2024-08-12T08:18:05.26195445Z"
+digest: sha256:fa0c1821bc2e2bb3d567d68a2acb5c80aa9ae797a3db05feebdb7a86e19f1c3b
+generated: "2024-08-22T12:54:24.139753405Z"
