@@ -83,6 +83,9 @@ sudo chmod +x ./apache/scripts/ctl.sh
 sudo chown bitnami:root -R ./apache/conf
 sudo chown root:root ...
 
+MODULE=dbp info "Enter sleep period for testing"
+sleep 500
+
 MODULE=dbp info "Starting Moodle"
 printSystemStatus
 
