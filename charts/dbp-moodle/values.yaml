@@ -157,7 +157,7 @@ moodle:
   moodleSiteName: "Moodle"
   moodleLang: "de"
   moodleUsername: admin
-  moodleEmail: devops@dbildungscloud.de
+  moodleEmail: ""
   allowEmptyPassword: false
   extraEnvVars:
     - name: PHP_POST_MAX_SIZE
