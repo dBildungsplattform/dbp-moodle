@@ -62,7 +62,6 @@ RUN apt-get update && apt-get upgrade -y && \
 RUN /phpRedisInstall.sh
 
 RUN chown 1001:root -R /opt/bitnami
-RUN chown 1001:root -R /moosh
 RUN chown 1001:root -R /plugins
 
 ENTRYPOINT ["/scripts/entrypoint.sh"]
