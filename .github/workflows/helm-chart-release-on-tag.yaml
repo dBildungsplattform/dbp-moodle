@@ -4,29 +4,21 @@ on:
     tags:
       - 'dbp-moodle-[0-9]+.[0-9]+.[0-9]+'
 
+concurrency:
+  group: dbp-moodle-chart
+  cancel-in-progress: true
+
 jobs:
-  release:
-    runs-on: ubuntu-latest
+  scan:
+    uses: dBildungsplattform/dbp-github-workflows/.github/workflows/check-helm-kics.yaml@7
     permissions:
-      contents: write
-      packages: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  #v4.1.1
-        with:
-          fetch-depth: 0
-
-      - name: Configure Git
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-
-      - name: Add Helm dependencies
-        run: helm repo add bitnami https://charts.bitnami.com/bitnami
-
-      - name: Run chart-releaser
-        uses: helm/chart-releaser-action@a917fd15b20e8b64b94d9158ad54cd6345335584   #v1.6.0
-        with:
-          charts_dir: charts
-        env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      contents: read
+  release_helm:
+    needs: scan
+    uses: dBildungsplattform/dbp-github-workflows/.github/workflows/chart-release.yaml@7
+    secrets: inherit
+    with:
+      chart_name: dbp-moodle
+      image_tag_generation: chart_yaml
+      helm_repo_list: bitnami,https://charts.bitnami.com/bitnami
+      # helm_repo_list: bitnami,https://charts.bitnami.com/bitnami,sql_exporter,https://burningalchemist.github.io/sql_exporter/

@@ -1,9 +1,12 @@
-name: Release DBP Moodle Chart for dev
 on:
   push:
     branches-ignore:
       - 'chart-main'
       - 'main'
+
+concurrency:
+  group: dbp-moodle-chart
+  cancel-in-progress: true
 
 jobs:
   build_image_on_push:
@@ -23,9 +26,9 @@ jobs:
       fail_on_vulnerabilites: false
 
   release_helm:
-    uses: ./.github/workflows/chart-release.yaml
+    uses: dBildungsplattform/dbp-github-workflows/.github/workflows/chart-release.yaml@7
     secrets: inherit
     with:
       chart_name: dbp-moodle
-      helm_chart_version_generation: ticket_from_branch_timestamp
-      image_tag_generation: ticket_from_branch
+      helm_repo_list: bitnami,https://charts.bitnami.com/bitnami
+      helm_repo_list: bitnami,https://charts.bitnami.com/bitnami,sql_exporter,https://burningalchemist.github.io/sql_exporter/
