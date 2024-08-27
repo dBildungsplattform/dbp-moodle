@@ -123,6 +123,8 @@ dbpMoodle:
       - apiGroups: ["apps"]
         resources: ["deployments/scale", "deployments"]
         verbs: ["get", "list", "scale", "patch"]
+    existingDatabaseSecret: "moodle"
+    existingDatabaseSecretKey: "mariadb-password"
 
   moodlecronjob:
     rules:
