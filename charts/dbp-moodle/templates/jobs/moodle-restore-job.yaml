@@ -5,6 +5,7 @@ metadata:
   name: "{{ .Release.Name }}-restore-job"
   namespace: {{ .Release.Namespace }}
 spec:
+  backoffLimit: {{ .Values.dbpMoodle.restore.backoffLimit | default "4" }}
   template:
     spec:
       volumes:
@@ -82,5 +83,4 @@ spec:
               name: moodle-backup-s3
               key: s3_access_secret
       restartPolicy: Never
-  backoffLimit: 4
 {{- end }}
