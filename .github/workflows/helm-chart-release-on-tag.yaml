@@ -15,7 +15,8 @@ jobs:
       contents: read
   release_helm:
     needs: scan
-    uses: dBildungsplattform/dbp-github-workflows/.github/workflows/chart-release.yaml@7
+    # uses: dBildungsplattform/dbp-github-workflows/.github/workflows/chart-release.yaml@7
+    uses: dBildungsplattform/dbp-github-workflows/.github/workflows/chart-release.yaml@OPS-6833-Dependencies_not_possible_in_helm-chart-releaser
     secrets: inherit
     with:
       chart_name: dbp-moodle
