@@ -33,7 +33,7 @@ dependencies:
     alias: backup-cronjob
     version: 0.1.0
     repository: "file://charts/cronjob"
-    condition: backup.enabled
+    condition: dbpMoodle.backup.enabled
 
   - name: postgresql
     version: "15.5.7"
@@ -50,4 +50,4 @@ dependencies:
   - name: sql-exporter
     version: 0.6.1
     repository: "https://burningalchemist.github.io/sql_exporter/"
-    condition: sqlexporter.enabled
+    condition: sql-exporter.enabled

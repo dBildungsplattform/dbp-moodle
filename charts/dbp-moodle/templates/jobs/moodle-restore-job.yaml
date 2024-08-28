@@ -5,6 +5,7 @@ metadata:
   name: "{{ .Release.Name }}-restore-job"
   namespace: {{ .Release.Namespace }}
 spec:
+  backoffLimit: {{ .Values.dbpMoodle.restore.backoffLimit | default "4" }}
   template:
     spec:
       volumes:
@@ -26,13 +27,13 @@ spec:
                   - key: exclude
                     path: exclude
             - secret:
-                name: moodle-backup-gpg-keys
+                name: {{ .Values.dbpMoodle.restore.existingSecretGPG }}
           defaultMode: 0644
       serviceAccountName: moodle-restore-job
       serviceAccount: moodle-restore-job
       containers:
       - name:  moodle-restore-job
-        image: schulcloud/infra-tools:{{ .Values.infratools.image_tag }}
+        image: "{{ .Values.dbpMoodle.restore.image_repository }}/infra-tools:{{ .Values.dbpMoodle.restore.image_tag }}"
         command:
           - /bin/sh
           - -c
@@ -57,30 +58,20 @@ spec:
         - name: duply
           mountPath: /etc/duply/default/
         env:
-        {{- if .Values.postgresql.enabled }}
-        - name: POSTGRESQL_PASSWORD
+        - name: DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: moodle
-              key: PGSQL_POSTGRES_PASSWORD
-        {{- end }}
-        {{- if .Values.mariadb.enabled }}
-        - name: MARIADB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: moodle
-              key: mariadb-password
-        {{- end }}
+              name: {{ .Values.dbpMoodle.restore.existingSecretDatabase }}
+              key: {{ .Values.dbpMoodle.restore.existingSecretKeyDatabase }}
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
-              name: moodle-backup-s3
-              key: s3_access_key
+              name: {{ .Values.dbpMoodle.restore.existingSecretS3 }}
+              key: {{ .Values.dbpMoodle.restore.existingSecretKeyS3Access }}
         - name: AWS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
-              name: moodle-backup-s3
-              key: s3_access_secret
+              name: {{ .Values.dbpMoodle.restore.existingSecretS3 }}
+              key: {{ .Values.dbpMoodle.restore.existingSecretKeyS3Secret }}
       restartPolicy: Never
-  backoffLimit: 4
 {{- end }}

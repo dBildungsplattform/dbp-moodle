@@ -62,7 +62,7 @@ dbpMoodle:
   redis:
     host: "moodle-redis-master"
     port: 6379
-    password: 
+    password: ""
 
   external_pvc:
     enabled: true
@@ -75,12 +75,12 @@ dbpMoodle:
 
   secrets:
     useChartSecret: false
-    moodle_password: 
-    postgres_password: 
-    mariadb_password: 
-    mariadb_root_password: 
-    etherpad_postgresql_password: 
-    etherpad_api_key: 
+    moodle_password: ""
+    postgres_password: ""
+    mariadb_password: ""
+    mariadb_root_password: ""
+    etherpad_postgresql_password: ""
+    etherpad_api_key: ""
 
   moodleUpdatePreparationHook:
     rules:
@@ -93,17 +93,19 @@ dbpMoodle:
   
   backup:
     enabled: false
-    gpg_key_names: 
+    gpg_key_names: ""
     gpgkeys:
-      gpgkey.dbpinfra.pub.asc: 
-      gpgkey.dbpinfra.sec.asc: 
-    s3_bucket_name: 
-    cluster_name: 
-    endpoint: 
+      gpgkey.dbpinfra.pub.asc: ""
+      gpgkey.dbpinfra.sec.asc: ""
+      existingSecret: "" # existing secret for gpg keys 
+    s3_bucket_name: ""
+    cluster_name: ""
+    endpoint: ""
     secrets: 
-      s3_access_key: 
-      s3_access_secret: 
-      s3_endpoint_url: 
+      s3_access_key: ""
+      s3_access_secret: ""
+      s3_endpoint_url: ""
+      existingSecret: "" # existing secret for s3 secrets 
 
     rules:
       - apiGroups: ["apps"]
@@ -115,20 +117,38 @@ dbpMoodle:
 
   restore:
     enabled: false # Only to be used to restore a snapshot with the dbp-restore script
+    image_repository: schulcloud
+    image_tag: 4.0.3
     rules:
       - apiGroups: ["apps"]
         resources: ["deployments/scale", "deployments"]
         verbs: ["get", "list", "scale", "patch"]
+    existingSecretGPG: ""
+    existingSecretDatabase: "moodle"
+    existingSecretKeyDatabase: ""
+    existingSecretS3: ""
+    existingSecretKeyS3Access: ""
+    existingSecretKeyS3Secret: ""
 
   moodlecronjob:
     rules:
       - apiGroups: [""]
         resources: ["pods", "pods/exec"]
         verbs: ["get", "list", "create"]
-
-infratools:
-  repository: schulcloud
-  image_tag: 4.0.3
+  
+  # Horizontal Pod Autoscaling Values
+  hpa:
+    enabled: false
+    deployment_name_ref: "moodle"
+    # Moodle Autoscaling Values
+    min_replicas: 1
+    max_replicas: 4
+    average_cpu_utilization: 50
+    # The up and downscaling values to have more control over the speed moodle will be scaled
+    scaledown_value: 25 # The max amount in percent to scale in one step per cooldown period
+    scaledown_cooldown: 60
+    scaleup_value: 50
+    scaleup_cooldown: 15
 
 moodle:
   updateStrategy:
@@ -143,13 +163,13 @@ moodle:
   moodleSiteName: "Moodle"
   moodleLang: "de"
   moodleUsername: admin
-  moodleEmail: devops@dbildungscloud.de
+  moodleEmail: ""
   allowEmptyPassword: false
   extraEnvVars:
     - name: PHP_POST_MAX_SIZE
-      value: 200M
+      value: "200M"
     - name: PHP_UPLOAD_MAX_FILESIZE
-      value: 200M
+      value: "200M"
     - name: PHP_MAX_INPUT_VARS
       value: "5000"
     - name: MOODLE_PLUGINS
@@ -181,7 +201,7 @@ moodle:
     type: ClusterIP
   ingress:
     enabled: true
-    hostname: "moodle2.dbpinfra-dev-moodle-01.dbildungsplattform.de"
+    hostname: "example.de"
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
@@ -265,20 +285,6 @@ postgresql:
       limits:
         cpu: 9
         memory: "3Gi"
-
-# Horizontal Pod Autoscaling Values
-moodle_hpa:
-  deployment_name_ref: "moodle"
-  enabled: false
-  # Moodle Autoscaling Values
-  min_replicas: 1
-  max_replicas: 4
-  average_cpu_utilization: 50
-  # The up and downscaling values to have more control over the speed moodle will be scaled
-  scaledown_value: 25 # The max amount in percent to scale in one step per cooldown period
-  scaledown_cooldown: 60
-  scaleup_value: 50
-  scaleup_cooldown: 15
 
 # redis helm chart values
 redis:
