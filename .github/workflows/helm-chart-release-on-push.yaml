@@ -30,5 +30,4 @@ jobs:
     secrets: inherit
     with:
       chart_name: dbp-moodle
-      helm_repo_list: bitnami,https://charts.bitnami.com/bitnami
       helm_repo_list: bitnami,https://charts.bitnami.com/bitnami,sql_exporter,https://burningalchemist.github.io/sql_exporter/
