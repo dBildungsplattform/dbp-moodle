@@ -76,9 +76,9 @@ MYSQL_PWD="$DATABASE_PASSWORD" mariadb -u {{ .Values.mariadb.auth.username }} -h
 MYSQL_PWD="$DATABASE_PASSWORD" mariadb -u {{ .Values.mariadb.auth.username }} -h {{ .Release.Name }}-mariadb --port={{ .Values.mariadb.primary.containerPorts.mysql }} -e "CREATE DATABASE {{ .Values.mariadb.auth.database }};"
 {{ else }}
 # This command helps with - ERROR: database "moodle" is being accessed by other users
-PGPASSWORD="$DATABASE_PASSWORD" psql -U {{ .Values.postgresql.auth.username }} -h {{ .Release.Name }}-postgresql -c "REVOKE CONNECT ON DATABASE {{ .Values.postgresql.auth.database }} FROM public;SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '{{ .Values.postgresql.auth.database }}';"
-PGPASSWORD="$DATABASE_PASSWORD" psql -U {{ .Values.postgresql.auth.username }} -h {{ .Release.Name }}-postgresql -c "DROP DATABASE {{ .Values.postgresql.auth.database }}"
-PGPASSWORD="$DATABASE_PASSWORD" psql -U {{ .Values.postgresql.auth.username }} -h {{ .Release.Name }}-postgresql -c "CREATE DATABASE {{ .Values.postgresql.auth.database }}"
+PGPASSWORD="$DATABASE_PASSWORD" psql -U postgres -h {{ .Release.Name }}-postgresql -c "REVOKE CONNECT ON DATABASE {{ .Values.postgresql.auth.database }} FROM public;SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '{{ .Values.postgresql.auth.database }}';"
+PGPASSWORD="$DATABASE_PASSWORD" psql -U postgres -h {{ .Release.Name }}-postgresql -c "DROP DATABASE {{ .Values.postgresql.auth.database }}"
+PGPASSWORD="$DATABASE_PASSWORD" psql -U postgres -h {{ .Release.Name }}-postgresql -c "CREATE DATABASE {{ .Values.postgresql.auth.database }}"
 {{ end }}
 
 echo "=== Copy dump to DB ==="
