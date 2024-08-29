@@ -407,7 +407,7 @@ backup-cronjob:
     name: "moodle-backup-job"
     create: false
   env:
-    - name: MARIADB_PASSWORD
+    - name: DATABASE_PASSWORD
       valueFrom:
         secretKeyRef:
           name: moodle

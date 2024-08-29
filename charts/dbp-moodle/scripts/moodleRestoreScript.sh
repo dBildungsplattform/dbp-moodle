@@ -93,7 +93,7 @@ mv ./Full/backup/moodle_postgresqldb_dump_* moodledb_dump.sql
 {{ if .Values.mariadb.enabled }}
 MYSQL_PWD="$DATABASE_PASSWORD" mariadb -u {{ .Values.mariadb.auth.username }} -h {{ .Release.Name }}-mariadb {{ .Values.mariadb.auth.database }} < moodledb_dump.sql
 {{ else }}
-PGPASSWORD="$DATABASE_PASSWORD" psql -U {{ .Values.postgresql.auth.username }} -h {{ .Release.Name }}-postgresql {{ .Values.postgresql.auth.database }} < moodledb_dump.sql
+PGPASSWORD="$DATABASE_PASSWORD" psql -U postgres -h {{ .Release.Name }}-postgresql {{ .Values.postgresql.auth.database }} < moodledb_dump.sql
 {{ end }}
 echo "=== Finish restore ==="
 
