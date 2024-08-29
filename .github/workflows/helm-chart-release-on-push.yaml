@@ -1,3 +1,4 @@
+name: Release DBP Moodle Chart for dev
 on:
   push:
     branches-ignore:
@@ -31,3 +32,5 @@ jobs:
     with:
       chart_name: dbp-moodle
       helm_repo_list: bitnami,https://charts.bitnami.com/bitnami,sql_exporter,https://burningalchemist.github.io/sql_exporter/
+      helm_chart_version_generation: ticket_from_branch_timestamp
+      image_tag_generation: ticket_from_branch

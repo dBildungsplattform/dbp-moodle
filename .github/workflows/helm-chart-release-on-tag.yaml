@@ -19,5 +19,6 @@ jobs:
     secrets: inherit
     with:
       chart_name: dbp-moodle
+      helm_chart_version_generation: chart_yaml
       image_tag_generation: chart_yaml
       helm_repo_list: bitnami,https://charts.bitnami.com/bitnami,sql_exporter,https://burningalchemist.github.io/sql_exporter/
