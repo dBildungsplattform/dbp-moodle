@@ -182,7 +182,7 @@ moodle:
     type: ClusterIP
   ingress:
     enabled: true
-    hostname: "moodle3.dbpinfra-dev-moodle-01.dbildungsplattform.de"
+    hostname: "example.de"
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
