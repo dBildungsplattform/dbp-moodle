@@ -93,10 +93,10 @@ echo "=== Start DB dump ==="
 export DATE=$( date "+%Y-%m-%d" )
 
 {{ if .Values.mariadb.enabled }}
-MYSQL_PWD="$MARIADB_PASSWORD" mysqldump -h {{ .Release.Name }}-mariadb -P {{ .Values.mariadb.primary.containerPorts.mysql }} -u {{ .Values.mariadb.auth.username }} {{ .Values.mariadb.auth.database }} > moodle_mariadb_dump_$DATE.sql
+MYSQL_PWD="$DATABASE_PASSWORD" mysqldump -h {{ .Release.Name }}-mariadb -P {{ .Values.mariadb.primary.containerPorts.mysql }} -u {{ .Values.mariadb.auth.username }} {{ .Values.mariadb.auth.database }} > moodle_mariadb_dump_$DATE.sql
 gzip moodle_mariadb_dump_$DATE.sql
 {{ else }}
-PGPASSWORD="$POSTGRESQL_PASSWORD" pg_dump -h { .Release.Name }}-postgres-postgresql -p {{ .Values.postgresql.containerPorts.postgresql }} -U {{ .Values.postgresql.auth.username }} {{ .Values.postgresql.auth.database }} > moodle_postgresqldb_dump_$DATE.sql
+PGPASSWORD="$DATABASE_PASSWORD" pg_dump -h {{ .Release.Name }}-postgresql -p {{ .Values.postgresql.containerPorts.postgresql }} -U postgres {{ .Values.postgresql.auth.database }} > moodle_postgresqldb_dump_$DATE.sql
 gzip moodle_postgresqldb_dump_$DATE.sql
 {{ end }}
 
