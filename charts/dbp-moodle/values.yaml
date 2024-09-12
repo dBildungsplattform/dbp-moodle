@@ -147,7 +147,7 @@ moodle:
   image:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
-    tag: "4.1.12-debian-12-r0" 
+    tag: "4.1.12-debian-12-r1" 
     pullPolicy: Always
     debug: false
   moodleSkipInstall: false
@@ -195,7 +195,7 @@ moodle:
     type: ClusterIP
   ingress:
     enabled: true
-    hostname: ""
+    hostname: "example.de"
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
