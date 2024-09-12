@@ -74,13 +74,19 @@ dbpMoodle:
       "helm.sh/resource-policy": "keep"
 
   secrets:
-    useChartSecret: true
+    useChartSecret: false
     moodle_password: ""
     postgres_password: ""
     mariadb_password: ""
     mariadb_root_password: ""
     etherpad_postgresql_password: "" 
     etherpad_api_key: ""
+
+  moodleUpdatePreparationJob:
+    affinity: {}
+    tolerations: []
+    resources: {}
+    kubectlImage: bitnami/kubectl:1.30.4-debian-12-r3
 
   moodleUpdatePreparationHook:
     rules:
@@ -112,6 +118,11 @@ dbpMoodle:
       - apiGroups: ["batch"]
         resources: ["cronjobs", "jobs"]
         verbs: ["get", "patch"]
+    
+  moodleRestoreJob:
+    affinity: {}
+    tolerations: []
+    resources: {}
 
   restore:
     enabled: false # Only to be used to restore a snapshot with the dbp-restore script
@@ -136,14 +147,14 @@ moodle:
   image:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
-    tag: DBP-950 #"4.1.11-debian-12-r0" 
+    tag: "4.1.12-debian-12-r0" 
     pullPolicy: Always
     debug: false
   moodleSkipInstall: false
   moodleSiteName: "Moodle"
   moodleLang: "de"
-  moodleUsername: admin
-  moodleEmail: devops@dbildungscloud.de
+  moodleUsername: 
+  moodleEmail: 
   allowEmptyPassword: false
   extraEnvVars:
     - name: PHP_POST_MAX_SIZE
@@ -157,10 +168,12 @@ moodle:
         configMapKeyRef:
           name: moodle-plugins
           key: moodle-plugin-list
-  extraEnvVarsSecret: "moodle"
-  existingSecret: "moodle"
+  extraEnvVarsSecret: ""
+  existingSecret: ""
   persistence:
     existingClaim: "moodle-data"
+  affinity: {}
+  tolerations: []
   resources:
     requests:
       cpu: 300m
@@ -171,18 +184,18 @@ moodle:
   mariadb:
     enabled: false
   externalDatabase:
-    type: "pgsql"
-    host: "moodle-postgresql"
-    port: 5432 #3306
+    type: "mariadb" #"pgsql"
+    host: "moodle-mariadb" #"moodle-postgresql"
+    port: 3306 #5432
     user: "moodle"
-    database: "moodle"
-    existingSecret: "moodle"
+    database: ""
+    existingSecret: ""
     password: ""
   service:
     type: ClusterIP
   ingress:
     enabled: true
-    hostname: "example.de"
+    hostname: ""
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
@@ -221,6 +234,7 @@ moodle:
     enabled: true
     runAsGroup: 1001
     runAsNonRoot: true
+    privileged: false
   podSecurityContext:
     enabled: true
   containerPorts:
@@ -228,7 +242,7 @@ moodle:
     https: 8443
 
 mariadb:
-  enabled: false
+  enabled: true
   global:
     storageClass: "nfs-client"
   image:
@@ -242,6 +256,10 @@ mariadb:
     serviceMonitor:
       enabled: true
   primary:
+    containerSecurityContext:
+      privileged: false
+    affinity: {}
+    tolerations: []
     resources:
       requests:
         cpu: 250m
@@ -251,7 +269,7 @@ mariadb:
         memory: 3Gi
 
 postgresql:
-  enabled: true
+  enabled: false
   image:
     tag: "14.8.0-debian-11-r0"
   auth:
@@ -268,6 +286,8 @@ postgresql:
   primary:
     extendedConfiguration: |
       max_connections = 800
+    affinity: {}
+    tolerations: []
     resources:
       requests:
         cpu: "250m"
@@ -299,6 +319,10 @@ redis:
     existingSecret: "moodle"
     existingSecretPasswordKey: "redis-password"
     usePasswordFileFromSecret: true
+  master:
+    affinity: {}
+    tolerations: []
+    resources: {}
 
 etherpadlite:
   enabled: false
@@ -347,6 +371,8 @@ etherpadlite:
       - secretName: "etherpad.example.de-tls"
         hosts:
           - "etherpad.example.de"
+  affinity: {}
+  tolerations: []
   resources:
     requests:
       cpu: "100m"
@@ -366,6 +392,8 @@ etherpad-postgresql:
   persistence:
     existingClaim: "moodle-etherpad-postgresql"
   primary:
+    affinity: {}
+    tolerations: []
     resources:
       requests:
         cpu: "50m"
@@ -380,6 +408,9 @@ moodlecronjob:
   serviceAccount:
     name: "moodle-moodle-cronjob"
     create: false
+  affinity: {}
+  tolerations: []
+  resources: {}
   jobs:
     - name: php-script
       schedule: "* * * * *"
@@ -459,6 +490,8 @@ backup-cronjob:
           - secret:
               name: moodle-backup-gpg-keys
         defaultMode: 0644
+  affinity: {}
+  tolerations: []
   resources:
     limits:
       cpu: 2000m
@@ -481,6 +514,9 @@ sql-exporter:
   enabled: true
   image:
     pullPolicy: "IfNotPresent"
+  affinity: {}
+  tolerations: []
+  resources: {}
   config:
     target:
       data_source_name: ""

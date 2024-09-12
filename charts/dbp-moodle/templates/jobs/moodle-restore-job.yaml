@@ -81,6 +81,8 @@ spec:
             secretKeyRef:
               name: moodle-backup-s3
               key: s3_access_secret
+      affinity: {{ .Values.dbpMoodle.moodleRestoreJob.affinity | toYaml }}
+      tolerations: {{ .Values.dbpMoodle.moodleRestoreJob.tolerations | toYaml }}
       restartPolicy: Never
   backoffLimit: 4
 {{- end }}
