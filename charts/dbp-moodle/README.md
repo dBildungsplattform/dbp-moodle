@@ -98,7 +98,7 @@ The following table lists the helpers available in the library which are scoped 
 | `secrets.useChartSecret`               | If set to true the secret will be created with given values. | `true` |
 | `updateHelper.rules`                   | [WIP] Set permissions for the updateHelper that is created when `update_migration.enabled=true`| `[...]` |
 | `secrets.moodle_password`              | | `randAlphaNum 16` |
-| `secrets.postgres_password`            | | `randAlphaNum 16` |
+| `secrets.postgres_admin_password`      | | `randAlphaNum 16` |
 | `secrets.mariadb_password`             | | `randAlphaNum 16` |
 | `secrets.mariadb_root_password`        | | `randAlphaNum 16` |
 | `secrets.etherpad_postgresql_password` | | `randAlphaNum 16` |
@@ -301,7 +301,7 @@ values.yaml
 secrets:
   useChartSecret: true
   moodle_password: "moodle"
-  postgres_password: "moodle"
+  postgres_admin_password: "moodle"
   mariadb_password: "moodle"
   mariadb_root_password: "moodle"
   etherpad_postgresql_password: "moodle"

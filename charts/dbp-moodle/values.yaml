@@ -76,10 +76,10 @@ dbpMoodle:
   secrets:
     useChartSecret: false
     moodle_password: ""
-    postgres_password: ""
+    postgres_admin_password: ""
     mariadb_password: ""
     mariadb_root_password: ""
-    etherpad_postgresql_password: "" 
+    etherpad_postgresql_password: ""
     etherpad_api_key: ""
 
   moodleUpdatePreparationJob:
@@ -204,9 +204,9 @@ moodle:
   mariadb:
     enabled: false
   externalDatabase:
-    type: "mariadb" #"pgsql"
-    host: "moodle-mariadb" #"moodle-postgresql"
-    port: 3306 #5432
+    type: "mariadb"
+    host: "moodle-mariadb"
+    port: 3306
     user: "moodle"
     database: ""
     existingSecret: ""
@@ -288,7 +288,7 @@ mariadb:
         cpu: 9
         memory: 3Gi
 
-postgresql:
+postgresql: # Include privileged: false
   enabled: false
   image:
     tag: "14.8.0-debian-11-r0"
@@ -330,6 +330,7 @@ redis:
     tolerations: []
     resources: {}
 
+#Test why the etherpadlite does not work!
 etherpadlite:
   enabled: false
   image:
@@ -398,6 +399,8 @@ etherpad-postgresql:
   persistence:
     existingClaim: "moodle-etherpad-postgresql"
   primary:
+  containerSecurityContext:
+    privileged: false
     affinity: {}
     tolerations: []
     resources:
@@ -414,6 +417,8 @@ moodlecronjob:
   serviceAccount:
     name: "moodle-moodle-cronjob"
     create: false
+  securityContext:
+    privileged: false
   affinity: {}
   tolerations: []
   resources: {}
@@ -496,6 +501,8 @@ backup-cronjob:
           - secret:
               name: moodle-backup-gpg-keys
         defaultMode: 0644
+  securityContext:
+    privileged: false
   affinity: {}
   tolerations: []
   resources:
@@ -517,9 +524,11 @@ backup-cronjob:
         - /scripts/backup-script
 
 sql-exporter:
-  enabled: true
+  enabled: false
   image:
     pullPolicy: "IfNotPresent"
+  securityContext:
+    privileged: false
   affinity: {}
   tolerations: []
   resources: {}

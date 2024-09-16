@@ -39,6 +39,8 @@ spec:
           - -c
         args:
           - /scripts/restore-script
+        securityContext:
+          privileged: false
         resources:
           limits:
             cpu: 2000m

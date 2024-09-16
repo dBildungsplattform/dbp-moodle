@@ -13,6 +13,8 @@ spec:
       containers:
         - name: moodle-update-preparation
           image: {{ .Values.dbpMoodle.moodleUpdatePreparationJob.kubectlImage}}
+          securityContext:
+            privileged: false
           command: ["/bin/bash", "/moodle-update-preparation.sh"]
           resources: {{ .Values.dbpMoodle.moodleUpdatePreparationJob.resources | toYaml }}
           env:

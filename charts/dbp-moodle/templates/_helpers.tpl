@@ -31,8 +31,8 @@ false
 {{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.moodle_password }}
 {{- end -}}
 
-{{- define "dbpMoodle.secrets.postgres_password" -}}
-{{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.postgres_password }}
+{{- define "dbpMoodle.secrets.postgres_admin_password" -}}
+{{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.postgres_admin_password }}
 {{- end -}}
 
 {{- define "dbpMoodle.secrets.mariadb_password" -}}
