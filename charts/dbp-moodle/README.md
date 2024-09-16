@@ -157,7 +157,7 @@ Horizontal Pod Autoscaling Values
 | `extraEnvVars.MOODLE_PLUGINS`               | WIP | |
 | `extraEnvVars.ENABLE_KALTURA`               ||`"false"`|
 | `extraEnvVarsSecret`                        ||`"moodle"`|
-| `existingSecret`                            ||`"moodle"`|
+| `existingSecret`                            | If this value is not set, moodle will create its own secret "moodle" which could cause problems. |`"moodle"`|
 | `persistence.enabled`                       ||`true`|
 | `persistence.storageClass`                  ||`"nfs-client"`|
 | `persistence.annotations`                   ||`"helm.sh/resource-policy":"keep"`|

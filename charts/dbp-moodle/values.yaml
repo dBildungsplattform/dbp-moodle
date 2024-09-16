@@ -208,8 +208,8 @@ moodle:
     host: "moodle-mariadb"
     port: 3306
     user: "moodle"
-    database: ""
-    existingSecret: ""
+    database: "moodle"
+    existingSecret: "moodle"
     password: ""
   service:
     type: ClusterIP
