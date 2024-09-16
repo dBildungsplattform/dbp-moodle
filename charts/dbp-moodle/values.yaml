@@ -288,7 +288,7 @@ mariadb:
         cpu: 9
         memory: 3Gi
 
-postgresql: # Include privileged: false
+postgresql:
   enabled: false
   image:
     tag: "14.8.0-debian-11-r0"
@@ -306,6 +306,8 @@ postgresql: # Include privileged: false
   primary:
     extendedConfiguration: |
       max_connections = 800
+    containerSecurityContext:
+      privileged: false
     affinity: {}
     tolerations: []
     resources:
@@ -330,7 +332,6 @@ redis:
     tolerations: []
     resources: {}
 
-#Test why the etherpadlite does not work!
 etherpadlite:
   enabled: false
   image:
@@ -378,6 +379,8 @@ etherpadlite:
       - secretName: "etherpad.example.de-tls"
         hosts:
           - "etherpad.example.de"
+  securityContext:
+    privileged: false
   affinity: {}
   tolerations: []
   resources:
@@ -399,8 +402,8 @@ etherpad-postgresql:
   persistence:
     existingClaim: "moodle-etherpad-postgresql"
   primary:
-  containerSecurityContext:
-    privileged: false
+    containerSecurityContext:
+      privileged: false
     affinity: {}
     tolerations: []
     resources:
