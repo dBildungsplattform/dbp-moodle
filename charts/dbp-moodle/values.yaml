@@ -76,7 +76,7 @@ dbpMoodle:
   secrets:
     useChartSecret: false
     moodle_password: ""
-    postgres_admin_password: ""
+    pgsql_admin_password: ""
     mariadb_password: ""
     mariadb_root_password: ""
     etherpad_postgresql_password: ""
@@ -140,7 +140,7 @@ dbpMoodle:
     existingSecretKeyS3Secret: ""
     affinity: {}
     tolerations: []
-    
+
     rules:
       - apiGroups: ["apps"]
         resources: ["deployments/scale", "deployments"]
@@ -302,7 +302,7 @@ postgresql:
     database: "moodle"
     existingSecret: "moodle"
     secretKeys:
-      adminPasswordKey: "postgres-admin-password"
+      adminPasswordKey: "pgsql-admin-password"
       userPasswordKey: "mariadb-password" # moodle expects its db password key to be mariadb-password
   metrics:
     enabled: true
