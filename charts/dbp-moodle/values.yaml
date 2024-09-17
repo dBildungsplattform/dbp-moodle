@@ -194,7 +194,7 @@ moodle:
           name: moodle-plugins
           key: moodle-plugin-list
   extraEnvVarsSecret: ""
-  existingSecret: ""
+  existingSecret: "moodle"
   persistence:
     existingClaim: "moodle-data"
   affinity: {}
