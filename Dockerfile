@@ -1,8 +1,8 @@
 # This Dockerfile starts the entrypoint script to evaluate if a new moodle version exists and an update should be started.
 # Stage 1: Build stage
-FROM bitnami/moodle:4.1.11-debian-12-r0 AS build
+FROM bitnami/moodle:4.1.12-debian-12-r1 AS build
 USER root
-ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.1.11"}
+ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.1.12"}
 
 COPY scripts/install/downloadMoodle.sh /downloadMoodle.sh
 COPY scripts/install/downloadPlugins.sh /downloadPlugins.sh
@@ -32,8 +32,8 @@ RUN mkdir /plugins && /downloadPlugins.sh
 # RUN /scripts/phpRedisInstall.sh
 
 # Stage 2: Production stage
-FROM bitnami/moodle:4.1.11-debian-12-r0
-ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.1.11"}
+FROM bitnami/moodle:4.1.12-debian-12-r1
+ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.1.12"}
 ARG DEBUG=${DEBUG:-false}
 
 RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen
@@ -60,5 +60,8 @@ RUN apt-get update && apt-get upgrade -y && \
 
 # Install redis-php which is required for moodle to use redis
 RUN /phpRedisInstall.sh
+
+RUN chown 1001:root -R /opt/bitnami
+RUN chown 1001:root -R /plugins
 
 ENTRYPOINT ["/scripts/entrypoint.sh"]
