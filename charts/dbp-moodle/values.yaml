@@ -296,8 +296,9 @@ postgresql:
     username: "moodle"
     database: "moodle"
     existingSecret: "moodle"
+    enablePostgresUser: true # If true, the admin user "postgres" is enabled
     secretKeys:
-      adminPasswordKey: "pgsql-admin-password"
+      adminPasswordKey: "postgresql-password"
       userPasswordKey: "mariadb-password" # moodle expects its db password key to be mariadb-password
   metrics:
     enabled: true
