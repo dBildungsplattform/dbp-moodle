@@ -120,26 +120,31 @@ dbpMoodle:
       - apiGroups: ["batch"]
         resources: ["cronjobs", "jobs"]
         verbs: ["get", "patch"]
-    
-  moodleRestoreJob:
-    affinity: {}
-    tolerations: []
-    resources: {}
 
   restore:
     enabled: false # Only to be used to restore a snapshot with the dbp-restore script
     image_repository: schulcloud
     image_tag: 4.0.3
-    rules:
-      - apiGroups: ["apps"]
-        resources: ["deployments/scale", "deployments"]
-        verbs: ["get", "list", "scale", "patch"]
+    resources:
+      limits:
+        cpu: 2000m
+        memory: 16Gi
+      requests:
+        cpu: 1000m
+        memory: 8Gi
     existingSecretGPG: ""
     existingSecretDatabase: "moodle"
     existingSecretKeyDatabase: ""
     existingSecretS3: ""
     existingSecretKeyS3Access: ""
     existingSecretKeyS3Secret: ""
+    affinity: {}
+    tolerations: []
+    
+    rules:
+      - apiGroups: ["apps"]
+        resources: ["deployments/scale", "deployments"]
+        verbs: ["get", "list", "scale", "patch"]
 
   moodlecronjob:
     rules:
@@ -296,9 +301,8 @@ postgresql:
     username: "moodle"
     database: "moodle"
     existingSecret: "moodle"
-    enablePostgresUser: true # If true, the admin user "postgres" is enabled
     secretKeys:
-      adminPasswordKey: "postgresql-password"
+      adminPasswordKey: "postgres-admin-password"
       userPasswordKey: "mariadb-password" # moodle expects its db password key to be mariadb-password
   metrics:
     enabled: true

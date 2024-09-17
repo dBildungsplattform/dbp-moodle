@@ -41,13 +41,7 @@ spec:
           - /scripts/restore-script
         securityContext:
           privileged: false
-        resources:
-          limits:
-            cpu: 2000m
-            memory: 16Gi
-          requests:
-            cpu: 1000m
-            memory: 8Gi
+        resources: {{ .Values.dbpMoodle.restore.resources | toYaml }}
         volumeMounts:
         - name: moodle-data
           mountPath: /bitnami/moodle
@@ -75,7 +69,7 @@ spec:
             secretKeyRef:
               name: {{ .Values.dbpMoodle.restore.existingSecretS3 }}
               key: {{ .Values.dbpMoodle.restore.existingSecretKeyS3Secret }}
-      affinity: {{ .Values.dbpMoodle.moodleRestoreJob.affinity | toYaml }}
-      tolerations: {{ .Values.dbpMoodle.moodleRestoreJob.tolerations | toYaml }}
+      affinity: {{ .Values.dbpMoodle.restore.affinity | toYaml }}
+      tolerations: {{ .Values.dbpMoodle.restore.tolerations | toYaml }}
       restartPolicy: Never
 {{- end }}
