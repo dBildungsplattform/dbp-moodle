@@ -172,7 +172,7 @@ moodle:
   image:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
-    tag: "4.1.12-debian-12-r1" 
+    tag: "4.1.12-debian-12-r1-chart-main" 
     pullPolicy: Always
     debug: false
   moodleSkipInstall: false
