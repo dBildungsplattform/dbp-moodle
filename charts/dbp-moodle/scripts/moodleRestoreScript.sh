@@ -5,28 +5,6 @@ if [ ! -d /backup ]; then
     mkdir -p /backup
 fi
 
-curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null
-echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
-apt-get update
-
-apt install duply
-# Install mariadb-client or postgresql-client-14
-# Needed for moodle restore
-# Differs from other backup Helm Charts
-apt-get -y install ca-certificates gnupg
-{{ if .Values.mariadb.enabled }}
-apt-get -y install mariadb-client
-{{ else }}
-apt-get -y remove postgresql-client-common
-apt-get -y install postgresql-client-14
-{{ end }}
-pg_dump -V
-
-# Install kubectl
-curl -LO https://dl.k8s.io/release/v{{ .Values.global.kubectl_version }}/bin/linux/amd64/kubectl
-chmod +x kubectl
-mv ./kubectl /usr/local/bin/kubectl
-
 # Get current replicas and scale down deployment
 replicas=$(kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o=jsonpath='{.status.replicas}')
 echo "=== Current replicas detected: $replicas ==="
