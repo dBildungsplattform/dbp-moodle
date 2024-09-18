@@ -1,9 +1,5 @@
 #!/bin/bash
-# Create destination dir if not exists
 set -e
-if [ ! -d /backup ]; then
-    mkdir -p /backup
-fi
 
 # Get current replicas and scale down deployment
 replicas=$(kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o=jsonpath='{.status.replicas}')
