@@ -427,6 +427,11 @@ moodlecronjob:
     create: false
   securityContext:
     privileged: false
+    allowPrivilegeEscalation: false
+    runAsGroup: 1001
+    capabilities:
+      drop:
+        - ALL
   affinity: {}
   tolerations: []
   resources: {}
@@ -511,6 +516,11 @@ backup-cronjob:
         defaultMode: 0644
   securityContext:
     privileged: false
+    allowPrivilegeEscalation: false
+    runAsGroup: 1001
+    capabilities:
+      drop:
+        - ALL
   affinity: {}
   tolerations: []
   resources:
@@ -537,6 +547,7 @@ sql-exporter:
     pullPolicy: "IfNotPresent"
   securityContext:
     privileged: false
+    allowPrivilegeEscalation: false
   affinity: {}
   tolerations: []
   resources: {}
