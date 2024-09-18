@@ -1,8 +1,8 @@
 #!/bin/bash
 # Create destination dir if not exists
 set -e
-if [ ! -d /backup ]; then
-    mkdir -p /backup
+if [ ! -d /tmp/backup ]; then
+    mkdir -p /tmp/backup
 fi
 
 readiness_probe_file="/tmp/readinessprobe.json"
@@ -65,7 +65,7 @@ fi
 echo "=== Start backup ==="
 date +%Y%m%d_%H%M%S%Z
 
-cd /backup
+cd /tmp/backup
 # Get dump of db
 echo "=== Start DB dump ==="
 export DATE=$( date "+%Y-%m-%d" )
@@ -100,7 +100,7 @@ echo "=== Execute backup ==="
 /usr/bin/duply default backup
 /usr/bin/duply default status
 cd /
-rm -rf /backup
+rm -rf /tmp/backup
 echo "=== Backup finished ==="
 echo "=== Clean up old backups ==="
 /usr/bin/duply default purge --force
