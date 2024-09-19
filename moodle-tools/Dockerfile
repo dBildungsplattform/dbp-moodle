@@ -14,6 +14,7 @@ RUN set -x \
     && pip install boto \
     && apt-get -y update \
     && apt-get -y install \
+        curl \
         duply \
         ca-certificates \
         gnupg \
