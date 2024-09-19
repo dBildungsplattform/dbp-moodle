@@ -421,7 +421,7 @@ etherpad-postgresql:
 moodlecronjob:
   image:
     repository: ghcr.io/dbildungsplattform/moodle-tools
-    tag: 1.0.5
+    tag: 1.0.6
   clusterRole:
     create: false
   serviceAccount:
@@ -462,7 +462,7 @@ moodlecronjob:
 backup-cronjob:
   image:
     repository: ghcr.io/dbildungsplattform/moodle-tools
-    tag: 1.0.5
+    tag: 1.0.6
   clusterRole:
     create: false
   serviceAccount:
