@@ -33,7 +33,7 @@ spec:
       serviceAccount: moodle-restore-job
       containers:
       - name:  moodle-restore-job
-        image: "{{ .Values.dbpMoodle.restore.image_repository }}/infra-tools:{{ .Values.dbpMoodle.restore.image_tag }}"
+        image: {{ .Values.dbpMoodle.restore.image }}
         command:
           - /bin/sh
           - -c
