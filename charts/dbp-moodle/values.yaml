@@ -123,8 +123,7 @@ dbpMoodle:
 
   restore:
     enabled: false # Only to be used to restore a snapshot with the dbp-restore script
-    image_repository: schulcloud
-    image_tag: 4.0.3
+    image: ghcr.io/dbildungsplattform/moodle-tools:1.0.5
     resources:
       limits:
         cpu: 2000m
@@ -420,6 +419,9 @@ etherpad-postgresql:
         memory: "1Gi"
 
 moodlecronjob:
+  image:
+    repository: ghcr.io/dbildungsplattform/moodle-tools
+    tag: 1.0.5
   clusterRole:
     create: false
   serviceAccount:
@@ -459,7 +461,8 @@ moodlecronjob:
 
 backup-cronjob:
   image:
-    tag: 4.0.3
+    repository: ghcr.io/dbildungsplattform/moodle-tools
+    tag: 1.0.5
   clusterRole:
     create: false
   serviceAccount:
