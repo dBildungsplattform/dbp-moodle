@@ -33,7 +33,7 @@ spec:
       serviceAccount: moodle-restore-job
       containers:
       - name:  moodle-restore-job
-        image: "{{ .Values.dbpMoodle.restore.image_repository }}/infra-tools:{{ .Values.dbpMoodle.restore.image_tag }}"
+        image: {{ .Values.dbpMoodle.restore.image }}
         command:
           - /bin/sh
           - -c
@@ -41,7 +41,8 @@ spec:
           - /scripts/restore-script
         securityContext:
           privileged: false
-        resources: {{ .Values.dbpMoodle.restore.resources | toYaml }}
+        resources: 
+          {{- .Values.dbpMoodle.restore.resources | toYaml | nindent 10 }}
         volumeMounts:
         - name: moodle-data
           mountPath: /bitnami/moodle

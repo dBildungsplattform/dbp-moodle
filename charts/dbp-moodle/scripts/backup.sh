@@ -1,29 +1,12 @@
 #!/bin/bash
 # Create destination dir if not exists
 set -e
-if [ ! -d /backup ]; then
-    mkdir -p /backup
+if [ ! -d /tmp/backup ]; then
+    mkdir -p /tmp/backup
 fi
 
 readiness_probe_file="/tmp/readinessprobe.json"
 liveness_probe_file="/tmp/livenessprobe.json"
-
-curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null
-echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
-apt-get update
-
-apt install duply
-# Install mariadb-client or postgresql-client-14
-apt-get -y install ca-certificates gnupg
-apt-get install apt-transport-https --yes
-{{ if .Values.mariadb.enabled }}
-apt-get -y install mariadb-client
-{{ else }}
-apt-get -y remove postgresql-client-common
-apt-get -y install postgresql-client-14
-{{ end }}
-pg_dump -V
-pip install boto
 
 # Cleanup after finish only if not an update backup (normal backup has no CliUpdate file)
 # If update backup: depending on exit code create the signal for the update helper job with success or failure
@@ -58,11 +41,6 @@ function clean_up() {
 
 trap "clean_up" EXIT
 
-# Install kubectl
-curl -LO https://dl.k8s.io/release/v{{ .Values.global.kubectl_version }}/bin/linux/amd64/kubectl
-chmod +x kubectl
-mv ./kubectl /usr/local/bin/kubectl
-
 # If the backup is done for the update it skips the preparation because the update helper already did this
 if ! [ -a /mountData/moodledata/CliUpdate ]; then
     # Suspend the cronjob to avoid errors due to missing moodle
@@ -87,7 +65,7 @@ fi
 echo "=== Start backup ==="
 date +%Y%m%d_%H%M%S%Z
 
-cd /backup
+cd /tmp/backup
 # Get dump of db
 echo "=== Start DB dump ==="
 export DATE=$( date "+%Y-%m-%d" )
@@ -122,7 +100,7 @@ echo "=== Execute backup ==="
 /usr/bin/duply default backup
 /usr/bin/duply default status
 cd /
-rm -rf /backup
+rm -rf /tmp/backup
 echo "=== Backup finished ==="
 echo "=== Clean up old backups ==="
 /usr/bin/duply default purge --force

@@ -16,6 +16,6 @@ data:
     MAX_FULLBKP_AGE=1W
     DUPL_PARAMS="$DUPL_PARAMS --full-if-older-than $MAX_FULLBKP_AGE --allow-source-mismatch --s3-endpoint-url  {{ .Values.dbpMoodle.backup.endpoint }}"
   exclude: |-
-    + /backup
+    + /tmp/backup
     - **
 {{- end }}

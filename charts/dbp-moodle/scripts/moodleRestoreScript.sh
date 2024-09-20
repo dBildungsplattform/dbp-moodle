@@ -1,31 +1,5 @@
 #!/bin/bash
-# Create destination dir if not exists
 set -e
-if [ ! -d /backup ]; then
-    mkdir -p /backup
-fi
-
-curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null
-echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
-apt-get update
-
-apt install duply
-# Install mariadb-client or postgresql-client-14
-# Needed for moodle restore
-# Differs from other backup Helm Charts
-apt-get -y install ca-certificates gnupg
-{{ if .Values.mariadb.enabled }}
-apt-get -y install mariadb-client
-{{ else }}
-apt-get -y remove postgresql-client-common
-apt-get -y install postgresql-client-14
-{{ end }}
-pg_dump -V
-
-# Install kubectl
-curl -LO https://dl.k8s.io/release/v{{ .Values.global.kubectl_version }}/bin/linux/amd64/kubectl
-chmod +x kubectl
-mv ./kubectl /usr/local/bin/kubectl
 
 # Get current replicas and scale down deployment
 replicas=$(kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o=jsonpath='{.status.replicas}')
@@ -57,8 +31,8 @@ rm -rf /bitnami/moodle/.??*
 rm -rf /bitnami/moodledata/*
 rm -rf /bitnami/moodledata/.??*
 echo "=== Extract backup files ==="
-tar -xzf ./Full/backup/moodle.tar.gz -C /bitnami/
-tar -xzf ./Full/backup/moodledata.tar.gz -C /bitnami/
+tar -xzf ./Full/tmp/backup/moodle.tar.gz -C /bitnami/
+tar -xzf ./Full/tmp/backup/moodledata.tar.gz -C /bitnami/
 echo "=== Move backup files ==="
 mv /bitnami/mountData/moodle/* /bitnami/moodle/
 mv /bitnami/mountData/moodle/.[!.]* /bitnami/moodle/
@@ -83,11 +57,11 @@ PGPASSWORD="$DATABASE_PASSWORD" psql -U postgres -h {{ .Release.Name }}-postgres
 
 echo "=== Copy dump to DB ==="
 {{ if .Values.mariadb.enabled }}
-gunzip ./Full/backup/moodle_mariadb_dump_*
-mv ./Full/backup/moodle_mariadb_dump_* moodledb_dump.sql
+gunzip ./Full/tmp/backup/moodle_mariadb_dump_*
+mv ./Full/tmp/backup/moodle_mariadb_dump_* moodledb_dump.sql
 {{ else }}
-gunzip ./Full/backup/moodle_postgresqldb_dump_*
-mv ./Full/backup/moodle_postgresqldb_dump_* moodledb_dump.sql
+gunzip ./Full/tmp/backup/moodle_postgresqldb_dump_*
+mv ./Full/tmp/backup/moodle_postgresqldb_dump_* moodledb_dump.sql
 {{ end }}
 
 {{ if .Values.mariadb.enabled }}
