@@ -2,7 +2,7 @@ apiVersion: v2
 name: dbp-moodle
 description: A Helm chart for dBildungsplattform Moodle including customizations
 type: application
-version: 0.0.3
+version: 0.0.4
 appVersion: "4.1.12"
 dependencies:
   - name: moodle
