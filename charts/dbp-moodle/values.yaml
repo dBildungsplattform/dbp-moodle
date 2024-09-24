@@ -32,6 +32,8 @@ global:
       enabled: false
     staticpage:
       enabled: false
+    heartbeat:
+      enabled: false
     remuiformat:
       enabled: false
     topcoll:
