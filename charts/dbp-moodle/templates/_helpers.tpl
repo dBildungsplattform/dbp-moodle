@@ -72,7 +72,7 @@ unilabel:mod_unilabel:mod/unilabel:                             {{- .Values.glob
 geogebra:mod_geogebra:mod/geogebra:                             {{- .Values.global.moodlePlugins.geogebra.enabled }}
 choicegroup:mod_choicegroup:mod/choicegroup:                    {{- .Values.global.moodlePlugins.choicegroup.enabled }}
 staticpage:local_staticpage:local/staticpage:                   {{- .Values.global.moodlePlugins.staticpage.enabled }}
-heartbeat:tool_heartbeat:tool/heartbeat:                        {{- .Values.global.moodlePlugins.heartbeat.enabled }}
+heartbeat:tool_heartbeat:admin/tool/heartbeat:                  {{- .Values.global.moodlePlugins.heartbeat.enabled }}
 remuiformat:format_remuiformat:course/format/remuiformat:       {{- .Values.global.moodlePlugins.remuiformat.enabled }}
 tiles:format_tiles:course/format/tiles:                         {{- .Values.global.moodlePlugins.tiles.enabled }}
 topcoll:format_topcoll:course/format/topcoll:                   {{- .Values.global.moodlePlugins.topcoll.enabled }}
