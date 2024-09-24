@@ -71,7 +71,6 @@ reengagement:mod_reengagement:mod/reengagement:                 {{- .Values.glob
 unilabel:mod_unilabel:mod/unilabel:                             {{- .Values.global.moodlePlugins.unilabel.enabled }}
 geogebra:mod_geogebra:mod/geogebra:                             {{- .Values.global.moodlePlugins.geogebra.enabled }}
 choicegroup:mod_choicegroup:mod/mod_choicegroup:                {{- .Values.global.moodlePlugins.choicegroup.enabled }}
-heartbeat:tool_heartbeat:mod/tool_heartbeat:                    {{- .Values.global.moodlePlugins.heartbeat.enabled }}
 staticpage:local_staticpage:mod/local_staticpage:               {{- .Values.global.moodlePlugins.staticpage.enabled }}
 remuiformat:format_remuiformat:course/format/remuiformat:       {{- .Values.global.moodlePlugins.remuiformat.enabled }}
 tiles:format_tiles:course/format/tiles:                         {{- .Values.global.moodlePlugins.tiles.enabled }}

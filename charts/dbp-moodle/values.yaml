@@ -30,8 +30,6 @@ global:
       enabled: false
     choicegroup:
       enabled: false
-    heartbeat:
-      enabled: false
     staticpage:
       enabled: false
     remuiformat:
