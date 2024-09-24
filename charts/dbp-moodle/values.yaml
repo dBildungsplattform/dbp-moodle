@@ -80,7 +80,7 @@ dbpMoodle:
       "helm.sh/resource-policy": "keep"
 
   secrets:
-    useChartSecret: true
+    useChartSecret: false
     moodle_password: ""
     pgsql_admin_password: ""
     mariadb_password: ""
@@ -258,7 +258,7 @@ moodle:
             path: php.ini
         defaultMode: 0644
   podAnnotations:
-    moodle/image: "{{- .Values.image.repository -}}:{{- .Values.image.tag -}}"
+    moodle/image: '{{- .Values.image.repository -}}:{{- .Values.image.tag -}}'
     moodleplugins/checksum: '{{- include "dbpMoodle.pluginConfigMap.content" . | sha256sum -}}'
   containerSecurityContext:
     enabled: true
@@ -553,7 +553,7 @@ backup-cronjob:
         - /scripts/backup-script
 
 sql-exporter:
-  enabled: true
+  enabled: false
   image:
     pullPolicy: "IfNotPresent"
   securityContext:
@@ -572,22 +572,22 @@ sql-exporter:
           - metric_name: sql_moodle_total_user_count
             type: gauge
             values: [metric]
-            help: "Total number of registed users in this instance."
+            help: 'Total number of registed users in this instance.'
             query_ref: sql_moodle_total_user_count
           - metric_name: sql_moodle_active_user_count_current_month
             type: gauge
             values: [metric]
-            help: "Total number of logged in users in this instance for the current month."
+            help: 'Total number of logged in users in this instance for the current month.'
             query_ref: sql_moodle_active_user_count_current_month
           - metric_name: sql_moodle_active_user_count_last_30_days
             type: gauge
             values: [metric]
-            help: "The amount of users logged in to moodle in the last 30 days."
+            help: 'The amount of users logged in to moodle in the last 30 days.'
             query_ref: sql_moodle_active_user_count_last_30_days
           - metric_name: sql_moodle_current_login_user_count
             type: gauge
             values: [metric]
-            help: "Total number of currently logged in users in this instance."
+            help: 'Total number of currently logged in users in this instance.'
             query_ref: sql_moodle_current_login_user_count
 
         queries:
