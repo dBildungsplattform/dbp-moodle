@@ -9,7 +9,11 @@ $CFG->dblibrary = 'native';
 $CFG->dbhost    = '{{ .Values.moodle.externalDatabase.host }}';
 $CFG->dbname    = '{{ .Values.moodle.externalDatabase.database }}';
 $CFG->dbuser    = '{{ .Values.moodle.externalDatabase.user }}';
+{{- if .Values.moodle.externalDatabase.existingSecret -}}
+$CFG->dbpass    = '{{ .Values.secret.existingSecret | lookup "v1" "Secret" .Release.Namespace .Values.moodle.externalDatabase.existingSecret | index "data" "mariadb-password" | b64dec }}',
+{{- else -}}
 $CFG->dbpass    = '{{ .Values.moodle.externalDatabase.password }}';
+{{- end -}}
 $CFG->prefix    = 'mdl_';
 $CFG->dboptions = array (
   'dbpersist' => 0,
