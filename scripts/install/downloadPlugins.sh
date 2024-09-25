@@ -32,6 +32,9 @@ moosh plugin-download -v "$major_minor" mod_booking
 moosh plugin-download -v "$major_minor" mod_reengagement
 moosh plugin-download -v "$major_minor" mod_unilabel
 moosh plugin-download -v "$major_minor" mod_geogebra
+moosh plugin-download -v "$major_minor" mod_choicegroup
+moosh plugin-download -v "$major_minor" local_staticpage
+moosh plugin-download -v "$major_minor" tool_heartbeat
 moosh plugin-download -v "$major_minor" format_remuiformat
 moosh plugin-download -v "$major_minor" format_tiles
 moosh plugin-download -v "$major_minor" format_topcoll

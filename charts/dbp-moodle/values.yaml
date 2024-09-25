@@ -28,6 +28,12 @@ global:
       enabled: false
     geogebra:
       enabled: false
+    choicegroup:
+      enabled: false
+    staticpage:
+      enabled: false
+    heartbeat:
+      enabled: false
     remuiformat:
       enabled: false
     topcoll:
@@ -96,22 +102,22 @@ dbpMoodle:
       - apiGroups: ["batch"]
         resources: ["cronjobs", "jobs"]
         verbs: ["get", "list", "create", "patch", "watch"]
-  
+
   backup:
     enabled: false
     gpg_key_names: ""
     gpgkeys:
       gpgkey.dbpinfra.pub.asc: ""
       gpgkey.dbpinfra.sec.asc: ""
-      existingSecret: "" # existing secret for gpg keys 
+      existingSecret: "" # existing secret for gpg keys
     s3_bucket_name: ""
     cluster_name: ""
     endpoint: ""
-    secrets: 
+    secrets:
       s3_access_key: ""
       s3_access_secret: ""
       s3_endpoint_url: ""
-      existingSecret: "" # existing secret for s3 secrets 
+      existingSecret: "" # existing secret for s3 secrets
 
     rules:
       - apiGroups: ["apps"]
@@ -150,7 +156,7 @@ dbpMoodle:
       - apiGroups: [""]
         resources: ["pods", "pods/exec"]
         verbs: ["get", "list", "create"]
-  
+
   # Horizontal Pod Autoscaling Values
   hpa:
     enabled: false
@@ -171,7 +177,7 @@ moodle:
   image:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
-    tag: "4.1.12-debian-12-r1-chart-main" 
+    tag: "4.1.12-debian-12-r1-chart-main"
     pullPolicy: Always
     debug: false
   moodleSkipInstall: false
