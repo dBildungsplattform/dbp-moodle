@@ -10,7 +10,7 @@ $CFG->dbhost    = '{{ .Values.moodle.externalDatabase.host }}';
 $CFG->dbname    = '{{ .Values.moodle.externalDatabase.database }}';
 $CFG->dbuser    = '{{ .Values.moodle.externalDatabase.user }}';
 {{ if .Values.moodle.externalDatabase.existingSecret -}}
-$CFG->dbpass    = '{{ index (lookup "v1" "Secret" .Release.Namespace .Values.moodle.externalDatabase.existingSecret).data "mariadb-password" | b64dec }}',
+$CFG->dbpass    = '{{ index (lookup "v1" "Secret" .Release.Namespace .Values.moodle.externalDatabase.existingSecret).data "mariadb-password" | b64dec }}';
 {{- else -}}
 $CFG->dbpass    = '{{ .Values.moodle.externalDatabase.password }}';
 {{- end }}
