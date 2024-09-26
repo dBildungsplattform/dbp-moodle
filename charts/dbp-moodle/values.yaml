@@ -52,9 +52,14 @@ global:
       enabled: false
     coursecertificate:
       enabled: false
+    adaptable:
+      enabled: false
     boost_union:
       enabled: false
-
+    boost_magnific:
+      enabled: false
+    snap:
+      enabled: false
 dbpMoodle:
   name: infra
   stage: infra

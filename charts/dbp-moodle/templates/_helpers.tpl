@@ -82,5 +82,9 @@ dash:block_dash:blocks/dash:                                    {{- .Values.glob
 sharing_cart:block_sharing_cart:blocks/sharing_cart:            {{- .Values.global.moodlePlugins.sharing_cart.enabled }}
 xp:block_xp:blocks/xp:                                          {{- .Values.global.moodlePlugins.xp.enabled }}
 coursecertificate:mod_coursecertificate:mod/coursecertificate:  {{- .Values.global.moodlePlugins.coursecertificate.enabled }}
+adaptable:theme_adaptable:theme/adaptable:                      {{- .Values.global.moodlePlugins.adaptable.enabled }}
 boost_union:theme_boost_union:theme/boost_union:                {{- .Values.global.moodlePlugins.boost_union.enabled }}
+boost_magnific:theme_boost_magnific:theme/boost_magnific:       {{- .Values.global.moodlePlugins.boost_magnific.enabled }}
+snap:theme_snap:theme/snap:                                     {{- .Values.global.moodlePlugins.snap.enabled }}
+
 {{- end -}}
