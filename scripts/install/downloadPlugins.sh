@@ -44,4 +44,7 @@ moosh plugin-download -v "$major_minor" block_dash
 moosh plugin-download -v "$major_minor" block_sharing_cart
 moosh plugin-download -v "$major_minor" block_xp
 moosh plugin-download -v "$major_minor" mod_coursecertificate
+moosh plugin-download -v "$major_minor" theme_adaptable
 moosh plugin-download -v "$major_minor" theme_boost_union
+moosh plugin-download -v "$major_minor" theme_boost_magnific
+moosh plugin-download -v "$major_minor" theme_snap
