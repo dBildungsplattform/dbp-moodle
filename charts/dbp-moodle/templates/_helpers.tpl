@@ -56,35 +56,35 @@ false
 {{- end -}}
 
 {{- define "dbpMoodle.pluginConfigMap.content" -}}
-kaltura:kaltura:: {{- .Values.global.moodlePlugins.kaltura.enabled }}
-wunderbyte_table:local_wunderbyte_table:local/wunderbyte_table: {{- .Values.global.moodlePlugins.booking.enabled }}
-certificate:tool_certificate:admin/tool/certificate:            {{- or .Values.global.moodlePlugins.certificate.enabled .Values.global.moodlePlugins.coursecertificate.enabled }}
-etherpadlite:mod_etherpadlite:mod/etherpadlite:                 {{- .Values.global.moodlePlugins.etherpadlite.enabled }}
-hvp:mod_hvp:mod/hvp:                                            {{- .Values.global.moodlePlugins.hvp.enabled }}
-groupselect:mod_groupselect:mod/groupselect:                    {{- .Values.global.moodlePlugins.groupselect.enabled }}
-jitsi:mod_jitsi:mod/jitsi:                                      {{- .Values.global.moodlePlugins.jitsi.enabled }}
-pdfannotator:mod_pdfannotator:mod/pdfannotator:                 {{- .Values.global.moodlePlugins.pdfannotator.enabled }}
-skype:mod_skype:mod/skype:                                      {{- .Values.global.moodlePlugins.skype.enabled }}
-zoom:mod_zoom:mod/zoom:                                         {{- .Values.global.moodlePlugins.zoom.enabled }}
-booking:mod_booking:mod/booking:                                {{- .Values.global.moodlePlugins.booking.enabled }}
-reengagement:mod_reengagement:mod/reengagement:                 {{- .Values.global.moodlePlugins.reengagement.enabled }}
-unilabel:mod_unilabel:mod/unilabel:                             {{- .Values.global.moodlePlugins.unilabel.enabled }}
-geogebra:mod_geogebra:mod/geogebra:                             {{- .Values.global.moodlePlugins.geogebra.enabled }}
-choicegroup:mod_choicegroup:mod/choicegroup:                    {{- .Values.global.moodlePlugins.choicegroup.enabled }}
-staticpage:local_staticpage:local/staticpage:                   {{- .Values.global.moodlePlugins.staticpage.enabled }}
-heartbeat:tool_heartbeat:admin/tool/heartbeat:                  {{- .Values.global.moodlePlugins.heartbeat.enabled }}
-remuiformat:format_remuiformat:course/format/remuiformat:       {{- .Values.global.moodlePlugins.remuiformat.enabled }}
-tiles:format_tiles:course/format/tiles:                         {{- .Values.global.moodlePlugins.tiles.enabled }}
-topcoll:format_topcoll:course/format/topcoll:                   {{- .Values.global.moodlePlugins.topcoll.enabled }}
-oidc:auth_oidc:auth/oidc:                                       {{- .Values.global.moodlePlugins.oidc.enabled }}
-saml2:auth_saml2:auth/saml2:                                    {{- .Values.global.moodlePlugins.saml2.enabled }}
-dash:block_dash:blocks/dash:                                    {{- .Values.global.moodlePlugins.dash.enabled }}
-sharing_cart:block_sharing_cart:blocks/sharing_cart:            {{- .Values.global.moodlePlugins.sharing_cart.enabled }}
-xp:block_xp:blocks/xp:                                          {{- .Values.global.moodlePlugins.xp.enabled }}
-coursecertificate:mod_coursecertificate:mod/coursecertificate:  {{- .Values.global.moodlePlugins.coursecertificate.enabled }}
-adaptable:theme_adaptable:theme/adaptable:                      {{- .Values.global.moodlePlugins.adaptable.enabled }}
-boost_union:theme_boost_union:theme/boost_union:                {{- .Values.global.moodlePlugins.boost_union.enabled }}
-boost_magnific:theme_boost_magnific:theme/boost_magnific:       {{- .Values.global.moodlePlugins.boost_magnific.enabled }}
-snap:theme_snap:theme/snap:                                     {{- .Values.global.moodlePlugins.snap.enabled }}
+kaltura:kaltura:: {{- .Values.global.moodlePlugins.kaltura.enabled }}{{"\n"}}
+wunderbyte_table:local_wunderbyte_table:local/wunderbyte_table: {{- .Values.global.moodlePlugins.booking.enabled}}{{"\n"}}
+certificate:tool_certificate:admin/tool/certificate:            {{- or .Values.global.moodlePlugins.certificate.enabled .Values.global.moodlePlugins.coursecertificate.enabled }}{{"\n"}}
+etherpadlite:mod_etherpadlite:mod/etherpadlite:                 {{- .Values.global.moodlePlugins.etherpadlite.enabled }}{{"\n"}}
+hvp:mod_hvp:mod/hvp:                                            {{- .Values.global.moodlePlugins.hvp.enabled }}{{"\n"}}
+groupselect:mod_groupselect:mod/groupselect:                    {{- .Values.global.moodlePlugins.groupselect.enabled }}{{"\n"}}
+jitsi:mod_jitsi:mod/jitsi:                                      {{- .Values.global.moodlePlugins.jitsi.enabled }}{{"\n"}}
+pdfannotator:mod_pdfannotator:mod/pdfannotator:                 {{- .Values.global.moodlePlugins.pdfannotator.enabled }}{{"\n"}}
+skype:mod_skype:mod/skype:                                      {{- .Values.global.moodlePlugins.skype.enabled }}{{"\n"}}
+zoom:mod_zoom:mod/zoom:                                         {{- .Values.global.moodlePlugins.zoom.enabled }}{{"\n"}}
+booking:mod_booking:mod/booking:                                {{- .Values.global.moodlePlugins.booking.enabled }}{{"\n"}}
+reengagement:mod_reengagement:mod/reengagement:                 {{- .Values.global.moodlePlugins.reengagement.enabled }}{{"\n"}}
+unilabel:mod_unilabel:mod/unilabel:                             {{- .Values.global.moodlePlugins.unilabel.enabled }}{{"\n"}}
+geogebra:mod_geogebra:mod/geogebra:                             {{- .Values.global.moodlePlugins.geogebra.enabled }}{{"\n"}}
+choicegroup:mod_choicegroup:mod/choicegroup:                    {{- .Values.global.moodlePlugins.choicegroup.enabled }}{{"\n"}}
+staticpage:local_staticpage:local/staticpage:                   {{- .Values.global.moodlePlugins.staticpage.enabled }}{{"\n"}}
+heartbeat:tool_heartbeat:admin/tool/heartbeat:                  {{- .Values.global.moodlePlugins.heartbeat.enabled }}{{"\n"}}
+remuiformat:format_remuiformat:course/format/remuiformat:       {{- .Values.global.moodlePlugins.remuiformat.enabled }}{{"\n"}}
+tiles:format_tiles:course/format/tiles:                         {{- .Values.global.moodlePlugins.tiles.enabled }}{{"\n"}}
+topcoll:format_topcoll:course/format/topcoll:                   {{- .Values.global.moodlePlugins.topcoll.enabled }}{{"\n"}}
+oidc:auth_oidc:auth/oidc:                                       {{- .Values.global.moodlePlugins.oidc.enabled }}{{"\n"}}
+saml2:auth_saml2:auth/saml2:                                    {{- .Values.global.moodlePlugins.saml2.enabled }}{{"\n"}}
+dash:block_dash:blocks/dash:                                    {{- .Values.global.moodlePlugins.dash.enabled }}{{"\n"}}
+sharing_cart:block_sharing_cart:blocks/sharing_cart:            {{- .Values.global.moodlePlugins.sharing_cart.enabled }}{{"\n"}}
+xp:block_xp:blocks/xp:                                          {{- .Values.global.moodlePlugins.xp.enabled }}{{"\n"}}
+coursecertificate:mod_coursecertificate:mod/coursecertificate:  {{- .Values.global.moodlePlugins.coursecertificate.enabled }}{{"\n"}}
+adaptable:theme_adaptable:theme/adaptable:                      {{- .Values.global.moodlePlugins.adaptable.enabled }}{{"\n"}}
+boost_union:theme_boost_union:theme/boost_union:                {{- .Values.global.moodlePlugins.boost_union.enabled }}{{"\n"}}
+boost_magnific:theme_boost_magnific:theme/boost_magnific:       {{- .Values.global.moodlePlugins.boost_magnific.enabled }}{{"\n"}}
+snap:theme_snap:theme/snap:                                     {{- .Values.global.moodlePlugins.snap.enabled }}{{"\n"}}
 
 {{- end -}}
