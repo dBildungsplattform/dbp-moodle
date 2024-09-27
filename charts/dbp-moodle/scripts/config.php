@@ -4,11 +4,11 @@ unset($CFG);
 global $CFG;
 $CFG = new stdClass();
 
-$CFG->dbtype    = '{{ .Values.moodle.externalDatabase.type }}';
+$CFG->dbtype    = getenv('MOODLE_DATABASE_TYPE');
 $CFG->dblibrary = 'native';
-$CFG->dbhost    = '{{ .Values.moodle.externalDatabase.host }}';
-$CFG->dbname    = '{{ .Values.moodle.externalDatabase.database }}';
-$CFG->dbuser    = '{{ .Values.moodle.externalDatabase.user }}';
+$CFG->dbhost    = getenv('MOODLE_DATABASE_HOST');
+$CFG->dbname    = getenv('MOODLE_DATABASE_NAME');
+$CFG->dbuser    = getenv('MOODLE_DATABASE_USER');
 $CFG->dbpass    = getenv('MOODLE_DATABASE_PASSWORD');
 $CFG->prefix    = 'mdl_';
 $CFG->dboptions = array (
