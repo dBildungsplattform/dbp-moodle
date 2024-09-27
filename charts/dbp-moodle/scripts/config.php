@@ -13,7 +13,7 @@ $CFG->dbpass    = getenv('MOODLE_DATABASE_PASSWORD');
 $CFG->prefix    = 'mdl_';
 $CFG->dboptions = array (
   'dbpersist' => 0,
-  'dbport' => {{ .Values.moodle.externalDatabase.port }},
+  'dbport' => getenv('MOODLE_DATABASE_PORT_NUMBER'),
   'dbsocket' => '',
 );
 
