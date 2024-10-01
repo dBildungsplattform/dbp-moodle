@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: moodle-update-preparation
+  name: "{{ .Release.Name }}-update-preparation"
   annotations:
     "helm.sh/hook": pre-upgrade
     "helm.sh/hook-weight": "1"
@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
         - name: moodle-update-preparation
-          image: {{ .Values.dbpMoodle.moodleUpdatePreparationJob.kubectlImage}}
+          image: {{ .Values.dbpMoodle.moodleUpdatePreparationJob.kubectlImage }}
           securityContext:
             privileged: false
           command: ["/bin/bash", "/moodle-update-preparation.sh"]

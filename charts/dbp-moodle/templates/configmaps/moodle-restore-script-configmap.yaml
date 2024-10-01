@@ -4,6 +4,10 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-restore-script
   namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded,hook-failed
 data:
   restore-script: |-
 {{ tpl ( .Files.Get "scripts/moodleRestoreScript.sh" ) . | nindent 4 }}
