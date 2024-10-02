@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
-kubectl get pods -n {{ .Release.Namespace }} | egrep "^moodle-[a-z0-9]{8,10}-[a-z0-9]{5,5}"
-kubectl exec $(kubectl get pods -n {{ .Release.Namespace }} --field-selector=status.phase=Running | egrep "^moodle-[a-z0-9]{5,10}-[a-z0-9]{3,5}[^a-z0-9]") -- /opt/bitnami/php/bin/php ./bitnami/moodle/admin/cli/cron.php
-echo "Command '/opt/bitnami/php/bin/php ./bitnami/moodle/admin/cli/cron.php' has been run!"
+moodle_pods=$(kubectl -n {{ .Release.Namespace }} get pods -l app.kubernetes.io/name=moodle -o jsonpath='{.items[*].metadata.name}')
+
+for pod in "${moodle_pods[@]}"; do
+  echo "Waiting for pod [${pod}] to be ready..."
+  kubectl -n {{ .Release.Namespace }} wait --for=condition=Ready pod/${pod} --timeout=15m
+  echo "Executing command in pod: ${pod}"
+  kubectl exec --kubeconfig -n {{ .Release.Namespace }} "${pod}" -- /opt/bitnami/php/bin/php ./bitnami/moodle/admin/cli/cron.php
+  echo "Command '/opt/bitnami/php/bin/php ./bitnami/moodle/admin/cli/cron.php' has been run on [${pod}]!"
+done
