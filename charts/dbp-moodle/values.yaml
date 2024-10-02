@@ -127,7 +127,7 @@ dbpMoodle:
     rules:
       - apiGroups: ["apps"]
         resources: ["deployments"]
-        verbs: ["get", "patch", "list"]
+        verbs: ["get", "patch", "list", watch]
       - apiGroups: ["batch"]
         resources: ["cronjobs", "jobs"]
         verbs: ["get", "patch"]
