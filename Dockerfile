@@ -1,8 +1,11 @@
 # This Dockerfile starts the entrypoint script to evaluate if a new moodle version exists and an update should be started.
+
 # Stage 1: Build stage
 FROM bitnami/moodle:4.1.12-debian-12-r1 AS build
 USER root
 ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.1.12"}
+
+RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen
 
 COPY scripts/install/downloadMoodle.sh /downloadMoodle.sh
 COPY scripts/install/downloadPlugins.sh /downloadPlugins.sh
