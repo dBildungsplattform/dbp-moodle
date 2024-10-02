@@ -160,7 +160,7 @@ dbpMoodle:
     rules:
       - apiGroups: [""]
         resources: ["pods", "pods/exec"]
-        verbs: ["get", "list", "create"]
+        verbs: ["get", "list", "create", "watch"]
 
   # Horizontal Pod Autoscaling Values
   hpa:
