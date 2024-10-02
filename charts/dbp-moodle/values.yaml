@@ -157,7 +157,7 @@ dbpMoodle:
         verbs: ["get", "list", "scale", "patch"]
 
   moodlecronjob:
-    wait_timeout: "15min"
+    wait_timeout: "15m"
     rules:
       - apiGroups: [""]
         resources: ["pods", "pods/exec"]
