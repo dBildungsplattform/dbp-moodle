@@ -50,7 +50,7 @@ install_new_version() {
     local image_version="$1"
     MODULE="dbp-update" info "Installing new Moodle (${image_version})"
     mkdir -p "$moodle_path"
-    tar -xzf --strip-components=1 "/moodle-${image_version}.tgz" -C "$moodle_path"
+    tar --strip-components=1 -xzf "/moodle-${image_version}.tgz" -C "$moodle_path"
 }
 
 main() {
@@ -93,5 +93,4 @@ main() {
 }
 
 trap onErrorRestoreBackup ERR
-trap cleanup EXIT
 main
