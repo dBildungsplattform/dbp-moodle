@@ -51,13 +51,16 @@ create_backup() {
     cp -rp "${moodle_path}/"* "$moodle_backup_path"
 }
 
-unpack_new_version() {
+install_new_version() {
     local image_version="$1"
     if [ -d "$new_moodle_unpack_path" ]; then
         rm -rf "$new_moodle_unpack_path"
     fi
+    MODULE="dbp-update" info "Unpacking new Moodle (${image_version})"
     mkdir "$new_moodle_unpack_path"
     tar -xzf "/moodle-${image_version}.tgz" -C "$new_moodle_unpack_path" --strip 1
+        MODULE="dbp-update" info "Installing new Moodle (${image_version})"
+    mv ${new_moodle_unpack_path}/* ${moodle_path}/
 }
 
 main() {
@@ -66,7 +69,8 @@ main() {
     image_version="$APP_VERSION"
 
     if [[ -z "$installed_version" ]]; then
-        MODULE="dbp-update" info "No installed Moodle version detected, continuing with fresh install"
+        MODULE="dbp-update" info "No installed Moodle version detected"
+        install_new_version "$image_version"
         exit 0
     fi
     comp_result="$(compare_semver "$installed_version" "$image_version")"
@@ -86,7 +90,6 @@ main() {
     MODULE="dbp-update" info "Creating local backup"
     create_backup
     MODULE="dbp-update" info "Unpacking new moodle version"
-    unpack_new_version "$image_version"
 
     # TODO test if i can leave this commented out since this script already runs as user 1001 it shouldnt be needed... maybe?
     # MODULE="dbp-update" info "Configure current user as owner of /bitnami/moodledata/"
@@ -96,8 +99,7 @@ main() {
         MODULE="dbp-update" info "Removing old Moodle (${installed_version})"
     fi
     rm -rf "${moodle_path:?}"/*
-    MODULE="dbp-update" info "Installing new Moodle (${image_version})"
-    cp -rp ${new_moodle_unpack_path}/* ${moodle_path}/
+    install_new_version "$image_version"
 }
 
 trap onErrorRestoreBackup ERR
