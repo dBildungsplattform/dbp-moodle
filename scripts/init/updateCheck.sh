@@ -7,16 +7,11 @@ set -o nounset
 moodle_path="/bitnami/moodle"
 
 # data folders
-new_moodle_unpack_path="/bitnami/moodledata/updated-moodle"
 moodle_backup_path="/bitnami/moodledata/moodle-backup"
 
 onErrorRestoreBackup() {
     mv "${moodle_path}" "${moodle_path}-failed"
     cp -rp "${moodle_backup_path}" "${moodle_path}"
-}
-
-cleanup() {
-    rm -rf "$new_moodle_unpack_path"
 }
 
 # return 0 if equal, -1 if $1 > $2 and 1 if $1 < $2
@@ -53,12 +48,8 @@ create_backup() {
 
 install_new_version() {
     local image_version="$1"
-    if [ -d "$new_moodle_unpack_path" ]; then
-        rm -rf "$new_moodle_unpack_path"
-    fi
-    MODULE="dbp-update" info "Unpacking new Moodle (${image_version})"
-    mkdir "$new_moodle_unpack_path"
     MODULE="dbp-update" info "Installing new Moodle (${image_version})"
+    mkdir -p "$moodle_path"
     tar -xzf --strip-components=1 "/moodle-${image_version}.tgz" -C "$moodle_path"
 }
 
