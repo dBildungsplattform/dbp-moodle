@@ -58,9 +58,8 @@ install_new_version() {
     fi
     MODULE="dbp-update" info "Unpacking new Moodle (${image_version})"
     mkdir "$new_moodle_unpack_path"
-    tar -xzf "/moodle-${image_version}.tgz" -C "$new_moodle_unpack_path" --strip 1
-        MODULE="dbp-update" info "Installing new Moodle (${image_version})"
-    mv ${new_moodle_unpack_path}/* ${moodle_path}/
+    MODULE="dbp-update" info "Installing new Moodle (${image_version})"
+    tar -xzf --strip-components=1 "/moodle-${image_version}.tgz" -C "$moodle_path"
 }
 
 main() {
