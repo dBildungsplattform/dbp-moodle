@@ -13,7 +13,7 @@ RUN set -x \
     && echo "deb [signed-by=/usr/share/keyrings/postgres.asc] https://apt.postgresql.org/pub/repos/apt jammy-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
     && apt-get -y update \
     && apt-get -y install \
-    python3-boto3 \
+        python3-boto3 \
         curl \
         duply \
         ca-certificates \
