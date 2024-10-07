@@ -84,7 +84,16 @@ tar -zcf moodle.tar.gz /mountData/moodle/
 
 # Get moodledata folder
 echo "=== Start moodledata directory backup ==="
-tar --exclude="/mountData/moodledata/cache" --exclude="/mountData/moodledata/sessions" --exclude="/mountData/moodledata/moodle-backup" --exclude="/mountData/moodledata/CliUpdate" -zcf moodledata.tar.gz /mountData/moodledata/
+tar \
+    --exclude="/mountData/moodledata/cache" \
+    --exclude="/mountData/moodledata/sessions" \
+    --exclude="/mountData/moodledata/moodle-backup" \
+    --exclude="/mountData/moodledata/CliUpdate" \
+    --exclude="/mountData/moodledata/UpdateInProgress" \
+    --exclude="/mountData/moodledata/UpdateFailed" \
+    --exclude="/mountData/moodledata/PluginsFailed" \
+    --exclude="/mountData/moodledata/climaintenance.html" \
+    -zcf moodledata.tar.gz /mountData/moodledata/
 
 echo "=== Start duply process ==="
 cd /etc/duply/default
