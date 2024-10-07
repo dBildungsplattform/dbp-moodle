@@ -1,7 +1,6 @@
 FROM ubuntu:22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
-ENV TZ=Europe/Berlin
 
 RUN set -x \
     && apt-get -y update \
