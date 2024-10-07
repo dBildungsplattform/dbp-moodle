@@ -28,6 +28,9 @@ booking:mod_booking:mod/booking
 reengagement:mod_reengagement:mod/reengagement
 unilabel:mod_unilabel:mod/unilabel
 geogebra:mod_geogebra:mod/geogebra
+choicegroup:mod_choicegroup:mod/choicegroup
+staticpage:local_staticpage:local/staticpage
+heartbeat:tool_heartbeat:admin/tool/heartbeat
 remuiformat:format_remuiformat:course/format/remuiformat
 tiles:format_tiles:course/format/tiles
 topcoll:format_topcoll:course/format/topcoll
@@ -37,7 +40,10 @@ dash:block_dash:blocks/dash
 sharing_cart:block_sharing_cart:blocks/sharing_cart
 xp:block_xp:blocks/xp
 coursecertificate:mod_coursecertificate:mod/coursecertificate
+adaptable:theme_adaptable:theme/adaptable
 boost_union:theme_boost_union:theme/boost_union
+boost_magnific:theme_boost_magnific:theme/boost_magnific
+snap:theme_snap:theme/snap
 EOF
 )
 
