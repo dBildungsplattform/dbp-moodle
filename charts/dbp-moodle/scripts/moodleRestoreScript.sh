@@ -27,9 +27,9 @@ echo "=== Download backup ==="
 duply default restore Full
 echo "=== Clear PVC ==="
 rm -rf /bitnami/moodle/*
-rm -rf /bitnami/moodle/.??*
+rm -rf /bitnami/moodle/.[!.]*
 rm -rf /bitnami/moodledata/*
-rm -rf /bitnami/moodledata/.??*
+rm -rf /bitnami/moodle/.[!.]*
 echo "=== Extract backup files ==="
 tar -xzf ./Full/tmp/backup/moodle.tar.gz -C /bitnami/
 tar -xzf ./Full/tmp/backup/moodledata.tar.gz -C /bitnami/
