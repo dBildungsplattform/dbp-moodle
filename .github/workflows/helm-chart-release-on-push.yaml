@@ -2,7 +2,6 @@ name: Release DBP Moodle Chart for dev
 on:
   push:
     branches-ignore:
-      - 'chart-main'
       - 'main'
 
 concurrency:
