@@ -1,5 +1,5 @@
 ---
-name: Build and push Docker Image on Tag
+name: Build and push Moodle Tools Docker Image on Tag
 
 on:
   push:
