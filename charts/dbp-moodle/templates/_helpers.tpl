@@ -1,11 +1,3 @@
-{{- define "dbpMoodle.stageBackupEnabled" -}}
-{{- if and (or (eq .Values.dbpMoodle.stage "prod") (eq .Values.dbpMoodle.name "infra")) ( .Values.dbpMoodle.backup.enabled ) -}}
-true
-{{- else -}}
-false
-{{- end -}}
-{{- end -}}
-
 {{- define "dbpMoodle.moodlePvc.name" -}}
 {{- if .Values.dbpMoodle.external_pvc.enabled }}
 {{- .Values.dbpMoodle.external_pvc.name -}}

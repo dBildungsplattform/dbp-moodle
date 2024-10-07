@@ -19,7 +19,7 @@ spec:
           resources: {{ .Values.dbpMoodle.moodleUpdatePreparationJob.resources | toYaml }}
           env:
           - name: BACKUP_ENABLED
-            value: '{{ include "dbpMoodle.stageBackupEnabled" . }}'
+            value: '{{ .Values.dbpMoodle.backup.enabled }}'
           volumeMounts:
             - name: script-volume
               mountPath: /moodle-update-preparation.sh
