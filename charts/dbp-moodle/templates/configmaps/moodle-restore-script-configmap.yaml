@@ -10,5 +10,5 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded,hook-failed
 data:
   restore-script: |-
-{{ tpl ( .Files.Get "scripts/moodleRestoreScript.sh" ) . | nindent 4 }}
+{{- tpl ( .Files.Get "scripts/moodleRestoreScript.sh" ) . | nindent 4 -}}
 {{- end }}
