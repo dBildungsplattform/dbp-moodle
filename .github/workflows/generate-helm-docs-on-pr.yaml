@@ -1,6 +1,6 @@
 # https://github.com/terraform-docs/gh-actions
 
-name: Generate Terraform-Docs && Helm-Docs
+name: Generate Helm-Docs on Pull Request
 on:
   push:
     branches:
