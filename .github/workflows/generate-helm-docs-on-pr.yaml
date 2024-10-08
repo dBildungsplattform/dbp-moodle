@@ -32,3 +32,5 @@ jobs:
         git_push: true
         username: "devops"
         email: "devops@dbildungsplattform.de"
+        permissions:
+          contents: write
