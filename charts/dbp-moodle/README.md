@@ -1,311 +1,417 @@
-# dbp Moodle Helm Chart
+# dbp-moodle
 
-A [Helm Library Chart](https://helm.sh/docs/topics/library_charts/#helm) for grouping common logic between bitnami charts.
+![Version: 0.0.6](https://img.shields.io/badge/Version-0.0.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.1.13](https://img.shields.io/badge/AppVersion-4.1.13-informational?style=flat-square)
 
-## TL;DR
+A Helm chart for dBildungsplattform Moodle including customizations
 
-```console
-$ helm repo add moodle https://dbildungsplattform.github.io/dbp-moodle/
-$ helm install moodle moodle/dbp-moodle
-```
-Notice: It is advised to use "moodle" as helm chart name due to naming of database configurations which are set in the default values. This can be circumvented by setting the values:
-  - moodle.externalDatabase.host
-  - etherpad-postgresql.persistence.existingClaim
-  - etherpadlite.env.DB_HOST.value
-  - moodle_hpa.deployment_name_ref
+## Requirements
 
+| Repository | Name | Version |
+|------------|------|---------|
+| file://charts/cronjob | cronjob | 0.1.0 |
+| file://charts/cronjob | cronjob | 0.1.0 |
+| file://charts/etherpad | etherpad | 0.1.0 |
+| https://burningalchemist.github.io/sql_exporter/ | sql-exporter | 0.6.1 |
+| https://charts.bitnami.com/bitnami | mariadb | 18.2.2 |
+| https://charts.bitnami.com/bitnami | moodle | 22.2.7 |
+| https://charts.bitnami.com/bitnami | postgresql | 15.5.7 |
+| https://charts.bitnami.com/bitnami | postgresql | 15.5.7 |
+| https://charts.bitnami.com/bitnami | redis | 19.5.3 |
 
-The dbp-moodle Helm Chart dependencies
-```yaml
-dependencies:
-  - name: moodle
-    version: "22.2.7"
-    repository: https://charts.bitnami.com/bitnami
+## Values
 
-  - name: redis
-    version: "19.5.3"
-    repository: https://charts.bitnami.com/bitnami
-    condition: redis.enabled
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| backup-cronjob.affinity | object | `{}` |  |
+| backup-cronjob.clusterRole.create | bool | `false` |  |
+| backup-cronjob.env[0].name | string | `"DATABASE_PASSWORD"` |  |
+| backup-cronjob.env[0].valueFrom.secretKeyRef.key | string | `"mariadb-password"` |  |
+| backup-cronjob.env[0].valueFrom.secretKeyRef.name | string | `"moodle"` |  |
+| backup-cronjob.env[1].name | string | `"AWS_ACCESS_KEY_ID"` |  |
+| backup-cronjob.env[1].valueFrom.secretKeyRef.key | string | `"s3_access_key"` |  |
+| backup-cronjob.env[1].valueFrom.secretKeyRef.name | string | `"moodle-backup-s3"` |  |
+| backup-cronjob.env[2].name | string | `"AWS_SECRET_ACCESS_KEY"` |  |
+| backup-cronjob.env[2].valueFrom.secretKeyRef.key | string | `"s3_access_secret"` |  |
+| backup-cronjob.env[2].valueFrom.secretKeyRef.name | string | `"moodle-backup-s3"` |  |
+| backup-cronjob.env[3].name | string | `"S3_BACKUP_REGION_URL"` |  |
+| backup-cronjob.env[3].valueFrom.secretKeyRef.key | string | `"s3_endpoint_url"` |  |
+| backup-cronjob.env[3].valueFrom.secretKeyRef.name | string | `"moodle-backup-s3"` |  |
+| backup-cronjob.extraVolumeMounts[0].mountPath | string | `"/scripts/"` |  |
+| backup-cronjob.extraVolumeMounts[0].name | string | `"moodle-backup-script"` |  |
+| backup-cronjob.extraVolumeMounts[1].mountPath | string | `"/mountData"` |  |
+| backup-cronjob.extraVolumeMounts[1].name | string | `"moodle-pvc-data"` |  |
+| backup-cronjob.extraVolumeMounts[2].mountPath | string | `"/etc/duply/default/"` |  |
+| backup-cronjob.extraVolumeMounts[2].name | string | `"duply"` |  |
+| backup-cronjob.extraVolumes[0].name | string | `"moodle-pvc-data"` |  |
+| backup-cronjob.extraVolumes[0].persistentVolumeClaim.claimName | string | `"moodle-data"` |  |
+| backup-cronjob.extraVolumes[1].configMap.defaultMode | int | `457` |  |
+| backup-cronjob.extraVolumes[1].configMap.name | string | `"moodle-backup-script"` |  |
+| backup-cronjob.extraVolumes[1].name | string | `"moodle-backup-script"` |  |
+| backup-cronjob.extraVolumes[2].name | string | `"duply"` |  |
+| backup-cronjob.extraVolumes[2].projected.defaultMode | int | `420` |  |
+| backup-cronjob.extraVolumes[2].projected.sources[0].configMap.items[0].key | string | `"conf"` |  |
+| backup-cronjob.extraVolumes[2].projected.sources[0].configMap.items[0].path | string | `"conf"` |  |
+| backup-cronjob.extraVolumes[2].projected.sources[0].configMap.items[1].key | string | `"exclude"` |  |
+| backup-cronjob.extraVolumes[2].projected.sources[0].configMap.items[1].path | string | `"exclude"` |  |
+| backup-cronjob.extraVolumes[2].projected.sources[0].configMap.name | string | `"moodle-duply"` |  |
+| backup-cronjob.extraVolumes[2].projected.sources[1].secret.name | string | `"moodle-backup-gpg-keys"` |  |
+| backup-cronjob.image.repository | string | `"ghcr.io/dbildungsplattform/moodle-tools"` |  |
+| backup-cronjob.image.tag | string | `"1.0.7"` |  |
+| backup-cronjob.jobs[0].args[0] | string | `"/scripts/backup-script"` |  |
+| backup-cronjob.jobs[0].command[0] | string | `"/bin/sh"` |  |
+| backup-cronjob.jobs[0].command[1] | string | `"-c"` |  |
+| backup-cronjob.jobs[0].failedJobsHistoryLimit | int | `1` |  |
+| backup-cronjob.jobs[0].name | string | `"backup"` |  |
+| backup-cronjob.jobs[0].schedule | string | `"0 3 * * *"` |  |
+| backup-cronjob.jobs[0].successfulJobsHistoryLimit | int | `1` |  |
+| backup-cronjob.resources.limits.cpu | string | `"2000m"` |  |
+| backup-cronjob.resources.limits.memory | string | `"4Gi"` |  |
+| backup-cronjob.resources.requests.cpu | string | `"500m"` |  |
+| backup-cronjob.resources.requests.memory | string | `"1Gi"` |  |
+| backup-cronjob.securityContext.allowPrivilegeEscalation | bool | `false` |  |
+| backup-cronjob.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| backup-cronjob.securityContext.privileged | bool | `false` |  |
+| backup-cronjob.securityContext.runAsGroup | int | `1001` |  |
+| backup-cronjob.serviceAccount.create | bool | `false` |  |
+| backup-cronjob.serviceAccount.name | string | `"moodle-backup-job"` |  |
+| backup-cronjob.tolerations | list | `[]` |  |
+| dbpMoodle.backup.cluster_name | string | `""` |  |
+| dbpMoodle.backup.enabled | bool | `false` |  |
+| dbpMoodle.backup.endpoint | string | `""` |  |
+| dbpMoodle.backup.gpg_key_names | string | `""` |  |
+| dbpMoodle.backup.gpgkeys."gpgkey.dbpinfra.pub.asc" | string | `""` |  |
+| dbpMoodle.backup.gpgkeys."gpgkey.dbpinfra.sec.asc" | string | `""` |  |
+| dbpMoodle.backup.gpgkeys.existingSecret | string | `""` |  |
+| dbpMoodle.backup.rules[0].apiGroups[0] | string | `"apps"` |  |
+| dbpMoodle.backup.rules[0].resources[0] | string | `"deployments"` |  |
+| dbpMoodle.backup.rules[0].verbs[0] | string | `"get"` |  |
+| dbpMoodle.backup.rules[0].verbs[1] | string | `"patch"` |  |
+| dbpMoodle.backup.rules[0].verbs[2] | string | `"list"` |  |
+| dbpMoodle.backup.rules[0].verbs[3] | string | `"watch"` |  |
+| dbpMoodle.backup.rules[1].apiGroups[0] | string | `"batch"` |  |
+| dbpMoodle.backup.rules[1].resources[0] | string | `"cronjobs"` |  |
+| dbpMoodle.backup.rules[1].resources[1] | string | `"jobs"` |  |
+| dbpMoodle.backup.rules[1].verbs[0] | string | `"get"` |  |
+| dbpMoodle.backup.rules[1].verbs[1] | string | `"patch"` |  |
+| dbpMoodle.backup.s3_bucket_name | string | `""` |  |
+| dbpMoodle.backup.secrets.existingSecret | string | `""` |  |
+| dbpMoodle.backup.secrets.s3_access_key | string | `""` |  |
+| dbpMoodle.backup.secrets.s3_access_secret | string | `""` |  |
+| dbpMoodle.backup.secrets.s3_endpoint_url | string | `""` |  |
+| dbpMoodle.debug | bool | `false` |  |
+| dbpMoodle.external_pvc.accessModes[0] | string | `"ReadWriteOnce"` |  |
+| dbpMoodle.external_pvc.annotations."helm.sh/resource-policy" | string | `"keep"` |  |
+| dbpMoodle.external_pvc.enabled | bool | `true` |  |
+| dbpMoodle.external_pvc.name | string | `"moodle-data"` |  |
+| dbpMoodle.external_pvc.size | string | `"8Gi"` |  |
+| dbpMoodle.external_pvc.storage_class | string | `"nfs-client"` |  |
+| dbpMoodle.hpa.average_cpu_utilization | int | `50` |  |
+| dbpMoodle.hpa.deployment_name_ref | string | `"moodle"` |  |
+| dbpMoodle.hpa.enabled | bool | `false` |  |
+| dbpMoodle.hpa.max_replicas | int | `4` |  |
+| dbpMoodle.hpa.min_replicas | int | `1` |  |
+| dbpMoodle.hpa.scaledown_cooldown | int | `60` |  |
+| dbpMoodle.hpa.scaledown_value | int | `25` |  |
+| dbpMoodle.hpa.scaleup_cooldown | int | `15` |  |
+| dbpMoodle.hpa.scaleup_value | int | `50` |  |
+| dbpMoodle.logging | bool | `false` |  |
+| dbpMoodle.moodleUpdatePreparationHook.rules[0].apiGroups[0] | string | `"apps"` |  |
+| dbpMoodle.moodleUpdatePreparationHook.rules[0].resources[0] | string | `"deployments"` |  |
+| dbpMoodle.moodleUpdatePreparationHook.rules[0].verbs[0] | string | `"get"` |  |
+| dbpMoodle.moodleUpdatePreparationHook.rules[0].verbs[1] | string | `"patch"` |  |
+| dbpMoodle.moodleUpdatePreparationHook.rules[1].apiGroups[0] | string | `"batch"` |  |
+| dbpMoodle.moodleUpdatePreparationHook.rules[1].resources[0] | string | `"cronjobs"` |  |
+| dbpMoodle.moodleUpdatePreparationHook.rules[1].resources[1] | string | `"jobs"` |  |
+| dbpMoodle.moodleUpdatePreparationHook.rules[1].verbs[0] | string | `"get"` |  |
+| dbpMoodle.moodleUpdatePreparationHook.rules[1].verbs[1] | string | `"list"` |  |
+| dbpMoodle.moodleUpdatePreparationHook.rules[1].verbs[2] | string | `"create"` |  |
+| dbpMoodle.moodleUpdatePreparationHook.rules[1].verbs[3] | string | `"patch"` |  |
+| dbpMoodle.moodleUpdatePreparationHook.rules[1].verbs[4] | string | `"watch"` |  |
+| dbpMoodle.moodleUpdatePreparationJob.affinity | object | `{}` |  |
+| dbpMoodle.moodleUpdatePreparationJob.kubectlImage | string | `"bitnami/kubectl:1.30.4-debian-12-r3"` |  |
+| dbpMoodle.moodleUpdatePreparationJob.resources | object | `{}` |  |
+| dbpMoodle.moodleUpdatePreparationJob.tolerations | list | `[]` |  |
+| dbpMoodle.moodlecronjob.rules[0].apiGroups[0] | string | `""` |  |
+| dbpMoodle.moodlecronjob.rules[0].resources[0] | string | `"pods"` |  |
+| dbpMoodle.moodlecronjob.rules[0].resources[1] | string | `"pods/exec"` |  |
+| dbpMoodle.moodlecronjob.rules[0].verbs[0] | string | `"get"` |  |
+| dbpMoodle.moodlecronjob.rules[0].verbs[1] | string | `"list"` |  |
+| dbpMoodle.moodlecronjob.rules[0].verbs[2] | string | `"create"` |  |
+| dbpMoodle.moodlecronjob.rules[0].verbs[3] | string | `"watch"` |  |
+| dbpMoodle.moodlecronjob.wait_timeout | string | `"15m"` |  |
+| dbpMoodle.name | string | `"infra"` |  |
+| dbpMoodle.redis.host | string | `"moodle-redis-master"` |  |
+| dbpMoodle.redis.password | string | `""` |  |
+| dbpMoodle.redis.port | int | `6379` |  |
+| dbpMoodle.restore.affinity | object | `{}` |  |
+| dbpMoodle.restore.enabled | bool | `false` |  |
+| dbpMoodle.restore.existingSecretDatabase | string | `"moodle"` |  |
+| dbpMoodle.restore.existingSecretGPG | string | `""` |  |
+| dbpMoodle.restore.existingSecretKeyDatabase | string | `""` |  |
+| dbpMoodle.restore.existingSecretKeyS3Access | string | `""` |  |
+| dbpMoodle.restore.existingSecretKeyS3Secret | string | `""` |  |
+| dbpMoodle.restore.existingSecretS3 | string | `""` |  |
+| dbpMoodle.restore.image | string | `"ghcr.io/dbildungsplattform/moodle-tools:1.0.7"` |  |
+| dbpMoodle.restore.resources.limits.cpu | string | `"2000m"` |  |
+| dbpMoodle.restore.resources.limits.memory | string | `"16Gi"` |  |
+| dbpMoodle.restore.resources.requests.cpu | string | `"1000m"` |  |
+| dbpMoodle.restore.resources.requests.memory | string | `"8Gi"` |  |
+| dbpMoodle.restore.rules[0].apiGroups[0] | string | `"apps"` |  |
+| dbpMoodle.restore.rules[0].resources[0] | string | `"deployments/scale"` |  |
+| dbpMoodle.restore.rules[0].resources[1] | string | `"deployments"` |  |
+| dbpMoodle.restore.rules[0].verbs[0] | string | `"get"` |  |
+| dbpMoodle.restore.rules[0].verbs[1] | string | `"list"` |  |
+| dbpMoodle.restore.rules[0].verbs[2] | string | `"scale"` |  |
+| dbpMoodle.restore.rules[0].verbs[3] | string | `"patch"` |  |
+| dbpMoodle.restore.tolerations | list | `[]` |  |
+| dbpMoodle.secrets.etherpad_api_key | string | `""` |  |
+| dbpMoodle.secrets.etherpad_postgresql_password | string | `""` |  |
+| dbpMoodle.secrets.mariadb_password | string | `""` |  |
+| dbpMoodle.secrets.mariadb_root_password | string | `""` |  |
+| dbpMoodle.secrets.moodle_password | string | `""` |  |
+| dbpMoodle.secrets.pgsql_admin_password | string | `""` |  |
+| dbpMoodle.secrets.useChartSecret | bool | `false` |  |
+| dbpMoodle.stage | string | `"infra"` |  |
+| dbpMoodle.update_migration.enabled | bool | `false` |  |
+| etherpad-postgresql.auth.database | string | `"etherpad"` |  |
+| etherpad-postgresql.auth.enablePostgresUser | bool | `false` |  |
+| etherpad-postgresql.auth.existingSecret | string | `"moodle"` |  |
+| etherpad-postgresql.auth.secretKeys.userPasswordKey | string | `"etherpad-postgresql-password"` |  |
+| etherpad-postgresql.auth.username | string | `"etherpad"` |  |
+| etherpad-postgresql.persistence.existingClaim | string | `"moodle-etherpad-postgresql"` |  |
+| etherpad-postgresql.primary.affinity | object | `{}` |  |
+| etherpad-postgresql.primary.containerSecurityContext.privileged | bool | `false` |  |
+| etherpad-postgresql.primary.resources.limits.cpu | string | `"1000m"` |  |
+| etherpad-postgresql.primary.resources.limits.memory | string | `"1Gi"` |  |
+| etherpad-postgresql.primary.resources.requests.cpu | string | `"50m"` |  |
+| etherpad-postgresql.primary.resources.requests.memory | string | `"128Mi"` |  |
+| etherpad-postgresql.primary.tolerations | list | `[]` |  |
+| etherpadlite.affinity | object | `{}` |  |
+| etherpadlite.enabled | bool | `false` |  |
+| etherpadlite.env[0].name | string | `"DB_TYPE"` |  |
+| etherpadlite.env[0].value | string | `"postgres"` |  |
+| etherpadlite.env[1].name | string | `"DB_HOST"` |  |
+| etherpadlite.env[1].value | string | `"moodle-etherpad-postgresql"` |  |
+| etherpadlite.env[2].name | string | `"DB_PORT"` |  |
+| etherpadlite.env[2].value | string | `"5432"` |  |
+| etherpadlite.env[3].name | string | `"DB_NAME"` |  |
+| etherpadlite.env[3].value | string | `"etherpad"` |  |
+| etherpadlite.env[4].name | string | `"DB_USER"` |  |
+| etherpadlite.env[4].value | string | `"etherpad"` |  |
+| etherpadlite.env[5].name | string | `"DB_PASS"` |  |
+| etherpadlite.env[5].valueFrom.secretKeyRef.key | string | `"etherpad-postgresql-password"` |  |
+| etherpadlite.env[5].valueFrom.secretKeyRef.name | string | `"moodle"` |  |
+| etherpadlite.env[6].name | string | `"REQUIRE_SESSION"` |  |
+| etherpadlite.env[6].value | string | `"true"` |  |
+| etherpadlite.image.repository | string | `"ghcr.io/dbildungsplattform/etherpad"` |  |
+| etherpadlite.image.tag | string | `"1.8.18.0"` |  |
+| etherpadlite.ingress.annotations."cert-manager.io/cluster-issuer" | string | `"sc-cert-manager-clusterissuer-letsencrypt"` |  |
+| etherpadlite.ingress.enabled | bool | `true` |  |
+| etherpadlite.ingress.hosts[0].host | string | `"etherpad.example.de"` |  |
+| etherpadlite.ingress.hosts[0].paths[0].path | string | `"/"` |  |
+| etherpadlite.ingress.hosts[0].paths[0].pathType | string | `"Prefix"` |  |
+| etherpadlite.ingress.tls[0].hosts[0] | string | `"etherpad.example.de"` |  |
+| etherpadlite.ingress.tls[0].secretName | string | `"etherpad.example.de-tls"` |  |
+| etherpadlite.resources.limits.cpu | string | `"1000m"` |  |
+| etherpadlite.resources.limits.memory | string | `"1Gi"` |  |
+| etherpadlite.resources.requests.cpu | string | `"100m"` |  |
+| etherpadlite.resources.requests.memory | string | `"128Mi"` |  |
+| etherpadlite.securityContext.privileged | bool | `false` |  |
+| etherpadlite.tolerations | list | `[]` |  |
+| etherpadlite.volumeMounts[0].mountPath | string | `"/opt/etherpad-lite/APIKEY.txt"` |  |
+| etherpadlite.volumeMounts[0].name | string | `"api-key"` |  |
+| etherpadlite.volumeMounts[0].subPath | string | `"APIKEY.txt"` |  |
+| etherpadlite.volumes[0].name | string | `"api-key"` |  |
+| etherpadlite.volumes[0].secret.items[0].key | string | `"etherpad-api-key"` |  |
+| etherpadlite.volumes[0].secret.items[0].path | string | `"APIKEY.txt"` |  |
+| etherpadlite.volumes[0].secret.secretName | string | `"moodle"` |  |
+| global.kubectl_version | string | `"1.28.7"` |  |
+| global.moodlePlugins.adaptable.enabled | bool | `false` |  |
+| global.moodlePlugins.booking.enabled | bool | `false` |  |
+| global.moodlePlugins.boost_magnific.enabled | bool | `false` |  |
+| global.moodlePlugins.boost_union.enabled | bool | `false` |  |
+| global.moodlePlugins.certificate.enabled | bool | `false` |  |
+| global.moodlePlugins.choicegroup.enabled | bool | `false` |  |
+| global.moodlePlugins.coursecertificate.enabled | bool | `false` |  |
+| global.moodlePlugins.dash.enabled | bool | `false` |  |
+| global.moodlePlugins.etherpadlite.enabled | bool | `false` |  |
+| global.moodlePlugins.geogebra.enabled | bool | `false` |  |
+| global.moodlePlugins.groupselect.enabled | bool | `false` |  |
+| global.moodlePlugins.heartbeat.enabled | bool | `false` |  |
+| global.moodlePlugins.hvp.enabled | bool | `false` |  |
+| global.moodlePlugins.jitsi.enabled | bool | `false` |  |
+| global.moodlePlugins.kaltura.enabled | bool | `false` |  |
+| global.moodlePlugins.oidc.enabled | bool | `false` |  |
+| global.moodlePlugins.pdfannotator.enabled | bool | `false` |  |
+| global.moodlePlugins.reengagement.enabled | bool | `false` |  |
+| global.moodlePlugins.remuiformat.enabled | bool | `false` |  |
+| global.moodlePlugins.saml2.enabled | bool | `false` |  |
+| global.moodlePlugins.sharing_cart.enabled | bool | `false` |  |
+| global.moodlePlugins.skype.enabled | bool | `false` |  |
+| global.moodlePlugins.snap.enabled | bool | `false` |  |
+| global.moodlePlugins.staticpage.enabled | bool | `false` |  |
+| global.moodlePlugins.tiles.enabled | bool | `false` |  |
+| global.moodlePlugins.topcoll.enabled | bool | `false` |  |
+| global.moodlePlugins.unilabel.enabled | bool | `false` |  |
+| global.moodlePlugins.xp.enabled | bool | `false` |  |
+| global.moodlePlugins.zoom.enabled | bool | `false` |  |
+| global.storageClass | string | `"nfs-client"` |  |
+| mariadb.auth.database | string | `"moodle"` |  |
+| mariadb.auth.existingSecret | string | `"moodle"` |  |
+| mariadb.auth.username | string | `"moodle"` |  |
+| mariadb.enabled | bool | `true` |  |
+| mariadb.global.storageClass | string | `"nfs-client"` |  |
+| mariadb.image.tag | string | `"11.3.2-debian-12-r5"` |  |
+| mariadb.metrics.enabled | bool | `true` |  |
+| mariadb.metrics.serviceMonitor.enabled | bool | `true` |  |
+| mariadb.primary.affinity | object | `{}` |  |
+| mariadb.primary.containerSecurityContext.privileged | bool | `false` |  |
+| mariadb.primary.resources.limits.cpu | int | `9` |  |
+| mariadb.primary.resources.limits.memory | string | `"3Gi"` |  |
+| mariadb.primary.resources.requests.cpu | string | `"250m"` |  |
+| mariadb.primary.resources.requests.memory | string | `"256Mi"` |  |
+| mariadb.primary.tolerations | list | `[]` |  |
+| moodle.affinity | object | `{}` |  |
+| moodle.allowEmptyPassword | bool | `false` |  |
+| moodle.containerPorts.http | int | `8080` |  |
+| moodle.containerPorts.https | int | `8443` |  |
+| moodle.containerSecurityContext.enabled | bool | `true` |  |
+| moodle.containerSecurityContext.privileged | bool | `false` |  |
+| moodle.containerSecurityContext.runAsGroup | int | `1001` |  |
+| moodle.containerSecurityContext.runAsNonRoot | bool | `true` |  |
+| moodle.existingSecret | string | `"moodle"` |  |
+| moodle.externalDatabase.database | string | `"moodle"` |  |
+| moodle.externalDatabase.existingSecret | string | `"moodle"` |  |
+| moodle.externalDatabase.host | string | `"moodle-mariadb"` |  |
+| moodle.externalDatabase.password | string | `""` |  |
+| moodle.externalDatabase.port | int | `3306` |  |
+| moodle.externalDatabase.type | string | `"mariadb"` |  |
+| moodle.externalDatabase.user | string | `"moodle"` |  |
+| moodle.extraEnvVarsSecret | string | `""` |  |
+| moodle.extraEnvVars[0].name | string | `"PHP_POST_MAX_SIZE"` |  |
+| moodle.extraEnvVars[0].value | string | `"200M"` |  |
+| moodle.extraEnvVars[1].name | string | `"PHP_UPLOAD_MAX_FILESIZE"` |  |
+| moodle.extraEnvVars[1].value | string | `"200M"` |  |
+| moodle.extraEnvVars[2].name | string | `"PHP_MAX_INPUT_VARS"` |  |
+| moodle.extraEnvVars[2].value | string | `"5000"` |  |
+| moodle.extraEnvVars[3].name | string | `"MOODLE_PLUGINS"` |  |
+| moodle.extraEnvVars[3].valueFrom.configMapKeyRef.key | string | `"moodle-plugin-list"` |  |
+| moodle.extraEnvVars[3].valueFrom.configMapKeyRef.name | string | `"moodle-plugins"` |  |
+| moodle.extraVolumeMounts[0].mountPath | string | `"/moodleconfig"` |  |
+| moodle.extraVolumeMounts[0].name | string | `"moodle-config"` |  |
+| moodle.extraVolumeMounts[0].readOnly | bool | `true` |  |
+| moodle.extraVolumes[0].name | string | `"moodle-config"` |  |
+| moodle.extraVolumes[0].secret.defaultMode | int | `420` |  |
+| moodle.extraVolumes[0].secret.items[0].key | string | `"config.php"` |  |
+| moodle.extraVolumes[0].secret.items[0].path | string | `"config.php"` |  |
+| moodle.extraVolumes[0].secret.items[1].key | string | `"php.ini"` |  |
+| moodle.extraVolumes[0].secret.items[1].path | string | `"php.ini"` |  |
+| moodle.extraVolumes[0].secret.secretName | string | `"moodle-config"` |  |
+| moodle.image.debug | bool | `false` |  |
+| moodle.image.pullPolicy | string | `"Always"` |  |
+| moodle.image.registry | string | `"ghcr.io"` |  |
+| moodle.image.repository | string | `"dbildungsplattform/moodle"` |  |
+| moodle.image.tag | string | `"4.1.12-debian-12-r1-chart-main"` |  |
+| moodle.ingress.annotations."cert-manager.io/cluster-issuer" | string | `"sc-cert-manager-clusterissuer-letsencrypt"` |  |
+| moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-body-size" | string | `"200M"` |  |
+| moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-connect-timeout" | string | `"30s"` |  |
+| moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-read-timeout" | string | `"20s"` |  |
+| moodle.ingress.enabled | bool | `true` |  |
+| moodle.ingress.hostname | string | `"example.de"` |  |
+| moodle.ingress.tls | bool | `true` |  |
+| moodle.mariadb.enabled | bool | `false` |  |
+| moodle.metrics.enabled | bool | `true` |  |
+| moodle.metrics.resources.limits.cpu | string | `"200m"` |  |
+| moodle.metrics.resources.limits.memory | string | `"256Mi"` |  |
+| moodle.metrics.resources.requests.cpu | string | `"10m"` |  |
+| moodle.metrics.resources.requests.memory | string | `"16Mi"` |  |
+| moodle.metrics.service.type | string | `"ClusterIP"` |  |
+| moodle.moodleEmail | string | `""` |  |
+| moodle.moodleLang | string | `"de"` |  |
+| moodle.moodleSiteName | string | `"Moodle"` |  |
+| moodle.moodleSkipInstall | bool | `false` |  |
+| moodle.moodleUsername | string | `"admin"` |  |
+| moodle.networkPolicy.enabled | bool | `false` |  |
+| moodle.persistence.existingClaim | string | `"moodle-data"` |  |
+| moodle.podAnnotations.moodle/image | string | `"{{- .Values.image.repository -}}:{{- .Values.image.tag -}}"` |  |
+| moodle.podAnnotations.moodleplugins/checksum | string | `"{{- include \"dbpMoodle.pluginConfigMap.content\" . | sha256sum -}}"` |  |
+| moodle.podSecurityContext.enabled | bool | `true` |  |
+| moodle.resources.limits.cpu | int | `6` |  |
+| moodle.resources.limits.memory | string | `"3Gi"` |  |
+| moodle.resources.requests.cpu | string | `"300m"` |  |
+| moodle.resources.requests.memory | string | `"512Mi"` |  |
+| moodle.service.type | string | `"ClusterIP"` |  |
+| moodle.tolerations | list | `[]` |  |
+| moodle.updateStrategy.type | string | `"RollingUpdate"` |  |
+| moodlecronjob.affinity | object | `{}` |  |
+| moodlecronjob.clusterRole.create | bool | `false` |  |
+| moodlecronjob.image.repository | string | `"ghcr.io/dbildungsplattform/moodle-tools"` |  |
+| moodlecronjob.image.tag | string | `"1.0.7"` |  |
+| moodlecronjob.jobs[0].args[0] | string | `"/scripts/cronjob-script"` |  |
+| moodlecronjob.jobs[0].backoffLimit | int | `1` |  |
+| moodlecronjob.jobs[0].command[0] | string | `"/bin/bash"` |  |
+| moodlecronjob.jobs[0].command[1] | string | `"-c"` |  |
+| moodlecronjob.jobs[0].concurrencyPolicy | string | `"Forbid"` |  |
+| moodlecronjob.jobs[0].extraVolumeMounts[0].mountPath | string | `"/scripts/"` |  |
+| moodlecronjob.jobs[0].extraVolumeMounts[0].name | string | `"moodle-php-script"` |  |
+| moodlecronjob.jobs[0].extraVolumes[0].configMap.defaultMode | int | `457` |  |
+| moodlecronjob.jobs[0].extraVolumes[0].configMap.name | string | `"moodle-php-script"` |  |
+| moodlecronjob.jobs[0].extraVolumes[0].name | string | `"moodle-php-script"` |  |
+| moodlecronjob.jobs[0].failedJobsHistoryLimit | int | `1` |  |
+| moodlecronjob.jobs[0].name | string | `"php-script"` |  |
+| moodlecronjob.jobs[0].restartPolicy | string | `"Never"` |  |
+| moodlecronjob.jobs[0].schedule | string | `"* * * * *"` |  |
+| moodlecronjob.jobs[0].successfulJobsHistoryLimit | int | `1` |  |
+| moodlecronjob.resources | object | `{}` |  |
+| moodlecronjob.securityContext.allowPrivilegeEscalation | bool | `false` |  |
+| moodlecronjob.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| moodlecronjob.securityContext.privileged | bool | `false` |  |
+| moodlecronjob.securityContext.runAsGroup | int | `1001` |  |
+| moodlecronjob.serviceAccount.create | bool | `false` |  |
+| moodlecronjob.serviceAccount.name | string | `"moodle-moodle-cronjob"` |  |
+| moodlecronjob.tolerations | list | `[]` |  |
+| postgresql.auth.database | string | `"moodle"` |  |
+| postgresql.auth.existingSecret | string | `"moodle"` |  |
+| postgresql.auth.secretKeys.adminPasswordKey | string | `"pgsql-admin-password"` |  |
+| postgresql.auth.secretKeys.userPasswordKey | string | `"mariadb-password"` |  |
+| postgresql.auth.username | string | `"moodle"` |  |
+| postgresql.enabled | bool | `false` |  |
+| postgresql.image.tag | string | `"14.8.0-debian-11-r0"` |  |
+| postgresql.metrics.enabled | bool | `true` |  |
+| postgresql.metrics.serviceMonitor.enabled | bool | `true` |  |
+| postgresql.primary.affinity | object | `{}` |  |
+| postgresql.primary.containerSecurityContext.privileged | bool | `false` |  |
+| postgresql.primary.extendedConfiguration | string | `"max_connections = 800\n"` |  |
+| postgresql.primary.resources.limits.cpu | int | `9` |  |
+| postgresql.primary.resources.limits.memory | string | `"3Gi"` |  |
+| postgresql.primary.resources.requests.cpu | string | `"250m"` |  |
+| postgresql.primary.resources.requests.memory | string | `"256Mi"` |  |
+| postgresql.primary.tolerations | list | `[]` |  |
+| redis.architecture | string | `"standalone"` |  |
+| redis.auth.enabled | bool | `true` |  |
+| redis.auth.existingSecret | string | `"moodle"` |  |
+| redis.auth.existingSecretPasswordKey | string | `"redis-password"` |  |
+| redis.auth.usePasswordFileFromSecret | bool | `true` |  |
+| redis.enabled | bool | `true` |  |
+| redis.master.affinity | object | `{}` |  |
+| redis.master.resources | object | `{}` |  |
+| redis.master.tolerations | list | `[]` |  |
+| sql-exporter.affinity | object | `{}` |  |
+| sql-exporter.config.collector_files[0] | string | `"collectors/sql_exporter_moodle.yaml"` |  |
+| sql-exporter.config.target.collectors[0] | string | `"sql_exporter_moodle"` |  |
+| sql-exporter.config.target.data_source_name | string | `""` |  |
+| sql-exporter.enabled | bool | `false` |  |
+| sql-exporter.extraVolumes[0].mount.mountPath | string | `"/etc/sql_exporter/collectors/"` |  |
+| sql-exporter.extraVolumes[0].mount.readOnly | bool | `true` |  |
+| sql-exporter.extraVolumes[0].name | string | `"moodle-collector-config"` |  |
+| sql-exporter.extraVolumes[0].volume.configMap.items[0].key | string | `"moodle-collector-config"` |  |
+| sql-exporter.extraVolumes[0].volume.configMap.items[0].path | string | `"sql_exporter_moodle.yaml"` |  |
+| sql-exporter.extraVolumes[0].volume.configMap.name | string | `"moodle-sql-exporter-configmap"` |  |
+| sql-exporter.image.pullPolicy | string | `"IfNotPresent"` |  |
+| sql-exporter.resources | object | `{}` |  |
+| sql-exporter.securityContext.allowPrivilegeEscalation | bool | `false` |  |
+| sql-exporter.securityContext.privileged | bool | `false` |  |
+| sql-exporter.tolerations | list | `[]` |  |
 
-  - name: mariadb
-    version: "18.2.2"
-    repository: https://charts.bitnami.com/bitnami
-    condition: mariadb.enabled
-
-  - name: postgresql
-    version: "15.5.7"
-    repository: https://charts.bitnami.com/bitnami
-    condition: postgresql.enabled
-
-  - name: cronjob
-    alias: backup-cronjob
-    version: 0.1.0
-    repository: "file://charts/backup-cronjob"
-    condition: backup.enabled
-
-  - name: postgresql
-    version: "15.5.7"
-    repository: https://charts.bitnami.com/bitnami
-    alias: etherpad-postgresql
-    condition: etherpadlite.enabled
-
-  - name: etherpad
-    version: 0.1.0
-    repository: "file://charts/etherpad"
-    alias: etherpadlite
-    condition: etherpadlite.enabled
-```
-
-## Introduction
-
-This is a Helm Chart bundling some of the bitnami resources to deploy Moodle for DBildungsplattform. Extending them with features such as 
-
-MariaDB and PostgreSQL support, Horizontal Autoscaling capabilities, Redis Session Store, Etherpad-Lite.
-The Chart can be deployed without any modification but it is advised to set own secrets acccording to this readme.
-
-## Parameters
-
-The following table lists the helpers available in the library which are scoped in different sections.
-
-### Globals
-| Name                 | Description  | Value       |
-| -----                | ------------ | --------    |
-| `name`                 |              | `"infra"`        |
-| `stage`                |              | `"infra"`        |
-| `kubectl_version`      |              | `"1.28.7"`     |
-| `infratools_image_tag` |              | `"4.0.3"`      |
-| `storageClass`         |              | `"nfs-client"` |
-
-### Backup
-| Name                | Description  | Value        |
-| -----               | ------------ | --------     |
-| `enabled`             |              | `false`        |
-| `gpg_key_names`       |              | `"dbpinfra"`     |
-| `s3_bucket_name`      |              | `"default"`      |
-| `cluster_name`        |              | `"default"`      |
-| `endpoint.url`        |              | `"moodle.example.de"` |
-
-### dbpMoodle
-| Name                                   | Description  | Value        |
-| -----                                  | ------------ | --------     |
-| `logging`                              |              | `false` |
-| `debug`                                | Moodle Debugging is not safe for production | `false` |
-| `restore`                              |              | `false` |
-| `update_migration.enabled`             | The dbp update process to migrate moodle date when Moodle versions are increased | `false` |
-| `redis.host`                           | | `"moodle-redis-master`"|
-| `redis.port`                           | | `6379` |
-| `redis.password`                       | | `"moodle"` |
-| `secrets.useChartSecret`               | If set to true the secret will be created with given values. | `true` |
-| `updateHelper.rules`                   | [WIP] Set permissions for the updateHelper that is created when `update_migration.enabled=true`| `[...]` |
-| `secrets.moodle_password`              | | `randAlphaNum 16` |
-| `secrets.postgres_admin_password`      | | `randAlphaNum 16` |
-| `secrets.mariadb_password`             | | `randAlphaNum 16` |
-| `secrets.mariadb_root_password`        | | `randAlphaNum 16` |
-| `secrets.etherpad_postgresql_password` | | `randAlphaNum 16` |
-| `secrets.etherpad_api_key`             | | `"moodle"` |
-
-### infratools
-| Name                     | Description  | Value        |
-| -----                    | ------------ | --------     |
-|`repository`||`schulcloud`|
-|`image_tag`||`4.0.3`|
-
-### external_pvc
-| Name                     | Description  | Value               |
-| -----                    | ------------ | --------            |
-| `enabled`                | Currently not operational. WIP     | `false`             |
-| `name`                   | The Name of the external PVC to use. | `"moodle-data"`     |
-| `size`                   |              | `"8Gi"`             |
-| `storage_class`          |              | `"nfs-client"`      |
-| `accessModes`            | Because of Autoscaling and [WIP] Update Process it needs to be accessed by multiple Pods. | `["ReadWriteMany"]` |
-| `annotations."helm.sh/resource-policy"`|   | `"keep"` |
-
-### moodle_hpa
-Horizontal Pod Autoscaling Values
-| Name                        | Description  | Value        |
-| -----                       | ------------ | --------     |
-| `deployment_name_ref`       | |`"moodle"`|
-| `enabled`                   | |`false` |
-| `min_replicas`              | |`1`|
-| `max_replicas`              | |`4`|
-| `average_cpu_utilization`   | |`50`|
-| `scaledown_value`           | The max amount in percent to scale in one step per cooldown period | `25` |
-| `scaledown_cooldown`        ||`60`|
-| `scaleup_value`             ||`50`|
-| `scaleup_cooldown`          ||`15`|
-
-## Parameters for Dependencies
-
-### moodle
-| Name                                | Description  | Value        |
-|---                                         |---|---|
-| `image.registry`                            ||`ghcr.io`|
-| `image.repository`                          ||`dbildungsplattform/moodle`|
-| `image.tag`                                 | The dbp Image which is build for this Helm Chart. |`"4.1.11-debian-12-r0"`|
-| `image.pullPolicy`                          ||`Always`|
-| `image.debug`                               | Debug mode for more detailed Moodle installation and log output. |`false`|
-| `moodleSkipInstall`                         ||`false`|
-| `moodleSiteName`                            ||`"Moodle"`|
-| `moodleLang`                                ||`"de"`|
-| `moodleUsername`                            ||`admin`|
-| `moodleEmail`                               ||`devops@dbildungscloud.de`|
-| `allowEmptyPassword`                        ||`false`|
-| `extraEnvVars`                              |   | `[...] `|
-| `extraEnvVars.PHP_POST_MAX_SIZE`            ||`200M`|
-| `extraEnvVars.PHP_UPLOAD_MAX_FILESIZE`      ||`200M`|
-| `extraEnvVars.PHP_MAX_INPUT_VARS`           ||`"5000"`|
-| `extraEnvVars.MOODLE_PLUGINS`               | WIP | |
-| `extraEnvVars.ENABLE_KALTURA`               ||`"false"`|
-| `extraEnvVarsSecret`                        ||`"moodle"`|
-| `existingSecret`                            | If this value is not set, moodle will create its own secret "moodle" which could cause problems. |`"moodle"`|
-| `persistence.enabled`                       ||`true`|
-| `persistence.storageClass`                  ||`"nfs-client"`|
-| `persistence.annotations`                   ||`"helm.sh/resource-policy":"keep"`|
-| `resources.requests.cpu`                    ||`300m`|
-| `resources.requests.memory`                 ||`512Mi`|
-| `resources.limits.cpu`                      ||`6`|
-| `resources.limits.memory`                   ||`3Gi`|
-| `mariadb.enabled`                           ||`false`|
-| `externalDatabase.type`                     ||`"mariadb"`|
-| `externalDatabase.host`                     ||`"moodle-mariadb"`|
-| `externalDatabase.port`                     ||`3306`|
-| `externalDatabase.user`                     ||`"moodle"`|
-| `externalDatabase.database`                 ||`"moodle"`|
-| `externalDatabase.password`                 ||`"moodle"`|
-| `externalDatabase.existingSecret`           ||`"moodle"`|
-| `service.type`                              ||`ClusterIP`|
-| `ingress.enabled`                           ||`true`|
-| `ingress.hostname`                          | The corresponding hostname of the moodle application. |`"example.hostname.de"`|
-| `ingress.tls`                               ||`true`|
-| `ingress.annotations`                       ||`[...] `|
-| `metrics.enabled`                           ||`true`|
-| `metrics.service.type`                      ||`ClusterIP`|
-| `metrics.resources.requests.cpu`            ||`10m`|
-| `metrics.resources.requests.memory`         ||`16Mi`|
-| `metrics.resources.limits.cpu`              ||`200m`|
-| `metrics.resources.limits.memory`           ||`256Mi`|
-| `metrics.extraVolumeMounts`                 | The required configuration files for Moodle to work. |  `[...] `|
-| `metrics.extraVolumeMounts.name`            ||`moodle-config`|
-| `metrics.extraVolumeMounts.readOnly`        ||`true`|
-| `metrics.extraVolumeMounts.mountPath`       ||`/moodleconfig`|
-| `metrics.extraVolumes`                      | A List of Files to mount |  `[...] `|
-| `metrics.extraVolumes.name`                 ||`moodle-config`|
-| `metrics.extraVolumes.secret.secretName`    ||`moodle-config`|
-| `metrics.extraVolumes.secret.items[0].key`  | The custom config.php File that is used to configure Moodle to use the Database and Redis (If activated) |`config.php`|
-| `metrics.extraVolumes.secret.items[0].path` ||`config.php`|
-| `metrics.extraVolumes.secret.items[1].key`  | The php.ini which installs the php-redis extension to enable the use for redis. |`php.ini`|
-| `metrics.extraVolumes.secret.items[1].path` ||`php.ini`|
-| `metrics.extraVolumes.secret.defaultMode`   ||`644`|
-
-### mariadb
-| Name                                    | Description  | Value        |
-| -----                                   | ------------ | --------     |
-| `enabled`                                 || `true` |
-| `global.storageClass`                     || `"nfs-client"` |
-| `image.tag`                               || `"11.3.2-debian-12-r5"` |
-| `auth.username`                           || `"moodle"` |
-| `auth.database`                           || `"moodle"` |
-| `auth.rootPassword`                       || `"moodle"` |
-| `auth.password`                           || `"moodle"` |
-| `auth.existingSecret`                     || `"moodle"` |
-| `metrics.enabled`                         || `true` |
-| `metrics.serviceMonitor.enabled`          || `true` |
-| `primary.resources.requests.cpu`          || `"250m" ` |
-| `primary.resources.requests.memory`       || `"256Mi" ` |
-| `primary.resources.limits.cpu`            || `9 ` |
-| `primary.resources.limits.memory`         || `"3Gi" ` |
-
-### postgresql
-| Name                                   | Description  | Value        |
-| -----                                  | ------------ | --------     |
-| `enabled`                                 || `false` |
-| `image.tag`                               || `"14.8.0-debian-11-r0"` |
-| `auth.username`                           || `"moodle"` |
-| `auth.database`                           || `"moodle"` |
-| `auth.existingSecret`                     || `"moodle"` |
-| `auth.secretKeys.adminPasswordKey`        || `"PGSQL_POSTGRES_PASSWORD"` |
-| `auth.secretKeys.userPasswordKey`         || `"postgresql-password"` |
-| `metrics.enabled`                         || `true` |
-| `metrics.serviceMonitor.enabled`          || `true` |
-| `primary.extendedConfiguration`           || `"max_connections = 800"` |
-| `primary.resources.requests.cpu`          || `"250m"` |
-| `primary.resources.requests.memory`       || `"256Mi"` |
-| `primary.resources.limits.cpu`            || `9` |
-| `primary.resources.limits.memory`         || `"3Gi"` |
-
-### redis
-| Name                                    | Description  | Value        |
-| -----                                   | ------------ | --------     |
-| `enabled`                                 || `false` |
-| `architecture`                            || `"standalone"` |
-| `auth.enabled`                            || `true` |
-| `auth.password`                           || `"moodle"` |
-| `auth.existingSecret`                     || `"moodle"` |
-| `auth.existingSecretPasswordKey`          || `"redis-password"` |
-| `auth.usePasswordFileFromSecret`          || `true` |
-
-### etherpad-postgresql
-| Name                                   | Description  | Value        |
-| -----                                  | ------------ | --------     |
-| `auth.enablePostgresUser`               |              | `false`      |
-| `auth.username`                         |              | `"etherpad"` |
-| `auth.existingSecret`                   |              | `"moodle"` |
-| `auth.secretKeys.userPasswordKey`       |              | `"etherpad-postgresql-password"` |
-| `auth.database`                         |              | `"etherpad"` |
-| `persistence.existingClaim`             |              | `"moodle-etherpad-postgresql"` |
-| `primary.resources.requests.cpu`        |              | `"50m"` | 
-| `primary.resources.requests.memory`     |              | `"128Mi"` |                      
-| `primary.resources.limits.cpu`          |              | `"1000m"` |
-| `primary.resources.limits.memory`       |              | `"1Gi"` |
-
-### etherpadlite
-Etherpad requires configuration to work.
-| Name                                      | Description  | Value        |
-| -----                                     | ------------ | --------     |
-| `enabled`                                 | | `true `|
-| `image.repository`                        | | `"ghcr.io/dbildungsplattform/etherpad"` |
-| `image.tag`                               | | `"1.8.18.0"` |
-| `env.DB_TYPE`                             | | `"postgres"` |
-| `env.DB_HOST`                             | | `"moodle-etherpad-postgresql"` |
-| `env.DB_PORT`                             | | `5432 `|
-| `env.DB_NAME`                             | | `"etherpad"` |
-| `env.DB_USER`                             | | `"etherpad"` |
-| `env.DB_PASS.valueFrom.secretKeyRef.name` | | `"moodle"` |
-| `env.DB_PASS.valueFrom.secretKeyRef.key`  | | `"etherpad-postgresql-password"` |
-| `env.REQUIRE_SESSION`                     | | `"true"` |
-| `volumes.name`                            | | `"api-key"` |
-| `volumes.name`                            | | `"api-key"` |
-| `volumes.secret.secretName`               | | `"moodle"` |
-| `volumes.secret.items.key`                | | `"etherpad-api-key"` |
-| `volumes.secret.items.path`               | | `"APIKEY.txt"` |
-| `volumeMounts.name`                       | | `"api-key"` |
-| `volumeMounts.mountPath`                  | | `"api-key"` |
-| `volumeMounts.subPath`                    | | `"APIKEY.txt"` |
-| `ingress.enabled`                         | | `true `|
-| `ingress.annotations`                     | | ` [...] `  |
-| `ingress.hosts.host`                      | | `["etherpad.example.de"] `|
-| `ingress.paths.path`                      | | `"/"` |
-| `ingress.paths.pathType`                  | | `Prefix`|
-| `ingress.tls.secretName`                  | | ` ["etherpad.example.de-tls"]`|
-| `ingress.tls.hosts`                       | | ` ["etherpad.example.de"]` |
-| `resources.requests.cpu`                  | | `"100m"`  |
-| `resources.requests.memory`               | | `"128Mi"` |
-| `resources.limits.cpu`                    | | `"1000m"` |
-| `resources.limits.memory`                 | | `"1Gi"`  |
-
-## Secrets
-There is a default secret that will be created with the chart deployment, it covers all necessary secrets that cover all featurs:
-values.yaml
-
-```yaml
-secrets:
-  useChartSecret: true
-  moodle_password: "moodle"
-  postgres_admin_password: "moodle"
-  mariadb_password: "moodle"
-  mariadb_root_password: "moodle"
-  etherpad_postgresql_password: "moodle"
-  etherpad_api_key: "moodle"
-```
-
-In case an own secret will be provided and should be used the value "useChartSecret" can be set to "false" and all existingSecret Values need to be set accordingly.
+----------------------------------------------
+Autogenerated from chart metadata using [helm-docs v1.2.0](https://github.com/norwoodj/helm-docs/releases/v1.2.0)
