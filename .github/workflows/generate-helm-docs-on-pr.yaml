@@ -30,7 +30,7 @@ jobs:
         src_path: "charts"
         template_file: ".github/templates/README.md.gotmpl"
         # provide name of dirs to ignore, separate by comma without space
-        # ignored_dirs: 
+        ignored_dirs: dbp-moodle/charts/cronjob,dbp-moodle/charts/etherpad
         git_push: true
         username: "devops"
         email: "devops@dbildungsplattform.de"
