@@ -1,6 +1,8 @@
 global:
   kubectl_version: "1.28.7"
+  # -- default storage class, should support ReadWriteMany
   storageClass: "nfs-client"
+  # -- all plugins are disabled by default. if enabled, the plugin is installed on image startup
   moodlePlugins:
     kaltura:
       enabled: false
@@ -63,13 +65,16 @@ global:
 dbpMoodle:
   name: infra
   stage: infra
+  # -- Extended php logging
   logging: false
-  debug: false # Moodle debugging is not safe for production
+  # -- Moodle debugging is not safe for production
+  debug: false
 
-  # The dbp update process to migrate moodle data when moodle versions are increased
+  # -- The dbp update process to migrate moodle data when moodle versions are increased
   update_migration:
     enabled: false
 
+  # -- configurations for the optional redis
   redis:
     host: "moodle-redis-master"
     port: 6379
@@ -84,6 +89,8 @@ dbpMoodle:
     annotations:
       "helm.sh/resource-policy": "keep"
 
+  # -- Create a secret with for all moodle relevant credentials, set useChartSecret: false to provide your own secret
+  # -- if you create your own secret, also set moodle.existingSecret and moodle.externalDatabase.existingSecret (if you bring your own DB)
   secrets:
     useChartSecret: false
     moodle_password: ""
@@ -93,6 +100,7 @@ dbpMoodle:
     etherpad_postgresql_password: ""
     etherpad_api_key: ""
 
+  # -- A preperation job which disables the php-cronjob, scales down the deployment and creates a backup if dbpMoodle.backup.enabled=true
   moodleUpdatePreparationJob:
     affinity: {}
     tolerations: []
@@ -108,21 +116,25 @@ dbpMoodle:
         resources: ["cronjobs", "jobs"]
         verbs: ["get", "list", "create", "patch", "watch"]
 
+  # -- Creates a backup of moodle data & postgres. see backup-cronjob for more values (such as schedule)
   backup:
     enabled: false
     gpg_key_names: ""
     gpgkeys:
       gpgkey.dbpinfra.pub.asc: ""
       gpgkey.dbpinfra.sec.asc: ""
-      existingSecret: "" # existing secret for gpg keys
+      # -- existing secret for gpg keys
+      existingSecret: ""
     s3_bucket_name: ""
     cluster_name: ""
     endpoint: ""
+    # -- either provide an existing secret, or set each secret value here. If both are set the existingSecret is used
     secrets:
       s3_access_key: ""
       s3_access_secret: ""
       s3_endpoint_url: ""
-      existingSecret: "" # existing secret for s3 secrets
+      # -- provide a secret with the three keys above
+      existingSecret: ""
 
     rules:
       - apiGroups: ["apps"]
@@ -132,8 +144,9 @@ dbpMoodle:
         resources: ["cronjobs", "jobs"]
         verbs: ["get", "patch"]
 
+  # -- This restores moodle to the latest snapshot. ONLY USE FOR ROLLBACK
   restore:
-    enabled: false # Only to be used to restore a snapshot with the dbp-restore script
+    enabled: false
     image: ghcr.io/dbildungsplattform/moodle-tools:1.0.7
     resources:
       limits:
@@ -156,6 +169,7 @@ dbpMoodle:
         resources: ["deployments/scale", "deployments"]
         verbs: ["get", "list", "scale", "patch"]
 
+  # -- cronjob to sync moodle users, needs to run regularly if moodle doesn't run as root
   moodlecronjob:
     wait_timeout: "15m"
     rules:
@@ -163,18 +177,20 @@ dbpMoodle:
         resources: ["pods", "pods/exec"]
         verbs: ["get", "list", "create", "watch"]
 
-  # Horizontal Pod Autoscaling Values
+  # -- Horizontal Pod Autoscaling Values
   hpa:
     enabled: false
     deployment_name_ref: "moodle"
-    # Moodle Autoscaling Values
     min_replicas: 1
     max_replicas: 4
     average_cpu_utilization: 50
-    # The up and downscaling values to have more control over the speed moodle will be scaled
-    scaledown_value: 25 # The max amount in percent to scale in one step per cooldown period
+    # -- The max amount in percent to scale down in one step per cooldown period
+    scaledown_value: 25
+    # -- How many seconds to wait between downscaling adjustments
     scaledown_cooldown: 60
+    # -- The max amount in percent to scale up in one step per cooldown period
     scaleup_value: 50
+    # -- How many seconds to wait between upscaling adjustments
     scaleup_cooldown: 15
 
 moodle:
@@ -183,8 +199,10 @@ moodle:
   image:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
+    # -- The dbp Image which is build for this Helm Chart
     tag: "4.1.12-debian-12-r1-chart-main"
     pullPolicy: Always
+    # -- Debug mode for more detailed Moodle installation and log output
     debug: false
   moodleSkipInstall: false
   moodleSiteName: "Moodle"
@@ -205,8 +223,10 @@ moodle:
           name: moodle-plugins
           key: moodle-plugin-list
   extraEnvVarsSecret: ""
+  # --	If this value is unset, the bitnami/moodle chart generates its own secret
   existingSecret: "moodle"
   persistence:
+    # --	If this value is unset, the bitnami/moodle chart generates its own PV & PVC
     existingClaim: "moodle-data"
   affinity: {}
   tolerations: []
@@ -217,20 +237,29 @@ moodle:
     limits:
       cpu: 6
       memory: 3Gi
+  # -- The mariadb included in bitnami/moodle chart. For this chart usage of mariadb.enabled with moodle.externalDatabase.type="mariadb" is recommended
   mariadb:
     enabled: false
   externalDatabase:
+    # -- Type of DB to provision, possible values are "mariadb" and "pgsql"
     type: "mariadb"
+    # -- Host of the existing database
     host: "moodle-mariadb"
+    # -- Port of the existing database
     port: 3306
+    # -- Existing username in the external db
     user: "moodle"
-    database: "moodle"
-    existingSecret: "moodle"
+    # -- 	Password for the above username
     password: ""
+    # -- Name of the existing database
+    database: "moodle"
+    # -- Name of an existing secret resource containing the DB password
+    existingSecret: "moodle"
   service:
     type: ClusterIP
   ingress:
     enabled: true
+    # -- The hostname of the moodle application.
     hostname: "example.de"
     tls: true
     annotations:
@@ -242,7 +271,8 @@ moodle:
     enabled: true
     service:
       type: ClusterIP
-    resources: # We need those resources so the Horizontal Pod Autoscaler for moodle can read the moodle cpu consumption correctly
+    # -- Resources have to be set so that the Horizontal Pod Autoscaler for moodle can read the moodle cpu consumption correctly
+    resources: 
       requests:
         cpu: 10m
         memory: 16Mi
@@ -258,8 +288,10 @@ moodle:
       secret:
         secretName: moodle-config
         items:
+          # -- The custom config.php File that is used to configure Moodle to use the Database and Redis (If activated)
           - key: config.php
             path: config.php
+          # -- The php.ini which installs the php-redis extension to enable the use for redis
           - key: php.ini
             path: php.ini
         defaultMode: 0644

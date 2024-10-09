@@ -3,6 +3,7 @@
 
 {{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
 
+## Introduction
 {{ template "chart.description" . }}
 
 {{ template "chart.homepageLine" . }}
@@ -11,7 +12,8 @@
 ## How to install this chart
 
 ```console
-helm install chart_name ./{{ template "chart.name" . }}
+helm repo add moodle https://dbildungsplattform.github.io/dbp-moodle/
+helm install moodle ./{{ template "chart.name" . }}
 ```
 
 To install the chart with the release name `my-release`:
