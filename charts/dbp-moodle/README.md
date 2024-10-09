@@ -109,6 +109,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | dbpMoodle.moodleUpdatePreparationHook.rules[1].verbs[3] | string | `"patch"` |  |
 | dbpMoodle.moodleUpdatePreparationHook.rules[1].verbs[4] | string | `"watch"` |  |
 | dbpMoodle.moodleUpdatePreparationJob | object | `{"affinity":{},"kubectlImage":"bitnami/kubectl:1.30.4-debian-12-r3","resources":{},"tolerations":[]}` | A preperation job which disables the php-cronjob, scales down the deployment and creates a backup if dbpMoodle.backup.enabled=true |
+| dbpMoodle.moodleUpdatePreparationJob.kubectlImage | string | `"bitnami/kubectl:1.30.4-debian-12-r3"` | which kubectl image to use |
 | dbpMoodle.moodlecronjob | object | `{"rules":[{"apiGroups":[""],"resources":["pods","pods/exec"],"verbs":["get","list","create","watch"]}],"wait_timeout":"15m"}` | cronjob to sync moodle users, needs to run regularly if moodle doesn't run as root |
 | dbpMoodle.name | string | `"infra"` |  |
 | dbpMoodle.redis | object | `{"host":"moodle-redis-master","password":"","port":6379}` | configurations for the optional redis |
