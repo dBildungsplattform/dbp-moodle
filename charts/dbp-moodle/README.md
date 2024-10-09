@@ -2,7 +2,11 @@
 
 ![Version: 0.0.6](https://img.shields.io/badge/Version-0.0.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.1.13](https://img.shields.io/badge/AppVersion-4.1.13-informational?style=flat-square)
 
-A Helm chart for dBildungsplattform Moodle including customizations
+This is a Helm Chart bundling some of the bitnami resources to deploy Moodle for DBildungsplattform. Extending them with features such as
+MariaDB and PostgreSQL support, Horizontal Autoscaling capabilities, Redis Session Store, Etherpad-Lite.
+The Chart can be deployed without any modification but it is advised to set own secrets acccording to this readme.
+
+**Homepage:** <https://dbildungsplattform.github.io/dbp-moodle/>
 
 ## Requirements
 
@@ -75,46 +79,23 @@ A Helm chart for dBildungsplattform Moodle including customizations
 | backup-cronjob.serviceAccount.create | bool | `false` |  |
 | backup-cronjob.serviceAccount.name | string | `"moodle-backup-job"` |  |
 | backup-cronjob.tolerations | list | `[]` |  |
-| dbpMoodle.backup.cluster_name | string | `""` |  |
-| dbpMoodle.backup.enabled | bool | `false` |  |
-| dbpMoodle.backup.endpoint | string | `""` |  |
-| dbpMoodle.backup.gpg_key_names | string | `""` |  |
-| dbpMoodle.backup.gpgkeys."gpgkey.dbpinfra.pub.asc" | string | `""` |  |
-| dbpMoodle.backup.gpgkeys."gpgkey.dbpinfra.sec.asc" | string | `""` |  |
-| dbpMoodle.backup.gpgkeys.existingSecret | string | `""` |  |
-| dbpMoodle.backup.rules[0].apiGroups[0] | string | `"apps"` |  |
-| dbpMoodle.backup.rules[0].resources[0] | string | `"deployments"` |  |
-| dbpMoodle.backup.rules[0].verbs[0] | string | `"get"` |  |
-| dbpMoodle.backup.rules[0].verbs[1] | string | `"patch"` |  |
-| dbpMoodle.backup.rules[0].verbs[2] | string | `"list"` |  |
-| dbpMoodle.backup.rules[0].verbs[3] | string | `"watch"` |  |
-| dbpMoodle.backup.rules[1].apiGroups[0] | string | `"batch"` |  |
-| dbpMoodle.backup.rules[1].resources[0] | string | `"cronjobs"` |  |
-| dbpMoodle.backup.rules[1].resources[1] | string | `"jobs"` |  |
-| dbpMoodle.backup.rules[1].verbs[0] | string | `"get"` |  |
-| dbpMoodle.backup.rules[1].verbs[1] | string | `"patch"` |  |
-| dbpMoodle.backup.s3_bucket_name | string | `""` |  |
-| dbpMoodle.backup.secrets.existingSecret | string | `""` |  |
-| dbpMoodle.backup.secrets.s3_access_key | string | `""` |  |
-| dbpMoodle.backup.secrets.s3_access_secret | string | `""` |  |
-| dbpMoodle.backup.secrets.s3_endpoint_url | string | `""` |  |
-| dbpMoodle.debug | bool | `false` |  |
+| dbpMoodle.backup | object | `{"cluster_name":"","enabled":false,"endpoint":"","gpg_key_names":"","gpgkeys":{"existingSecret":"","gpgkey.dbpinfra.pub.asc":"","gpgkey.dbpinfra.sec.asc":""},"rules":[{"apiGroups":["apps"],"resources":["deployments"],"verbs":["get","patch","list","watch"]},{"apiGroups":["batch"],"resources":["cronjobs","jobs"],"verbs":["get","patch"]}],"s3_bucket_name":"","secrets":{"existingSecret":"","s3_access_key":"","s3_access_secret":"","s3_endpoint_url":""}}` | Creates a backup of moodle data & postgres. see backup-cronjob for more values (such as schedule) |
+| dbpMoodle.backup.gpgkeys.existingSecret | string | `""` | existing secret for gpg keys |
+| dbpMoodle.backup.secrets | object | `{"existingSecret":"","s3_access_key":"","s3_access_secret":"","s3_endpoint_url":""}` | either provide an existing secret, or set each secret value here. If both are set the existingSecret is used |
+| dbpMoodle.backup.secrets.existingSecret | string | `""` | provide a secret with the three keys above |
+| dbpMoodle.debug | bool | `false` | Moodle debugging is not safe for production |
 | dbpMoodle.external_pvc.accessModes[0] | string | `"ReadWriteOnce"` |  |
 | dbpMoodle.external_pvc.annotations."helm.sh/resource-policy" | string | `"keep"` |  |
 | dbpMoodle.external_pvc.enabled | bool | `true` |  |
 | dbpMoodle.external_pvc.name | string | `"moodle-data"` |  |
 | dbpMoodle.external_pvc.size | string | `"8Gi"` |  |
 | dbpMoodle.external_pvc.storage_class | string | `"nfs-client"` |  |
-| dbpMoodle.hpa.average_cpu_utilization | int | `50` |  |
-| dbpMoodle.hpa.deployment_name_ref | string | `"moodle"` |  |
-| dbpMoodle.hpa.enabled | bool | `false` |  |
-| dbpMoodle.hpa.max_replicas | int | `4` |  |
-| dbpMoodle.hpa.min_replicas | int | `1` |  |
-| dbpMoodle.hpa.scaledown_cooldown | int | `60` |  |
-| dbpMoodle.hpa.scaledown_value | int | `25` |  |
-| dbpMoodle.hpa.scaleup_cooldown | int | `15` |  |
-| dbpMoodle.hpa.scaleup_value | int | `50` |  |
-| dbpMoodle.logging | bool | `false` |  |
+| dbpMoodle.hpa | object | `{"average_cpu_utilization":50,"deployment_name_ref":"moodle","enabled":false,"max_replicas":4,"min_replicas":1,"scaledown_cooldown":60,"scaledown_value":25,"scaleup_cooldown":15,"scaleup_value":50}` | Horizontal Pod Autoscaling Values |
+| dbpMoodle.hpa.scaledown_cooldown | int | `60` | How many seconds to wait between downscaling adjustments |
+| dbpMoodle.hpa.scaledown_value | int | `25` | The max amount in percent to scale down in one step per cooldown period |
+| dbpMoodle.hpa.scaleup_cooldown | int | `15` | How many seconds to wait between upscaling adjustments |
+| dbpMoodle.hpa.scaleup_value | int | `50` | The max amount in percent to scale up in one step per cooldown period |
+| dbpMoodle.logging | bool | `false` | Extended php logging |
 | dbpMoodle.moodleUpdatePreparationHook.rules[0].apiGroups[0] | string | `"apps"` |  |
 | dbpMoodle.moodleUpdatePreparationHook.rules[0].resources[0] | string | `"deployments"` |  |
 | dbpMoodle.moodleUpdatePreparationHook.rules[0].verbs[0] | string | `"get"` |  |
@@ -127,52 +108,14 @@ A Helm chart for dBildungsplattform Moodle including customizations
 | dbpMoodle.moodleUpdatePreparationHook.rules[1].verbs[2] | string | `"create"` |  |
 | dbpMoodle.moodleUpdatePreparationHook.rules[1].verbs[3] | string | `"patch"` |  |
 | dbpMoodle.moodleUpdatePreparationHook.rules[1].verbs[4] | string | `"watch"` |  |
-| dbpMoodle.moodleUpdatePreparationJob.affinity | object | `{}` |  |
-| dbpMoodle.moodleUpdatePreparationJob.kubectlImage | string | `"bitnami/kubectl:1.30.4-debian-12-r3"` |  |
-| dbpMoodle.moodleUpdatePreparationJob.resources | object | `{}` |  |
-| dbpMoodle.moodleUpdatePreparationJob.tolerations | list | `[]` |  |
-| dbpMoodle.moodlecronjob.rules[0].apiGroups[0] | string | `""` |  |
-| dbpMoodle.moodlecronjob.rules[0].resources[0] | string | `"pods"` |  |
-| dbpMoodle.moodlecronjob.rules[0].resources[1] | string | `"pods/exec"` |  |
-| dbpMoodle.moodlecronjob.rules[0].verbs[0] | string | `"get"` |  |
-| dbpMoodle.moodlecronjob.rules[0].verbs[1] | string | `"list"` |  |
-| dbpMoodle.moodlecronjob.rules[0].verbs[2] | string | `"create"` |  |
-| dbpMoodle.moodlecronjob.rules[0].verbs[3] | string | `"watch"` |  |
-| dbpMoodle.moodlecronjob.wait_timeout | string | `"15m"` |  |
+| dbpMoodle.moodleUpdatePreparationJob | object | `{"affinity":{},"kubectlImage":"bitnami/kubectl:1.30.4-debian-12-r3","resources":{},"tolerations":[]}` | A preperation job which disables the php-cronjob, scales down the deployment and creates a backup if dbpMoodle.backup.enabled=true |
+| dbpMoodle.moodlecronjob | object | `{"rules":[{"apiGroups":[""],"resources":["pods","pods/exec"],"verbs":["get","list","create","watch"]}],"wait_timeout":"15m"}` | cronjob to sync moodle users, needs to run regularly if moodle doesn't run as root |
 | dbpMoodle.name | string | `"infra"` |  |
-| dbpMoodle.redis.host | string | `"moodle-redis-master"` |  |
-| dbpMoodle.redis.password | string | `""` |  |
-| dbpMoodle.redis.port | int | `6379` |  |
-| dbpMoodle.restore.affinity | object | `{}` |  |
-| dbpMoodle.restore.enabled | bool | `false` |  |
-| dbpMoodle.restore.existingSecretDatabase | string | `"moodle"` |  |
-| dbpMoodle.restore.existingSecretGPG | string | `""` |  |
-| dbpMoodle.restore.existingSecretKeyDatabase | string | `""` |  |
-| dbpMoodle.restore.existingSecretKeyS3Access | string | `""` |  |
-| dbpMoodle.restore.existingSecretKeyS3Secret | string | `""` |  |
-| dbpMoodle.restore.existingSecretS3 | string | `""` |  |
-| dbpMoodle.restore.image | string | `"ghcr.io/dbildungsplattform/moodle-tools:1.0.7"` |  |
-| dbpMoodle.restore.resources.limits.cpu | string | `"2000m"` |  |
-| dbpMoodle.restore.resources.limits.memory | string | `"16Gi"` |  |
-| dbpMoodle.restore.resources.requests.cpu | string | `"1000m"` |  |
-| dbpMoodle.restore.resources.requests.memory | string | `"8Gi"` |  |
-| dbpMoodle.restore.rules[0].apiGroups[0] | string | `"apps"` |  |
-| dbpMoodle.restore.rules[0].resources[0] | string | `"deployments/scale"` |  |
-| dbpMoodle.restore.rules[0].resources[1] | string | `"deployments"` |  |
-| dbpMoodle.restore.rules[0].verbs[0] | string | `"get"` |  |
-| dbpMoodle.restore.rules[0].verbs[1] | string | `"list"` |  |
-| dbpMoodle.restore.rules[0].verbs[2] | string | `"scale"` |  |
-| dbpMoodle.restore.rules[0].verbs[3] | string | `"patch"` |  |
-| dbpMoodle.restore.tolerations | list | `[]` |  |
-| dbpMoodle.secrets.etherpad_api_key | string | `""` |  |
-| dbpMoodle.secrets.etherpad_postgresql_password | string | `""` |  |
-| dbpMoodle.secrets.mariadb_password | string | `""` |  |
-| dbpMoodle.secrets.mariadb_root_password | string | `""` |  |
-| dbpMoodle.secrets.moodle_password | string | `""` |  |
-| dbpMoodle.secrets.pgsql_admin_password | string | `""` |  |
-| dbpMoodle.secrets.useChartSecret | bool | `false` |  |
+| dbpMoodle.redis | object | `{"host":"moodle-redis-master","password":"","port":6379}` | configurations for the optional redis |
+| dbpMoodle.restore | object | `{"affinity":{},"enabled":false,"existingSecretDatabase":"moodle","existingSecretGPG":"","existingSecretKeyDatabase":"","existingSecretKeyS3Access":"","existingSecretKeyS3Secret":"","existingSecretS3":"","image":"ghcr.io/dbildungsplattform/moodle-tools:1.0.7","resources":{"limits":{"cpu":"2000m","memory":"16Gi"},"requests":{"cpu":"1000m","memory":"8Gi"}},"rules":[{"apiGroups":["apps"],"resources":["deployments/scale","deployments"],"verbs":["get","list","scale","patch"]}],"tolerations":[]}` | This restores moodle to the latest snapshot. ONLY USE FOR ROLLBACK |
+| dbpMoodle.secrets | object | `{"etherpad_api_key":"","etherpad_postgresql_password":"","mariadb_password":"","mariadb_root_password":"","moodle_password":"","pgsql_admin_password":"","useChartSecret":false}` | Create a secret with for all moodle relevant credentials, set useChartSecret: false to provide your own secret -- if you create your own secret, also set moodle.existingSecret and moodle.externalDatabase.existingSecret (if you bring your own DB) |
 | dbpMoodle.stage | string | `"infra"` |  |
-| dbpMoodle.update_migration.enabled | bool | `false` |  |
+| dbpMoodle.update_migration | object | `{"enabled":false}` | The dbp update process to migrate moodle data when moodle versions are increased |
 | etherpad-postgresql.auth.database | string | `"etherpad"` |  |
 | etherpad-postgresql.auth.enablePostgresUser | bool | `false` |  |
 | etherpad-postgresql.auth.existingSecret | string | `"moodle"` |  |
@@ -226,36 +169,8 @@ A Helm chart for dBildungsplattform Moodle including customizations
 | etherpadlite.volumes[0].secret.items[0].path | string | `"APIKEY.txt"` |  |
 | etherpadlite.volumes[0].secret.secretName | string | `"moodle"` |  |
 | global.kubectl_version | string | `"1.28.7"` |  |
-| global.moodlePlugins.adaptable.enabled | bool | `false` |  |
-| global.moodlePlugins.booking.enabled | bool | `false` |  |
-| global.moodlePlugins.boost_magnific.enabled | bool | `false` |  |
-| global.moodlePlugins.boost_union.enabled | bool | `false` |  |
-| global.moodlePlugins.certificate.enabled | bool | `false` |  |
-| global.moodlePlugins.choicegroup.enabled | bool | `false` |  |
-| global.moodlePlugins.coursecertificate.enabled | bool | `false` |  |
-| global.moodlePlugins.dash.enabled | bool | `false` |  |
-| global.moodlePlugins.etherpadlite.enabled | bool | `false` |  |
-| global.moodlePlugins.geogebra.enabled | bool | `false` |  |
-| global.moodlePlugins.groupselect.enabled | bool | `false` |  |
-| global.moodlePlugins.heartbeat.enabled | bool | `false` |  |
-| global.moodlePlugins.hvp.enabled | bool | `false` |  |
-| global.moodlePlugins.jitsi.enabled | bool | `false` |  |
-| global.moodlePlugins.kaltura.enabled | bool | `false` |  |
-| global.moodlePlugins.oidc.enabled | bool | `false` |  |
-| global.moodlePlugins.pdfannotator.enabled | bool | `false` |  |
-| global.moodlePlugins.reengagement.enabled | bool | `false` |  |
-| global.moodlePlugins.remuiformat.enabled | bool | `false` |  |
-| global.moodlePlugins.saml2.enabled | bool | `false` |  |
-| global.moodlePlugins.sharing_cart.enabled | bool | `false` |  |
-| global.moodlePlugins.skype.enabled | bool | `false` |  |
-| global.moodlePlugins.snap.enabled | bool | `false` |  |
-| global.moodlePlugins.staticpage.enabled | bool | `false` |  |
-| global.moodlePlugins.tiles.enabled | bool | `false` |  |
-| global.moodlePlugins.topcoll.enabled | bool | `false` |  |
-| global.moodlePlugins.unilabel.enabled | bool | `false` |  |
-| global.moodlePlugins.xp.enabled | bool | `false` |  |
-| global.moodlePlugins.zoom.enabled | bool | `false` |  |
-| global.storageClass | string | `"nfs-client"` |  |
+| global.moodlePlugins | object | `{"adaptable":{"enabled":false},"booking":{"enabled":false},"boost_magnific":{"enabled":false},"boost_union":{"enabled":false},"certificate":{"enabled":false},"choicegroup":{"enabled":false},"coursecertificate":{"enabled":false},"dash":{"enabled":false},"etherpadlite":{"enabled":false},"geogebra":{"enabled":false},"groupselect":{"enabled":false},"heartbeat":{"enabled":false},"hvp":{"enabled":false},"jitsi":{"enabled":false},"kaltura":{"enabled":false},"oidc":{"enabled":false},"pdfannotator":{"enabled":false},"reengagement":{"enabled":false},"remuiformat":{"enabled":false},"saml2":{"enabled":false},"sharing_cart":{"enabled":false},"skype":{"enabled":false},"snap":{"enabled":false},"staticpage":{"enabled":false},"tiles":{"enabled":false},"topcoll":{"enabled":false},"unilabel":{"enabled":false},"xp":{"enabled":false},"zoom":{"enabled":false}}` | all plugins are disabled by default. if enabled, the plugin is installed on image startup |
+| global.storageClass | string | `"nfs-client"` | default storage class, should support ReadWriteMany |
 | mariadb.auth.database | string | `"moodle"` |  |
 | mariadb.auth.existingSecret | string | `"moodle"` |  |
 | mariadb.auth.username | string | `"moodle"` |  |
@@ -280,13 +195,13 @@ A Helm chart for dBildungsplattform Moodle including customizations
 | moodle.containerSecurityContext.runAsGroup | int | `1001` |  |
 | moodle.containerSecurityContext.runAsNonRoot | bool | `true` |  |
 | moodle.existingSecret | string | `"moodle"` |  |
-| moodle.externalDatabase.database | string | `"moodle"` |  |
-| moodle.externalDatabase.existingSecret | string | `"moodle"` |  |
-| moodle.externalDatabase.host | string | `"moodle-mariadb"` |  |
-| moodle.externalDatabase.password | string | `""` |  |
-| moodle.externalDatabase.port | int | `3306` |  |
-| moodle.externalDatabase.type | string | `"mariadb"` |  |
-| moodle.externalDatabase.user | string | `"moodle"` |  |
+| moodle.externalDatabase.database | string | `"moodle"` | Name of the existing database |
+| moodle.externalDatabase.existingSecret | string | `"moodle"` | Name of an existing secret resource containing the DB password |
+| moodle.externalDatabase.host | string | `"moodle-mariadb"` | Host of the existing database |
+| moodle.externalDatabase.password | string | `""` | Password for the above username |
+| moodle.externalDatabase.port | int | `3306` | Port of the existing database |
+| moodle.externalDatabase.type | string | `"mariadb"` | Type of DB to provision, possible values are "mariadb" and "pgsql" |
+| moodle.externalDatabase.user | string | `"moodle"` | Existing username in the external db |
 | moodle.extraEnvVarsSecret | string | `""` |  |
 | moodle.extraEnvVars[0].name | string | `"PHP_POST_MAX_SIZE"` |  |
 | moodle.extraEnvVars[0].value | string | `"200M"` |  |
@@ -302,29 +217,24 @@ A Helm chart for dBildungsplattform Moodle including customizations
 | moodle.extraVolumeMounts[0].readOnly | bool | `true` |  |
 | moodle.extraVolumes[0].name | string | `"moodle-config"` |  |
 | moodle.extraVolumes[0].secret.defaultMode | int | `420` |  |
-| moodle.extraVolumes[0].secret.items[0].key | string | `"config.php"` |  |
-| moodle.extraVolumes[0].secret.items[0].path | string | `"config.php"` |  |
-| moodle.extraVolumes[0].secret.items[1].key | string | `"php.ini"` |  |
-| moodle.extraVolumes[0].secret.items[1].path | string | `"php.ini"` |  |
+| moodle.extraVolumes[0].secret.items[0] | object | `{"key":"config.php","path":"config.php"}` | The custom config.php File that is used to configure Moodle to use the Database and Redis (If activated) |
+| moodle.extraVolumes[0].secret.items[1] | object | `{"key":"php.ini","path":"php.ini"}` | The php.ini which installs the php-redis extension to enable the use for redis |
 | moodle.extraVolumes[0].secret.secretName | string | `"moodle-config"` |  |
-| moodle.image.debug | bool | `false` |  |
+| moodle.image.debug | bool | `false` | Debug mode for more detailed Moodle installation and log output |
 | moodle.image.pullPolicy | string | `"Always"` |  |
 | moodle.image.registry | string | `"ghcr.io"` |  |
 | moodle.image.repository | string | `"dbildungsplattform/moodle"` |  |
-| moodle.image.tag | string | `"4.1.12-debian-12-r1-chart-main"` |  |
+| moodle.image.tag | string | `"4.1.12-debian-12-r1-chart-main"` | The dbp Image which is build for this Helm Chart |
 | moodle.ingress.annotations."cert-manager.io/cluster-issuer" | string | `"sc-cert-manager-clusterissuer-letsencrypt"` |  |
 | moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-body-size" | string | `"200M"` |  |
 | moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-connect-timeout" | string | `"30s"` |  |
 | moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-read-timeout" | string | `"20s"` |  |
 | moodle.ingress.enabled | bool | `true` |  |
-| moodle.ingress.hostname | string | `"example.de"` |  |
+| moodle.ingress.hostname | string | `"example.de"` | The hostname of the moodle application. |
 | moodle.ingress.tls | bool | `true` |  |
-| moodle.mariadb.enabled | bool | `false` |  |
+| moodle.mariadb | object | `{"enabled":false}` | The mariadb included in bitnami/moodle chart. For this chart usage of mariadb.enabled with moodle.externalDatabase.type="mariadb" is recommended |
 | moodle.metrics.enabled | bool | `true` |  |
-| moodle.metrics.resources.limits.cpu | string | `"200m"` |  |
-| moodle.metrics.resources.limits.memory | string | `"256Mi"` |  |
-| moodle.metrics.resources.requests.cpu | string | `"10m"` |  |
-| moodle.metrics.resources.requests.memory | string | `"16Mi"` |  |
+| moodle.metrics.resources | object | `{"limits":{"cpu":"200m","memory":"256Mi"},"requests":{"cpu":"10m","memory":"16Mi"}}` | Resources have to be set so that the Horizontal Pod Autoscaler for moodle can read the moodle cpu consumption correctly |
 | moodle.metrics.service.type | string | `"ClusterIP"` |  |
 | moodle.moodleEmail | string | `""` |  |
 | moodle.moodleLang | string | `"de"` |  |
