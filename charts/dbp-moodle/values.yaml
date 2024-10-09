@@ -105,6 +105,7 @@ dbpMoodle:
     affinity: {}
     tolerations: []
     resources: {}
+    # -- which kubectl image to use
     kubectlImage: bitnami/kubectl:1.30.4-debian-12-r3
 
   moodleUpdatePreparationHook:
