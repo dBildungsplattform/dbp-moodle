@@ -114,7 +114,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | dbpMoodle.name | string | `"infra"` |  |
 | dbpMoodle.redis | object | `{"host":"moodle-redis-master","password":"","port":6379}` | Configurations for the optional redis |
 | dbpMoodle.restore | object | `{"affinity":{},"enabled":false,"existingSecretDatabase":"moodle","existingSecretGPG":"","existingSecretKeyDatabase":"","existingSecretKeyS3Access":"","existingSecretKeyS3Secret":"","existingSecretS3":"","image":"ghcr.io/dbildungsplattform/moodle-tools:1.0.7","resources":{"limits":{"cpu":"2000m","memory":"16Gi"},"requests":{"cpu":"1000m","memory":"8Gi"}},"rules":[{"apiGroups":["apps"],"resources":["deployments/scale","deployments"],"verbs":["get","list","scale","patch"]}],"tolerations":[]}` | This restores moodle to the latest snapshot. ONLY USE FOR ROLLBACK |
-| dbpMoodle.secrets | object | `{"etherpad_api_key":"","etherpad_postgresql_password":"","mariadb_password":"","mariadb_root_password":"","moodle_password":"","pgsql_admin_password":"","useChartSecret":false}` | Create a secret with for all moodle relevant credentials, set useChartSecret: false to provide your own secret -- if you create your own secret, also set moodle.existingSecret and moodle.externalDatabase.existingSecret (if you bring your own DB) |
+| dbpMoodle.secrets | object | `{"etherpad_api_key":"","etherpad_postgresql_password":"","mariadb_password":"","mariadb_root_password":"","moodle_password":"","pgsql_admin_password":"","useChartSecret":false}` | Creates a secret with all relevant credentials for moodle -- Set useChartSecret: false to provide your own secret -- if you create your own secret, also set moodle.existingSecret and moodle.externalDatabase.existingSecret (if you bring your own DB) |
 | dbpMoodle.stage | string | `"infra"` |  |
 | dbpMoodle.update_migration | object | `{"enabled":false}` | The dbp update process to migrate moodle data when moodle versions are increased |
 | etherpad-postgresql.auth.database | string | `"etherpad"` |  |
@@ -243,7 +243,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.moodleSkipInstall | bool | `false` |  |
 | moodle.moodleUsername | string | `"admin"` |  |
 | moodle.networkPolicy.enabled | bool | `false` |  |
-| moodle.persistence.existingClaim | string | `"moodle-data"` |  |
+| moodle.persistence.existingClaim | string | `"moodle-data"` | If this value is unset, the bitnami/moodle chart generates its own PV & PVC |
 | moodle.podAnnotations.moodle/image | string | `"{{- .Values.image.repository -}}:{{- .Values.image.tag -}}"` |  |
 | moodle.podAnnotations.moodleplugins/checksum | string | `"{{- include \"dbpMoodle.pluginConfigMap.content\" . | sha256sum -}}"` |  |
 | moodle.podSecurityContext.enabled | bool | `true` |  |
