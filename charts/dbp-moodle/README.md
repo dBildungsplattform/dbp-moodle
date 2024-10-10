@@ -98,7 +98,7 @@ The following table lists the helpers available in the library which are scoped 
 | `secrets.useChartSecret`               | If set to true the secret will be created with given values. | `true` |
 | `updateHelper.rules`                   | [WIP] Set permissions for the updateHelper that is created when `update_migration.enabled=true`| `[...]` |
 | `secrets.moodle_password`              | | `randAlphaNum 16` |
-| `secrets.postgres_password`            | | `randAlphaNum 16` |
+| `secrets.postgres_admin_password`      | | `randAlphaNum 16` |
 | `secrets.mariadb_password`             | | `randAlphaNum 16` |
 | `secrets.mariadb_root_password`        | | `randAlphaNum 16` |
 | `secrets.etherpad_postgresql_password` | | `randAlphaNum 16` |
@@ -141,7 +141,7 @@ Horizontal Pod Autoscaling Values
 |---                                         |---|---|
 | `image.registry`                            ||`ghcr.io`|
 | `image.repository`                          ||`dbildungsplattform/moodle`|
-| `image.tag`                                 | The dbp Image which is build for this Helm Chart. |`"4.1.10-debian-12-r5"`|
+| `image.tag`                                 | The dbp Image which is build for this Helm Chart. |`"4.1.11-debian-12-r0"`|
 | `image.pullPolicy`                          ||`Always`|
 | `image.debug`                               | Debug mode for more detailed Moodle installation and log output. |`false`|
 | `moodleSkipInstall`                         ||`false`|
@@ -157,7 +157,7 @@ Horizontal Pod Autoscaling Values
 | `extraEnvVars.MOODLE_PLUGINS`               | WIP | |
 | `extraEnvVars.ENABLE_KALTURA`               ||`"false"`|
 | `extraEnvVarsSecret`                        ||`"moodle"`|
-| `existingSecret`                            ||`"moodle"`|
+| `existingSecret`                            | If this value is not set, moodle will create its own secret "moodle" which could cause problems. |`"moodle"`|
 | `persistence.enabled`                       ||`true`|
 | `persistence.storageClass`                  ||`"nfs-client"`|
 | `persistence.annotations`                   ||`"helm.sh/resource-policy":"keep"`|
@@ -301,7 +301,7 @@ values.yaml
 secrets:
   useChartSecret: true
   moodle_password: "moodle"
-  postgres_password: "moodle"
+  postgres_admin_password: "moodle"
   mariadb_password: "moodle"
   mariadb_root_password: "moodle"
   etherpad_postgresql_password: "moodle"

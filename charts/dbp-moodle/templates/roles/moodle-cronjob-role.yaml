@@ -1,0 +1,6 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: "{{ .Release.Name }}-moodle-cronjob"
+rules:
+  {{- toYaml .Values.dbpMoodle.moodlecronjob.rules | nindent 2 }}

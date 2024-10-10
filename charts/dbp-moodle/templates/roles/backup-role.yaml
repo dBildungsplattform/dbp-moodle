@@ -1,0 +1,7 @@
+{{- if .Values.dbpMoodle.backup.enabled -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: "{{ .Release.Name }}-backup-job"
+rules: {{- toYaml .Values.dbpMoodle.backup.rules | nindent 2 }}
+{{- end -}}

@@ -2,8 +2,8 @@ apiVersion: v2
 name: dbp-moodle
 description: A Helm chart for dBildungsplattform Moodle including customizations
 type: application
-version: 1.0.0
-appVersion: "4.1.10"
+version: 0.0.6
+appVersion: "4.1.13"
 dependencies:
   - name: moodle
     version: "22.2.7"
@@ -25,10 +25,15 @@ dependencies:
     condition: postgresql.enabled
 
   - name: cronjob
+    alias: moodlecronjob
+    version: 0.1.0
+    repository: "file://charts/cronjob"
+
+  - name: cronjob
     alias: backup-cronjob
     version: 0.1.0
-    repository: "file://charts/backup-cronjob"
-    condition: backup.enabled
+    repository: "file://charts/cronjob"
+    condition: dbpMoodle.backup.enabled
 
   - name: postgresql
     version: "15.5.7"
@@ -42,6 +47,7 @@ dependencies:
     alias: etherpadlite
     condition: etherpadlite.enabled
 
-# - name: sql-exporter
-
-#Include tasks for sc-serviceaccounts.yml
+  - name: sql-exporter
+    version: 0.6.1
+    repository: "https://burningalchemist.github.io/sql_exporter/"
+    condition: sql-exporter.enabled

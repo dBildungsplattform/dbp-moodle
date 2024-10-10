@@ -1,0 +1,37 @@
+{{ if not .Values.dbpMoodle.restore.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-update-preparation"
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  template:
+    spec:
+      containers:
+        - name: moodle-update-preparation
+          image: {{ .Values.dbpMoodle.moodleUpdatePreparationJob.kubectlImage }}
+          securityContext:
+            privileged: false
+          command: ["/bin/bash", "/moodle-update-preparation.sh"]
+          resources: {{ .Values.dbpMoodle.moodleUpdatePreparationJob.resources | toYaml }}
+          env:
+          - name: BACKUP_ENABLED
+            value: '{{ .Values.dbpMoodle.backup.enabled }}'
+          volumeMounts:
+            - name: script-volume
+              mountPath: /moodle-update-preparation.sh
+              subPath: moodle-update-preparation.sh
+      affinity: {{ .Values.dbpMoodle.moodleUpdatePreparationJob.affinity | toYaml }}
+      tolerations: {{ .Values.dbpMoodle.moodleUpdatePreparationJob.tolerations | toYaml }}
+      serviceAccountName: "{{ .Release.Name }}-moodle-update-preparation-hook-serviceaccount"
+      restartPolicy: Never
+      volumes:
+        - name: script-volume
+          configMap:
+            name: "{{ .Release.Name }}-moodle-update-preparation-hook-script"
+            defaultMode: 0755
+  ttlSecondsAfterFinished: 300
+{{ end }}

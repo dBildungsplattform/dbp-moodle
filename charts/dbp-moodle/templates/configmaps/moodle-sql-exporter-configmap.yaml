@@ -1,0 +1,66 @@
+{{- if index .Values "sql-exporter" "enabled" -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: moodle-sql-exporter-configmap
+  namespace: {{ .Release.Namespace }}
+data:
+  moodle-collector-config: |-
+    collector_name: sql_exporter_moodle
+    metrics:
+    - metric_name: sql_moodle_total_user_count
+      type: gauge
+      values: [metric]
+      help: 'Total number of registed users in this instance.'
+      query: |
+        SELECT COUNT(*) AS metric
+        FROM mdl_user WHERE deleted=0;
+    - metric_name: sql_moodle_active_user_count_current_month
+      type: gauge
+      values: [metric]
+      help: 'Total number of logged in users in this instance for the current month.'
+      query: |
+        {{- if .Values.mariadb.enabled }}
+        SELECT COUNT(*) AS metric
+        FROM mdl_user
+        WHERE currentlogin >= UNIX_TIMESTAMP(DATE_FORMAT(CURDATE(), '%Y-%m-01'))
+        OR lastaccess >= UNIX_TIMESTAMP(DATE_FORMAT(CURDATE(), '%Y-%m-01'));
+        {{- else if .Values.postgresql.enabled }}
+        SELECT COUNT(*) AS metric
+        FROM mdl_user
+        WHERE currentlogin >= EXTRACT(EPOCH FROM DATE_TRUNC('MONTH', CURRENT_TIMESTAMP))
+        OR lastaccess >= EXTRACT(EPOCH FROM DATE_TRUNC('MONTH', CURRENT_TIMESTAMP));
+        {{- end }}
+    - metric_name: sql_moodle_active_user_count_last_30_days
+      type: gauge
+      values: [metric]
+      help: 'The amount of users logged in to moodle in the last 30 days.'
+      query: |
+        {{- if .Values.mariadb.enabled }}
+        SELECT COUNT(*) AS metric
+        FROM mdl_user
+        WHERE currentlogin >= UNIX_TIMESTAMP(CURRENT_DATE - INTERVAL 30 DAY)
+        OR lastaccess >= UNIX_TIMESTAMP(CURRENT_DATE - INTERVAL 30 DAY);
+        {{- else if .Values.postgresql.enabled }}
+        SELECT COUNT(*) AS metric
+        FROM mdl_user
+        WHERE currentlogin >= EXTRACT(EPOCH FROM CURRENT_DATE - INTERVAL '30 days')
+        OR lastaccess >= EXTRACT(EPOCH FROM CURRENT_DATE - INTERVAL '30 days');
+        {{- end }}
+    - metric_name: sql_moodle_current_login_user_count
+      type: gauge
+      values: [metric]
+      help: 'Total number of currently logged in users in this instance.'
+      query: |
+        {{- if .Values.mariadb.enabled }}
+        SELECT COUNT(*) AS metric
+        FROM mdl_user
+        WHERE currentlogin >= UNIX_TIMESTAMP(NOW() - INTERVAL 10 MINUTE)
+        OR lastaccess >= UNIX_TIMESTAMP(NOW() - INTERVAL 10 MINUTE);
+        {{- else if .Values.postgresql.enabled }}
+        SELECT COUNT(*) AS metric
+        FROM mdl_user
+        WHERE currentlogin >= EXTRACT(EPOCH FROM CURRENT_TIMESTAMP - INTERVAL '10 minutes')
+        OR lastaccess >= EXTRACT(EPOCH FROM CURRENT_TIMESTAMP - INTERVAL '10 minutes');
+        {{- end }}
+{{ end }}

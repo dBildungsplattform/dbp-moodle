@@ -1,50 +1,38 @@
 #!/bin/bash
-# create destination dir if not exists
+# Create destination dir if not exists
 set -e
-if [ ! -d /backup ]
-then
-    mkdir -p /backup
+if [ ! -d /tmp/backup ]; then
+    mkdir -p /tmp/backup
 fi
 
-curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null
-echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
-curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyrings/helm.gpg > /dev/null
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list
-apt-get update
+readiness_probe_file="/tmp/readinessprobe.json"
+liveness_probe_file="/tmp/livenessprobe.json"
 
-apt install duply
-# Install postgresql-client-14
-apt-get -y remove postgresql-client-common
-apt-get -y install ca-certificates gnupg
-apt-get install apt-transport-https --yes
-apt-get -y install mariadb-client
-apt-get -y install postgresql-client-14
-pg_dump -V
-pip install boto
-
-#Cleanup after finish only if not an Update Backup (Normal Backup has no CliUpdate file)
-#If Update Backup: depending on exit code create the signal for the Update Helper Job with success or failure
+# Cleanup after finish only if not an update backup (normal backup has no CliUpdate file)
+# If update backup: depending on exit code create the signal for the update helper job with success or failure
 function clean_up() {
     exit_code=$?
-    if ! [ -a /mountData/moodledata/CliUpdate ]
-    then
+    if ! [ -a /mountData/moodledata/CliUpdate ]; then
         echo "=== Starting cleanup ==="
-        echo "=== Stopping Maintenance Mode ==="
+        echo "=== Stopping maintenance mode ==="
         rm -f /mountData/moodledata/climaintenance.html
 
         echo "=== Turn on liveness and readiness probe ==="
-        helm upgrade --reuse-values --set livenessProbe.enabled=true --set readinessProbe.enabled=true moodle bitnami/moodle --namespace {{ .Release.Namespace }}
+        if [ -e "${readiness_probe_file}" ] && [ -s "${readiness_probe_file}" ] && [ -e "${liveness_probe_file}" ] && [ -s "${liveness_probe_file}" ] ; then
+            kubectl patch deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} --type=json -p="[{\"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/readinessProbe\", \"value\": $(cat ${readiness_probe_file})}, {\"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/livenessProbe\", \"value\": $(cat ${liveness_probe_file})}]"
+        else
+            echo "Unable to turn on liveness and readiness probes. Either the readiness_probe_file or the liveness_probe_file does not exist or is empty."
+        fi
 
         echo "=== Unsuspending moodle cronjob ==="
-        kubectl patch cronjobs moodle-{{ .Release.Namespace }}-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : false }}'
-    elif [ $exit_code -eq 0 ]
-    then
-    echo "=== Update Backup was successful with exit code $exit_code ==="
+        kubectl patch cronjobs {{ .Release.Name }}-moodlecronjob-{{ include "moodlecronjob.job_name" . }} -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : false }}'
+    elif [ $exit_code -eq 0 ]; then
+        echo "=== Update backup was successful with exit code $exit_code ==="
         rm -f /mountData/moodledata/UpdateBackupFailure
         touch /mountData/moodledata/UpdateBackupSuccess
         exit $exit_code
     else
-        echo "=== Update Backup failed with exit code $exit_code ==="
+        echo "=== Update backup failed with exit code $exit_code ==="
         rm -f /mountData/moodledata/UpdateBackupSuccess
         touch /mountData/moodledata/UpdateBackupFailure
         exit $exit_code
@@ -53,82 +41,76 @@ function clean_up() {
 
 trap "clean_up" EXIT
 
-# install kubectl
-curl -LO https://dl.k8s.io/release/v{{ .Values.global.kubectl_version }}/bin/linux/amd64/kubectl
-chmod +x kubectl
-mv ./kubectl /usr/local/bin/kubectl
-apt-get -y install helm
-helm repo add bitnami https://charts.bitnami.com/bitnami
-
-#If the Backup is done for the Update it skips the preparation because the Update Helper already did this
-if ! [ -a /mountData/moodledata/CliUpdate ]
-then
-    #Suspend the cronjob to avoid errors due to missing moodle
+# If the backup is done for the update it skips the preparation because the update helper already did this
+if ! [ -a /mountData/moodledata/CliUpdate ]; then
+    # Suspend the cronjob to avoid errors due to missing moodle
     echo "=== Suspending moodle cronjob ==="
-    kubectl patch cronjobs moodle-{{ .Release.Namespace }}-cronjob-php-script -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : true }}'
+    kubectl patch cronjobs {{ .Release.Name }}-moodlecronjob-{{ include "moodlecronjob.job_name" . }} -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : true }}'
 
     echo "=== Turn off liveness and readiness probe ==="
-    helm upgrade --reuse-values --set livenessProbe.enabled=false --set readinessProbe.enabled=false moodle --wait bitnami/moodle --namespace {{ .Release.Namespace }}
-    
-    kubectl rollout status deployment/moodle
+    kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o jsonpath="{.spec.template.spec.containers[0].readinessProbe}" > ${readiness_probe_file}
+    kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o jsonpath="{.spec.template.spec.containers[0].livenessProbe}" > ${liveness_probe_file}
+    kubectl patch deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} --type=json -p="[{'op': 'remove', 'path': '/spec/template/spec/containers/0/readinessProbe'}, {'op': 'remove', 'path': '/spec/template/spec/containers/0/livenessProbe'}]"
 
-    #Wait for running Jobs to finish to avoid errors
-    echo "=== Waiting for Jobs to finish ==="
+    kubectl rollout status deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} 
+
+    # Wait for running jobs to finish to avoid errors
+    echo "=== Waiting for jobs to finish ==="
     sleep 30
     
-    echo "=== Starting Maintenance mode ==="
+    echo "=== Starting maintenance mode ==="
     echo '<h1>Sorry, maintenance in progress</h1>' > /mountData/moodledata/climaintenance.html
 fi
 
-echo "=== start backup ==="
+echo "=== Start backup ==="
 date +%Y%m%d_%H%M%S%Z
 
-cd /backup
-# get dump of db
-echo "=== start DB dump ==="
+cd /tmp/backup
+# Get dump of db
+echo "=== Start DB dump ==="
 export DATE=$( date "+%Y-%m-%d" )
 
-{% if moodle_use_mariadb %}
-MYSQL_PWD="$MARIADB_PASSWORD" mysqldump -h moodle-mariadb -P 3306 -u moodle moodle > moodle_mariadb_dump_$DATE.sql
+{{ if .Values.mariadb.enabled }}
+MYSQL_PWD="$DATABASE_PASSWORD" mysqldump -h {{ .Release.Name }}-mariadb -P {{ .Values.mariadb.primary.containerPorts.mysql }} -u {{ .Values.mariadb.auth.username }} {{ .Values.mariadb.auth.database }} > moodle_mariadb_dump_$DATE.sql
 gzip moodle_mariadb_dump_$DATE.sql
-{% else %}
-PGPASSWORD="$POSTGRESQL_PASSWORD" pg_dump -h moodle-postgres-postgresql -p 5432 -U postgres moodle > moodle_postgresqldb_dump_$DATE.sql
+{{ else }}
+PGPASSWORD="$DATABASE_PASSWORD" pg_dump -h {{ .Release.Name }}-postgresql -p {{ .Values.postgresql.containerPorts.postgresql }} -U postgres {{ .Values.postgresql.auth.database }} > moodle_postgresqldb_dump_$DATE.sql
 gzip moodle_postgresqldb_dump_$DATE.sql
-{% endif %}
+{{ end }}
 
-# get moodle folder
-echo "=== start moodle directory backup ==="
+# Get moodle folder
+echo "=== Start moodle directory backup ==="
 tar -zcf moodle.tar.gz /mountData/moodle/
 
-# get moodledata folder
-echo "=== start moodledata directory backup ==="
-if [ -a /mountData/moodledata/CliUpdate ]
-then
-    #Backup during the Moodle Update Process
-    tar --exclude="/mountData/moodledata/cache" --exclude="/mountData/moodledata/sessions" --exclude="/mountData/moodledata/moodle-backup" --exclude="/mountData/moodledata/CliUpdate" -zcf moodledata.tar.gz /mountData/moodledata/
-else
-    #Regular scheduled daily Backup process
-    tar --exclude="/mountData/moodledata/cache" --exclude="/mountData/moodledata/sessions" -zcf moodledata.tar.gz /mountData/moodledata/
-fi
+# Get moodledata folder
+echo "=== Start moodledata directory backup ==="
+tar \
+    --exclude="/mountData/moodledata/cache" \
+    --exclude="/mountData/moodledata/sessions" \
+    --exclude="/mountData/moodledata/moodle-backup" \
+    --exclude="/mountData/moodledata/CliUpdate" \
+    --exclude="/mountData/moodledata/UpdateInProgress" \
+    --exclude="/mountData/moodledata/UpdateFailed" \
+    --exclude="/mountData/moodledata/PluginsFailed" \
+    --exclude="/mountData/moodledata/climaintenance.html" \
+    -zcf moodledata.tar.gz /mountData/moodledata/
 
 echo "=== Start duply process ==="
 cd /etc/duply/default
-for cert in *.asc
-    do
+for cert in *.asc; do
     echo "=== Import key $cert ==="
     gpg --import --batch $cert
-    done
-for fpr in $(gpg --batch --no-tty --command-fd 0 --list-keys --with-colons | awk -F: '/fpr:/ {print $10}' | sort -u); 
-    do
+done
+for fpr in $(gpg --batch --no-tty --command-fd 0 --list-keys --with-colons | awk -F: '/fpr:/ {print $10}' | sort -u); do
     echo "=== Trusts key $fpr ==="
     echo -e "5\ny\n" | gpg --batch --no-tty --command-fd 0 --expert --edit-key $fpr trust;
-    done
+done
 echo "=== Execute backup ==="
 /usr/bin/duply default backup
 /usr/bin/duply default status
 cd /
-rm -rf /backup
-echo "=== backup finished ==="
+rm -rf /tmp/backup
+echo "=== Backup finished ==="
 echo "=== Clean up old backups ==="
 /usr/bin/duply default purge --force
 date +%Y%m%d_%H%M%S%Z

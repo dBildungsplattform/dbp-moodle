@@ -1,0 +1,13 @@
+{{ if not .Values.dbpMoodle.restore.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Release.Name }}-moodle-update-preparation-hook-script"
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded,hook-failed
+data:
+  moodle-update-preparation.sh: |-
+{{ tpl ( .Files.Get "scripts/hook/moodle-update-preparation.sh" ) . | nindent 4 }}
+{{ end }}

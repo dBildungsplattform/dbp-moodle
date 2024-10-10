@@ -12,7 +12,10 @@ dependencies:
   repository: https://charts.bitnami.com/bitnami
   version: 15.5.7
 - name: cronjob
-  repository: file://charts/backup-cronjob
+  repository: file://charts/cronjob
+  version: 0.1.0
+- name: cronjob
+  repository: file://charts/cronjob
   version: 0.1.0
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
@@ -20,5 +23,8 @@ dependencies:
 - name: etherpad
   repository: file://charts/etherpad
   version: 0.1.0
-digest: sha256:0bcbb8bdf12bab5529a1360b1157e36d2bd51e1d12b3ef653c61b07ba6936ce8
-generated: "2024-06-20T12:13:11.419404592Z"
+- name: sql-exporter
+  repository: https://burningalchemist.github.io/sql_exporter/
+  version: 0.6.1
+digest: sha256:fa0c1821bc2e2bb3d567d68a2acb5c80aa9ae797a3db05feebdb7a86e19f1c3b
+generated: "2024-08-22T12:54:24.139753405Z"
