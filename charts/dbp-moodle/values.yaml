@@ -251,7 +251,7 @@ moodle:
     port: 3306
     # -- Existing username in the external db
     user: "moodle"
-    # -- 	Password for the above username
+    # -- Password for the above username
     password: ""
     # -- Name of the existing database
     database: "moodle"
