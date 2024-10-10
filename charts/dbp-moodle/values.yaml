@@ -261,7 +261,7 @@ moodle:
     type: ClusterIP
   ingress:
     enabled: true
-    # -- The hostname of the moodle application.
+    # -- The hostname of the moodle application
     hostname: "example.de"
     tls: true
     annotations:
