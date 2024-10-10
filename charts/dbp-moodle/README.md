@@ -218,7 +218,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.extraVolumeMounts[0].readOnly | bool | `true` |  |
 | moodle.extraVolumes[0].name | string | `"moodle-config"` |  |
 | moodle.extraVolumes[0].secret.defaultMode | int | `420` |  |
-| moodle.extraVolumes[0].secret.items[0] | object | `{"key":"config.php","path":"config.php"}` | The custom config.php File that is used to configure Moodle to use the Database and Redis (If activated) |
+| moodle.extraVolumes[0].secret.items[0] | object | `{"key":"config.php","path":"config.php"}` | The custom config.php file that is used to configure moodle to use the database and redis (if activated) |
 | moodle.extraVolumes[0].secret.items[1] | object | `{"key":"php.ini","path":"php.ini"}` | The php.ini which installs the php-redis extension to enable the use for redis |
 | moodle.extraVolumes[0].secret.secretName | string | `"moodle-config"` |  |
 | moodle.image.debug | bool | `false` | Debug mode for more detailed Moodle installation and log output |
@@ -235,7 +235,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.ingress.tls | bool | `true` |  |
 | moodle.mariadb | object | `{"enabled":false}` | The mariadb included in bitnami/moodle chart. For this chart usage of mariadb.enabled with moodle.externalDatabase.type="mariadb" is recommended |
 | moodle.metrics.enabled | bool | `true` |  |
-| moodle.metrics.resources | object | `{"limits":{"cpu":"200m","memory":"256Mi"},"requests":{"cpu":"10m","memory":"16Mi"}}` | Resources have to be set so that the Horizontal Pod Autoscaler for moodle can read the moodle cpu consumption correctly |
+| moodle.metrics.resources | object | `{"limits":{"cpu":"200m","memory":"256Mi"},"requests":{"cpu":"10m","memory":"16Mi"}}` | Resources have to be set so that the horizontal pod autoscaler for moodle can read the moodle cpu consumption correctly |
 | moodle.metrics.service.type | string | `"ClusterIP"` |  |
 | moodle.moodleEmail | string | `""` |  |
 | moodle.moodleLang | string | `"de"` |  |
