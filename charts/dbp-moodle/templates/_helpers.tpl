@@ -27,7 +27,7 @@
 {{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.pgsql_admin_password }}
 {{- end -}}
 
-{{- define "dbpMoodle.secrets.mariadb_password" -}}
+{{- define "dbpMoodle.secrets.db_password" -}}
 {{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.mariadb_password }}
 {{- end -}}
 
