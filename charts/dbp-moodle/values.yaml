@@ -91,7 +91,7 @@ dbpMoodle:
 
   # -- Creates a secret with all relevant credentials for moodle
   # -- Set useChartSecret: false to provide your own secret
-  # -- if you create your own secret, also set moodle.existingSecret and moodle.externalDatabase.existingSecret (if you bring your own DB)
+  # -- If you create your own secret, also set moodle.existingSecret (and moodle.externalDatabase.existingSecret if you bring your own DB)
   secrets:
     useChartSecret: false
     moodle_password: ""
