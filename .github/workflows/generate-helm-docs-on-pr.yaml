@@ -7,7 +7,7 @@ on:
       - 'DBP-000-Generate_Helm_Doc_On_PR'
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - 'charts/**'
       - '.github/workflows/**'
