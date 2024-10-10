@@ -273,7 +273,7 @@ moodle:
     enabled: true
     service:
       type: ClusterIP
-    # -- Resources have to be set so that the Horizontal Pod Autoscaler for moodle can read the moodle cpu consumption correctly
+    # -- Resources have to be set so that the horizontal pod autoscaler for moodle can read the moodle cpu consumption correctly
     resources: 
       requests:
         cpu: 10m
