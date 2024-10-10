@@ -227,7 +227,7 @@ moodle:
   # --	If this value is unset, the bitnami/moodle chart generates its own secret
   existingSecret: "moodle"
   persistence:
-    # --	If this value is unset, the bitnami/moodle chart generates its own PV & PVC
+    # -- If this value is unset, the bitnami/moodle chart generates its own PV & PVC
     existingClaim: "moodle-data"
   affinity: {}
   tolerations: []
