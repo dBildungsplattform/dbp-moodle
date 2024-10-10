@@ -1,6 +1,6 @@
 global:
   kubectl_version: "1.28.7"
-  # -- default storage class, should support ReadWriteMany
+  # -- Default storage class, should support ReadWriteMany
   storageClass: "nfs-client"
   # -- all plugins are disabled by default. if enabled, the plugin is installed on image startup
   moodlePlugins:
