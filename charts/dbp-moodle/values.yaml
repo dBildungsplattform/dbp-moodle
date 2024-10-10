@@ -89,7 +89,8 @@ dbpMoodle:
     annotations:
       "helm.sh/resource-policy": "keep"
 
-  # -- Create a secret with for all moodle relevant credentials, set useChartSecret: false to provide your own secret
+  # -- Creates a secret with all relevant credentials for moodle
+  # -- Set useChartSecret: false to provide your own secret
   # -- if you create your own secret, also set moodle.existingSecret and moodle.externalDatabase.existingSecret (if you bring your own DB)
   secrets:
     useChartSecret: false
