@@ -106,7 +106,7 @@ dbpMoodle:
     affinity: {}
     tolerations: []
     resources: {}
-    # -- which kubectl image to use
+    # -- Which kubectl image to use
     kubectlImage: bitnami/kubectl:1.30.4-debian-12-r3
 
   moodleUpdatePreparationHook:
@@ -118,24 +118,24 @@ dbpMoodle:
         resources: ["cronjobs", "jobs"]
         verbs: ["get", "list", "create", "patch", "watch"]
 
-  # -- Creates a backup of moodle data & postgres. see backup-cronjob for more values (such as schedule)
+  # -- Backup configuration. Set enabled=true to enable the backup-cronjob. Also set s3 location credentials
   backup:
     enabled: false
     gpg_key_names: ""
     gpgkeys:
       gpgkey.dbpinfra.pub.asc: ""
       gpgkey.dbpinfra.sec.asc: ""
-      # -- existing secret for gpg keys
+      # -- Existing  secret for gpg keys
       existingSecret: ""
     s3_bucket_name: ""
     cluster_name: ""
     endpoint: ""
-    # -- either provide an existing secret, or set each secret value here. If both are set the existingSecret is used
+    # -- Either provide an existing secret, or set each secret value here. If both are set the existingSecret is used
     secrets:
       s3_access_key: ""
       s3_access_secret: ""
       s3_endpoint_url: ""
-      # -- provide a secret with the three keys above
+      # -- Existing secret for s3 endpoint
       existingSecret: ""
 
     rules:
@@ -146,7 +146,7 @@ dbpMoodle:
         resources: ["cronjobs", "jobs"]
         verbs: ["get", "patch"]
 
-  # -- This restores moodle to the latest snapshot. ONLY USE FOR ROLLBACK
+  # -- This restores moodle to the latest snapshot. Requires an existing s3 backup. ONLY USE FOR ROLLBACK
   restore:
     enabled: false
     image: ghcr.io/dbildungsplattform/moodle-tools:1.0.7
@@ -171,7 +171,7 @@ dbpMoodle:
         resources: ["deployments/scale", "deployments"]
         verbs: ["get", "list", "scale", "patch"]
 
-  # -- cronjob to sync moodle users, needs to run regularly if moodle doesn't run as root
+  # -- Configuration for the moodle-cronjob which runs moodles cron.php. This is required since moodle does not run as root
   moodlecronjob:
     wait_timeout: "15m"
     rules:
@@ -179,7 +179,7 @@ dbpMoodle:
         resources: ["pods", "pods/exec"]
         verbs: ["get", "list", "create", "watch"]
 
-  # -- Horizontal Pod Autoscaling Values
+  # -- Horizontal pod autoscaling values
   hpa:
     enabled: false
     deployment_name_ref: "moodle"
@@ -201,10 +201,10 @@ moodle:
   image:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
-    # -- The dbp Image which is build for this Helm Chart
+    # -- The dbp-moodle image which is build for this helm chart
     tag: "4.1.12-debian-12-r1-chart-main"
     pullPolicy: Always
-    # -- Debug mode for more detailed Moodle installation and log output
+    # -- Debug mode for more detailed moodle installation and log output
     debug: false
   moodleSkipInstall: false
   moodleSiteName: "Moodle"
