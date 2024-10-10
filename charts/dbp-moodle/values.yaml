@@ -74,7 +74,7 @@ dbpMoodle:
   update_migration:
     enabled: false
 
-  # -- configurations for the optional redis
+  # -- Configurations for the optional redis
   redis:
     host: "moodle-redis-master"
     port: 6379
