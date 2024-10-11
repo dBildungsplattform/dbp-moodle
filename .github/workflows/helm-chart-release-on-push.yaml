@@ -24,6 +24,7 @@ jobs:
       add_latest_tag: false
       container_registry: "ghcr.io"
       fail_on_vulnerabilites: false
+      context: "./moodle/"
 
   release_helm:
     uses: dBildungsplattform/dbp-github-workflows/.github/workflows/chart-release.yaml@7
