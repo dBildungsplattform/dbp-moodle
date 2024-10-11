@@ -59,7 +59,7 @@ main() {
     image_version="$APP_VERSION"
 
     if [[ -z "$installed_version" ]]; then
-        MODULE="dbp-update" info "No installed Moodle version detected"
+        MODULE="dbp-update" info "No installed Moodle version detected. Installing Moodle..."
         install_new_version "$image_version"
         exit 0
     fi
