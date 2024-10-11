@@ -350,7 +350,8 @@ postgresql:
     existingSecret: "moodle"
     secretKeys:
       adminPasswordKey: "pgsql-admin-password"
-      userPasswordKey: "mariadb-password" # moodle expects its db password key to be mariadb-password
+      # -- Moodle expects its db password key to be mariadb-password
+      userPasswordKey: "mariadb-password"
   metrics:
     enabled: true
     serviceMonitor:
