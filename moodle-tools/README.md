@@ -1,4 +1,4 @@
-# cron-tools
+# moodle-tools
 Minimal image with the tools that are necessary for our Moodle Kubernetes CronJobs.
 
 ## Provided Tools
