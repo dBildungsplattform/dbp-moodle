@@ -11,6 +11,9 @@ COPY scripts/install/downloadPlugins.sh /downloadPlugins.sh
 
 RUN chmod +x /downloadMoodle.sh /downloadPlugins.sh
 
+RUN ls -alh /
+RUN cat /downloadPlugins.sh
+
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y curl wget gpg jq && \
     rm -rf /var/lib/apt/lists/*
