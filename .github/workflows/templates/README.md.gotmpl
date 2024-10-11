@@ -36,7 +36,7 @@ helm install chart_name ./{{ template "chart.name" . }} -f values.yaml
 
 {{ template "chart.sourcesSection" . }}
 
-{{ template "chart.requirementsSection" . | uniq }}
+{{ template "chart.requirementsSection" . }}
 
 {{ template "chart.valuesSection" . }}
 
