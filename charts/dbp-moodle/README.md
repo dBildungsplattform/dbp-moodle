@@ -84,7 +84,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | dbpMoodle.backup.secrets | object | `{"existingSecret":"","s3_access_key":"","s3_access_secret":"","s3_endpoint_url":""}` | Either provide an existing secret, or set each secret value here. If both are set the existingSecret is used |
 | dbpMoodle.backup.secrets.existingSecret | string | `""` | Existing secret for s3 endpoint |
 | dbpMoodle.debug | bool | `false` | Moodle debugging is not safe for production |
-| dbpMoodle.external_pvc.accessModes[0] | string | `"ReadWriteOnce"` |  |
+| dbpMoodle.external_pvc.accessModes[0] | string | `"ReadWriteMany"` |  |
 | dbpMoodle.external_pvc.annotations."helm.sh/resource-policy" | string | `"keep"` |  |
 | dbpMoodle.external_pvc.enabled | bool | `true` |  |
 | dbpMoodle.external_pvc.name | string | `"moodle-data"` |  |
