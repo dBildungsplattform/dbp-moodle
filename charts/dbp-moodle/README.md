@@ -284,7 +284,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | postgresql.auth.database | string | `"moodle"` |  |
 | postgresql.auth.existingSecret | string | `"moodle"` |  |
 | postgresql.auth.secretKeys.adminPasswordKey | string | `"pgsql-admin-password"` |  |
-| postgresql.auth.secretKeys.userPasswordKey | string | `"mariadb-password"` |  |
+| postgresql.auth.secretKeys.userPasswordKey | string | `"mariadb-password"` | Moodle expects its db password key to be mariadb-password |
 | postgresql.auth.username | string | `"moodle"` |  |
 | postgresql.enabled | bool | `false` |  |
 | postgresql.image.tag | string | `"14.8.0-debian-11-r0"` |  |
