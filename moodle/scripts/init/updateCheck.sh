@@ -80,10 +80,6 @@ main() {
     create_backup
     MODULE="dbp-update" info "Unpacking new moodle version"
 
-    # TODO test if i can leave this commented out since this script already runs as user 1001 it shouldnt be needed... maybe?
-    # MODULE="dbp-update" info "Configure current user as owner of /bitnami/moodledata/"
-    # chown -R 1001:root /bitnami/moodledata/*
-
     if [[ -n "$installed_version" ]]; then
         MODULE="dbp-update" info "Removing old Moodle (${installed_version})"
     fi
