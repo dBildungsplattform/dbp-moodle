@@ -17,6 +17,7 @@ jobs:
         id: tag
         with:
           tagRegex: "(?<tag>[0-9]+.[0-9]+.[0-9]+)(?<suffix>-.*)"
+  
   build_and_push:
     permissions:
       packages: write
