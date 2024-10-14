@@ -105,8 +105,8 @@ upgrade_if_pending
 MODULE=dbp info "Replacing config files with ours"
 /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
 /bin/cp /moodleconfig/php.ini /opt/bitnami/php/etc/conf.d/php.ini
-
 upgrade_if_pending
+
 if [[ ! -f "$update_failed_path" ]] && [[ ! -f "$plugin_state_failed_path" ]]; then
     MODULE=dbp info "Starting plugin installation"
     if /scripts/pluginCheck.sh; then
