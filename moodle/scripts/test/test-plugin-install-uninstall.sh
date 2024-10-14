@@ -82,7 +82,7 @@ print_step() {
     printf "##########################################\n"
     printf "Step %d: %s\n" $step_count "$1"
     printf "##########################################\n"
-    set +o errexit # for some reason the incrementing errors some times??
+    set +o errexit
     (( step_count++ ))
     set -o errexit    
 }
