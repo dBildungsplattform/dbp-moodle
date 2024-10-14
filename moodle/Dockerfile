@@ -46,7 +46,6 @@ COPY --from=build /plugins /plugins
 COPY scripts/init/entrypoint.sh /scripts/entrypoint.sh
 COPY scripts/init/updateCheck.sh /scripts/updateCheck.sh
 COPY scripts/init/pluginCheck.sh /scripts/pluginCheck.sh
-# TODO: ideally move phpRedisInstall to build stage and just use the artifacts
 COPY scripts/install/phpRedisInstall.sh /phpRedisInstall.sh
 
 COPY scripts/test/test-plugin-install-uninstall.sh /scripts/test-plugin-install-uninstall.sh
