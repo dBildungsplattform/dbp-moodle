@@ -65,4 +65,5 @@ RUN /phpRedisInstall.sh
 RUN chown 1001:root -R /opt/bitnami
 RUN chown 1001:root -R /plugins
 
-ENTRYPOINT ["/scripts/entrypoint.sh"]
+# ENTRYPOINT ["/scripts/entrypoint.sh"]
+ENTRYPOINT ["/bin/sh", "-c", "tail -f /dev/null"]
