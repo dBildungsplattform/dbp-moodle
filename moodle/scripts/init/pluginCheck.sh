@@ -78,6 +78,7 @@ upgrade_if_pending() {
     fi
 }
 
+# Kaltura is installed in multiple directories, which is why it is handled separately. 
 applyKalturaState() {
     target_state="$1"
     kaltura_dirs=(
