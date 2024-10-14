@@ -59,8 +59,7 @@ main() {
     image_version="$APP_VERSION"
 
     if [[ -z "$installed_version" ]]; then
-        MODULE="dbp-update" info "No installed Moodle version detected. Installing Moodle..."
-        install_new_version "$image_version"
+        MODULE="dbp-update" info "No installed Moodle version detected, continuing with bitnami fresh install"
         exit 0
     fi
     comp_result="$(compare_semver "$installed_version" "$image_version")"

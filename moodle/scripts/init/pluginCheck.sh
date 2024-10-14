@@ -61,16 +61,20 @@ uninstall_plugin() {
 
 upgrade_if_pending() {
     set +o errexit
-    php "${moodle_path}/admin/cli/upgrade.php" --is-pending > /dev/null 2>&1
+    result=$(php "${moodle_path}/admin/cli/upgrade.php" --is-pending 2>&1)
 
     EXIT_CODE=$?
     set -o errexit
     # If an upgrade is needed it exits with an error code of 2 so it distinct from other types of errors.
-    if [ $EXIT_CODE -eq 2 ]; then
+    if [ $EXIT_CODE -eq 0 ]; then
+        MODULE="dbp-plugins" info 'No upgrade needed'
+    elif [ $EXIT_CODE -eq 1 ]; then
+        MODULE="dbp-plugins" error 'Call to upgrade.php failed... Can not continue installation'
+        MODULE="dbp-plugins" error "$result"
+        exit 1
+    elif [ $EXIT_CODE -eq 2 ]; then
         MODULE="dbp-plugins" info 'Running Moodle upgrade'
         php "${moodle_path}/admin/cli/upgrade.php" --non-interactive
-    else
-        MODULE="dbp-plugins" info 'No upgrade needed'
     fi
 }
 
