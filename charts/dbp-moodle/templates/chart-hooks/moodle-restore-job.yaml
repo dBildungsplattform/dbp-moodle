@@ -1,10 +1,15 @@
-{{- if .Values.dbpMoodle.restore }}
+{{- if .Values.dbpMoodle.restore.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: "{{ .Release.Name }}-restore-job"
   namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
+  backoffLimit: {{ .Values.dbpMoodle.restore.backoffLimit | default "4" }}
   template:
     spec:
       volumes:
@@ -13,38 +18,35 @@ spec:
           claimName: {{ include "dbpMoodle.moodlePvc.name" . }}
       - name: moodle-restore-script
         configMap:
-          name: moodle-restore-script
+          name: "{{ .Release.Name }}-restore-script"
           defaultMode: 0711
       - name: duply
         projected:
           sources:
             - configMap:
-                name: moodle-duply
+                name: "{{ .Release.Name }}-duply"
                 items:
                   - key: conf
                     path: conf
                   - key: exclude
                     path: exclude
             - secret:
-                name: moodle-backup-gpg-keys
+                name: {{ .Values.dbpMoodle.restore.existingSecretGPG }}
           defaultMode: 0644
-      serviceAccountName: moodle-restore-job
-      serviceAccount: moodle-restore-job
+      serviceAccountName: "{{ .Release.Name }}-restore-job"
+      serviceAccount: "{{ .Release.Name }}-restore-job"
       containers:
       - name:  moodle-restore-job
-        image: schulcloud/infra-tools:{{ .Values.infratools.image_tag }}
+        image: {{ .Values.dbpMoodle.restore.image }}
         command:
           - /bin/sh
           - -c
         args:
           - /scripts/restore-script
-        resources:
-          limits:
-            cpu: 2000m
-            memory: 16Gi
-          requests:
-            cpu: 1000m
-            memory: 8Gi
+        securityContext:
+          privileged: false
+        resources: 
+          {{- .Values.dbpMoodle.restore.resources | toYaml | nindent 10 }}
         volumeMounts:
         - name: moodle-data
           mountPath: /bitnami/moodle
@@ -57,26 +59,22 @@ spec:
         - name: duply
           mountPath: /etc/duply/default/
         env:
-        - name: POSTGRESQL_PASSWORD
+        - name: DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: moodle
-              key: PGSQL_POSTGRES_PASSWORD
-        - name: MARIADB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: moodle
-              key: mariadb-password
+              name: {{ .Values.dbpMoodle.restore.existingSecretDatabase }}
+              key: {{ .Values.dbpMoodle.restore.existingSecretKeyDatabase }}
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
-              name: moodle-backup-s3
-              key: s3_access_key
+              name: {{ .Values.dbpMoodle.restore.existingSecretS3 }}
+              key: {{ .Values.dbpMoodle.restore.existingSecretKeyS3Access }}
         - name: AWS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
-              name: moodle-backup-s3
-              key: s3_access_secret
+              name: {{ .Values.dbpMoodle.restore.existingSecretS3 }}
+              key: {{ .Values.dbpMoodle.restore.existingSecretKeyS3Secret }}
+      affinity: {{ .Values.dbpMoodle.restore.affinity | toYaml }}
+      tolerations: {{ .Values.dbpMoodle.restore.tolerations | toYaml }}
       restartPolicy: Never
-  backoffLimit: 4
 {{- end }}

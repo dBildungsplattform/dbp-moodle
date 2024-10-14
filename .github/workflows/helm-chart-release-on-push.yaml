@@ -1,0 +1,36 @@
+name: Release DBP Moodle Chart for dev
+on:
+  push:
+    branches-ignore:
+      - 'main'
+
+concurrency:
+  group: dbp-moodle-chart
+  cancel-in-progress: true
+
+jobs:
+  build_image_on_push:
+    name: "Publish image and scan with trivy"
+    if: ${{ github.event_name == 'push' }}
+    permissions:
+      packages: write
+      security-events: write
+      contents: read
+    uses: dBildungsplattform/dbp-github-workflows/.github/workflows/image-publish-trivy.yaml@7
+    with:
+      image_name: "moodle"
+      run_trivy_scan: false
+      image_tag_generation: ticket_from_branch
+      add_latest_tag: false
+      container_registry: "ghcr.io"
+      fail_on_vulnerabilites: false
+      context: "./moodle/"
+
+  release_helm:
+    uses: dBildungsplattform/dbp-github-workflows/.github/workflows/chart-release.yaml@7
+    secrets: inherit
+    with:
+      chart_name: dbp-moodle
+      helm_repo_list: bitnami,https://charts.bitnami.com/bitnami,sql_exporter,https://burningalchemist.github.io/sql_exporter/
+      helm_chart_version_generation: ticket_from_branch_timestamp
+      image_tag_generation: ticket_from_branch
