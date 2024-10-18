@@ -1,6 +1,25 @@
 #!/bin/bash
 set -e
 
+health_file="/tmp/healthy"
+
+# Create liveness probe file
+touch "${health_file}"
+
+function clean_up() {
+    exit_code=$?
+    if [ $exit_code -eq 0 ]; then
+        echo "=== Finished restore process ==="
+        exit $exit_code
+    else
+        echo "=== An error occurred. Deleting health file: ${health_file} ==="
+        rm -f "${health_file}"
+        exit $exit_code
+    fi
+}
+
+trap "clean_up" EXIT
+
 # Get current replicas and scale down deployment
 replicas=$(kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o=jsonpath='{.status.replicas}')
 echo "=== Current replicas detected: $replicas ==="
@@ -69,7 +88,7 @@ MYSQL_PWD="$DATABASE_PASSWORD" mariadb -u {{ .Values.mariadb.auth.username }} -h
 {{- else -}}
 PGPASSWORD="$DATABASE_PASSWORD" psql -U postgres -h {{ .Release.Name }}-postgresql {{ .Values.postgresql.auth.database }} < moodledb_dump.sql
 {{- end }}
-echo "=== Finish restore ==="
+echo "=== Finished DB restore ==="
 
 echo "=== Scaling deployment replicas to $replicas ==="
 kubectl scale deployment/{{ .Release.Name }} --replicas=$replicas -n {{ .Release.Namespace }}

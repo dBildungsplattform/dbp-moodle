@@ -62,6 +62,7 @@ global:
       enabled: false
     snap:
       enabled: false
+
 dbpMoodle:
   name: infra
   stage: infra
@@ -507,6 +508,13 @@ moodlecronjob:
           configMap:
             name: moodle-php-script
             defaultMode: 0711
+      livenessProbe:
+        exec:
+          command:
+            - cat
+            - /tmp/healthy
+        initialDelaySeconds: 2
+        periodSeconds: 2
 
 backup-cronjob:
   image:
@@ -592,6 +600,13 @@ backup-cronjob:
         - -c
       args:
         - /scripts/backup-script
+      livenessProbe:
+        exec:
+          command:
+            - cat
+            - /tmp/healthy
+        initialDelaySeconds: 5
+        periodSeconds: 10
 
 sql-exporter:
   enabled: false
