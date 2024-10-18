@@ -62,6 +62,7 @@ global:
       enabled: false
     snap:
       enabled: false
+
 dbpMoodle:
   name: infra
   stage: infra
@@ -573,6 +574,13 @@ backup-cronjob:
     capabilities:
       drop:
         - ALL
+  livenessProbe:
+    exec:
+      command:
+        - cat
+        - /tmp/healthy
+    initialDelaySeconds: 5
+    periodSeconds: 10
   affinity: {}
   tolerations: []
   resources:

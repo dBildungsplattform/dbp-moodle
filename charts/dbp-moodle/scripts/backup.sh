@@ -1,8 +1,14 @@
 #!/bin/bash
 set -e
+
+health_file="/tmp/healthy"
 backup_dir="/tmp/backup"
 readiness_bckp="/tmp/readinessprobe.json"
 liveness_bckp="/tmp/livenessprobe.json"
+
+# Create liveness probe file
+touch "${health_file}"
+
 # Create destination dir if not exists
 if [ ! -d "${backup_dir}" ]; then
     mkdir -p "${backup_dir}"
@@ -35,6 +41,7 @@ function clean_up() {
         echo "=== Update backup failed with exit code $exit_code ==="
         rm -f /mountData/moodledata/UpdateBackupSuccess
         touch /mountData/moodledata/UpdateBackupFailure
+        rm -f "${health_file}"
         exit $exit_code
     fi
 }
