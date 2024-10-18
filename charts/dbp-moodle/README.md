@@ -114,7 +114,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | dbpMoodle.name | string | `"infra"` |  |
 | dbpMoodle.redis | object | `{"host":"moodle-redis-master","password":"","port":6379}` | Configurations for the optional redis |
 | dbpMoodle.restore | object | `{"affinity":{},"enabled":false,"existingSecretDatabase":"moodle","existingSecretGPG":"","existingSecretKeyDatabase":"","existingSecretKeyS3Access":"","existingSecretKeyS3Secret":"","existingSecretS3":"","image":"ghcr.io/dbildungsplattform/moodle-tools:1.0.7","resources":{"limits":{"cpu":"2000m","memory":"16Gi"},"requests":{"cpu":"1000m","memory":"8Gi"}},"rules":[{"apiGroups":["apps"],"resources":["deployments/scale","deployments"],"verbs":["get","list","scale","patch"]}],"tolerations":[]}` | This restores moodle to the latest snapshot. Requires an existing s3 backup. ONLY USE FOR ROLLBACK |
-| dbpMoodle.secrets | object | `{"etherpad_api_key":"","etherpad_postgresql_password":"","mariadb_password":"","mariadb_root_password":"","moodle_password":"","pgsql_admin_password":"","useChartSecret":false}` | Creates a secret with all relevant credentials for moodle -- Set useChartSecret: false to provide your own secret -- If you create your own secret, also set moodle.existingSecret (and moodle.externalDatabase.existingSecret if you bring your own DB) |
+| dbpMoodle.secrets | object | `{"etherpad_api_key":"","etherpad_postgresql_password":"","mariadb_password":"","mariadb_root_password":"","moodle_password":"","pgsql_admin_password":"","useChartSecret":true}` | Creates a secret with all relevant credentials for moodle -- Set useChartSecret: false to provide your own secret -- If you create your own secret, also set moodle.existingSecret (and moodle.externalDatabase.existingSecret if you bring your own DB) |
 | dbpMoodle.stage | string | `"infra"` |  |
 | dbpMoodle.update_migration | object | `{"enabled":false}` | The dbp update process to migrate moodle data when moodle versions are increased |
 | etherpad-postgresql.auth.database | string | `"etherpad"` |  |
@@ -225,7 +225,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.image.pullPolicy | string | `"Always"` |  |
 | moodle.image.registry | string | `"ghcr.io"` |  |
 | moodle.image.repository | string | `"dbildungsplattform/moodle"` |  |
-| moodle.image.tag | string | `"4.1.12-debian-12-r1-chart-main"` | The dbp-moodle image which is build for this helm chart |
+| moodle.image.tag | string | `"4.1.13-debian-12-r2-dbp1"` | The dbp-moodle image which is build for this helm chart |
 | moodle.ingress.annotations."cert-manager.io/cluster-issuer" | string | `"sc-cert-manager-clusterissuer-letsencrypt"` |  |
 | moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-body-size" | string | `"200M"` |  |
 | moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-connect-timeout" | string | `"30s"` |  |

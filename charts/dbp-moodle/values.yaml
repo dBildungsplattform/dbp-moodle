@@ -93,7 +93,7 @@ dbpMoodle:
   # -- Set useChartSecret: false to provide your own secret
   # -- If you create your own secret, also set moodle.existingSecret (and moodle.externalDatabase.existingSecret if you bring your own DB)
   secrets:
-    useChartSecret: false
+    useChartSecret: true
     moodle_password: ""
     pgsql_admin_password: ""
     mariadb_password: ""
@@ -202,7 +202,7 @@ moodle:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
     # -- The dbp-moodle image which is build for this helm chart
-    tag: "4.1.12-debian-12-r1-chart-main"
+    tag: "4.1.13-debian-12-r2-dbp1"
     pullPolicy: Always
     # -- Debug mode for more detailed moodle installation and log output
     debug: false
