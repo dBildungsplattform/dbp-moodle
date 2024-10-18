@@ -484,6 +484,13 @@ moodlecronjob:
     capabilities:
       drop:
         - ALL
+  livenessProbe:
+    exec:
+      command:
+        - cat
+        - /tmp/healthy
+    initialDelaySeconds: 2
+    periodSeconds: 2
   affinity: {}
   tolerations: []
   resources: {}
