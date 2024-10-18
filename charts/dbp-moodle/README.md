@@ -68,6 +68,10 @@ The Chart can be deployed without any modification but it is advised to set own 
 | backup-cronjob.jobs[0].name | string | `"backup"` |  |
 | backup-cronjob.jobs[0].schedule | string | `"0 3 * * *"` |  |
 | backup-cronjob.jobs[0].successfulJobsHistoryLimit | int | `1` |  |
+| backup-cronjob.livenessProbe.exec.command[0] | string | `"cat"` |  |
+| backup-cronjob.livenessProbe.exec.command[1] | string | `"/tmp/healthy"` |  |
+| backup-cronjob.livenessProbe.initialDelaySeconds | int | `5` |  |
+| backup-cronjob.livenessProbe.periodSeconds | int | `10` |  |
 | backup-cronjob.resources.limits.cpu | string | `"2000m"` |  |
 | backup-cronjob.resources.limits.memory | string | `"4Gi"` |  |
 | backup-cronjob.resources.requests.cpu | string | `"500m"` |  |
@@ -273,6 +277,10 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodlecronjob.jobs[0].restartPolicy | string | `"Never"` |  |
 | moodlecronjob.jobs[0].schedule | string | `"* * * * *"` |  |
 | moodlecronjob.jobs[0].successfulJobsHistoryLimit | int | `1` |  |
+| moodlecronjob.livenessProbe.exec.command[0] | string | `"cat"` |  |
+| moodlecronjob.livenessProbe.exec.command[1] | string | `"/tmp/healthy"` |  |
+| moodlecronjob.livenessProbe.initialDelaySeconds | int | `2` |  |
+| moodlecronjob.livenessProbe.periodSeconds | int | `2` |  |
 | moodlecronjob.resources | object | `{}` |  |
 | moodlecronjob.securityContext.allowPrivilegeEscalation | bool | `false` |  |
 | moodlecronjob.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
