@@ -484,13 +484,6 @@ moodlecronjob:
     capabilities:
       drop:
         - ALL
-  livenessProbe:
-    exec:
-      command:
-        - cat
-        - /tmp/healthy
-    initialDelaySeconds: 2
-    periodSeconds: 2
   affinity: {}
   tolerations: []
   resources: {}
@@ -515,6 +508,13 @@ moodlecronjob:
           configMap:
             name: moodle-php-script
             defaultMode: 0711
+      livenessProbe:
+        exec:
+          command:
+            - cat
+            - /tmp/healthy
+        initialDelaySeconds: 2
+        periodSeconds: 2
 
 backup-cronjob:
   image:
@@ -581,13 +581,6 @@ backup-cronjob:
     capabilities:
       drop:
         - ALL
-  livenessProbe:
-    exec:
-      command:
-        - cat
-        - /tmp/healthy
-    initialDelaySeconds: 5
-    periodSeconds: 10
   affinity: {}
   tolerations: []
   resources:
@@ -607,6 +600,13 @@ backup-cronjob:
         - -c
       args:
         - /scripts/backup-script
+      livenessProbe:
+        exec:
+          command:
+            - cat
+            - /tmp/healthy
+        initialDelaySeconds: 5
+        periodSeconds: 10
 
 sql-exporter:
   enabled: false
