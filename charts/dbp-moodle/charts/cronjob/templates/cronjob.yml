@@ -131,7 +131,7 @@ spec:
               volumeMounts:
                 {{- toYaml . | nindent 16 }}
               {{- end }}
-              {{- if .Values.livenessProbe }}
+              {{- with .Values.livenessProbe }}
               livenessProbe:
                 {{- toYaml .Values.livenessProbe | nindent 16 }}
               {{- end }}  
