@@ -1,12 +1,18 @@
 #!/bin/bash
-# Create destination dir if not exists
 set -e
-if [ ! -d /tmp/backup ]; then
-    mkdir -p /tmp/backup
-fi
 
-readiness_probe_file="/tmp/readinessprobe.json"
-liveness_probe_file="/tmp/livenessprobe.json"
+health_file="/tmp/healthy"
+backup_dir="/tmp/backup"
+readiness_bckp="/tmp/readinessprobe.json"
+liveness_bckp="/tmp/livenessprobe.json"
+
+# Create liveness probe file
+touch "${health_file}"
+
+# Create destination dir if not exists
+if [ ! -d "${backup_dir}" ]; then
+    mkdir -p "${backup_dir}"
+fi
 
 # Cleanup after finish only if not an update backup (normal backup has no CliUpdate file)
 # If update backup: depending on exit code create the signal for the update helper job with success or failure
@@ -18,10 +24,10 @@ function clean_up() {
         rm -f /mountData/moodledata/climaintenance.html
 
         echo "=== Turn on liveness and readiness probe ==="
-        if [ -e "${readiness_probe_file}" ] && [ -s "${readiness_probe_file}" ] && [ -e "${liveness_probe_file}" ] && [ -s "${liveness_probe_file}" ] ; then
-            kubectl patch deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} --type=json -p="[{\"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/readinessProbe\", \"value\": $(cat ${readiness_probe_file})}, {\"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/livenessProbe\", \"value\": $(cat ${liveness_probe_file})}]"
+        if [ -e "${readiness_bckp}" ] && [ -s "${readiness_bckp}" ] && [ -e "${liveness_bckp}" ] && [ -s "${liveness_bckp}" ] ; then
+            kubectl patch deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} --type=json -p="[{\"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/readinessProbe\", \"value\": $(cat ${readiness_bckp})}, {\"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/livenessProbe\", \"value\": $(cat ${liveness_bckp})}]"
         else
-            echo "Unable to turn on liveness and readiness probes. Either the readiness_probe_file or the liveness_probe_file does not exist or is empty."
+            echo "Unable to turn on liveness and readiness probes. Either the readiness_bckp or the liveness_bckp does not exist or is empty."
         fi
 
         echo "=== Unsuspending moodle cronjob ==="
@@ -35,6 +41,7 @@ function clean_up() {
         echo "=== Update backup failed with exit code $exit_code ==="
         rm -f /mountData/moodledata/UpdateBackupSuccess
         touch /mountData/moodledata/UpdateBackupFailure
+        rm -f "${health_file}"
         exit $exit_code
     fi
 }
@@ -48,8 +55,8 @@ if ! [ -a /mountData/moodledata/CliUpdate ]; then
     kubectl patch cronjobs {{ .Release.Name }}-moodlecronjob-{{ include "moodlecronjob.job_name" . }} -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : true }}'
 
     echo "=== Turn off liveness and readiness probe ==="
-    kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o jsonpath="{.spec.template.spec.containers[0].readinessProbe}" > ${readiness_probe_file}
-    kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o jsonpath="{.spec.template.spec.containers[0].livenessProbe}" > ${liveness_probe_file}
+    kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o jsonpath="{.spec.template.spec.containers[0].readinessProbe}" > ${readiness_bckp}
+    kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o jsonpath="{.spec.template.spec.containers[0].livenessProbe}" > ${liveness_bckp}
     kubectl patch deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} --type=json -p="[{'op': 'remove', 'path': '/spec/template/spec/containers/0/readinessProbe'}, {'op': 'remove', 'path': '/spec/template/spec/containers/0/livenessProbe'}]"
 
     kubectl rollout status deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} 
@@ -65,7 +72,7 @@ fi
 echo "=== Start backup ==="
 date +%Y%m%d_%H%M%S%Z
 
-cd /tmp/backup
+cd "${backup_dir}"
 # Get dump of db
 echo "=== Start DB dump ==="
 export DATE=$( date "+%Y-%m-%d" )
@@ -109,7 +116,7 @@ echo "=== Execute backup ==="
 /usr/bin/duply default backup
 /usr/bin/duply default status
 cd /
-rm -rf /tmp/backup
+rm -rf "${backup_dir}"
 echo "=== Backup finished ==="
 echo "=== Clean up old backups ==="
 /usr/bin/duply default purge --force

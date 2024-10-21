@@ -45,6 +45,13 @@ spec:
           - /scripts/restore-script
         securityContext:
           privileged: false
+        livenessProbe:
+          exec:
+            command:
+              - cat
+              - /tmp/healthy
+          initialDelaySeconds: 10
+          periodSeconds: 10
         resources: 
           {{- .Values.dbpMoodle.restore.resources | toYaml | nindent 10 }}
         volumeMounts:

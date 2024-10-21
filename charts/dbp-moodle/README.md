@@ -65,6 +65,10 @@ The Chart can be deployed without any modification but it is advised to set own 
 | backup-cronjob.jobs[0].command[0] | string | `"/bin/sh"` |  |
 | backup-cronjob.jobs[0].command[1] | string | `"-c"` |  |
 | backup-cronjob.jobs[0].failedJobsHistoryLimit | int | `1` |  |
+| backup-cronjob.jobs[0].livenessProbe.exec.command[0] | string | `"cat"` |  |
+| backup-cronjob.jobs[0].livenessProbe.exec.command[1] | string | `"/tmp/healthy"` |  |
+| backup-cronjob.jobs[0].livenessProbe.initialDelaySeconds | int | `5` |  |
+| backup-cronjob.jobs[0].livenessProbe.periodSeconds | int | `10` |  |
 | backup-cronjob.jobs[0].name | string | `"backup"` |  |
 | backup-cronjob.jobs[0].schedule | string | `"0 3 * * *"` |  |
 | backup-cronjob.jobs[0].successfulJobsHistoryLimit | int | `1` |  |
@@ -269,6 +273,10 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodlecronjob.jobs[0].extraVolumes[0].configMap.name | string | `"moodle-php-script"` |  |
 | moodlecronjob.jobs[0].extraVolumes[0].name | string | `"moodle-php-script"` |  |
 | moodlecronjob.jobs[0].failedJobsHistoryLimit | int | `1` |  |
+| moodlecronjob.jobs[0].livenessProbe.exec.command[0] | string | `"cat"` |  |
+| moodlecronjob.jobs[0].livenessProbe.exec.command[1] | string | `"/tmp/healthy"` |  |
+| moodlecronjob.jobs[0].livenessProbe.initialDelaySeconds | int | `2` |  |
+| moodlecronjob.jobs[0].livenessProbe.periodSeconds | int | `2` |  |
 | moodlecronjob.jobs[0].name | string | `"php-script"` |  |
 | moodlecronjob.jobs[0].restartPolicy | string | `"Never"` |  |
 | moodlecronjob.jobs[0].schedule | string | `"* * * * *"` |  |

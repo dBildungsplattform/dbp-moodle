@@ -112,6 +112,7 @@ jobs:
     parallelism: 1
     ttlSecondsAfterFinished: 0
     suspend: false
+    livenessProbe: {}
     image:
       repository: nginx
       tag: latest
