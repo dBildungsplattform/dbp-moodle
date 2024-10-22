@@ -203,7 +203,7 @@ moodle:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
     # -- The dbp-moodle image which is build for this helm chart
-    tag: "4.1.14-debian-12-r0-dbp1"
+    tag: "4.1.13-debian-12-r2-dbp1"
     pullPolicy: Always
     # -- Debug mode for more detailed moodle installation and log output
     debug: false
