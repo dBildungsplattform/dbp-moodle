@@ -43,7 +43,7 @@ dependencies:
     version: "15.5.7"
     repository: https://charts.bitnami.com/bitnami
     alias: etherpad-postgresql
-    condition: etherpadlite.enabled
+    condition: etherpad-postgresql.enabled
 
   - name: etherpad
     version: 0.1.0

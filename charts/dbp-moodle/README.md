@@ -126,6 +126,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | etherpad-postgresql.auth.existingSecret | string | `"moodle"` |  |
 | etherpad-postgresql.auth.secretKeys.userPasswordKey | string | `"etherpad-postgresql-password"` |  |
 | etherpad-postgresql.auth.username | string | `"etherpad"` |  |
+| etherpad-postgresql.enabled | bool | `false` |  |
 | etherpad-postgresql.persistence.existingClaim | string | `"moodle-etherpad-postgresql"` |  |
 | etherpad-postgresql.primary.affinity | object | `{}` |  |
 | etherpad-postgresql.primary.containerSecurityContext.privileged | bool | `false` |  |
