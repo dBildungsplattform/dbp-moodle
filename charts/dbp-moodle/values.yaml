@@ -446,6 +446,7 @@ etherpadlite:
       memory: "1Gi"
 
 etherpad-postgresql:
+  enabled: false
   auth:
     enablePostgresUser: false
     username: etherpad
