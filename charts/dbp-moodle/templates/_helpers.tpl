@@ -47,6 +47,14 @@
 {{- default "moodle" .Values.dbpMoodle.secrets.etherpad_api_key }}
 {{- end -}}
 
+{{- define "dbpMoodle.backup.retention_time" -}}
+{{- default "6M" .Values.dbpMoodle.backup.retention_time }}
+{{- end -}}
+
+{{- define "dbpMoodle.backup.max_full_backup_age" -}}
+{{- default "1W" .Values.dbpMoodle.backup.max_full_backup_age }}
+{{- end -}}
+
 {{- define "dbpMoodle.pluginConfigMap.content" -}}
 kaltura:kaltura:: {{- .Values.global.moodlePlugins.kaltura.enabled }}{{"\n"}}
 wunderbyte_table:local_wunderbyte_table:local/wunderbyte_table: {{- .Values.global.moodlePlugins.booking.enabled}}{{"\n"}}
