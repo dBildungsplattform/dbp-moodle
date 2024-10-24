@@ -13,7 +13,7 @@ data:
     TARGET="boto3+s3://{{ .Values.dbpMoodle.backup.s3_bucket_name }}/{{ .Values.dbpMoodle.backup.cluster_name }}/{{ .Release.Namespace }}/"
     SOURCE='/'
     MAX_AGE={{ include "dbpMoodle.backup.retention_time" . }}
-    MAX_FULLBKP_AGE=1W
+    MAX_FULLBKP_AGE={{ include "dbpMoodle.backup.max_full_backup_age" . }}
     DUPL_PARAMS="$DUPL_PARAMS --full-if-older-than $MAX_FULLBKP_AGE --allow-source-mismatch --s3-endpoint-url  {{ .Values.dbpMoodle.backup.endpoint }}"
   exclude: |-
     + /tmp/backup

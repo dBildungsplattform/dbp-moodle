@@ -123,6 +123,7 @@ dbpMoodle:
   backup:
     enabled: false
     retention_time: ""
+    max_full_backup_age: ""
     gpg_key_names: ""
     gpgkeys:
       gpgkey.dbpinfra.pub.asc: ""
