@@ -122,6 +122,7 @@ dbpMoodle:
   # -- Backup configuration. Set enabled=true to enable the backup-cronjob. Also set s3 location credentials
   backup:
     enabled: false
+    retention_time: ""
     gpg_key_names: ""
     gpgkeys:
       gpgkey.dbpinfra.pub.asc: ""
