@@ -122,8 +122,10 @@ dbpMoodle:
   # -- Backup configuration. Set enabled=true to enable the backup-cronjob. Also set s3 location credentials
   backup:
     enabled: false
-    retention_time: ""
-    max_full_backup_age: ""
+    # -- Defines the maximum age of a backup before it is deleted
+    retention_time: "6M"
+    # -- Defines the maximum age of a full backup before a new full backup is created. The backups in between are incremental
+    max_full_backup_age: "1W"
     gpg_key_names: ""
     gpgkeys:
       gpgkey.dbpinfra.pub.asc: ""
