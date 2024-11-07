@@ -238,6 +238,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-connect-timeout" | string | `"30s"` |  |
 | moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-read-timeout" | string | `"20s"` |  |
 | moodle.ingress.enabled | bool | `true` |  |
+| moodle.ingress.extraHosts | list | `[]` | Any additional hostnames, needs to be name: URL value pairs |
 | moodle.ingress.hostname | string | `"example.de"` | The hostname of the moodle application |
 | moodle.ingress.tls | bool | `true` |  |
 | moodle.mariadb | object | `{"enabled":false}` | The mariadb included in bitnami/moodle chart. For this chart usage of mariadb.enabled with moodle.externalDatabase.type="mariadb" is recommended |
