@@ -268,7 +268,7 @@ moodle:
     enabled: true
     # -- The hostname of the moodle application
     hostname: "example.de"
-    # -- Any additional hostnames, needs to be name: URL value pairs
+    # -- Any additional hostnames, needs to be "name: URL" value pairs
     extraHosts: []
     tls: true
     annotations:
