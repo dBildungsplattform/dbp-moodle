@@ -110,7 +110,6 @@ if [ -f "/tmp/de.zip" ] && [ ! -d /bitnami/moodledata/lang/de ]; then \
     MODULE=dbp info "Installing german language pack"
     mkdir -p /bitnami/moodledata/lang
     unzip -q /tmp/de.zip -d /bitnami/moodledata/lang
-    rm -f /tmp/de.zip
 fi
 
 upgrade_if_pending
