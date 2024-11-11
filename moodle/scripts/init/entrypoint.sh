@@ -107,7 +107,7 @@ MODULE=dbp info "Replacing config files with ours"
 /bin/cp /moodleconfig/php.ini /opt/bitnami/php/etc/conf.d/php.ini
 
 if [ -f "/tmp/de.zip" ] && [ ! -d /bitnami/moodledata/lang/de ]; then \
-    MODULE=dbp warn "Installing german language pack"
+    MODULE=dbp info "Installing german language pack"
     mkdir -p /bitnami/moodledata/lang
     unzip -q /tmp/de.zip -d /bitnami/moodledata/lang
     rm -f /tmp/de.zip
