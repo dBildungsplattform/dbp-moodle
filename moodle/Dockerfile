@@ -61,6 +61,9 @@ RUN apt-get update && apt-get upgrade -y && \
 # Install redis-php which is required for moodle to use redis
 RUN /phpRedisInstall.sh
 
+RUN MAJOR_MINOR=$(echo "$MOODLE_VERSION" | cut -d. -f1,2) && \
+    curl -L https://download.moodle.org/download.php/direct/langpack/${MAJOR_MINOR}/de.zip --output /tmp/de.zip
+
 RUN chown 1001:root -R /opt/bitnami
 RUN chown 1001:root -R /plugins
 

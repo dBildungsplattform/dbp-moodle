@@ -105,6 +105,13 @@ upgrade_if_pending
 MODULE=dbp info "Replacing config files with ours"
 /bin/cp -p /moodleconfig/config.php /bitnami/moodle/config.php
 /bin/cp /moodleconfig/php.ini /opt/bitnami/php/etc/conf.d/php.ini
+
+if [ -f "/tmp/de.zip" ] && [ ! -d /bitnami/moodledata/lang/de ]; then \
+    MODULE=dbp info "Installing german language pack"
+    mkdir -p /bitnami/moodledata/lang
+    unzip -q /tmp/de.zip -d /bitnami/moodledata/lang
+fi
+
 upgrade_if_pending
 
 if [[ ! -f "$update_failed_path" ]] && [[ ! -f "$plugin_state_failed_path" ]]; then
@@ -118,7 +125,6 @@ if [[ ! -f "$update_failed_path" ]] && [[ ! -f "$plugin_state_failed_path" ]]; t
 else
     MODULE=dbp warn "Update or Plugin check failed previously. Skipping plugin check..."
 fi
-
 
 MODULE=dbp info "Finished all preparations! Starting Webserver"
 /opt/bitnami/scripts/moodle/run.sh

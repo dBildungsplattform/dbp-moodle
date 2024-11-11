@@ -1,0 +1,16 @@
+{{ if .Values.dbpMoodle.allowInternalNetworkingOnly }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: moodle-allow-internal-only
+  namespace: "{{ .Release.Namespace }}"
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: moodle
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+      - namespaceSelector: {}
+{{ end }}
