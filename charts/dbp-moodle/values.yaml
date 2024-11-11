@@ -76,9 +76,8 @@ dbpMoodle:
     extendedLogging: false
     # -- Moodle debugging is not safe for production
     debug: false
-    additional: |
-      $CFG->sslproxy = 1;
-      $CFG->someotheroption = "whatever value";
+    # -- Any additional text to be included into the config.php
+    additional: ""
 
   # -- Configurations for the optional redis
   redis:
