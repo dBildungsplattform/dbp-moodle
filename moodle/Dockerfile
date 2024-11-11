@@ -25,6 +25,10 @@ RUN curl -L https://github.com/tmuras/moosh/archive/refs/tags/1.21.tar.gz -o moo
     ln -s /moosh/moosh.php /usr/local/bin/moosh
 
 RUN /downloadMoodle.sh
+RUN mkdir /bitnami/moodledata/lang && \
+    MAJOR_MINOR=$(echo "$MOODLE_VERSION" | cut -d. -f1,2) && \
+    curl -L https://download.moodle.org/download.php/direct/langpack/4.1/de.zip --output de.zip && \
+    unzip de.zip -d /bitnami/moodledata/lang
 
 # Install plugins to the image
 RUN mkdir /plugins && /downloadPlugins.sh
@@ -42,6 +46,7 @@ RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen
 COPY --from=build "/moodle-${MOODLE_VERSION}.tgz" "/moodle-${MOODLE_VERSION}.tgz"
 COPY --from=build /moosh /moosh
 COPY --from=build /plugins /plugins
+COPY --from=build /bitnami/moodledata/lang /bitnami/moodledata/lang
 
 COPY scripts/init/entrypoint.sh /scripts/entrypoint.sh
 COPY scripts/init/updateCheck.sh /scripts/updateCheck.sh
@@ -60,10 +65,6 @@ RUN apt-get update && apt-get upgrade -y && \
 
 # Install redis-php which is required for moodle to use redis
 RUN /phpRedisInstall.sh
-
-RUN MAJOR_MINOR=$(echo "$MOODLE_VERSION" | cut -d. -f1,2) && \
-    curl -L https://download.moodle.org/download.php/direct/langpack/${MAJOR_MINOR}/de.zip --output /tmp/de.zip
-
 
 RUN chown 1001:root -R /opt/bitnami
 RUN chown 1001:root -R /plugins
