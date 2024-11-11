@@ -66,10 +66,6 @@ global:
 dbpMoodle:
   name: infra
   stage: infra
-  # -- Extended php logging
-  logging: false
-  # -- Moodle debugging is not safe for production
-  debug: false
 
   # -- The dbp update process to migrate moodle data when moodle versions are increased
   update_migration:
@@ -80,6 +76,10 @@ dbpMoodle:
     extendedLogging: false
     # -- Moodle debugging is not safe for production
     debug: false
+    additional: |
+      $CFG->sslproxy = 1;
+      $CFG->someotheroption = "whatever value";
+
   # -- Configurations for the optional redis
   redis:
     host: "moodle-redis-master"

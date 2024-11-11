@@ -63,5 +63,8 @@ $CFG->perfdebug = 7;
 $CFG->debugsqltrace = 0;
 {{- end }}
 
+{{ with .Values.dbpMoodle.phpConfig.additional -}}
+{{- . }}
+{{- end }}
 // There is no php closing tag in this file,
 // it is intentional because it prevents trailing whitespace problems!
