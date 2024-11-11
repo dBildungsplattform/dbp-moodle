@@ -75,9 +75,9 @@ dbpMoodle:
   update_migration:
     enabled: false
 
-  # -- disallows all egress from the namespace for the moodle deployment
+  # -- disallows all egress from release namespace for the moodle deployment
   allowInternalNetworkingOnly: false
-  
+
   phpConfig:
     # -- Extended php logging
     extendedLogging: false
