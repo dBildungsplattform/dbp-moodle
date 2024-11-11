@@ -383,7 +383,7 @@ postgresql:
 
 # redis helm chart values
 redis:
-  enabled: true
+  enabled: false
   architecture: "standalone"
   auth:
     enabled: true
