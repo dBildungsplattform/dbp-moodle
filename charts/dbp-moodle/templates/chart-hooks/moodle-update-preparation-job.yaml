@@ -31,13 +31,6 @@ spec:
                 - /tmp/healthy
             initialDelaySeconds: 10
             periodSeconds: 10
-          readinessProbe:
-            exec:
-              command:
-                - cat
-                - /tmp/healthy
-            initialDelaySeconds: 10
-            periodSeconds: 10
       affinity: {{ .Values.dbpMoodle.moodleUpdatePreparationJob.affinity | toYaml }}
       tolerations: {{ .Values.dbpMoodle.moodleUpdatePreparationJob.tolerations | toYaml }}
       serviceAccountName: "{{ .Release.Name }}-moodle-update-preparation-hook-serviceaccount"
