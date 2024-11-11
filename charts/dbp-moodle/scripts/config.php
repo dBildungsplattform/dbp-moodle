@@ -42,27 +42,29 @@ $CFG->session_redis_compressor = 'none';
 
 require_once(__DIR__ . '/lib/setup.php');
 
-{{ if .Values.dbpMoodle.logging }}
-define('MDL_PERF'  , true);
-define('MDL_PERFDB'  , true);
-define('MDL_PERFTOLOG'  , true); //OK for production
-{{ end }}
+{{- if .Values.dbpMoodle.phpConfig.extendedLogging }}
+define('MDL_PERF' , true);
+define('MDL_PERFDB' , true);
+define('MDL_PERFTOLOG' , true); //OK for production
+{{- end }}
 
-
-{{ if .Values.dbpMoodle.debug }}
+{{ if .Values.dbpMoodle.phpConfig.debug -}}
 @error_reporting(E_ALL | E_STRICT); // NOT FOR PRODUCTION SERVERS!
 @ini_set('display_errors', '1');    // NOT FOR PRODUCTION SERVERS!
 $CFG->debug = 32767;                // === DEBUG_DEVELOPER - NOT FOR PRODUCTION SERVERS!
 $CFG->debugdisplay = 1;             // NOT FOR PRODUCTION SERVERS!
 $CFG->debugpageinfo = 1;
 $CFG->perfdebug = 7;
-{{ else }}
+{{- else -}}
 $CFG->debug = 0;
 $CFG->debugdisplay = 0;
 $CFG->debugpageinfo = 0;
 $CFG->perfdebug = 7;
 $CFG->debugsqltrace = 0;
-{{ end }}
+{{- end }}
 
+{{ with .Values.dbpMoodle.phpConfig.additional -}}
+{{- . }}
+{{- end }}
 // There is no php closing tag in this file,
 // it is intentional because it prevents trailing whitespace problems!

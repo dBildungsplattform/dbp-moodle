@@ -70,14 +70,18 @@ global:
 dbpMoodle:
   name: infra
   stage: infra
-  # -- Extended php logging
-  logging: false
-  # -- Moodle debugging is not safe for production
-  debug: false
 
   # -- The dbp update process to migrate moodle data when moodle versions are increased
   update_migration:
     enabled: false
+
+  phpConfig:
+    # -- Extended php logging
+    extendedLogging: false
+    # -- Moodle debugging is not safe for production
+    debug: false
+    # -- Any additional text to be included into the config.php
+    additional: ""
 
   # -- Configurations for the optional redis
   redis:
@@ -384,7 +388,7 @@ postgresql:
 
 # redis helm chart values
 redis:
-  enabled: true
+  enabled: false
   architecture: "standalone"
   auth:
     enabled: true
