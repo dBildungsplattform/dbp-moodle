@@ -62,14 +62,14 @@ global:
       enabled: false
     snap:
       enabled: false
+    flexsections:
+      enabled: false
+    multitopic:
+      enabled: false
 
 dbpMoodle:
   name: infra
   stage: infra
-  # -- Extended php logging
-  logging: false
-  # -- Moodle debugging is not safe for production
-  debug: false
 
   # -- The dbp update process to migrate moodle data when moodle versions are increased
   update_migration:
@@ -77,6 +77,14 @@ dbpMoodle:
 
   # -- disallows all egress from the namespace for the moodle deployment
   allowInternalNetworkingOnly: false
+  
+  phpConfig:
+    # -- Extended php logging
+    extendedLogging: false
+    # -- Moodle debugging is not safe for production
+    debug: false
+    # -- Any additional text to be included into the config.php
+    additional: ""
 
   # -- Configurations for the optional redis
   redis:
@@ -271,6 +279,8 @@ moodle:
     enabled: true
     # -- The hostname of the moodle application
     hostname: "example.de"
+    # -- Any additional hostnames, needs to be "name: URL" value pairs
+    extraHosts: []
     tls: true
     annotations:
       cert-manager.io/cluster-issuer: sc-cert-manager-clusterissuer-letsencrypt
@@ -381,7 +391,7 @@ postgresql:
 
 # redis helm chart values
 redis:
-  enabled: true
+  enabled: false
   architecture: "standalone"
   auth:
     enabled: true
