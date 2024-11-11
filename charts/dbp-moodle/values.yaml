@@ -75,6 +75,9 @@ dbpMoodle:
   update_migration:
     enabled: false
 
+  # -- disallows all egress from the namespace for the moodle deployment
+  allowInternalNetworkingOnly: false
+
   # -- Configurations for the optional redis
   redis:
     host: "moodle-redis-master"
