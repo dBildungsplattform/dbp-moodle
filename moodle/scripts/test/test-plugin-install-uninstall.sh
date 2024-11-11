@@ -44,6 +44,8 @@ adaptable:theme_adaptable:theme/adaptable
 boost_union:theme_boost_union:theme/boost_union
 boost_magnific:theme_boost_magnific:theme/boost_magnific
 snap:theme_snap:theme/snap
+flexsections:format_flexsections:format/flexsections
+multitopic:format_multitopic:format/multitopic
 EOF
 )
 
