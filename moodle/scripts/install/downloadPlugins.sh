@@ -48,3 +48,5 @@ moosh plugin-download -v "$major_minor" theme_adaptable
 moosh plugin-download -v "$major_minor" theme_boost_union
 moosh plugin-download -v "$major_minor" theme_boost_magnific
 moosh plugin-download -v "$major_minor" theme_snap
+moosh plugin-download -v "$major_minor" theme_flexsections
+moosh plugin-download -v "$major_minor" theme_multitopic
