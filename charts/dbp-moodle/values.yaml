@@ -75,6 +75,11 @@ dbpMoodle:
   update_migration:
     enabled: false
 
+  phpConfig:
+    # -- Extended php logging
+    extendedLogging: false
+    # -- Moodle debugging is not safe for production
+    debug: false
   # -- Configurations for the optional redis
   redis:
     host: "moodle-redis-master"
