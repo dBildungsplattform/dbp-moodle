@@ -25,9 +25,9 @@ RUN curl -L https://github.com/tmuras/moosh/archive/refs/tags/1.21.tar.gz -o moo
     ln -s /moosh/moosh.php /usr/local/bin/moosh
 
 RUN /downloadMoodle.sh
-RUN mkdir /bitnami/moodledata/lang && \
+RUN mkdir -p /bitnami/moodledata/lang && \
     MAJOR_MINOR=$(echo "$MOODLE_VERSION" | cut -d. -f1,2) && \
-    curl -L https://download.moodle.org/download.php/direct/langpack/4.1/de.zip --output de.zip && \
+    curl -L https://download.moodle.org/download.php/direct/langpack/${MAJOR_MINOR}/de.zip --output de.zip && \
     unzip de.zip -d /bitnami/moodledata/lang
 
 # Install plugins to the image

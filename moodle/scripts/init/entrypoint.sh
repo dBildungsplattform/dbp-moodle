@@ -109,7 +109,7 @@ MODULE=dbp info "Replacing config files with ours"
 # if [ -f "/tmp/de.zip" ] && [ ! -d /bitnami/moodledata/lang/de ]; then \
 #     MODULE=dbp warn "Installing german language pack"
 #     mkdir -p /bitnami/moodledata/lang
-#     unzip -q /tmp/de.zip -d /bitnami/moodledata/lang
+#     unzip -qo /tmp/de.zip -d /bitnami/moodledata/lang
 #     rm -f /tmp/de.zip
 # fi
 
