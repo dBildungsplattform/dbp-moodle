@@ -38,6 +38,8 @@ moosh plugin-download -v "$major_minor" tool_heartbeat
 moosh plugin-download -v "$major_minor" format_remuiformat
 moosh plugin-download -v "$major_minor" format_tiles
 moosh plugin-download -v "$major_minor" format_topcoll
+moosh plugin-download -v "$major_minor" format_flexsections
+moosh plugin-download -v "$major_minor" format_multitopic
 moosh plugin-download -v "$major_minor" auth_oidc
 moosh plugin-download -v "$major_minor" auth_saml2
 moosh plugin-download -v "$major_minor" block_dash
@@ -48,5 +50,3 @@ moosh plugin-download -v "$major_minor" theme_adaptable
 moosh plugin-download -v "$major_minor" theme_boost_union
 moosh plugin-download -v "$major_minor" theme_boost_magnific
 moosh plugin-download -v "$major_minor" theme_snap
-moosh plugin-download -v "$major_minor" theme_flexsections
-moosh plugin-download -v "$major_minor" theme_multitopic

@@ -76,6 +76,8 @@ heartbeat:tool_heartbeat:admin/tool/heartbeat:                  {{- .Values.glob
 remuiformat:format_remuiformat:course/format/remuiformat:       {{- .Values.global.moodlePlugins.remuiformat.enabled }}{{"\n"}}
 tiles:format_tiles:course/format/tiles:                         {{- .Values.global.moodlePlugins.tiles.enabled }}{{"\n"}}
 topcoll:format_topcoll:course/format/topcoll:                   {{- .Values.global.moodlePlugins.topcoll.enabled }}{{"\n"}}
+flexsections:format_flexsections:format/flexsections:           {{- .Values.global.moodlePlugins.flexsections.enabled }}{{"\n"}}
+multitopic:format_multitopic:format/multitopic:                 {{- .Values.global.moodlePlugins.multitopic.enabled }}{{"\n"}}
 oidc:auth_oidc:auth/oidc:                                       {{- .Values.global.moodlePlugins.oidc.enabled }}{{"\n"}}
 saml2:auth_saml2:auth/saml2:                                    {{- .Values.global.moodlePlugins.saml2.enabled }}{{"\n"}}
 dash:block_dash:blocks/dash:                                    {{- .Values.global.moodlePlugins.dash.enabled }}{{"\n"}}
@@ -86,6 +88,4 @@ adaptable:theme_adaptable:theme/adaptable:                      {{- .Values.glob
 boost_union:theme_boost_union:theme/boost_union:                {{- .Values.global.moodlePlugins.boost_union.enabled }}{{"\n"}}
 boost_magnific:theme_boost_magnific:theme/boost_magnific:       {{- .Values.global.moodlePlugins.boost_magnific.enabled }}{{"\n"}}
 snap:theme_snap:theme/snap:                                     {{- .Values.global.moodlePlugins.snap.enabled }}{{"\n"}}
-flexsections:format_flexsections:format/flexsections:           {{- .Values.global.moodlePlugins.flexsections.enabled }}{{"\n"}}
-multitopic:format_multitopic:format/multitopic:                 {{- .Values.global.moodlePlugins.multitopic.enabled }}{{"\n"}}
 {{- end -}}
