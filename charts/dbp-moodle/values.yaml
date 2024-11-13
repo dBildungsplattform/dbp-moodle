@@ -4,6 +4,7 @@ global:
   storageClass: "nfs-client"
   # -- All plugins are disabled by default. if enabled, the plugin is installed on image startup
   moodlePlugins:
+    # -- installs [Kaltura Video Package](https://moodle.org/plugins/view.php?id=447)
     kaltura:
       enabled: false
     etherpadlite:
