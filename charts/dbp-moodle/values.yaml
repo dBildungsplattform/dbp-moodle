@@ -85,6 +85,9 @@ dbpMoodle:
     debug: false
     # -- Any additional text to be included into the config.php
     additional: ""
+    # -- Provide an existing secret containing the config.php instead of generating it from chart
+    # -- Remember to adjust moodle.extraVolumes & moodle.extraVolumeMounts when setting this.
+    existingConfig: ""
 
   # -- Configurations for the optional redis
   redis:
@@ -300,20 +303,28 @@ moodle:
         cpu: 200m
         memory: 256Mi
   extraVolumeMounts:
-    - name: moodle-config
+    - name: moodle-php-ini
       readOnly: true
-      mountPath: /moodleconfig
+      mountPath: /moodleconfig/php-ini
+    - name: moodle-php-config
+      readOnly: true
+      mountPath: /moodleconfig/config-php
   extraVolumes:
-    - name: moodle-config
-      secret:
-        secretName: moodle-config
+    # -- The php.ini which installs the php-redis extension to enable the use for redis
+    - name: moodle-php-ini
+      configMap:
+        name: moodle-php-ini
         items:
-          # -- The custom config.php file that is used to configure moodle to use the database and redis (if activated)
-          - key: config.php
-            path: config.php
-          # -- The php.ini which installs the php-redis extension to enable the use for redis
           - key: php.ini
             path: php.ini
+        defaultMode: 0644
+    # -- The custom config.php file that is used to configure moodle to use the database and redis (if activated)
+    - name: moodle-php-config
+      secret:
+        secretName: moodle-php-config
+        items:
+          - key: config.php
+            path: config.php
         defaultMode: 0644
   podAnnotations:
     moodle/image: '{{- .Values.image.repository -}}:{{- .Values.image.tag -}}'
