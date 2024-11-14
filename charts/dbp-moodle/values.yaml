@@ -87,6 +87,7 @@ dbpMoodle:
     additional: ""
     # -- Provide an existing secret containing the config.php instead of generating it from chart
     # -- Remember to adjust moodle.extraVolumes & moodle.extraVolumeMounts when setting this.
+    # -- Secret key is by default expected to be config.php
     existingConfig: ""
 
   # -- Configurations for the optional redis
