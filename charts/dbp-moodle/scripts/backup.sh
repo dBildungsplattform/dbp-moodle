@@ -77,12 +77,13 @@ cd "${backup_dir}"
 echo "=== Start DB dump ==="
 export DATE=$( date "+%Y-%m-%d" )
 
-{{ if .Values.mariadb.enabled }}
-MYSQL_PWD="$DATABASE_PASSWORD" mysqldump -h {{ .Release.Name }}-mariadb -P {{ .Values.mariadb.primary.containerPorts.mysql }} -u {{ .Values.mariadb.auth.username }} {{ .Values.mariadb.auth.database }} > moodle_mariadb_dump_$DATE.sql
-gzip moodle_mariadb_dump_$DATE.sql
-{{ else }}
-PGPASSWORD="$DATABASE_PASSWORD" pg_dump -h {{ .Release.Name }}-postgresql -p {{ .Values.postgresql.containerPorts.postgresql }} -U postgres {{ .Values.postgresql.auth.database }} > moodle_postgresqldb_dump_$DATE.sql
-gzip moodle_postgresqldb_dump_$DATE.sql
+# shellcheck disable=all
+{{ if or .Values.mariadb.enabled (eq .Values.moodle.externalDatabase.type "mariadb") }}
+MYSQL_PWD="$DATABASE_PASSWORD" mysqldump -h "$DATABASE_HOST" -P "$DATABASE_PORT" -u "$DATABASE_USER" "$DATABASE_NAME" > "moodle_mariadb_dump_${DATE}.sql"
+gzip "moodle_mariadb_dump_${DATE}.sql"
+{{ else if or .Values.postgresql.enabled (eq .Values.moodle.externalDatabase.type "pgsql") }}
+PGPASSWORD="$DATABASE_PASSWORD" pg_dump -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" "$DATABASE_NAME" > "moodle_postgresqldb_dump_${DATE}.sql"
+gzip "moodle_postgresqldb_dump_${DATE}.sql"
 {{ end }}
 
 # Get moodle folder

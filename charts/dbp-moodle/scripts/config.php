@@ -40,6 +40,10 @@ $CFG->session_redis_serializer_use_igbinary = false;
 $CFG->session_redis_compressor = 'none';
 {{- end }}
 
+{{ with .Values.dbpMoodle.phpConfig.additional -}}
+{{- . }}
+{{- end }}
+
 require_once(__DIR__ . '/lib/setup.php');
 
 {{- if .Values.dbpMoodle.phpConfig.extendedLogging }}
@@ -63,8 +67,5 @@ $CFG->perfdebug = 7;
 $CFG->debugsqltrace = 0;
 {{- end }}
 
-{{ with .Values.dbpMoodle.phpConfig.additional -}}
-{{- . }}
-{{- end }}
 // There is no php closing tag in this file,
 // it is intentional because it prevents trailing whitespace problems!
