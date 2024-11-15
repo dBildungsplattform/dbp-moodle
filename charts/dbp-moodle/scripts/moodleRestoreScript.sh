@@ -63,15 +63,14 @@ chown -R 1001 /bitnami/moodledata
 
 cd /bitnami/
 echo "=== Clear DB ==="
-
 {{ if .Values.mariadb.enabled -}}
 MYSQL_PWD="$DATABASE_PASSWORD" mariadb -h "$DATABASE_HOST" -u "$DATABASE_USER" -P "$DATABASE_PORT" -e "DROP DATABASE ${DATABASE_NAME};"
 MYSQL_PWD="$DATABASE_PASSWORD" mariadb -h "$DATABASE_HOST" -u "$DATABASE_USER" -P "$DATABASE_PORT" -e "CREATE DATABASE ${DATABASE_NAME};"
 {{- else -}}
 # This command helps with - ERROR: database "moodle" is being accessed by other users
-PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" -c "REVOKE CONNECT ON DATABASE ${DATABASE_NAME} FROM public;SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '${DATABASE_NAME}';"
-PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" -c "DROP DATABASE ${DATABASE_NAME}"
-PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" -c "CREATE DATABASE ${DATABASE_NAME}"
+PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" -c "REVOKE CONNECT ON DATABASE ${DATABASE_NAME} FROM public;SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND pg_stat_activity.datname = '${DATABASE_NAME}';"
+PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" -d postgres -c "DROP DATABASE ${DATABASE_NAME}"
+PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" -d postgres -c "CREATE DATABASE ${DATABASE_NAME}"
 {{- end }}
 
 echo "=== Copy dump to DB ==="
@@ -86,7 +85,7 @@ mv ./Full/tmp/backup/moodle_postgresqldb_dump_* moodledb_dump.sql
 {{ if .Values.mariadb.enabled -}}
 MYSQL_PWD="$DATABASE_PASSWORD" mariadb -h "$DATABASE_HOST" -P "$DATABASE_PORT" -u "$DATABASE_USER" "$DATABASE_NAME" < moodledb_dump.sql
 {{- else -}}
-PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -P "$DATABASE_PORT" -U "$DATABASE_USER" "$DATABASE_NAME"  < moodledb_dump.sql
+PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" "$DATABASE_NAME"  < moodledb_dump.sql
 {{- end }}
 echo "=== Finished DB restore ==="
 
