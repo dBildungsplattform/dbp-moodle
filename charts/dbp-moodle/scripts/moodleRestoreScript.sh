@@ -65,13 +65,13 @@ cd /bitnami/
 echo "=== Clear DB ==="
 
 {{ if .Values.mariadb.enabled -}}
-MYSQL_PWD="$DATABASE_PASSWORD" mariadb -u {{ .Values.mariadb.auth.username }} -h {{ .Release.Name }}-mariadb --port={{ .Values.mariadb.primary.containerPorts.mysql }} -e "DROP DATABASE {{ .Values.mariadb.auth.database }};"
-MYSQL_PWD="$DATABASE_PASSWORD" mariadb -u {{ .Values.mariadb.auth.username }} -h {{ .Release.Name }}-mariadb --port={{ .Values.mariadb.primary.containerPorts.mysql }} -e "CREATE DATABASE {{ .Values.mariadb.auth.database }};"
+MYSQL_PWD="$DATABASE_PASSWORD" mariadb -h "$DATABASE_HOST" -u "$DATABASE_USER" -P "$DATABASE_PORT" -e "DROP DATABASE ${DATABASE_NAME};"
+MYSQL_PWD="$DATABASE_PASSWORD" mariadb -h "$DATABASE_HOST" -u "$DATABASE_USER" -P "$DATABASE_PORT" -e "CREATE DATABASE ${DATABASE_NAME};"
 {{- else -}}
 # This command helps with - ERROR: database "moodle" is being accessed by other users
-PGPASSWORD="$DATABASE_PASSWORD" psql -U postgres -h {{ .Release.Name }}-postgresql -c "REVOKE CONNECT ON DATABASE {{ .Values.postgresql.auth.database }} FROM public;SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '{{ .Values.postgresql.auth.database }}';"
-PGPASSWORD="$DATABASE_PASSWORD" psql -U postgres -h {{ .Release.Name }}-postgresql -c "DROP DATABASE {{ .Values.postgresql.auth.database }}"
-PGPASSWORD="$DATABASE_PASSWORD" psql -U postgres -h {{ .Release.Name }}-postgresql -c "CREATE DATABASE {{ .Values.postgresql.auth.database }}"
+PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" -c "REVOKE CONNECT ON DATABASE ${DATABASE_NAME} FROM public;SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '${DATABASE_NAME}';"
+PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" -c "DROP DATABASE ${DATABASE_NAME}"
+PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" -c "CREATE DATABASE ${DATABASE_NAME}"
 {{- end }}
 
 echo "=== Copy dump to DB ==="
@@ -84,9 +84,9 @@ mv ./Full/tmp/backup/moodle_postgresqldb_dump_* moodledb_dump.sql
 {{- end }}
 
 {{ if .Values.mariadb.enabled -}}
-MYSQL_PWD="$DATABASE_PASSWORD" mariadb -u {{ .Values.mariadb.auth.username }} -h {{ .Release.Name }}-mariadb {{ .Values.mariadb.auth.database }} < moodledb_dump.sql
+MYSQL_PWD="$DATABASE_PASSWORD" mariadb -h "$DATABASE_HOST" -P "$DATABASE_PORT" -u "$DATABASE_USER" "$DATABASE_NAME" < moodledb_dump.sql
 {{- else -}}
-PGPASSWORD="$DATABASE_PASSWORD" psql -U postgres -h {{ .Release.Name }}-postgresql {{ .Values.postgresql.auth.database }} < moodledb_dump.sql
+PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -P "$DATABASE_PORT" -U "$DATABASE_USER" "$DATABASE_NAME"  < moodledb_dump.sql
 {{- end }}
 echo "=== Finished DB restore ==="
 
