@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "{{ .Release.Name }}-restore-job"
+  name: "moodle-restore-job"
   namespace: {{ .Release.Namespace }}
   annotations:
     "helm.sh/hook": pre-upgrade
@@ -18,13 +18,13 @@ spec:
           claimName: {{ include "dbpMoodle.moodlePvc.name" . }}
       - name: moodle-restore-script
         configMap:
-          name: "{{ .Release.Name }}-restore-script"
+          name: "moodle-restore-script"
           defaultMode: 0711
       - name: duply
         projected:
           sources:
             - configMap:
-                name: "{{ .Release.Name }}-duply"
+                name: "moodle-backup-duply"
                 items:
                   - key: conf
                     path: conf
@@ -33,8 +33,8 @@ spec:
             - secret:
                 name: {{ .Values.dbpMoodle.restore.existingSecretGPG }}
           defaultMode: 0644
-      serviceAccountName: "{{ .Release.Name }}-restore-job"
-      serviceAccount: "{{ .Release.Name }}-restore-job"
+      serviceAccountName: "moodle-restore-job"
+      serviceAccount: "moodle-restore-job"
       containers:
       - name:  moodle-restore-job
         image: {{ .Values.dbpMoodle.restore.image }}

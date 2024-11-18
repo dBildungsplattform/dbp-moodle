@@ -69,7 +69,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | backup-cronjob.extraVolumes[2].projected.sources[0].configMap.items[0].path | string | `"conf"` |  |
 | backup-cronjob.extraVolumes[2].projected.sources[0].configMap.items[1].key | string | `"exclude"` |  |
 | backup-cronjob.extraVolumes[2].projected.sources[0].configMap.items[1].path | string | `"exclude"` |  |
-| backup-cronjob.extraVolumes[2].projected.sources[0].configMap.name | string | `"moodle-duply"` |  |
+| backup-cronjob.extraVolumes[2].projected.sources[0].configMap.name | string | `"moodle-backup-duply"` |  |
 | backup-cronjob.extraVolumes[2].projected.sources[1].secret.name | string | `"moodle-backup-gpg-keys"` |  |
 | backup-cronjob.image.repository | string | `"ghcr.io/dbildungsplattform/moodle-tools"` |  |
 | backup-cronjob.image.tag | string | `"1.0.7"` |  |

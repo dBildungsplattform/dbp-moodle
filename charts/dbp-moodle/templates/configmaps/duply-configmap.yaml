@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: "{{ .Release.Name }}-duply"
+  name: "moodle-backup-duply"
   namespace: "{{ .Release.Namespace }}"
 data:
   conf: |-
