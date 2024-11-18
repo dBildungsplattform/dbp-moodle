@@ -253,6 +253,8 @@ moodle:
     existingClaim: "moodle-data"
   affinity: {}
   tolerations: []
+  readinessProbe:
+    path: /login/index.php?noredirect=1
   resources:
     requests:
       cpu: 300m
