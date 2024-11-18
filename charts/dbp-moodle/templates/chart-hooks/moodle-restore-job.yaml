@@ -66,11 +66,31 @@ spec:
         - name: duply
           mountPath: /etc/duply/default/
         env:
+        - name: DATABASE_HOST
+          valueFrom: 
+            secretKeyRef:
+              name: {{ .Values.dbpMoodle.restore.existingSecretDatabaseConfig }}
+              key: host
+        - name: DATABASE_PORT
+          valueFrom: 
+            secretKeyRef:
+              name: {{ .Values.dbpMoodle.restore.existingSecretDatabaseConfig }}
+              key: port
+        - name: DATABASE_NAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.dbpMoodle.restore.existingSecretDatabaseConfig }}
+              key: name
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.dbpMoodle.restore.existingSecretDatabaseConfig }}
+              key: user
         - name: DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.dbpMoodle.restore.existingSecretDatabase }}
-              key: {{ .Values.dbpMoodle.restore.existingSecretKeyDatabase }}
+              name: {{ .Values.dbpMoodle.restore.existingSecretDatabasePassword }}
+              key: {{ .Values.dbpMoodle.restore.existingSecretKeyDatabasePassword }}
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:

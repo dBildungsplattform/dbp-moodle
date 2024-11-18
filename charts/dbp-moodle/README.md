@@ -1,6 +1,6 @@
 # dbp-moodle
 
-![Version: 0.0.8](https://img.shields.io/badge/Version-0.0.8-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.1.14](https://img.shields.io/badge/AppVersion-4.1.14-informational?style=flat-square)
+![Version: 0.0.10](https://img.shields.io/badge/Version-0.0.10-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.1.14](https://img.shields.io/badge/AppVersion-4.1.14-informational?style=flat-square)
 
 This is a Helm Chart bundling some of the bitnami resources to deploy Moodle for DBildungsplattform. Extending them with features such as
 MariaDB and PostgreSQL support, Horizontal Autoscaling capabilities, Redis Session Store, Etherpad-Lite.
@@ -28,18 +28,30 @@ The Chart can be deployed without any modification but it is advised to set own 
 |-----|------|---------|-------------|
 | backup-cronjob.affinity | object | `{}` |  |
 | backup-cronjob.clusterRole.create | bool | `false` |  |
-| backup-cronjob.env[0].name | string | `"DATABASE_PASSWORD"` |  |
-| backup-cronjob.env[0].valueFrom.secretKeyRef.key | string | `"mariadb-password"` |  |
-| backup-cronjob.env[0].valueFrom.secretKeyRef.name | string | `"moodle"` |  |
-| backup-cronjob.env[1].name | string | `"AWS_ACCESS_KEY_ID"` |  |
-| backup-cronjob.env[1].valueFrom.secretKeyRef.key | string | `"s3_access_key"` |  |
-| backup-cronjob.env[1].valueFrom.secretKeyRef.name | string | `"moodle-backup-s3"` |  |
-| backup-cronjob.env[2].name | string | `"AWS_SECRET_ACCESS_KEY"` |  |
-| backup-cronjob.env[2].valueFrom.secretKeyRef.key | string | `"s3_access_secret"` |  |
-| backup-cronjob.env[2].valueFrom.secretKeyRef.name | string | `"moodle-backup-s3"` |  |
-| backup-cronjob.env[3].name | string | `"S3_BACKUP_REGION_URL"` |  |
-| backup-cronjob.env[3].valueFrom.secretKeyRef.key | string | `"s3_endpoint_url"` |  |
-| backup-cronjob.env[3].valueFrom.secretKeyRef.name | string | `"moodle-backup-s3"` |  |
+| backup-cronjob.env[0].name | string | `"DATABASE_HOST"` |  |
+| backup-cronjob.env[0].valueFrom.secretKeyRef.key | string | `"host"` |  |
+| backup-cronjob.env[0].valueFrom.secretKeyRef.name | string | `"moodle-database"` |  |
+| backup-cronjob.env[1].name | string | `"DATABASE_PORT"` |  |
+| backup-cronjob.env[1].valueFrom.secretKeyRef.key | string | `"port"` |  |
+| backup-cronjob.env[1].valueFrom.secretKeyRef.name | string | `"moodle-database"` |  |
+| backup-cronjob.env[2].name | string | `"DATABASE_NAME"` |  |
+| backup-cronjob.env[2].valueFrom.secretKeyRef.key | string | `"name"` |  |
+| backup-cronjob.env[2].valueFrom.secretKeyRef.name | string | `"moodle-database"` |  |
+| backup-cronjob.env[3].name | string | `"DATABASE_USER"` |  |
+| backup-cronjob.env[3].valueFrom.secretKeyRef.key | string | `"user"` |  |
+| backup-cronjob.env[3].valueFrom.secretKeyRef.name | string | `"moodle-database"` |  |
+| backup-cronjob.env[4].name | string | `"DATABASE_PASSWORD"` |  |
+| backup-cronjob.env[4].valueFrom.secretKeyRef.key | string | `"mariadb-password"` |  |
+| backup-cronjob.env[4].valueFrom.secretKeyRef.name | string | `"moodle"` |  |
+| backup-cronjob.env[5].name | string | `"AWS_ACCESS_KEY_ID"` |  |
+| backup-cronjob.env[5].valueFrom.secretKeyRef.key | string | `"s3_access_key"` |  |
+| backup-cronjob.env[5].valueFrom.secretKeyRef.name | string | `"moodle-backup-s3"` |  |
+| backup-cronjob.env[6].name | string | `"AWS_SECRET_ACCESS_KEY"` |  |
+| backup-cronjob.env[6].valueFrom.secretKeyRef.key | string | `"s3_access_secret"` |  |
+| backup-cronjob.env[6].valueFrom.secretKeyRef.name | string | `"moodle-backup-s3"` |  |
+| backup-cronjob.env[7].name | string | `"S3_BACKUP_REGION_URL"` |  |
+| backup-cronjob.env[7].valueFrom.secretKeyRef.key | string | `"s3_endpoint_url"` |  |
+| backup-cronjob.env[7].valueFrom.secretKeyRef.name | string | `"moodle-backup-s3"` |  |
 | backup-cronjob.extraVolumeMounts[0].mountPath | string | `"/scripts/"` |  |
 | backup-cronjob.extraVolumeMounts[0].name | string | `"moodle-backup-script"` |  |
 | backup-cronjob.extraVolumeMounts[1].mountPath | string | `"/mountData"` |  |
@@ -119,9 +131,10 @@ The Chart can be deployed without any modification but it is advised to set own 
 | dbpMoodle.name | string | `"infra"` |  |
 | dbpMoodle.phpConfig.additional | string | `""` | Any additional text to be included into the config.php |
 | dbpMoodle.phpConfig.debug | bool | `false` | Moodle debugging is not safe for production |
+| dbpMoodle.phpConfig.existingConfig | string | `""` | Provide an existing secret containing the config.php instead of generating it from chart -- Remember to adjust moodle.extraVolumes & moodle.extraVolumeMounts when setting this. -- Secret key is by default expected to be config.php |
 | dbpMoodle.phpConfig.extendedLogging | bool | `false` | Extended php logging |
 | dbpMoodle.redis | object | `{"host":"moodle-redis-master","password":"","port":6379}` | Configurations for the optional redis |
-| dbpMoodle.restore | object | `{"affinity":{},"enabled":false,"existingSecretDatabase":"moodle","existingSecretGPG":"","existingSecretKeyDatabase":"","existingSecretKeyS3Access":"","existingSecretKeyS3Secret":"","existingSecretS3":"","image":"ghcr.io/dbildungsplattform/moodle-tools:1.0.7","resources":{"limits":{"cpu":"2000m","memory":"16Gi"},"requests":{"cpu":"1000m","memory":"8Gi"}},"rules":[{"apiGroups":["apps"],"resources":["deployments/scale","deployments"],"verbs":["get","list","scale","patch"]}],"tolerations":[]}` | This restores moodle to the latest snapshot. Requires an existing s3 backup. ONLY USE FOR ROLLBACK |
+| dbpMoodle.restore | object | `{"affinity":{},"enabled":false,"existingSecretDatabaseConfig":"moodle-database","existingSecretDatabasePassword":"moodle","existingSecretGPG":"","existingSecretKeyDatabasePassword":"","existingSecretKeyS3Access":"","existingSecretKeyS3Secret":"","existingSecretS3":"","image":"ghcr.io/dbildungsplattform/moodle-tools:1.0.7","resources":{"limits":{"cpu":"2000m","memory":"16Gi"},"requests":{"cpu":"1000m","memory":"8Gi"}},"rules":[{"apiGroups":["apps"],"resources":["deployments/scale","deployments"],"verbs":["get","list","scale","patch"]}],"tolerations":[]}` | This restores moodle to the latest snapshot. Requires an existing s3 backup. ONLY USE FOR ROLLBACK |
 | dbpMoodle.secrets | object | `{"etherpad_api_key":"","etherpad_postgresql_password":"","mariadb_password":"","mariadb_root_password":"","moodle_password":"","pgsql_admin_password":"","useChartSecret":true}` | Creates a secret with all relevant credentials for moodle -- Set useChartSecret: false to provide your own secret -- If you create your own secret, also set moodle.existingSecret (and moodle.externalDatabase.existingSecret if you bring your own DB) |
 | dbpMoodle.stage | string | `"infra"` |  |
 | dbpMoodle.update_migration | object | `{"enabled":false}` | The dbp update process to migrate moodle data when moodle versions are increased |
@@ -223,19 +236,19 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.extraEnvVars[3].name | string | `"MOODLE_PLUGINS"` |  |
 | moodle.extraEnvVars[3].valueFrom.configMapKeyRef.key | string | `"moodle-plugin-list"` |  |
 | moodle.extraEnvVars[3].valueFrom.configMapKeyRef.name | string | `"moodle-plugins"` |  |
-| moodle.extraVolumeMounts[0].mountPath | string | `"/moodleconfig"` |  |
-| moodle.extraVolumeMounts[0].name | string | `"moodle-config"` |  |
+| moodle.extraVolumeMounts[0].mountPath | string | `"/moodleconfig/php-ini"` |  |
+| moodle.extraVolumeMounts[0].name | string | `"moodle-php-ini"` |  |
 | moodle.extraVolumeMounts[0].readOnly | bool | `true` |  |
-| moodle.extraVolumes[0].name | string | `"moodle-config"` |  |
-| moodle.extraVolumes[0].secret.defaultMode | int | `420` |  |
-| moodle.extraVolumes[0].secret.items[0] | object | `{"key":"config.php","path":"config.php"}` | The custom config.php file that is used to configure moodle to use the database and redis (if activated) |
-| moodle.extraVolumes[0].secret.items[1] | object | `{"key":"php.ini","path":"php.ini"}` | The php.ini which installs the php-redis extension to enable the use for redis |
-| moodle.extraVolumes[0].secret.secretName | string | `"moodle-config"` |  |
+| moodle.extraVolumeMounts[1].mountPath | string | `"/moodleconfig/config-php"` |  |
+| moodle.extraVolumeMounts[1].name | string | `"moodle-php-config"` |  |
+| moodle.extraVolumeMounts[1].readOnly | bool | `true` |  |
+| moodle.extraVolumes[0] | object | `{"configMap":{"defaultMode":420,"items":[{"key":"php.ini","path":"php.ini"}],"name":"moodle-php-ini"},"name":"moodle-php-ini"}` | The php.ini which installs the php-redis extension to enable the use for redis |
+| moodle.extraVolumes[1] | object | `{"name":"moodle-php-config","secret":{"defaultMode":420,"items":[{"key":"config.php","path":"config.php"}],"secretName":"moodle-php-config"}}` | The custom config.php file that is used to configure moodle to use the database and redis (if activated) |
 | moodle.image.debug | bool | `false` | Debug mode for more detailed moodle installation and log output |
 | moodle.image.pullPolicy | string | `"Always"` |  |
 | moodle.image.registry | string | `"ghcr.io"` |  |
 | moodle.image.repository | string | `"dbildungsplattform/moodle"` |  |
-| moodle.image.tag | string | `"4.1.14-debian-12-r0-dbp2"` | The dbp-moodle image which is build for this helm chart |
+| moodle.image.tag | string | `"4.1.14-debian-12-r0-dbp3"` | The dbp-moodle image which is build for this helm chart |
 | moodle.ingress.annotations."cert-manager.io/cluster-issuer" | string | `"sc-cert-manager-clusterissuer-letsencrypt"` |  |
 | moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-body-size" | string | `"200M"` |  |
 | moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-connect-timeout" | string | `"30s"` |  |
@@ -244,7 +257,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.ingress.extraHosts | list | `[]` | Any additional hostnames, needs to be "name: URL" value pairs |
 | moodle.ingress.hostname | string | `"example.de"` | The hostname of the moodle application |
 | moodle.ingress.tls | bool | `true` |  |
-| moodle.mariadb | object | `{"enabled":false}` | The mariadb included in bitnami/moodle chart. For this chart usage of mariadb.enabled with moodle.externalDatabase.type="mariadb" is recommended |
+| moodle.mariadb | object | `{"database":"bitnami_moodle","enabled":false,"username":"bn_moodle"}` | The mariadb included in bitnami/moodle chart. For this chart usage of mariadb.enabled with moodle.externalDatabase.type="mariadb" is recommended |
 | moodle.metrics.enabled | bool | `true` |  |
 | moodle.metrics.resources | object | `{"limits":{"cpu":"200m","memory":"256Mi"},"requests":{"cpu":"10m","memory":"16Mi"}}` | Resources have to be set so that the horizontal pod autoscaler for moodle can read the moodle cpu consumption correctly |
 | moodle.metrics.service.type | string | `"ClusterIP"` |  |
