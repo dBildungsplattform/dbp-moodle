@@ -291,6 +291,8 @@ moodle:
     existingClaim: "moodle-data"
   affinity: {}
   tolerations: []
+  readinessProbe:
+    path: /login/index.php?noredirect=1
   resources:
     requests:
       cpu: 300m
@@ -546,7 +548,7 @@ moodlecronjob:
   clusterRole:
     create: false
   serviceAccount:
-    name: "moodle-moodle-cronjob"
+    name: "moodle-cronjob"
     create: false
   securityContext:
     privileged: false
@@ -656,7 +658,7 @@ backup-cronjob:
       projected:
         sources:
           - configMap:
-              name: moodle-duply
+              name: moodle-backup-duply
               items:
                 - key: conf
                   path: conf

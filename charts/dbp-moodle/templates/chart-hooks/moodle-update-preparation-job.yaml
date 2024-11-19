@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "{{ .Release.Name }}-update-preparation"
+  name: "moodle-update-preparation"
   annotations:
     "helm.sh/hook": pre-upgrade
     "helm.sh/hook-weight": "1"
@@ -33,12 +33,12 @@ spec:
             periodSeconds: 10
       affinity: {{ .Values.dbpMoodle.moodleUpdatePreparationJob.affinity | toYaml }}
       tolerations: {{ .Values.dbpMoodle.moodleUpdatePreparationJob.tolerations | toYaml }}
-      serviceAccountName: "{{ .Release.Name }}-moodle-update-preparation-hook-serviceaccount"
+      serviceAccountName: "moodle-update-preparation-hook-serviceaccount"
       restartPolicy: Never
       volumes:
         - name: script-volume
           configMap:
-            name: "{{ .Release.Name }}-moodle-update-preparation-hook-script"
+            name: "moodle-update-preparation-hook-script"
             defaultMode: 0755
   ttlSecondsAfterFinished: 300
 {{ end }}
