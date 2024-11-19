@@ -1,11 +1,6 @@
 #!/bin/bash
 set -e
 
-health_file="/tmp/healthy"
-
-# Create liveness probe file
-touch "${health_file}"
-
 function clean_up() {
     exit_code=$?
     if [ $exit_code -eq 0 ]; then
@@ -20,14 +15,25 @@ function clean_up() {
 
 trap "clean_up" EXIT
 
+health_file="/tmp/healthy"
+
+# Create liveness probe file
+touch "${health_file}"
+
+# Deployment has "-moodle" appended if the Release.Name does not contain "moodle" 
+release_name="{{ .Release.Name }}"
+if [[ "$release_name" != "moodle" && "$release_name" != *"moodle"* ]]; then
+    release_name="${release_name}-moodle"
+fi
+
 # Get current replicas and scale down deployment
-replicas=$(kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o=jsonpath='{.status.replicas}')
+replicas=$(kubectl get "deployment/${release_name}" -n {{ .Release.Namespace }} -o=jsonpath='{.status.replicas}')
 echo "=== Current replicas detected: $replicas ==="
 if [ -z "$replicas" ] || [ "$replicas" -eq 0 ]; then 
     replicas=1
 fi
 echo "=== Scale moodle deployment to 0 replicas for restore operation ==="
-kubectl scale deployment/{{ .Release.Name }} --replicas=0 -n {{ .Release.Namespace }}
+kubectl scale "deployment/${release_name}" --replicas=0 -n {{ .Release.Namespace }}
 echo "=== After restore operation is completed will scale back to: $replicas replicas ==="
 
 # Restore
@@ -90,7 +96,7 @@ PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U 
 echo "=== Finished DB restore ==="
 
 echo "=== Scaling deployment replicas to $replicas ==="
-kubectl scale deployment/{{ .Release.Name }} --replicas=$replicas -n {{ .Release.Namespace }}
+kubectl scale "deployment/${release_name}" --replicas=$replicas -n {{ .Release.Namespace }}
 sleep 2
-scaledTo=$(kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o=jsonpath='{.status.replicas}')
+scaledTo=$(kubectl get "deployment/${release_name}" -n {{ .Release.Namespace }} -o=jsonpath='{.status.replicas}')
 echo "=== Deployment scaled to: $scaledTo ==="
