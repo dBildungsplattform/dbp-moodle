@@ -1,6 +1,6 @@
 {{- define "dbpMoodle.moodlePvc.name" -}}
-{{- if .Values.dbpMoodle.moodleExternalPVC.enabled }}
-{{- .Values.dbpMoodle.moodleExternalPVC.name -}}
+{{- if .Values.dbpMoodle.external_pvc.enabled }}
+{{- .Values.dbpMoodle.external_pvc.name -}}
 {{- else if .Values.moodle.persistence.enabled }}
 {{- .Release.Name }}-moodle
 {{- else }}

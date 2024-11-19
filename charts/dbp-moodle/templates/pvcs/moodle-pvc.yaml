@@ -1,22 +1,22 @@
-{{- if .Values.dbpMoodle.moodleExternalPVC.enabled -}}
+{{- if .Values.dbpMoodle.external_pvc.enabled -}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   annotations:
-    {{- with .Values.dbpMoodle.moodleExternalPVC.annotations }}
+    {{- with .Values.dbpMoodle.external_pvc.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-  name: "{{ .Values.dbpMoodle.moodleExternalPVC.name }}"
+  name: "{{ .Values.dbpMoodle.external_pvc.name }}"
   namespace: "{{ .Release.Namespace }}"
 spec:
-  storageClassName: "{{ .Values.dbpMoodle.moodleExternalPVC.storage_class }}"
+  storageClassName: "{{ .Values.dbpMoodle.external_pvc.storage_class }}"
   accessModes:
-  {{- if not (empty .Values.dbpMoodle.moodleExternalPVC.accessModes) }}
-  {{- range .Values.dbpMoodle.moodleExternalPVC.accessModes }}
+  {{- if not (empty .Values.dbpMoodle.external_pvc.accessModes) }}
+  {{- range .Values.dbpMoodle.external_pvc.accessModes }}
     - {{ . | quote }}
   {{- end }}
   {{- end }}
   resources:
     requests:
-      storage: "{{ .Values.dbpMoodle.moodleExternalPVC.size }}"
+      storage: "{{ .Values.dbpMoodle.external_pvc.size }}"
 {{- end }}
