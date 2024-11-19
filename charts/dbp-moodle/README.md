@@ -69,7 +69,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | backup-cronjob.extraVolumes[2].projected.sources[0].configMap.items[0].path | string | `"conf"` |  |
 | backup-cronjob.extraVolumes[2].projected.sources[0].configMap.items[1].key | string | `"exclude"` |  |
 | backup-cronjob.extraVolumes[2].projected.sources[0].configMap.items[1].path | string | `"exclude"` |  |
-| backup-cronjob.extraVolumes[2].projected.sources[0].configMap.name | string | `"moodle-duply"` |  |
+| backup-cronjob.extraVolumes[2].projected.sources[0].configMap.name | string | `"moodle-backup-duply"` |  |
 | backup-cronjob.extraVolumes[2].projected.sources[1].secret.name | string | `"moodle-backup-gpg-keys"` |  |
 | backup-cronjob.image.repository | string | `"ghcr.io/dbildungsplattform/moodle-tools"` |  |
 | backup-cronjob.image.tag | string | `"1.0.7"` |  |
@@ -270,6 +270,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.podAnnotations.moodle/image | string | `"{{- .Values.image.repository -}}:{{- .Values.image.tag -}}"` |  |
 | moodle.podAnnotations.moodleplugins/checksum | string | `"{{- include \"dbpMoodle.pluginConfigMap.content\" . | sha256sum -}}"` |  |
 | moodle.podSecurityContext.enabled | bool | `true` |  |
+| moodle.readinessProbe.path | string | `"/login/index.php?noredirect=1"` |  |
 | moodle.resources.limits.cpu | int | `6` |  |
 | moodle.resources.limits.memory | string | `"3Gi"` |  |
 | moodle.resources.requests.cpu | string | `"300m"` |  |
@@ -306,7 +307,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodlecronjob.securityContext.privileged | bool | `false` |  |
 | moodlecronjob.securityContext.runAsGroup | int | `1001` |  |
 | moodlecronjob.serviceAccount.create | bool | `false` |  |
-| moodlecronjob.serviceAccount.name | string | `"moodle-moodle-cronjob"` |  |
+| moodlecronjob.serviceAccount.name | string | `"moodle-cronjob"` |  |
 | moodlecronjob.tolerations | list | `[]` |  |
 | postgresql.auth.database | string | `"moodle"` |  |
 | postgresql.auth.existingSecret | string | `"moodle"` |  |
