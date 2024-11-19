@@ -13,143 +13,88 @@ global:
     # -- [Interactive Content – H5P](https://moodle.org/plugins/mod_hvp)
     hvp:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/mod_groupselect)
+    # -- [Group self-selection](https://moodle.org/plugins/mod_groupselect)
     groupselect:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/mod_pdfannotator)
+    # -- [PDF Annotation](https://moodle.org/plugins/mod_pdfannotator)
     pdfannotator:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/mod_jitsi)
+    # -- [Jitsi](https://moodle.org/plugins/mod_jitsi)
     jitsi:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/mod_skype)
+    # -- [Skype](https://moodle.org/plugins/mod_skype)
     skype:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/mod_zoom)
+    # -- [Zoom meeting](https://moodle.org/plugins/mod_zoom)
     zoom:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/mod_booking)
+    # -- [Booking](https://moodle.org/plugins/mod_booking)
     booking:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/mod_reengagement)
+    # -- [Reengagement](https://moodle.org/plugins/mod_reengagement)
     reengagement:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/mod_unilabel)
+    # -- [Unilabel](https://moodle.org/plugins/mod_unilabel)
     unilabel:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/mod_geogebra)
+    # -- [GeoGebra](https://moodle.org/plugins/mod_geogebra)
     geogebra:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/mod_choicegroup)
+    # -- [Group choice](https://moodle.org/plugins/mod_choicegroup)
     choicegroup:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/local_staticpage)
+    # -- [Static Pages](https://moodle.org/plugins/local_staticpage)
     staticpage:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/tool_heartbeat)
+    # -- [Heartbeat check](https://moodle.org/plugins/tool_heartbeat)
     heartbeat:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/format_remuiformat)
+    # -- [Edwiser Course Formats](https://moodle.org/plugins/format_remuiformat)
     remuiformat:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/format_tiles)
+    # -- [Tiles format](https://moodle.org/plugins/format_tiles)
     tiles:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/format_topcoll)
+    # -- [Collapsed Topics](https://moodle.org/plugins/format_topcoll)
     topcoll:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/format_flexsections)
+    # -- [Flexible sections format](https://moodle.org/plugins/format_flexsections)
     flexsections:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/format_multitopic)
+    # -- [Multitopic format](https://moodle.org/plugins/format_multitopic)
     multitopic:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/auth_oidc)
+    # -- [OpenID Connect](https://moodle.org/plugins/auth_oidc)
     oidc:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/auth_saml2)
+    # -- [SAML2 Single sign on](https://moodle.org/plugins/auth_saml2)
     saml2:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/block_dash)
+    # -- [Dash](https://moodle.org/plugins/block_dash)
     dash:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/block_sharing_cart)
+    # -- [Sharing Cart](https://moodle.org/plugins/block_sharing_cart)
     sharing_cart:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/block_xp)
+    # -- [Level Up XP - Gamification](https://moodle.org/plugins/block_xp)
     xp:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/mod_coursecertificate)
+    # -- [Workplace course certificate](https://moodle.org/plugins/mod_coursecertificate)
     coursecertificate:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/theme_adaptable)
+    # -- [Adaptable](https://moodle.org/plugins/theme_adaptable)
     adaptable:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/theme_boost_union)
+    # -- [Boost Union](https://moodle.org/plugins/theme_boost_union)
     boost_union:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/theme_boost_magnific)
+    # -- [Boost Magnific](https://moodle.org/plugins/theme_boost_magnific)
     boost_magnific:
       enabled: false
-    # -- [Interactive Content – H5P](https://moodle.org/plugins/theme_snap)
+    # -- [Snap](https://moodle.org/plugins/theme_snap)
     snap:
       enabled: false
 
-
-    jitsi:
-      enabled: false
-    pdfannotator:
-      enabled: false
-    tiles:
-      enabled: false
-    skype:
-      enabled: false
-    zoom:
-      enabled: false
-    booking:
-      enabled: false
-    reengagement:
-      enabled: false
-    unilabel:
-      enabled: false
-    geogebra:
-      enabled: false
-    choicegroup:
-      enabled: false
-    staticpage:
-      enabled: false
-    heartbeat:
-      enabled: false
-    remuiformat:
-      enabled: false
-    topcoll:
-      enabled: false
-    oidc:
-      enabled: false
-    saml2:
-      enabled: false
-    dash:
-      enabled: false
-    sharing_cart:
-      enabled: false
-    xp:
-      enabled: false
-    certificate:
-      enabled: false
-    coursecertificate:
-      enabled: false
-    adaptable:
-      enabled: false
-    boost_union:
-      enabled: false
-    boost_magnific:
-      enabled: false
-    snap:
-      enabled: false
-    flexsections:
-      enabled: false
-    multitopic:
-      enabled: false
 
 # -- Settings specific to the umbrella chart
 # -- Either extend functionality of one chart or connects/configures services from two charts
