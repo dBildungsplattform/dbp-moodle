@@ -85,11 +85,8 @@ printSystemStatus
 # Can handle new version and existing version.
 startBitnamiSetup
 
-{{ if .Values.redis.enabled }}
 MODULE=dbp info "Create php.ini with redis config"
 /bin/cp /moodleconfig/php-ini/php.ini /opt/bitnami/php/etc/conf.d/php.ini
-{{ end }}
-
 
 if [[ ! -f "$update_failed_path" ]]; then
     MODULE=dbp info "Starting Moodle Update Check"
