@@ -1,6 +1,6 @@
 # dbp-moodle
 
-![Version: 0.0.11](https://img.shields.io/badge/Version-0.0.11-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.1.14](https://img.shields.io/badge/AppVersion-4.1.14-informational?style=flat-square)
+![Version: 0.0.12](https://img.shields.io/badge/Version-0.0.12-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.1.14](https://img.shields.io/badge/AppVersion-4.1.14-informational?style=flat-square)
 
 This is a Helm Chart bundling some of the bitnami resources to deploy Moodle for DBildungsplattform. Extending them with features such as
 MariaDB and PostgreSQL support, Horizontal Autoscaling capabilities, Redis Session Store, Etherpad-Lite.
@@ -247,7 +247,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.image.pullPolicy | string | `"Always"` |  |
 | moodle.image.registry | string | `"ghcr.io"` |  |
 | moodle.image.repository | string | `"dbildungsplattform/moodle"` |  |
-| moodle.image.tag | string | `"4.1.14-debian-12-r0-dbp3"` | The dbp-moodle image which is build for this helm chart |
+| moodle.image.tag | string | `"4.1.14-debian-12-r0-dbp4"` | The dbp-moodle image which is build for this helm chart |
 | moodle.ingress.annotations."cert-manager.io/cluster-issuer" | string | `"sc-cert-manager-clusterissuer-letsencrypt"` |  |
 | moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-body-size" | string | `"200M"` |  |
 | moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-connect-timeout" | string | `"30s"` |  |

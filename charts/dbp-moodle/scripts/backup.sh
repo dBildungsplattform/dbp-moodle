@@ -3,16 +3,42 @@ set -e
 
 health_file="/tmp/healthy"
 backup_dir="/tmp/backup"
+
 readiness_bckp="/tmp/readinessprobe.json"
 liveness_bckp="/tmp/livenessprobe.json"
-
-# Create liveness probe file
-touch "${health_file}"
-
-# Create destination dir if not exists
-if [ ! -d "${backup_dir}" ]; then
-    mkdir -p "${backup_dir}"
-fi
+dummy_probe_patch=$(cat <<-EOF
+	[{
+		"op": "replace",
+		"path": "/spec/template/spec/containers/0/readinessProbe",
+		"value": {
+			"exec": {
+				"command": [
+					"sh",
+					"-c",
+					"exit 0"
+				]
+			},
+			"initialDelaySeconds": 5,
+			"periodSeconds": 10
+    	}
+	},
+	{
+		"op": "replace",
+		"path": "/spec/template/spec/containers/0/livenessProbe",
+		"value": {
+			"exec": {
+				"command": [
+					"sh",
+					"-c",
+					"exit 0"
+				]
+			},
+			"initialDelaySeconds": 5,
+			"periodSeconds": 10
+    	}
+	}]
+	EOF
+)
 
 # Cleanup after finish only if not an update backup (normal backup has no CliUpdate file)
 # If update backup: depending on exit code create the signal for the update helper job with success or failure
@@ -25,13 +51,27 @@ function clean_up() {
 
         echo "=== Turn on liveness and readiness probe ==="
         if [ -e "${readiness_bckp}" ] && [ -s "${readiness_bckp}" ] && [ -e "${liveness_bckp}" ] && [ -s "${liveness_bckp}" ] ; then
-            kubectl patch deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} --type=json -p="[{\"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/readinessProbe\", \"value\": $(cat ${readiness_bckp})}, {\"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/livenessProbe\", \"value\": $(cat ${liveness_bckp})}]"
+            # Careful, format the string with tabs only!
+            restore_probe_patch=$(cat <<-EOF
+				[{
+					"op": "add",
+					"path": "/spec/template/spec/containers/0/readinessProbe",
+					"value": $(cat ${readiness_bckp})
+				},
+				{
+					"op": "add",
+					"path": "/spec/template/spec/containers/0/livenessProbe",
+					"value": $(cat ${liveness_bckp})
+				}]
+				EOF
+            )
+            kubectl patch "deployment/${release_name}" -n "{{ .Release.Namespace }}" --type=json -p="$restore_probe_patch"
         else
             echo "Unable to turn on liveness and readiness probes. Either the readiness_bckp or the liveness_bckp does not exist or is empty."
         fi
 
         echo "=== Unsuspending moodle cronjob ==="
-        kubectl patch cronjobs {{ .Release.Name }}-moodlecronjob-{{ include "moodlecronjob.job_name" . }} -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : false }}'
+        kubectl patch cronjobs "{{ .Release.Name }}-moodlecronjob-{{ include "moodlecronjob.job_name" . }}" -n "{{ .Release.Namespace }}" -p '{"spec" : {"suspend" : false }}'
     elif [ $exit_code -eq 0 ]; then
         echo "=== Update backup was successful with exit code $exit_code ==="
         rm -f /mountData/moodledata/UpdateBackupFailure
@@ -48,18 +88,32 @@ function clean_up() {
 
 trap "clean_up" EXIT
 
+# Create liveness probe file
+touch "${health_file}"
+
+# Deployment has "-moodle" appended if the Release.Name does not contain "moodle" 
+release_name="{{ .Release.Name }}"
+if [[ $release_name != "moodle" && $release_name != *"moodle"* ]]; then
+    release_name="${release_name}-moodle"
+fi
+
+# Create destination dir if not exists
+if [ ! -d "${backup_dir}" ]; then
+    mkdir -p "${backup_dir}"
+fi
+
 # If the backup is done for the update it skips the preparation because the update helper already did this
 if ! [ -a /mountData/moodledata/CliUpdate ]; then
     # Suspend the cronjob to avoid errors due to missing moodle
     echo "=== Suspending moodle cronjob ==="
-    kubectl patch cronjobs {{ .Release.Name }}-moodlecronjob-{{ include "moodlecronjob.job_name" . }} -n {{ .Release.Namespace }} -p '{"spec" : {"suspend" : true }}'
+    kubectl patch cronjobs "{{ .Release.Name }}-moodlecronjob-{{ include "moodlecronjob.job_name" . }}" -n "{{ .Release.Namespace }}" -p '{"spec" : {"suspend" : true }}'
 
     echo "=== Turn off liveness and readiness probe ==="
-    kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o jsonpath="{.spec.template.spec.containers[0].readinessProbe}" > ${readiness_bckp}
-    kubectl get deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} -o jsonpath="{.spec.template.spec.containers[0].livenessProbe}" > ${liveness_bckp}
-    kubectl patch deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} --type=json -p="[{'op': 'remove', 'path': '/spec/template/spec/containers/0/readinessProbe'}, {'op': 'remove', 'path': '/spec/template/spec/containers/0/livenessProbe'}]"
+    kubectl get "deployment/${release_name}" -n "{{ .Release.Namespace }}" -o jsonpath="{.spec.template.spec.containers[0].readinessProbe}" > ${readiness_bckp}
+    kubectl get "deployment/${release_name}" -n "{{ .Release.Namespace }}" -o jsonpath="{.spec.template.spec.containers[0].livenessProbe}" > ${liveness_bckp}
+    kubectl patch "deployment/${release_name}" -n "{{ .Release.Namespace }}" --type=json -p="$dummy_probe_patch"
 
-    kubectl rollout status deployment/{{ .Release.Name }} -n {{ .Release.Namespace }} 
+    kubectl rollout status "deployment/${release_name}" -n "{{ .Release.Namespace }}"
 
     # Wait for running jobs to finish to avoid errors
     echo "=== Waiting for jobs to finish ==="
