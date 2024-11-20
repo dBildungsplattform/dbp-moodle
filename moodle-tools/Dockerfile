@@ -18,6 +18,6 @@ RUN set -x \
         ca-certificates \
         gnupg \
         apt-transport-https \
-        postgresql-client-14 \
+        postgresql-client-16 \
         mariadb-client \
     && apt-get clean -y
