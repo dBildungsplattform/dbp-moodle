@@ -71,10 +71,6 @@ dbpMoodle:
   name: infra
   stage: infra
 
-  # -- The dbp update process to migrate moodle data when moodle versions are increased
-  update_migration:
-    enabled: false
-
   # -- disallows all egress from release namespace for the moodle deployment
   allowInternalNetworkingOnly: false
 
@@ -119,6 +115,7 @@ dbpMoodle:
 
   # -- A preperation job which disables the php-cronjob, scales down the deployment and creates a backup if dbpMoodle.backup.enabled=true
   moodleUpdatePreparationJob:
+    enabled: false
     affinity: {}
     tolerations: []
     resources: {}
