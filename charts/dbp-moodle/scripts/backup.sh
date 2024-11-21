@@ -54,12 +54,12 @@ function clean_up() {
             # Careful, format the string with tabs only!
             restore_probe_patch=$(cat <<-EOF
 				[{
-					"op": "add",
+					"op": "replace",
 					"path": "/spec/template/spec/containers/0/readinessProbe",
 					"value": $(cat ${readiness_bckp})
 				},
 				{
-					"op": "add",
+					"op": "replace",
 					"path": "/spec/template/spec/containers/0/livenessProbe",
 					"value": $(cat ${liveness_bckp})
 				}]
