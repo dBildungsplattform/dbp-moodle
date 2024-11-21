@@ -37,7 +37,7 @@ spec:
       serviceAccount: "moodle-restore-job"
       containers:
       - name:  moodle-restore-job
-        image: {{ .Values.dbpMoodle.restore.image }}
+        image: "{{ .Values.dbpMoodle.restore.repository }}/{{ .Values.dbpMoodle.restore.image }}:{{ .Values.dbpMoodle.restore.tag }}"
         command:
           - /bin/sh
           - -c
