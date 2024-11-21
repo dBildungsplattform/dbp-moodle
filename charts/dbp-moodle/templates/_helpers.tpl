@@ -19,6 +19,13 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "backup-cronjob.job_name" -}}
+{{- $releasename := .Release.Name -}} 
+{{- with (index .Values "backup-cronjob" "jobs") -}}
+{{- printf "%s-backup-cronjob-%s" $releasename (index . 0).name -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "dbpMoodle.secrets.moodle_password" -}}
 {{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.moodle_password }}
 {{- end -}}
