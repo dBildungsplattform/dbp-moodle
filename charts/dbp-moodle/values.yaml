@@ -107,9 +107,8 @@ dbpMoodle:
   secrets:
     useChartSecret: true
     moodle_password: ""
-    pgsql_admin_password: ""
-    mariadb_password: ""
-    mariadb_root_password: ""
+    database_password: ""
+    database_root_password: ""
     etherpad_postgresql_password: ""
     etherpad_api_key: ""
 
