@@ -47,7 +47,7 @@
 {{- end -}}
 
 {{- define "dbpMoodle.secrets.etherpad_api_key" -}}
-{{- default "moodle" .Values.dbpMoodle.secrets.etherpad_api_key }}
+{{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.etherpad_api_key }}
 {{- end -}}
 
 {{- define "dbpMoodle.backup.retention_time" -}}
