@@ -20,6 +20,11 @@ health_file="/tmp/healthy"
 # Create liveness probe file
 touch "${health_file}"
 
+{{ if and .Values.dbpMoodle.backup.s3_certificate_path .Values.dbpMoodle.backup.s3_certificate_key }}
+printf "Appendending custom certificate (%s/%s) to /etc/ssl/certs/ca-certificates.crt\n" "{{ .Values.dbpMoodle.backup.s3_certificate_path }}" "{{ .Values.dbpMoodle.backup.s3_certificate_key }}"
+cat "{{ .Values.dbpMoodle.backup.s3_certificate_path }}/{{ .Values.dbpMoodle.backup.s3_certificate_key }}" >> /etc/ssl/certs/ca-certificates.crt
+{{ end }}
+
 # Deployment has "-moodle" appended if the Release.Name does not contain "moodle" 
 deployment_name="{{ .Release.Name }}"
 if [[ "$deployment_name" != "moodle" && "$deployment_name" != *"moodle"* ]]; then
