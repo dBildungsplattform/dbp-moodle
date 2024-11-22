@@ -23,7 +23,7 @@ spec:
           volumeMounts:
             - name: script-volume
               mountPath: /update-preparation.sh
-              subPath: update-preparation.sh
+              subPath: moodle-update-preparation.sh
           livenessProbe:
             exec:
               command:
