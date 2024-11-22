@@ -19,19 +19,22 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "backup-cronjob.job_name" -}}
+{{- $releasename := .Release.Name -}} 
+{{- with (index .Values "backup-cronjob" "jobs") -}}
+{{- printf "%s-backup-cronjob-%s" $releasename (index . 0).name -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "dbpMoodle.secrets.moodle_password" -}}
 {{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.moodle_password }}
 {{- end -}}
 
-{{- define "dbpMoodle.secrets.pgsql_admin_password" -}}
-{{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.pgsql_admin_password }}
+{{- define "dbpMoodle.secrets.database_password" -}}
+    {{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.database_password }}
 {{- end -}}
 
-{{- define "dbpMoodle.secrets.db_password" -}}
-{{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.mariadb_password }}
-{{- end -}}
-
-{{- define "dbpMoodle.secrets.mariadb_root_password" -}}
+{{- define "dbpMoodle.secrets.database_root_password" -}}
 {{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.mariadb_root_password }}
 {{- end -}}
 
@@ -44,7 +47,7 @@
 {{- end -}}
 
 {{- define "dbpMoodle.secrets.etherpad_api_key" -}}
-{{- default "moodle" .Values.dbpMoodle.secrets.etherpad_api_key }}
+{{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.etherpad_api_key }}
 {{- end -}}
 
 {{- define "dbpMoodle.backup.retention_time" -}}

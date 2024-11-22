@@ -1,4 +1,4 @@
-{{ if and .Values.dbpMoodle.update_migration.enabled (not .Values.dbpMoodle.restore.enabled) }}
+{{ if and .Values.dbpMoodle.moodleUpdatePreparationJob.enabled (not .Values.dbpMoodle.restore.enabled) }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -12,17 +12,17 @@ spec:
     spec:
       containers:
         - name: moodle-update-preparation
-          image: {{ .Values.dbpMoodle.moodleUpdatePreparationJob.kubectlImage }}
+          image: "{{ .Values.dbpMoodle.moodleUpdatePreparationJob.repository }}/{{ .Values.dbpMoodle.moodleUpdatePreparationJob.image }}:{{ .Values.dbpMoodle.moodleUpdatePreparationJob.tag }}"
           securityContext:
             privileged: false
-          command: ["/bin/bash", "/moodle-update-preparation.sh"]
+          command: ["/bin/bash", "/update-preparation.sh"]
           resources: {{ .Values.dbpMoodle.moodleUpdatePreparationJob.resources | toYaml }}
           env:
           - name: BACKUP_ENABLED
             value: '{{ .Values.dbpMoodle.backup.enabled }}'
           volumeMounts:
             - name: script-volume
-              mountPath: /moodle-update-preparation.sh
+              mountPath: /update-preparation.sh
               subPath: moodle-update-preparation.sh
           livenessProbe:
             exec:

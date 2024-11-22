@@ -71,10 +71,6 @@ dbpMoodle:
   name: infra
   stage: infra
 
-  # -- The dbp update process to migrate moodle data when moodle versions are increased
-  update_migration:
-    enabled: false
-
   # -- disallows all egress from release namespace for the moodle deployment
   allowInternalNetworkingOnly: false
 
@@ -111,19 +107,21 @@ dbpMoodle:
   secrets:
     useChartSecret: true
     moodle_password: ""
-    pgsql_admin_password: ""
-    mariadb_password: ""
-    mariadb_root_password: ""
+    database_password: ""
+    database_root_password: ""
     etherpad_postgresql_password: ""
     etherpad_api_key: ""
 
   # -- A preperation job which disables the php-cronjob, scales down the deployment and creates a backup if dbpMoodle.backup.enabled=true
   moodleUpdatePreparationJob:
+    enabled: false
     affinity: {}
     tolerations: []
     resources: {}
     # -- Which kubectl image to use
-    kubectlImage: bitnami/kubectl:1.30.4-debian-12-r3
+    repository: "ghcr.io/dbildungsplattform"
+    image: moodle-tools
+    tag: "1.0.8"
 
   moodleUpdatePreparationHook:
     rules:
@@ -157,7 +155,14 @@ dbpMoodle:
       s3_endpoint_url: ""
       # -- Existing secret for s3 endpoint
       existingSecret: ""
-
+    # -- Secret key of a certificate for duply to connect to s3 endpoint using SSL, useful to trust self-signed certificates
+    # -- certificate has to mounted "manually" under values backup-cronjob
+    s3_certificate_secret:
+      enabled: false
+      name: "s3-certificate"
+      # -- Path where the certificate is mounted
+      key: "certificate.crt"
+      mountpath: "/certs"
     rules:
       - apiGroups: ["apps"]
         resources: ["deployments"]
@@ -169,7 +174,9 @@ dbpMoodle:
   # -- This restores moodle to the latest snapshot. Requires an existing s3 backup. ONLY USE FOR ROLLBACK
   restore:
     enabled: false
-    image: ghcr.io/dbildungsplattform/moodle-tools:1.0.7
+    repository: ghcr.io/dbildungsplattform
+    image: moodle-tools
+    tag: 1.0.8
     resources:
       limits:
         cpu: 2000m
@@ -506,7 +513,7 @@ etherpad-postgresql:
 moodlecronjob:
   image:
     repository: "ghcr.io/dbildungsplattform/moodle-tools"
-    tag: "1.0.7"
+    tag: "1.0.8"
   clusterRole:
     create: false
   serviceAccount:
@@ -554,7 +561,7 @@ moodlecronjob:
 backup-cronjob:
   image:
     repository: "ghcr.io/dbildungsplattform/moodle-tools"
-    tag: "1.0.7"
+    tag: "1.0.8"
   clusterRole:
     create: false
   serviceAccount:
