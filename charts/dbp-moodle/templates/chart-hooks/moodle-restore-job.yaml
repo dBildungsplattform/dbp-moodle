@@ -33,6 +33,12 @@ spec:
             - secret:
                 name: {{ .Values.dbpMoodle.restore.existingSecretGPG }}
           defaultMode: 0644
+      {{ if and .Values.dbpMoodle.backup.s3_certificate_secret.mountpath .Values.dbpMoodle.backup.s3_certificate_secret.key }}
+      - name: "{{ .Values.dbpMoodle.backup.s3_certificate_secret.name }}"
+        secret:
+          secretName: "{{ .Values.dbpMoodle.backup.s3_certificate_secret.name }}"
+          defaultMode: 0644
+      {{ end }}
       serviceAccountName: "moodle-restore-job"
       serviceAccount: "moodle-restore-job"
       containers:
@@ -65,6 +71,10 @@ spec:
           mountPath: /scripts/
         - name: duply
           mountPath: /etc/duply/default/
+        {{ if .Values.dbpMoodle.backup.s3_certificate_secret.enabled }}
+        - name: "{{ .Values.dbpMoodle.backup.s3_certificate_secret.name }}"
+          mountPath: {{ .Values.dbpMoodle.backup.s3_certificate_secret.mountpath }}
+        {{ end }}
         env:
         - name: DATABASE_HOST
           valueFrom: 
