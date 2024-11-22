@@ -155,6 +155,11 @@ dbpMoodle:
       s3_endpoint_url: ""
       # -- Existing secret for s3 endpoint
       existingSecret: ""
+    # -- (Optional) Secret key of a certificate for duply to connect to s3 endpoint using SSL, useful to trust self-signed certificates
+    # -- certificate has to mounted under values backup-cronjob
+    s3_certificate_key: "certificate.crt"
+    # -- (Optional) Path where the certificate is mounted
+    s3_certificate_path: "/certs"
 
     rules:
       - apiGroups: ["apps"]
