@@ -17,16 +17,17 @@ spec:
       name: cpu
       target:
         type: Utilization
-        averageUtilization: {{ .Values.dbpMoodle.hpa.average_cpu_utilization }}
+        averageUtilization: {{ .Values.dbpMoodle.hpa.target_average_cpu_utilization }}
   behavior:
     scaleUp:
-      stabilizationWindowSeconds: 0
+      stabilizationWindowSeconds: {{ .Values.dbpMoodle.hpa.scale_up_stabilization_window_seconds }}
       selectPolicy: Max
       policies:
         - type: Percent
           value: {{ .Values.dbpMoodle.hpa.scaleup_value }}
           periodSeconds: {{ .Values.dbpMoodle.hpa.scaleup_cooldown }}
     scaleDown:
+      stabilizationWindowSeconds: {{ .Values.dbpMoodle.hpa.scale_down_stabilization_window_seconds }}
       selectPolicy: Max
       policies:
         - type: Percent
