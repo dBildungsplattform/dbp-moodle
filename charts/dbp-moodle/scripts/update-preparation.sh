@@ -6,8 +6,14 @@ set -o pipefail
 
 health_file="/tmp/healthy"
 
+# Deployment has "-moodle" appended if the Release.Name does not contain "moodle" 
+deployment_name="{{ .Release.Name }}"
+if [[ "$deployment_name" != "moodle" && "$deployment_name" != *"moodle"* ]]; then
+    deployment_name="${deployment_name}-moodle"
+fi
+
 get_current_deployment_image() {
-    kubectl get "deploy/{{ .Release.Name }}" -n "{{ .Release.Namespace }}" -o jsonpath='{..image}' |\
+    kubectl get "deploy/${deployment_name}" -n "{{ .Release.Namespace }}" -o jsonpath='{..image}' |\
         tr -s '[:space:]' '\n' |\
         grep '{{- .Values.moodle.image.repository -}}'
 }
@@ -30,14 +36,16 @@ printf 'Image change detected\n'
 printf 'Disabling regular cronjob to prevent failing runs\n'
 kubectl patch cronjobs "{{ .Release.Name }}"-moodlecronjob-"{{ include "moodlecronjob.job_name" . }}" -n "{{ .Release.Namespace }}" -p '{"spec" : {"suspend" : true }}'
 
-printf 'Scaling deployment "{{ .Release.Name }}" to 0 replicas\n'
-kubectl patch "deploy/{{ .Release.Name }}" -n "{{ .Release.Namespace }}" -p '{"spec":{"replicas": 0}}'
+printf 'Scaling deployment "%s" to 0 replicas\n' "$deployment_name"
+kubectl patch "deploy/${deployment_name}" -n "{{ .Release.Namespace }}" -p '{"spec":{"replicas": 0}}'
 
 {{ if .Values.dbpMoodle.backup.enabled }}
 if [ "$BACKUP_ENABLED" = true ]; then
     printf 'Starting pre-update backup\n'
-    kubectl create job moodle-pre-update-backup-job -n "{{ .Release.Namespace }}" --from=cronjob.batch/moodle-backup-cronjob-backup
+    kubectl create job moodle-pre-update-backup-job -n "{{ .Release.Namespace }}" --from="cronjob.batch/{{ include "backup-cronjob.job_name" . }}"
     printf 'Waiting for backup to finish...\n'
     kubectl wait --for=condition=complete --timeout=10m job/moodle-pre-update-backup-job
 fi
 {{ end }}
+
+printf 'Preparations completed successfully, exting...'

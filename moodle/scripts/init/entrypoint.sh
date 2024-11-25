@@ -85,6 +85,9 @@ printSystemStatus
 # Can handle new version and existing version.
 startBitnamiSetup
 
+MODULE=dbp info "Create php.ini with redis config"
+/bin/cp /moodleconfig/php-ini/php.ini /opt/bitnami/php/etc/conf.d/php.ini
+
 if [[ ! -f "$update_failed_path" ]]; then
     MODULE=dbp info "Starting Moodle Update Check"
     if /scripts/updateCheck.sh; then
@@ -102,9 +105,8 @@ MODULE=dbp info "Start Bitnami setup script after checking for proper version"
 /post-init.sh
 upgrade_if_pending
 
-MODULE=dbp info "Replacing config files with ours"
+MODULE=dbp info "Replacing config.php file with ours"
 /bin/cp -p /moodleconfig/config-php/config.php /bitnami/moodle/config.php
-/bin/cp /moodleconfig/php-ini/php.ini /opt/bitnami/php/etc/conf.d/php.ini
 
 if [ -f "/tmp/de.zip" ] && [ ! -d /bitnami/moodledata/lang/de ]; then \
     MODULE=dbp info "Installing german language pack"

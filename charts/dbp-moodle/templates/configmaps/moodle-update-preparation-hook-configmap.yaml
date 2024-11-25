@@ -9,5 +9,5 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded,hook-failed
 data:
   moodle-update-preparation.sh: |-
-{{ tpl ( .Files.Get "scripts/hook/moodle-update-preparation.sh" ) . | nindent 4 }}
+{{ tpl ( .Files.Get "scripts/update-preparation.sh" ) . | nindent 4 }}
 {{ end }}
