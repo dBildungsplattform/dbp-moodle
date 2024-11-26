@@ -523,6 +523,8 @@ moodlecronjob:
     privileged: false
     allowPrivilegeEscalation: false
     runAsGroup: 1001
+    runAsNonRoot: true
+    runAsUser: 1001
     capabilities:
       drop:
         - ALL
