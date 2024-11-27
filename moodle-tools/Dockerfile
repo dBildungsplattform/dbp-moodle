@@ -13,7 +13,6 @@ RUN set -x \
     && apt-get -y update \
     && apt-get -y install \
         python3-boto3 \
-        php \
         curl \
         duply \
         ca-certificates \
