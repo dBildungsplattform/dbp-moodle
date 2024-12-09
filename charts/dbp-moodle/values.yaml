@@ -519,10 +519,14 @@ moodlecronjob:
   serviceAccount:
     name: "moodle-cronjob"
     create: false
+  podSecurityContext:
+    fsGroup: 1001
   securityContext:
     privileged: false
     allowPrivilegeEscalation: false
     runAsGroup: 1001
+    runAsUser: 1001
+    runAsNonRoot: true
     capabilities:
       drop:
         - ALL
@@ -549,7 +553,7 @@ moodlecronjob:
         - name: moodle-php-script
           configMap:
             name: moodle-php-script
-            defaultMode: 0711
+            defaultMode: 0554
       livenessProbe:
         exec:
           command:

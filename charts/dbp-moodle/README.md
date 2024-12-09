@@ -1,6 +1,6 @@
 # dbp-moodle
 
-![Version: 0.0.14](https://img.shields.io/badge/Version-0.0.14-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.1.14](https://img.shields.io/badge/AppVersion-4.1.14-informational?style=flat-square)
+![Version: 0.0.15](https://img.shields.io/badge/Version-0.0.15-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.1.14](https://img.shields.io/badge/AppVersion-4.1.14-informational?style=flat-square)
 
 This is a Helm Chart bundling some of the bitnami resources to deploy Moodle for DBildungsplattform. Extending them with features such as
 MariaDB and PostgreSQL support, Horizontal Autoscaling capabilities, Redis Session Store, Etherpad-Lite.
@@ -290,7 +290,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodlecronjob.jobs[0].concurrencyPolicy | string | `"Forbid"` |  |
 | moodlecronjob.jobs[0].extraVolumeMounts[0].mountPath | string | `"/scripts/"` |  |
 | moodlecronjob.jobs[0].extraVolumeMounts[0].name | string | `"moodle-php-script"` |  |
-| moodlecronjob.jobs[0].extraVolumes[0].configMap.defaultMode | int | `457` |  |
+| moodlecronjob.jobs[0].extraVolumes[0].configMap.defaultMode | int | `364` |  |
 | moodlecronjob.jobs[0].extraVolumes[0].configMap.name | string | `"moodle-php-script"` |  |
 | moodlecronjob.jobs[0].extraVolumes[0].name | string | `"moodle-php-script"` |  |
 | moodlecronjob.jobs[0].failedJobsHistoryLimit | int | `1` |  |
@@ -302,11 +302,14 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodlecronjob.jobs[0].restartPolicy | string | `"Never"` |  |
 | moodlecronjob.jobs[0].schedule | string | `"* * * * *"` |  |
 | moodlecronjob.jobs[0].successfulJobsHistoryLimit | int | `1` |  |
+| moodlecronjob.podSecurityContext.fsGroup | int | `1001` |  |
 | moodlecronjob.resources | object | `{}` |  |
 | moodlecronjob.securityContext.allowPrivilegeEscalation | bool | `false` |  |
 | moodlecronjob.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | moodlecronjob.securityContext.privileged | bool | `false` |  |
 | moodlecronjob.securityContext.runAsGroup | int | `1001` |  |
+| moodlecronjob.securityContext.runAsNonRoot | bool | `true` |  |
+| moodlecronjob.securityContext.runAsUser | int | `1001` |  |
 | moodlecronjob.serviceAccount.create | bool | `false` |  |
 | moodlecronjob.serviceAccount.name | string | `"moodle-cronjob"` |  |
 | moodlecronjob.tolerations | list | `[]` |  |

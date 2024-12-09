@@ -44,7 +44,7 @@ dummy_probe_patch=$(cat <<-EOF
 # If update backup: depending on exit code create the signal for the update helper job with success or failure
 function clean_up() {
     exit_code=$?
-    if ! [ -a /mountData/moodledata/CliUpdate ]; then
+    if ! [ -e /mountData/moodledata/CliUpdate ]; then
         echo "=== Starting cleanup ==="
         echo "=== Stopping maintenance mode ==="
         rm -f /mountData/moodledata/climaintenance.html
@@ -108,7 +108,7 @@ if [ ! -d "${backup_dir}" ]; then
 fi
 
 # If the backup is done for the update it skips the preparation because the update helper already did this
-if ! [ -a /mountData/moodledata/CliUpdate ]; then
+if ! [ -e /mountData/moodledata/CliUpdate ]; then
     # Suspend the cronjob to avoid errors due to missing moodle
     echo "=== Suspending moodle cronjob ==="
     kubectl patch cronjobs "{{ .Release.Name }}-moodlecronjob-{{ include "moodlecronjob.job_name" . }}" -n "{{ .Release.Namespace }}" -p '{"spec" : {"suspend" : true }}'
