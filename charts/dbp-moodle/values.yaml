@@ -1,79 +1,108 @@
 global:
-  kubectl_version: "1.28.7"
   # -- Default storage class, should support ReadWriteMany
   storageClass: "nfs-client"
-  # -- All plugins are disabled by default. if enabled, the plugin is installed on image startup
+  # -- Moodle Plugins that are enabled will be installed on container startup
+  # -- If a plugin is changed from enabled to disabled, or vice versa, with an upgrade, the plugin will be installed/ uninstalled to match the new state
   moodlePlugins:
+    # -- [Kaltura Video Package](https://moodle.org/plugins/view.php?id=447)
     kaltura:
       enabled: false
+    # -- [Etherpad Lite](https://moodle.org/plugins/mod_etherpadlite)
     etherpadlite:
       enabled: false
+    # -- [Interactive Content – H5P](https://moodle.org/plugins/mod_hvp)
     hvp:
       enabled: false
+    # -- [Group self-selection](https://moodle.org/plugins/mod_groupselect)
     groupselect:
       enabled: false
-    jitsi:
-      enabled: false
+    # -- [PDF Annotation](https://moodle.org/plugins/mod_pdfannotator)
     pdfannotator:
       enabled: false
-    tiles:
+    # -- [Jitsi](https://moodle.org/plugins/mod_jitsi)
+    jitsi:
       enabled: false
+    # -- [Skype](https://moodle.org/plugins/mod_skype)
     skype:
       enabled: false
+    # -- [Zoom meeting](https://moodle.org/plugins/mod_zoom)
     zoom:
       enabled: false
+    # -- [Booking](https://moodle.org/plugins/mod_booking)
     booking:
       enabled: false
+    # -- [Reengagement](https://moodle.org/plugins/mod_reengagement)
     reengagement:
       enabled: false
+    # -- [Unilabel](https://moodle.org/plugins/mod_unilabel)
     unilabel:
       enabled: false
+    # -- [GeoGebra](https://moodle.org/plugins/mod_geogebra)
     geogebra:
       enabled: false
+    # -- [Group choice](https://moodle.org/plugins/mod_choicegroup)
     choicegroup:
       enabled: false
+    # -- [Static Pages](https://moodle.org/plugins/local_staticpage)
     staticpage:
       enabled: false
+    # -- [Heartbeat check](https://moodle.org/plugins/tool_heartbeat)
     heartbeat:
       enabled: false
+    # -- [Edwiser Course Formats](https://moodle.org/plugins/format_remuiformat)
     remuiformat:
       enabled: false
+    # -- [Tiles format](https://moodle.org/plugins/format_tiles)
+    tiles:
+      enabled: false
+    # -- [Collapsed Topics](https://moodle.org/plugins/format_topcoll)
     topcoll:
       enabled: false
-    oidc:
-      enabled: false
-    saml2:
-      enabled: false
-    dash:
-      enabled: false
-    sharing_cart:
-      enabled: false
-    xp:
-      enabled: false
-    certificate:
-      enabled: false
-    coursecertificate:
-      enabled: false
-    adaptable:
-      enabled: false
-    boost_union:
-      enabled: false
-    boost_magnific:
-      enabled: false
-    snap:
-      enabled: false
+    # -- [Flexible sections format](https://moodle.org/plugins/format_flexsections)
     flexsections:
       enabled: false
+    # -- [Multitopic format](https://moodle.org/plugins/format_multitopic)
     multitopic:
       enabled: false
+    # -- [OpenID Connect](https://moodle.org/plugins/auth_oidc)
+    oidc:
+      enabled: false
+    # -- [SAML2 Single sign on](https://moodle.org/plugins/auth_saml2)
+    saml2:
+      enabled: false
+    # -- [Dash](https://moodle.org/plugins/block_dash)
+    dash:
+      enabled: false
+    # -- [Sharing Cart](https://moodle.org/plugins/block_sharing_cart)
+    sharing_cart:
+      enabled: false
+    # -- [Level Up XP - Gamification](https://moodle.org/plugins/block_xp)
+    xp:
+      enabled: false
+    # -- [Workplace course certificate](https://moodle.org/plugins/mod_coursecertificate)
+    coursecertificate:
+      enabled: false
+    # -- [Adaptable](https://moodle.org/plugins/theme_adaptable)
+    adaptable:
+      enabled: false
+    # -- [Boost Union](https://moodle.org/plugins/theme_boost_union)
+    boost_union:
+      enabled: false
+    # -- [Boost Magnific](https://moodle.org/plugins/theme_boost_magnific)
+    boost_magnific:
+      enabled: false
+    # -- [Snap](https://moodle.org/plugins/theme_snap)
+    snap:
+      enabled: false
 
+
+# -- Settings specific to the umbrella chart
+# -- Either extend functionality of one chart or connects/configures services from two charts
 dbpMoodle:
-  name: infra
-  stage: infra
-
-  # -- disallows all egress from release namespace for the moodle deployment
+  # -- Disallows all egress from release namespace for the moodle deployment
   allowInternalNetworkingOnly: false
 
+  # -- These settings affect the config.php of the moodle container
   phpConfig:
     # -- Extended php logging
     extendedLogging: false
@@ -92,7 +121,8 @@ dbpMoodle:
     port: 6379
     password: ""
 
-  external_pvc:
+  # -- Creates a PVC for the moodle chart, this allows for additional configuration
+  moodleExternalPVC:
     enabled: true
     name: "moodle-data"
     size: "8Gi"
@@ -112,6 +142,7 @@ dbpMoodle:
     etherpad_postgresql_password: ""
     etherpad_api_key: ""
 
+  # -- The dbp update process to migrate moodle data when container image versions are increased
   # -- A preperation job which disables the php-cronjob, scales down the deployment and creates a backup if dbpMoodle.backup.enabled=true
   moodleUpdatePreparationJob:
     enabled: false
@@ -210,10 +241,18 @@ dbpMoodle:
   # -- Horizontal pod autoscaling values
   hpa:
     enabled: false
+    # -- The deployment to scale
     deployment_name_ref: "moodle"
+    # -- Minimum replicas of deployment
     min_replicas: 1
+    # -- Maximum replicas of deployment
     max_replicas: 4
-    average_cpu_utilization: 50
+    # -- The average cpu utilization of all pods in deployment to aim for, if exceeded for stabilization_window_seconds the deployment is scaled
+    target_average_cpu_utilization: 50
+    # How long to wait before scaling up when utilization exceeds target_average_cpu_utilization
+    scale_up_stabilization_window_seconds: 0
+    # How long to wait before scaling down when utilization is below target_average_cpu_utilization
+    scale_down_stabilization_window_seconds: 0
     # -- The max amount in percent to scale down in one step per cooldown period
     scaledown_value: 25
     # -- How many seconds to wait between downscaling adjustments
