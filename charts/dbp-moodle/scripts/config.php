@@ -40,6 +40,7 @@ $CFG->session_redis_serializer_use_igbinary = false;
 $CFG->session_redis_compressor = 'none';
 {{- end }}
 
+
 {{- if .Values.dbpMoodle.phpConfig.pluginUIInstallation.enabled }}
 $CFG->disableupdateautodeploy = false;
 {{- else -}}
