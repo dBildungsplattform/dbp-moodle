@@ -13,7 +13,7 @@ major_minor="${MOODLE_VERSION%.*}"
 
 cd /plugins || exit 1
 
-download_kaltura "$major_minor"
+#download_kaltura "$major_minor"
 moosh plugin-list > /dev/null
 
 # Dependencies
@@ -23,18 +23,18 @@ moosh plugin-download -v "$major_minor" tool_certificate # Dependency of mod_cou
 # Plugins
 moosh plugin-download -v "$major_minor" mod_etherpadlite
 moosh plugin-download -v "$major_minor" mod_hvp
-moosh plugin-download -v "$major_minor" mod_groupselect
+#moosh plugin-download -v "$major_minor" mod_groupselect
 moosh plugin-download -v "$major_minor" mod_jitsi
 moosh plugin-download -v "$major_minor" mod_pdfannotator
 moosh plugin-download -v "$major_minor" mod_skype
 moosh plugin-download -v "$major_minor" mod_zoom
 moosh plugin-download -v "$major_minor" mod_booking
-moosh plugin-download -v "$major_minor" mod_reengagement
+#moosh plugin-download -v "$major_minor" mod_reengagement
 moosh plugin-download -v "$major_minor" mod_unilabel
 moosh plugin-download -v "$major_minor" mod_geogebra
 moosh plugin-download -v "$major_minor" mod_choicegroup
 moosh plugin-download -v "$major_minor" local_staticpage
-moosh plugin-download -v "$major_minor" tool_heartbeat
+#moosh plugin-download -v "$major_minor" tool_heartbeat
 moosh plugin-download -v "$major_minor" format_remuiformat
 moosh plugin-download -v "$major_minor" format_tiles
 moosh plugin-download -v "$major_minor" format_topcoll
@@ -49,4 +49,4 @@ moosh plugin-download -v "$major_minor" mod_coursecertificate
 moosh plugin-download -v "$major_minor" theme_adaptable
 moosh plugin-download -v "$major_minor" theme_boost_union
 moosh plugin-download -v "$major_minor" theme_boost_magnific
-moosh plugin-download -v "$major_minor" theme_snap
+#moosh plugin-download -v "$major_minor" theme_snap
