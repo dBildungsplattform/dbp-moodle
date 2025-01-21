@@ -43,7 +43,7 @@ $CFG->session_redis_compressor = 'none';
 
 {{- if .Values.dbpMoodle.phpConfig.pluginUIInstallation.enabled }}
 $CFG->disableupdateautodeploy = false;
-{{- else -}}
+{{- else }}
 $CFG->disableupdateautodeploy = true;
 {{- end }}
 
