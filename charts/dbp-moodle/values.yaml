@@ -79,8 +79,9 @@ dbpMoodle:
     extendedLogging: false
     # -- Moodle debugging is not safe for production
     debug: false
-    # -- Prevents the installation of Plugins from the Moodle Web Interface for Admins
-    disablePluginUIInstallation: false
+    # -- Prevents the installation of Plugins from the Moodle Web Interface for Admins (Disabled by default)
+    pluginUIInstallation:
+      enabled: false
     # -- Any additional text to be included into the config.php
     additional: ""
     # -- Provide an existing secret containing the config.php instead of generating it from chart
