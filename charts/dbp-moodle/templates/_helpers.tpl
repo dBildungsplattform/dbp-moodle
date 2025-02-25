@@ -91,4 +91,5 @@ adaptable:theme_adaptable:theme/adaptable:                      {{- .Values.glob
 boost_union:theme_boost_union:theme/boost_union:                {{- .Values.global.moodlePlugins.boost_union.enabled }}{{"\n"}}
 boost_magnific:theme_boost_magnific:theme/boost_magnific:       {{- .Values.global.moodlePlugins.boost_magnific.enabled }}{{"\n"}}
 snap:theme_snap:theme/snap:                                     {{- .Values.global.moodlePlugins.snap.enabled }}{{"\n"}}
+usersuspension:tool_usersuspension:admin/tool/usersuspension    {{- .Values.global.moodlePlugins.usersuspension.enabled }}{{"\n"}}
 {{- end -}}
