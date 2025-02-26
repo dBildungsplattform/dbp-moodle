@@ -16,7 +16,8 @@ jobs:
         uses: olegtarasov/get-tag@v2.1
         id: tag
         with:
-          tagRegex: "(?<tag>[0-9]+.[0-9]+.[0-9]+)"
+          tagRegex: "(?<tag>[0-9]+.[0-9]+.[0-9]+)(?<suffix>-.*)?"
+  
   build_and_push:
     permissions:
       packages: write
@@ -29,4 +30,5 @@ jobs:
       registry: ghcr.io
       image: dbildungsplattform/moodle-tools
       tag: ${{ needs.pre_build.outputs.tag }}
+      suffix: ${{ needs.pre_build.outputs.suffix }}
       context: "./moodle-tools/"
