@@ -124,7 +124,7 @@ dbpMoodle:
     # -- Which kubectl image to use
     repository: "ghcr.io/dbildungsplattform"
     image: moodle-tools
-    tag: "1.0.8"
+    tag: "1.1.0"
 
   moodleUpdatePreparationHook:
     rules:
@@ -179,7 +179,7 @@ dbpMoodle:
     enabled: false
     repository: ghcr.io/dbildungsplattform
     image: moodle-tools
-    tag: 1.0.8
+    tag: 1.1.0
     resources:
       limits:
         cpu: 2000m
@@ -233,7 +233,7 @@ moodle:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
     # -- The dbp-moodle image which is build for this helm chart
-    tag: "4.1.14-debian-12-r4-dbp5"
+    tag: "4.5.2-debian-12-r4-dbp1"
     pullPolicy: Always
     # -- Debug mode for more detailed moodle installation and log output
     debug: false
@@ -388,7 +388,7 @@ mariadb:
 postgresql:
   enabled: false
   image:
-    tag: "14.8.0-debian-11-r0"
+    tag: "14.8.0-debian-11-r84"
   auth:
     username: "moodle"
     database: "moodle"
@@ -434,7 +434,7 @@ etherpadlite:
   enabled: false
   image:
     repository: "ghcr.io/dbildungsplattform/etherpad"
-    tag: "1.8.18.0"
+    tag: "2.2.7.0"
   env:
     - name: DB_TYPE
       value: "postgres"
@@ -516,7 +516,7 @@ etherpad-postgresql:
 moodlecronjob:
   image:
     repository: "ghcr.io/dbildungsplattform/moodle-tools"
-    tag: "1.0.8"
+    tag: "1.1.0"
   clusterRole:
     create: false
   serviceAccount:
@@ -568,7 +568,7 @@ moodlecronjob:
 backup-cronjob:
   image:
     repository: "ghcr.io/dbildungsplattform/moodle-tools"
-    tag: "1.0.8"
+    tag: "1.1.0"
   clusterRole:
     create: false
   serviceAccount:
