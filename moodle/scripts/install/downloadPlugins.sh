@@ -32,3 +32,4 @@ moosh plugin-download -v "$major_minor" mod_coursecertificate
 moosh plugin-download -v "$major_minor" theme_adaptable
 moosh plugin-download -v "$major_minor" theme_boost_union
 moosh plugin-download -v "$major_minor" theme_boost_magnific
+moosh plugin-download -v "$major_minor" tool_usersuspension

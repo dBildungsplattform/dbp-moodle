@@ -46,6 +46,7 @@ boost_magnific:theme_boost_magnific:theme/boost_magnific
 snap:theme_snap:theme/snap
 flexsections:format_flexsections:format/flexsections
 multitopic:format_multitopic:format/multitopic
+usersuspension:tool_usersuspension:admin/tool/usersuspension
 EOF
 )
 
