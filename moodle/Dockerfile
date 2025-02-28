@@ -1,9 +1,9 @@
 # This Dockerfile starts the entrypoint script to evaluate if a new moodle version exists and an update should be started.
 
 # Stage 1: Build stage
-FROM bitnami/moodle:4.1.15-debian-12-r0 AS build
+FROM bitnami/moodle:4.5.2-debian-12-r4 AS build
 USER root
-ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.1.15"}
+ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.5.2"}
 
 COPY scripts/install/downloadMoodle.sh /downloadMoodle.sh
 COPY scripts/install/downloadPlugins.sh /downloadPlugins.sh
@@ -16,7 +16,7 @@ RUN apt-get update && apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists/*
 
 # Install moosh for plugin management
-RUN curl -L https://github.com/tmuras/moosh/archive/refs/tags/1.21.tar.gz -o moosh.tar.gz && \
+RUN curl -L https://github.com/tmuras/moosh/archive/refs/tags/1.27.tar.gz -o moosh.tar.gz && \
     mkdir /moosh && tar -xzvf moosh.tar.gz -C moosh/ --strip-components=1 && \
     mkdir /.moosh && \
     chmod 774 /.moosh &&\
@@ -33,8 +33,8 @@ RUN mkdir /plugins && /downloadPlugins.sh
 # RUN /scripts/phpRedisInstall.sh
 
 # Stage 2: Production stage
-FROM bitnami/moodle:4.1.15-debian-12-r0
-ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.1.15"}
+FROM bitnami/moodle:4.5.2-debian-12-r4
+ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.5.2"}
 ARG DEBUG=${DEBUG:-false}
 
 RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen
