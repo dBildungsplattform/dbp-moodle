@@ -1,10 +1,9 @@
 replicaCount: 1
 
 image:
-  repository: etherpad/etherpad
+  repository: ghcr.io/dbildungsplattform/etherpad
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "2.2.7"
+  tag: "2.2.7.0"
 
 imagePullSecrets: []
 nameOverride: ""
