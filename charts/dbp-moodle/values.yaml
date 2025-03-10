@@ -568,6 +568,9 @@ moodlecronjob:
             - /tmp/healthy
         initialDelaySeconds: 2
         periodSeconds: 2
+      readinessProbe:
+        initialDelaySeconds: 30
+        periodSeconds: 30
 
 backup-cronjob:
   image:
@@ -680,6 +683,9 @@ backup-cronjob:
             - /tmp/healthy
         initialDelaySeconds: 5
         periodSeconds: 10
+      readinessProbe:
+        initialDelaySeconds: 30
+        periodSeconds: 30
 
 sql-exporter:
   enabled: false
