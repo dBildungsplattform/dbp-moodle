@@ -269,6 +269,8 @@ moodle:
   tolerations: []
   readinessProbe:
     path: /login/index.php?noredirect=1
+    initialDelaySeconds: 30
+    periodSeconds: 30
   resources:
     requests:
       cpu: 300m
