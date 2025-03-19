@@ -7,10 +7,10 @@ description: |
 type: application
 home: https://dbildungsplattform.github.io/dbp-moodle/
 version: 0.0.20
-appVersion: "4.5.2"
+appVersion: "4.5.3"
 dependencies:
   - name: moodle
-    version: "25.1.4"
+    version: "25.1.5"
     repository: https://charts.bitnami.com/bitnami
 
   - name: redis
