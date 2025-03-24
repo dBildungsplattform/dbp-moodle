@@ -6,11 +6,11 @@ description: |
   The Chart can be deployed without any modification but it is advised to set own secrets acccording to this readme.
 type: application
 home: https://dbildungsplattform.github.io/dbp-moodle/
-version: 0.0.20
-appVersion: "4.5.2"
+version: 0.0.23
+appVersion: "4.5.3"
 dependencies:
   - name: moodle
-    version: "25.1.4"
+    version: "25.1.5"
     repository: https://charts.bitnami.com/bitnami
 
   - name: redis
