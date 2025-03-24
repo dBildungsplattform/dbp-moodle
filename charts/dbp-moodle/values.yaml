@@ -237,7 +237,7 @@ moodle:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
     # -- The dbp-moodle image which is build for this helm chart
-    tag: "4.5.2-debian-12-r4-dbp1"
+    tag: "4.5.3-debian-12-r1-dbp1"
     pullPolicy: Always
     # -- Debug mode for more detailed moodle installation and log output
     debug: false
@@ -269,8 +269,6 @@ moodle:
   tolerations: []
   readinessProbe:
     path: /login/index.php?noredirect=1
-    initialDelaySeconds: 30
-    periodSeconds: 30
   resources:
     requests:
       cpu: 300m

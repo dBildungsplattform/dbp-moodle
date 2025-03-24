@@ -13,6 +13,7 @@ download_kaltura() {
 
 cd /plugins || exit 1
 
+download_kaltura "$major_minor"
 moosh plugin-list > /dev/null
 
 # Dependencies
