@@ -1,6 +1,6 @@
 # dbp-moodle
 
-![Version: 0.0.20](https://img.shields.io/badge/Version-0.0.20-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.5.2](https://img.shields.io/badge/AppVersion-4.5.2-informational?style=flat-square)
+![Version: 0.0.23](https://img.shields.io/badge/Version-0.0.23-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.5.3](https://img.shields.io/badge/AppVersion-4.5.3-informational?style=flat-square)
 
 This is a Helm Chart bundling some of the bitnami resources to deploy Moodle for DBildungsplattform. Extending them with features such as
 MariaDB and PostgreSQL support, Horizontal Autoscaling capabilities, Redis Session Store, Etherpad-Lite.
@@ -17,7 +17,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | file://charts/etherpad | etherpad | 0.1.0 |
 | https://burningalchemist.github.io/sql_exporter/ | sql-exporter | 0.6.1 |
 | https://charts.bitnami.com/bitnami | mariadb | 18.2.2 |
-| https://charts.bitnami.com/bitnami | moodle | 25.1.4 |
+| https://charts.bitnami.com/bitnami | moodle | 25.1.5 |
 | https://charts.bitnami.com/bitnami | postgresql | 15.5.7 |
 | https://charts.bitnami.com/bitnami | postgresql | 15.5.7 |
 | https://charts.bitnami.com/bitnami | redis | 19.5.3 |
@@ -250,7 +250,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.image.pullPolicy | string | `"Always"` |  |
 | moodle.image.registry | string | `"ghcr.io"` |  |
 | moodle.image.repository | string | `"dbildungsplattform/moodle"` |  |
-| moodle.image.tag | string | `"4.5.2-debian-12-r4-dbp1"` | The dbp-moodle image which is build for this helm chart |
+| moodle.image.tag | string | `"4.5.3-debian-12-r1-dbp1"` | The dbp-moodle image which is build for this helm chart |
 | moodle.ingress.annotations."cert-manager.io/cluster-issuer" | string | `"sc-cert-manager-clusterissuer-letsencrypt"` |  |
 | moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-body-size" | string | `"200M"` |  |
 | moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-connect-timeout" | string | `"30s"` |  |
