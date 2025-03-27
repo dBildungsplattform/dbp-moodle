@@ -25,6 +25,10 @@ $CFG->dataroot  = '/bitnami/moodledata';
 $CFG->admin     = 'admin';
 $CFG->directorypermissions = 02775;
 
+$CFG->getremoteaddrconf = 'HTTP_X_FORWARDED_FOR, REMOTE_ADDR'; //Shows the real client IPs
+$CFG->allowedip = {{ .Values.dbpMoodle.ip.allowed }};
+$CFG->blockedip = {{ .Values.dbpMoodle.ip.blocked }};
+
 {{- if .Values.redis.enabled }}
 $CFG->session_handler_class = '\core\session\redis';
 $CFG->session_redis_host = '{{ .Values.dbpMoodle.redis.host }}';
