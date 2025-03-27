@@ -204,7 +204,7 @@ dbpMoodle:
     rules:
       - apiGroups: ["apps"]
         resources: ["deployments/scale", "deployments"]
-        verbs: ["get", "list", "scale", "patch"]
+        verbs: ["get", "list", "patch"]
 
   # -- Configuration for the moodle-cronjob which runs moodles cron.php. This is required since moodle does not run as root
   moodlecronjob:

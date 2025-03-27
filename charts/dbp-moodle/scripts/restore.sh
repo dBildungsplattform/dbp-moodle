@@ -38,7 +38,7 @@ if [ -z "$replicas" ] || [ "$replicas" -eq 0 ]; then
     replicas=1
 fi
 echo "=== Scale moodle deployment to 0 replicas for restore operation ==="
-kubectl scale "deployment/${deployment_name}" --replicas=0 -n {{ .Release.Namespace }}
+kubectl patch "deployment/${deployment_name}" -n "{{ .Release.Namespace }}" -p '{"spec":{"replicas": 0}}'
 echo "=== After restore operation is completed will scale back to: $replicas replicas ==="
 
 # Restore
@@ -101,7 +101,7 @@ PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U 
 echo "=== Finished DB restore ==="
 
 echo "=== Scaling deployment replicas to $replicas ==="
-kubectl scale "deployment/${deployment_name}" --replicas=$replicas -n {{ .Release.Namespace }}
+kubectl patch "deployment/${deployment_name}" -n "{{ .Release.Namespace }}" -p '{"spec":{"replicas": $replicas}}'
 sleep 2
 scaledTo=$(kubectl get "deployment/${deployment_name}" -n {{ .Release.Namespace }} -o=jsonpath='{.status.replicas}')
 echo "=== Deployment scaled to: $scaledTo ==="
