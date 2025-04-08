@@ -191,6 +191,17 @@ dbpMoodle:
       requests:
         cpu: 1000m
         memory: 8Gi
+    podSecurityContext:
+      fsGroup: 1001
+    securityContext:
+      privileged: false
+      allowPrivilegeEscalation: false
+      runAsGroup: 1001
+      runAsUser: 1001
+      runAsNonRoot: true
+      capabilities:
+        drop:
+          - ALL
     existingSecretGPG: ""
     existingSecretDatabaseConfig: "moodle-database"
     existingSecretDatabasePassword: "moodle"
