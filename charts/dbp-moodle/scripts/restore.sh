@@ -69,8 +69,8 @@ mv /bitnami/mountData/moodle/.[!.]* /bitnami/moodle/
 mv /bitnami/mountData/moodledata/* /bitnami/moodledata/
 mv /bitnami/mountData/moodledata/.[!.]* /bitnami/moodledata/
 # Set moodle user 1001
-# chown -R 1001 /bitnami/moodle
-# chown -R 1001 /bitnami/moodledata
+chown -R 1001 /bitnami/moodle
+chown -R 1001 /bitnami/moodledata
 
 cd /bitnami/
 echo "=== Clear DB ==="
