@@ -59,7 +59,8 @@ done
 
 cd /bitnami/
 echo "=== Download backup ==="
-duply default restore Full --profile /etc/duply/default
+export DUPLY_HOME="/etc/duply"
+duply default restore Full
 echo "=== Clear PVC ==="
 rm -rf /bitnami/moodle/*
 rm -rf /bitnami/moodle/.[!.]*
