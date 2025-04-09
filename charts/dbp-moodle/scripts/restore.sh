@@ -58,9 +58,12 @@ for fpr in $(gpg --homedir $GPG_HOME --batch --no-tty --command-fd 0 --list-keys
 done
 
 cd /bitnami/
+echo "=== etc duply folder debug ==="
+ls /etc/duply
 echo "=== Download backup ==="
 export DUPLY_HOME="/etc/duply"
-duply default restore Full
+duply --profile /etc/duply/default default restore Full
+
 echo "=== Clear PVC ==="
 rm -rf /bitnami/moodle/*
 rm -rf /bitnami/moodle/.[!.]*
