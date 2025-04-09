@@ -59,10 +59,10 @@ done
 
 cd /bitnami/
 echo "=== etc duply folder debug ==="
-ls /etc/duply
+ls -la /etc/duply
 echo "=== Download backup ==="
 export DUPLY_HOME="/etc/duply"
-duply --profile /etc/duply/default default restore Full
+duply default restore Full --profile /etc/duply/default
 
 echo "=== Clear PVC ==="
 rm -rf /bitnami/moodle/*
