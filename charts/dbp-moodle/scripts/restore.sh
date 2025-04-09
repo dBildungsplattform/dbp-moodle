@@ -42,14 +42,19 @@ kubectl patch "deployment/${deployment_name}" -n "{{ .Release.Namespace }}" -p '
 echo "=== After restore operation is completed will scale back to: $replicas replicas ==="
 
 # Restore
+
+GPG_HOME="/tmp/.gnupg"
+mkdir -p $GPG_HOME
+chmod 700 $GPG_HOME
+
 cd /etc/duply/default
 for cert in *.asc; do
     echo "=== Import key $cert ==="
-    gpg --import --batch $cert
+    gpg --homedir $GPG_HOME --import --batch $cert
 done
-for fpr in $(gpg --batch --no-tty --command-fd 0 --list-keys --with-colons  | awk -F: '/fpr:/ {print $10}' | sort -u); do
+for fpr in $(gpg --homedir $GPG_HOME --batch --no-tty --command-fd 0 --list-keys --with-colons  | awk -F: '/fpr:/ {print $10}' | sort -u); do
     echo "=== Trusts key $fpr ==="
-    echo -e "5\ny\n" |  gpg --batch --no-tty --command-fd 0 --expert --edit-key $fpr trust;
+    echo -e "5\ny\n" |  gpg --homedir $GPG_HOME --batch --no-tty --command-fd 0 --expert --edit-key $fpr trust;
 done
 
 cd /bitnami/
