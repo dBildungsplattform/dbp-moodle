@@ -58,13 +58,29 @@ for fpr in $(gpg --homedir $GPG_HOME --batch --no-tty --command-fd 0 --list-keys
     echo -e "5\ny\n" |  gpg --homedir $GPG_HOME --batch --no-tty --command-fd 0 --expert --edit-key $fpr trust;
 done
 
+
+# Path to the duply configuration file
+CONF_FILE="/etc/duply/default/conf"
+
+# Line to add
+PROFILE_DIR_LINE="PROFILE_DIR='/etc/duply/default'"
+
+# Check if the line already exists
+if ! grep -q "$PROFILE_DIR_LINE" "$CONF_FILE"; then
+    # Append the line to the end of the file
+    echo "$PROFILE_DIR_LINE" >> "$CONF_FILE"
+    echo "=== Added PROFILE_DIR to $CONF_FILE ==="
+else
+    echo "=== PROFILE_DIR already exists in $CONF_FILE ==="
+fi
+
+
 cd /bitnami/
 echo "=== etc duply folder debug and sleep ==="
-ls -la /etc/duply/default
 sleep 60
 echo "=== Download backup ==="
 export DUPLY_HOME="/etc/duply"
-/usr/bin/duply default restore Full --verbosity --profile /etc/duply/default
+/usr/bin/duply default restore Full --profile /etc/duply/default
 
 echo "=== Clear PVC ==="
 rm -rf /bitnami/moodle/*
