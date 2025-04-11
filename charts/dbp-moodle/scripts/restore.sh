@@ -59,8 +59,9 @@ for fpr in $(gpg --homedir $GPG_HOME --batch --no-tty --command-fd 0 --list-keys
 done
 
 cd /bitnami/
-echo "=== etc duply folder debug ==="
+echo "=== etc duply folder debug and sleep ==="
 ls -la /etc/duply/default
+sleep 60
 echo "=== Download backup ==="
 export DUPLY_HOME="/etc/duply"
 /usr/bin/duply default restore Full --verbosity --profile /etc/duply/default
