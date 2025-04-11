@@ -47,6 +47,7 @@ GPG_HOME="/tmp/.gnupg"
 mkdir -p $GPG_HOME
 chmod 700 $GPG_HOME
 
+echo "=== Start duply process ==="
 cd /etc/duply/default
 for cert in *.asc; do
     echo "=== Import key $cert ==="
@@ -59,10 +60,10 @@ done
 
 cd /bitnami/
 echo "=== etc duply folder debug ==="
-ls -la /etc/duply
+ls -la /etc/duply/default
 echo "=== Download backup ==="
 export DUPLY_HOME="/etc/duply"
-duply default restore Full --profile /etc/duply/default
+/usr/bin/duply default restore Full --verbosity --profile /etc/duply/default
 
 echo "=== Clear PVC ==="
 rm -rf /bitnami/moodle/*
