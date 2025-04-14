@@ -21,8 +21,6 @@ RUN set -x \
         postgresql-client-16 \
         mariadb-client \
     && apt-get clean -y
-    
-RUN mkdir -p /etc/duply/default \
-    && chown -R 1001:1001 /etc/duply/default \
-    && chmod -R 755 /etc/duply/default
 
+# Set the environment variable
+ENV PROFILE_DIR=/etc/duply/default
