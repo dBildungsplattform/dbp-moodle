@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM docker.io/bitnami/minideb:bookworm
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -14,10 +14,15 @@ RUN set -x \
     && apt-get -y install \
         python3-boto3 \
         curl \
-        duply \
         ca-certificates \
+        duply \
         gnupg \
         apt-transport-https \
         postgresql-client-16 \
         mariadb-client \
     && apt-get clean -y
+    
+RUN mkdir -p /etc/duply/default \
+    && chown -R 1001:1001 /etc/duply/default \
+    && chmod -R 755 /etc/duply/default
+

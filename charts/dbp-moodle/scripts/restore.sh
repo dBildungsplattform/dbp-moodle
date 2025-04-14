@@ -60,20 +60,20 @@ done
 
 
 # Path to the duply configuration file
-CONF_FILE="/etc/duply/default/conf"
+# CONF_FILE="/etc/duply/default/conf"
 
-# Line to add
-PROFILE_DIR_LINE="PROFILE_DIR='/etc/duply/default'"
+# # Line to add
+# PROFILE_DIR_LINE="PROFILE_DIR='/etc/duply/default'"
 
-# Check if the line already exists
-if ! grep -q "$PROFILE_DIR_LINE" "$CONF_FILE"; then
-    # Append the line to the end of the file
-    echo "$PROFILE_DIR_LINE" >> "$CONF_FILE"
-    echo "=== Added PROFILE_DIR to $CONF_FILE ==="
-    grep "$PROFILE_DIR_LINE" "$CONF_FILE"
-else
-    echo "=== PROFILE_DIR already exists in $CONF_FILE ==="
-fi
+# # Check if the line already exists
+# if ! grep -q "$PROFILE_DIR_LINE" "$CONF_FILE"; then
+#     # Append the line to the end of the file
+#     echo "$PROFILE_DIR_LINE" >> "$CONF_FILE"
+#     echo "=== Added PROFILE_DIR to $CONF_FILE ==="
+#     grep "$PROFILE_DIR_LINE" "$CONF_FILE"
+# else
+#     echo "=== PROFILE_DIR already exists in $CONF_FILE ==="
+# fi
 
 
 cd /bitnami/
