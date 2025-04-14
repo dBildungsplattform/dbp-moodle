@@ -183,7 +183,7 @@ dbpMoodle:
     enabled: false
     repository: ghcr.io/dbildungsplattform
     image: moodle-tools
-    tag: 1.1.0
+    tag: 1.1.2
     resources:
       limits:
         cpu: 2000m
