@@ -54,7 +54,6 @@ for fpr in $(gpg --batch --no-tty --command-fd 0 --list-keys --with-colons  | aw
     echo -e "5\ny\n" |  gpg --batch --no-tty --command-fd 0 --expert --edit-key $fpr trust;
 done
 
-mkdir /tmp
 cd /tmp/
 echo "=== etc duply folder debug and sleep ==="
 sleep 60
