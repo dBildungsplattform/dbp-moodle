@@ -55,14 +55,15 @@ for fpr in $(gpg --batch --no-tty --command-fd 0 --list-keys --with-colons  | aw
 done
 
 cd /tmp/
-echo "=== etc duply folder debug and sleep ==="
-sleep 60
 echo "=== Download backup ==="
 export DUPLY_HOME="/etc/duply"
 /usr/bin/duply default restore Full
 echo "=== Debug output ==="
 ls /tmp/Full
-
+ls /tmp
+ls /tmp/Full/tmp
+ls /tmp/Full/tmp/backup
+sleep 60
 echo "=== Clear PVC ==="
 rm -rf /bitnami/moodle/*
 rm -rf /bitnami/moodle/.[!.]*
