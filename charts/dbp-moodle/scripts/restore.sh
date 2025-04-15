@@ -61,7 +61,7 @@ echo "=== Download backup ==="
 export DUPLY_HOME="/etc/duply"
 /usr/bin/duply default restore Full
 echo "=== Debug output ==="
-ls /tmp
+ls /tmp/Full
 
 echo "=== Clear PVC ==="
 rm -rf /bitnami/moodle/*
@@ -69,8 +69,8 @@ rm -rf /bitnami/moodle/.[!.]*
 rm -rf /bitnami/moodledata/*
 rm -rf /bitnami/moodle/.[!.]*
 echo "=== Extract backup files ==="
-tar -xzf /tmp/backup/moodle.tar.gz -C /bitnami/
-tar -xzf /tmp/backup/moodledata.tar.gz -C /bitnami/
+tar -xzf /tmp/Full/backup/moodle.tar.gz -C /bitnami/
+tar -xzf /tmp/Full/backup/moodledata.tar.gz -C /bitnami/
 echo "=== Move backup files ==="
 mv /bitnami/mountData/moodle/* /bitnami/moodle/
 mv /bitnami/mountData/moodle/.[!.]* /bitnami/moodle/
