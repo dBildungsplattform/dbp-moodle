@@ -70,8 +70,8 @@ rm -rf /bitnami/moodle/.[!.]*
 rm -rf /bitnami/moodledata/*
 rm -rf /bitnami/moodle/.[!.]*
 echo "=== Extract backup files ==="
-tar -xzf /tmp/Full/backup/moodle.tar.gz -C /bitnami/
-tar -xzf /tmp/Full/backup/moodledata.tar.gz -C /bitnami/
+tar -xzf /tmp/Full/tmp/backup/moodle.tar.gz -C /bitnami/
+tar -xzf /tmp/Full/tmp/backup/moodledata.tar.gz -C /bitnami/
 echo "=== Move backup files ==="
 mv /bitnami/mountData/moodle/* /bitnami/moodle/
 mv /bitnami/mountData/moodle/.[!.]* /bitnami/moodle/
@@ -95,11 +95,11 @@ PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U 
 
 echo "=== Copy dump to DB ==="
 {{ if .Values.mariadb.enabled -}}
-gunzip ./Full/tmp/backup/moodle_mariadb_dump_*
-mv ./Full/tmp/backup/moodle_mariadb_dump_* moodledb_dump.sql
+gunzip /tmp/Full/tmp/backup/moodle_mariadb_dump_*
+mv /tmp/Full/tmp/backup/moodle_mariadb_dump_* moodledb_dump.sql
 {{- else -}}
-gunzip ./Full/tmp/backup/moodle_postgresqldb_dump_*
-mv ./Full/tmp/backup/moodle_postgresqldb_dump_* moodledb_dump.sql
+gunzip /tmp/Full/tmp/backup/moodle_postgresqldb_dump_*
+mv /tmp/Full/tmp/backup/moodle_postgresqldb_dump_* moodledb_dump.sql
 {{- end }}
 
 {{ if .Values.mariadb.enabled -}}
