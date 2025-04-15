@@ -54,12 +54,15 @@ for fpr in $(gpg --batch --no-tty --command-fd 0 --list-keys --with-colons  | aw
     echo -e "5\ny\n" |  gpg --batch --no-tty --command-fd 0 --expert --edit-key $fpr trust;
 done
 
-cd /bitnami/
+mkdir /tmp
+cd /tmp/
 echo "=== etc duply folder debug and sleep ==="
 sleep 60
 echo "=== Download backup ==="
 export DUPLY_HOME="/etc/duply"
 /usr/bin/duply default restore Full
+echo "=== Debug output ==="
+ls /tmp
 
 echo "=== Clear PVC ==="
 rm -rf /bitnami/moodle/*
@@ -67,8 +70,8 @@ rm -rf /bitnami/moodle/.[!.]*
 rm -rf /bitnami/moodledata/*
 rm -rf /bitnami/moodle/.[!.]*
 echo "=== Extract backup files ==="
-tar -xzf ./Full/tmp/backup/moodle.tar.gz -C /bitnami/
-tar -xzf ./Full/tmp/backup/moodledata.tar.gz -C /bitnami/
+tar -xzf /tmp/backup/moodle.tar.gz -C /bitnami/
+tar -xzf /tmp/backup/moodledata.tar.gz -C /bitnami/
 echo "=== Move backup files ==="
 mv /bitnami/mountData/moodle/* /bitnami/moodle/
 mv /bitnami/mountData/moodle/.[!.]* /bitnami/moodle/
