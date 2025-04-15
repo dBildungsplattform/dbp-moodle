@@ -43,19 +43,15 @@ echo "=== After restore operation is completed will scale back to: $replicas rep
 
 # Restore
 
-GPG_HOME="/tmp/.gnupg"
-mkdir -p $GPG_HOME
-chmod 700 $GPG_HOME
-
 echo "=== Start duply process ==="
 cd /etc/duply/default
 for cert in *.asc; do
     echo "=== Import key $cert ==="
-    gpg --homedir $GPG_HOME --import --batch $cert
+    gpg --import --batch $cert
 done
-for fpr in $(gpg --homedir $GPG_HOME --batch --no-tty --command-fd 0 --list-keys --with-colons  | awk -F: '/fpr:/ {print $10}' | sort -u); do
+for fpr in $(gpg --batch --no-tty --command-fd 0 --list-keys --with-colons  | awk -F: '/fpr:/ {print $10}' | sort -u); do
     echo "=== Trusts key $fpr ==="
-    echo -e "5\ny\n" |  gpg --homedir $GPG_HOME --batch --no-tty --command-fd 0 --expert --edit-key $fpr trust;
+    echo -e "5\ny\n" |  gpg --batch --no-tty --command-fd 0 --expert --edit-key $fpr trust;
 done
 
 cd /bitnami/
@@ -63,7 +59,7 @@ echo "=== etc duply folder debug and sleep ==="
 sleep 60
 echo "=== Download backup ==="
 export DUPLY_HOME="/etc/duply"
-/usr/bin/duply default restore Full --profile /etc/duply/default
+/usr/bin/duply default restore Full
 
 echo "=== Clear PVC ==="
 rm -rf /bitnami/moodle/*
