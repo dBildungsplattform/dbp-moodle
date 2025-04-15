@@ -43,13 +43,6 @@ spec:
       serviceAccount: "moodle-restore-job"
       securityContext:
         {{- toYaml .Values.dbpMoodle.restore.podSecurityContext | nindent 8 }}
-      initContainers:
-      - name: init-permissions
-        image: busybox
-        command: ["sh", "-c", "chown -R 1001:1001 /etc/duply/default && chmod -R 755 /etc/duply/default"]
-        volumeMounts:
-        - name: duply
-          mountPath: /etc/duply/default
       containers:
       - name:  moodle-restore-job
         image: "{{ .Values.dbpMoodle.restore.repository }}/{{ .Values.dbpMoodle.restore.image }}:{{ .Values.dbpMoodle.restore.tag }}"
