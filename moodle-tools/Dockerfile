@@ -21,3 +21,7 @@ RUN set -x \
         postgresql-client-16 \
         mariadb-client \
     && apt-get clean -y
+
+RUN adduser -u 1001 -D nonrootuser
+USER nonrootuser
+   
