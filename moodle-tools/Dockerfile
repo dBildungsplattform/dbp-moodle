@@ -14,13 +14,10 @@ RUN set -x \
     && apt-get -y install \
         python3-boto3 \
         curl \
-        ca-certificates \
         duply \
+        ca-certificates \
         gnupg \
         apt-transport-https \
         postgresql-client-16 \
         mariadb-client \
     && apt-get clean -y
-
-# Set the environment variable
-ENV PROFILE_DIR=/etc/duply/default
