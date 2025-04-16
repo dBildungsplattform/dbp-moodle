@@ -197,6 +197,7 @@ dbpMoodle:
       privileged: false
       allowPrivilegeEscalation: false
       runAsGroup: 1001
+      runAsNonRoot: true
       capabilities:
         drop:
           - ALL
