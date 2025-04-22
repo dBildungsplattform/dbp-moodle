@@ -56,7 +56,7 @@ done
 
 cd /tmp/
 echo "=== Download backup ==="
-sleep 60
+ln -s /etc/duply /home/nonrootuser/.duply
 export DUPLY_HOME="/etc/duply"
 /usr/bin/duply default restore Full
 echo "=== Clear PVC ==="
