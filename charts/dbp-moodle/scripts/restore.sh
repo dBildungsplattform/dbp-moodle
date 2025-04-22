@@ -91,16 +91,16 @@ PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U 
 echo "=== Copy dump to DB ==="
 {{ if .Values.mariadb.enabled -}}
 gunzip /tmp/Full/tmp/backup/moodle_mariadb_dump_*
-mv /tmp/Full/tmp/backup/moodle_mariadb_dump_* moodledb_dump.sql
+mv /tmp/Full/tmp/backup/moodle_mariadb_dump_* /tmp/moodledb_dump.sql
 {{- else -}}
 gunzip /tmp/Full/tmp/backup/moodle_postgresqldb_dump_*
-mv /tmp/Full/tmp/backup/moodle_postgresqldb_dump_* moodledb_dump.sql
+mv /tmp/Full/tmp/backup/moodle_postgresqldb_dump_* /tmp/moodledb_dump.sql
 {{- end }}
 
 {{ if .Values.mariadb.enabled -}}
-MYSQL_PWD="$DATABASE_PASSWORD" mariadb -h "$DATABASE_HOST" -P "$DATABASE_PORT" -u "$DATABASE_USER" "$DATABASE_NAME" < moodledb_dump.sql
+MYSQL_PWD="$DATABASE_PASSWORD" mariadb -h "$DATABASE_HOST" -P "$DATABASE_PORT" -u "$DATABASE_USER" "$DATABASE_NAME" < /tmp/moodledb_dump.sql
 {{- else -}}
-PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" "$DATABASE_NAME"  < moodledb_dump.sql
+PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" "$DATABASE_NAME"  < /tmp/moodledb_dump.sql
 {{- end }}
 echo "=== Finished DB restore ==="
 
