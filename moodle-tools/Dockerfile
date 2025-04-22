@@ -21,7 +21,8 @@ RUN set -x \
         postgresql-client-16 \
         mariadb-client \
     && apt-get clean -y
-    
-RUN useradd -u 1001 -m nonrootuser
+
+RUN chown -R 1001:1001 /tmp \
+    && useradd -u 1001 -m nonrootuser
 USER 1001
    
