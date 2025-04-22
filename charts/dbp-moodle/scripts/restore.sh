@@ -65,15 +65,13 @@ rm -rf /bitnami/moodle/.[!.]*
 rm -rf /bitnami/moodledata/*
 rm -rf /bitnami/moodle/.[!.]*
 echo "=== Extract backup files ==="
-tar -xzf /tmp/Full/tmp/backup/moodle.tar.gz -C /bitnami/ --no-same-owner
-tar -xzf /tmp/Full/tmp/backup/moodledata.tar.gz -C /bitnami/ --no-same-owner
-echo "=== Debug sleep ==="
-sleep 60
+tar -xzf /tmp/Full/tmp/backup/moodle.tar.gz -C /tmp/ --no-same-owner
+tar -xzf /tmp/Full/tmp/backup/moodledata.tar.gz -C /tmp/ --no-same-owner
 echo "=== Move backup files ==="
-mv /bitnami/mountData/moodle/* /bitnami/moodle/
-mv /bitnami/mountData/moodle/.[!.]* /bitnami/moodle/
-mv /bitnami/mountData/moodledata/* /bitnami/moodledata/
-mv /bitnami/mountData/moodledata/.[!.]* /bitnami/moodledata/
+mv /tmp/mountData/moodle/* /bitnami/moodle/
+mv /tmp/mountData/moodle/.[!.]* /bitnami/moodle/
+mv /tmp/mountData/moodledata/* /bitnami/moodledata/
+mv /tmp/mountData/moodledata/.[!.]* /bitnami/moodledata/
 # Set moodle user 1001
 # chown -R 1001 /bitnami/moodle
 # chown -R 1001 /bitnami/moodledata

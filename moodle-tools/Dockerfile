@@ -23,6 +23,7 @@ RUN set -x \
     && apt-get clean -y
 
 RUN chown -R 1001:1001 /tmp \
+    && chmod g+w /bitnami    
     && useradd -u 1001 -m nonrootuser
 USER 1001
    
