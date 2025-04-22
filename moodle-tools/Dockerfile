@@ -22,5 +22,6 @@ RUN set -x \
         mariadb-client \
     && apt-get clean -y
     
+RUN useradd -u 1001 -m nonrootuser
 USER 1001
    

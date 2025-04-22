@@ -44,7 +44,6 @@ echo "=== After restore operation is completed will scale back to: $replicas rep
 # Restore
 
 echo "=== Start duply process ==="
-id
 cd /etc/duply/default
 for cert in *.asc; do
     echo "=== Import key $cert ==="
