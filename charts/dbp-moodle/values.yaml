@@ -581,7 +581,7 @@ moodlecronjob:
 backup-cronjob:
   image:
     repository: "ghcr.io/dbildungsplattform/moodle-tools"
-    tag: "1.1.0"
+    tag: "1.1.9"
   clusterRole:
     create: false
   serviceAccount:
@@ -656,6 +656,8 @@ backup-cronjob:
           - secret:
               name: moodle-backup-gpg-keys
         defaultMode: 0644
+  podSecurityContext:
+    fsGroup: 1001
   securityContext:
     privileged: false
     allowPrivilegeEscalation: false
