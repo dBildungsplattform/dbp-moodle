@@ -242,6 +242,7 @@ moodle:
     # -- Debug mode for more detailed moodle installation and log output
     debug: false
   moodleSkipInstall: false
+  usePasswordFiles: false
   moodleSiteName: "Moodle"
   moodleLang: "de"
   moodleUsername: admin
