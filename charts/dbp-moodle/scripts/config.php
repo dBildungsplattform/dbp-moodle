@@ -25,7 +25,7 @@ $CFG->dataroot  = '/bitnami/moodledata';
 $CFG->admin     = 'admin';
 $CFG->directorypermissions = 02775;
 
-$CFG->getremoteaddrconf = 'HTTP_X_FORWARDED_FOR, REMOTE_ADDR'; // Shows the real client IPs
+$CFG->getremoteaddrconf = 0; // Shows the real client IPs
 $CFG->allowedip = {{ .Values.dbpMoodle.phpConfig.ip.allowed }};
 $CFG->blockedip = {{ .Values.dbpMoodle.phpConfig.ip.blocked }};
 
