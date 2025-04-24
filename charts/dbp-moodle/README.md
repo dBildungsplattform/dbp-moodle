@@ -1,6 +1,6 @@
 # dbp-moodle
 
-![Version: 0.0.30](https://img.shields.io/badge/Version-0.0.30-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.5.4](https://img.shields.io/badge/AppVersion-4.5.4-informational?style=flat-square)
+![Version: 0.0.31](https://img.shields.io/badge/Version-0.0.31-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.5.4](https://img.shields.io/badge/AppVersion-4.5.4-informational?style=flat-square)
 
 This is a Helm Chart bundling some of the bitnami resources to deploy Moodle for DBildungsplattform. Extending them with features such as
 MariaDB and PostgreSQL support, Horizontal Autoscaling capabilities, Redis Session Store, Etherpad-Lite.
@@ -281,6 +281,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.service.type | string | `"ClusterIP"` |  |
 | moodle.tolerations | list | `[]` |  |
 | moodle.updateStrategy.type | string | `"RollingUpdate"` |  |
+| moodle.usePasswordFiles | bool | `false` |  |
 | moodlecronjob.affinity | object | `{}` |  |
 | moodlecronjob.clusterRole.create | bool | `false` |  |
 | moodlecronjob.image.repository | string | `"ghcr.io/dbildungsplattform/moodle-tools"` |  |
