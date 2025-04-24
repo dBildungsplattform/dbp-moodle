@@ -281,6 +281,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.service.type | string | `"ClusterIP"` |  |
 | moodle.tolerations | list | `[]` |  |
 | moodle.updateStrategy.type | string | `"RollingUpdate"` |  |
+| moodle.usePasswordFiles | bool | `false` |  |
 | moodlecronjob.affinity | object | `{}` |  |
 | moodlecronjob.clusterRole.create | bool | `false` |  |
 | moodlecronjob.image.repository | string | `"ghcr.io/dbildungsplattform/moodle-tools"` |  |
