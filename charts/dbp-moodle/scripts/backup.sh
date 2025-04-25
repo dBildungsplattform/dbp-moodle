@@ -163,7 +163,6 @@ tar \
     -zcf moodledata.tar.gz /mountData/moodledata/
 
 echo "=== Start duply process ==="
-ln -s /etc/duply /home/nonrootuser/.duply
 cd /etc/duply/default
 for cert in *.asc; do
     echo "=== Import key $cert ==="

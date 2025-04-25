@@ -20,6 +20,7 @@ health_file="/tmp/healthy"
 # Create liveness probe file
 touch "${health_file}"
 
+# Dieser Abschnitt funktioniert nicht
 {{ if and .Values.dbpMoodle.backup.s3_certificate_secret.enabled }}
 printf "Appendending custom certificate (%s/%s) to /etc/ssl/certs/ca-certificates.crt\n" "{{ .Values.dbpMoodle.backup.s3_certificate_secret.mountpath }}" "{{ .Values.dbpMoodle.backup.s3_certificate_secret.key }}"
 cat "{{ .Values.dbpMoodle.backup.s3_certificate_secret.mountpath }}/{{ .Values.dbpMoodle.backup.s3_certificate_secret.key }}" >> /etc/ssl/certs/ca-certificates.crt
