@@ -180,10 +180,6 @@ dbpMoodle:
       - apiGroups: ["batch"]
         resources: ["cronjobs", "jobs"]
         verbs: ["get", "patch"]
-  ip:
-    # -- If allowed contains any values, it will block all other IPs
-    allowed: ''
-    blocked: ''
 
   # -- This restores moodle to the latest snapshot. Requires an existing s3 backup. ONLY USE FOR ROLLBACK
   restore:
