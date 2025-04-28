@@ -183,7 +183,7 @@ dbpMoodle:
     enabled: false
     repository: ghcr.io/dbildungsplattform
     image: moodle-tools
-    tag: 1.1.9
+    tag: 1.1.12
     resources:
       limits:
         cpu: 2000m
@@ -529,7 +529,7 @@ etherpad-postgresql:
 moodlecronjob:
   image:
     repository: "ghcr.io/dbildungsplattform/moodle-tools"
-    tag: "1.1.9"
+    tag: "1.1.12"
   clusterRole:
     create: false
   serviceAccount:
@@ -581,7 +581,7 @@ moodlecronjob:
 backup-cronjob:
   image:
     repository: "ghcr.io/dbildungsplattform/moodle-tools"
-    tag: "1.1.9"
+    tag: "1.1.12"
   clusterRole:
     create: false
   serviceAccount:
