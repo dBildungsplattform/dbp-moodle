@@ -135,6 +135,8 @@ The Chart can be deployed without any modification but it is advised to set own 
 | dbpMoodle.phpConfig.debug | bool | `false` | Moodle debugging is not safe for production |
 | dbpMoodle.phpConfig.existingConfig | string | `""` | Provide an existing secret containing the config.php instead of generating it from chart -- Remember to adjust moodle.extraVolumes & moodle.extraVolumeMounts when setting this. -- Secret key is by default expected to be config.php |
 | dbpMoodle.phpConfig.extendedLogging | bool | `false` | Extended php logging |
+| dbpMoodle.phpConfig.ip.allowed | string | `""` |  |
+| dbpMoodle.phpConfig.ip.blocked | string | `""` |  |
 | dbpMoodle.phpConfig.pluginUIInstallation | object | `{"enabled":false}` | Prevents the installation of Plugins from the Moodle Web Interface for Admins (Disabled by default) |
 | dbpMoodle.redis | object | `{"host":"moodle-redis-master","password":"","port":6379}` | Configurations for the optional redis |
 | dbpMoodle.restore | object | `{"affinity":{},"enabled":false,"existingSecretDatabaseConfig":"moodle-database","existingSecretDatabasePassword":"moodle","existingSecretGPG":"","existingSecretKeyDatabasePassword":"","existingSecretKeyS3Access":"","existingSecretKeyS3Secret":"","existingSecretS3":"","image":"moodle-tools","repository":"ghcr.io/dbildungsplattform","resources":{"limits":{"cpu":"2000m","memory":"16Gi"},"requests":{"cpu":"1000m","memory":"8Gi"}},"rules":[{"apiGroups":["apps"],"resources":["deployments/scale","deployments"],"verbs":["get","list","scale","patch"]}],"tag":"1.1.0","tolerations":[]}` | This restores moodle to the latest snapshot. Requires an existing s3 backup. ONLY USE FOR ROLLBACK |
@@ -255,6 +257,8 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-body-size" | string | `"200M"` |  |
 | moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-connect-timeout" | string | `"30s"` |  |
 | moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-read-timeout" | string | `"20s"` |  |
+| moodle.ingress.annotations."nginx.ingress.kubernetes.io/use-forwarded-headers" | bool | `true` |  |
+| moodle.ingress.annotations."nginx.ingress.kubernetes.io/whitelist-source-range" | string | `"0.0.0.0/0"` |  |
 | moodle.ingress.enabled | bool | `true` |  |
 | moodle.ingress.extraHosts | list | `[]` | Any additional hostnames, needs to be "name: URL" value pairs |
 | moodle.ingress.hostname | string | `"example.de"` | The hostname of the moodle application |
