@@ -42,7 +42,6 @@ kubectl patch "deployment/${deployment_name}" -n "{{ .Release.Namespace }}" -p '
 echo "=== After restore operation is completed will scale back to: $replicas replicas ==="
 
 # Restore
-
 echo "=== Start duply process ==="
 cd /etc/duply/default
 for cert in *.asc; do
@@ -72,9 +71,6 @@ mv /tmp/mountData/moodle/* /bitnami/moodle/
 mv /tmp/mountData/moodle/.[!.]* /bitnami/moodle/
 mv /tmp/mountData/moodledata/* /bitnami/moodledata/
 mv /tmp/mountData/moodledata/.[!.]* /bitnami/moodledata/
-# Set moodle user 1001
-# chown -R 1001 /bitnami/moodle
-# chown -R 1001 /bitnami/moodledata
 
 cd /bitnami/
 echo "=== Clear DB ==="
