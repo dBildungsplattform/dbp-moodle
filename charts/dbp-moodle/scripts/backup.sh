@@ -128,6 +128,7 @@ if ! [ -e /mountData/moodledata/CliUpdate ]; then
     echo '<h1>Sorry, maintenance in progress</h1>' > /mountData/moodledata/climaintenance.html
 fi
 
+# Test comment for debugging
 echo "=== Start backup ==="
 date +%Y%m%d_%H%M%S%Z
 
