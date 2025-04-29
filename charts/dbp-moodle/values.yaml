@@ -86,6 +86,9 @@ dbpMoodle:
     # -- Prevents the installation of Plugins from the Moodle Web Interface for Admins (Disabled by default)
     pluginUIInstallation:
       enabled: false
+    ip:
+      allowed: ""
+      blocked: ""
     # -- Any additional text to be included into the config.php
     additional: ""
     # -- Provide an existing secret containing the config.php instead of generating it from chart
@@ -246,11 +249,12 @@ moodle:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
     # -- The dbp-moodle image which is build for this helm chart
-    tag: "4.5.3-debian-12-r1-dbp2"
+    tag: "4.5.4-debian-12-r0-dbp1"
     pullPolicy: Always
     # -- Debug mode for more detailed moodle installation and log output
     debug: false
   moodleSkipInstall: false
+  usePasswordFiles: false
   moodleSiteName: "Moodle"
   moodleLang: "de"
   moodleUsername: admin
@@ -319,6 +323,8 @@ moodle:
       nginx.ingress.kubernetes.io/proxy-connect-timeout: "30s"
       nginx.ingress.kubernetes.io/proxy-read-timeout: "20s"
       nginx.ingress.kubernetes.io/proxy-body-size: "200M"
+      nginx.ingress.kubernetes.io/use-forwarded-headers: true
+      nginx.ingress.kubernetes.io/whitelist-source-range: "0.0.0.0/0"
   metrics:
     enabled: true
     service:
