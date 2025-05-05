@@ -713,3 +713,8 @@ sql-exporter:
     target:
       data_source_name: ""
       collectors: [sql_exporter_moodle]
+
+clamav:
+  enabled: true
+  image:
+    tag: latest
