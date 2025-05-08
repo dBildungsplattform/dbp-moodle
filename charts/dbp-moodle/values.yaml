@@ -716,5 +716,27 @@ sql-exporter:
 
 clamav:
   enabled: true
+  privateMirrorEnabled: true
+  privateMirror: test.com
   image:
     tag: latest
+  service:
+    type: ClusterIP
+    port: 3310
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+  volumes:
+    - name: clamav-freshclam-conf
+      configMap:
+        name: clamav-freshclam-conf
+        items:
+          - key: freshclam.conf
+            path: freshclam.conf
+        defaultMode: 0644
+  volumeMounts:
+    - name: clamav-freshclam-conf
+      readOnly: true
+      mountPath: /etc/freshclam.conf
+      subPath: freshclam.conf
