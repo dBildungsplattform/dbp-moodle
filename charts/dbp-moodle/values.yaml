@@ -314,7 +314,7 @@ moodle:
       nginx.ingress.kubernetes.io/proxy-connect-timeout: "30s"
       nginx.ingress.kubernetes.io/proxy-read-timeout: "20s"
       nginx.ingress.kubernetes.io/proxy-body-size: "200M"
-      nginx.ingress.kubernetes.io/use-forwarded-headers: true
+      nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
       nginx.ingress.kubernetes.io/whitelist-source-range: "0.0.0.0/0"
   metrics:
     enabled: true
