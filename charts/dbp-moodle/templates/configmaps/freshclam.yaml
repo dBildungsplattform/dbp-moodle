@@ -1,3 +1,4 @@
+{{- if .Values.clamav.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -5,4 +6,5 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   freshclam.conf: |
-    {{- .Files.Get "scripts/freshclam.conf" | nindent 4 }}
+{{ tpl ( .Files.Get "scripts/freshclam.conf" ) | nindent 4 }}
+{{- end }}
