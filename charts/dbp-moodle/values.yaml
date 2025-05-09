@@ -731,12 +731,9 @@ clamav:
     - name: clamav-freshclam-conf
       configMap:
         name: clamav-freshclam-conf
-        items:
-          - key: freshclam.conf
-            path: freshclam.conf
         defaultMode: 0644
   volumeMounts:
     - name: clamav-freshclam-conf
       readOnly: true
-      mountPath: /etc/freshclam.conf
+      mountPath: /etc/
       subPath: freshclam.conf
