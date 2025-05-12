@@ -10,11 +10,11 @@ version: 0.0.32
 appVersion: "4.5.4"
 dependencies:
   - name: moodle
-    version: "25.2.2"
+    version: "26.0.2"
     repository: https://charts.bitnami.com/bitnami
 
   - name: redis
-    version: "19.5.3"
+    version: "21.0.2"
     repository: https://charts.bitnami.com/bitnami
     condition: redis.enabled
 
@@ -24,7 +24,7 @@ dependencies:
     condition: mariadb.enabled
 
   - name: postgresql
-    version: "15.5.7"
+    version: "16.7.2"
     repository: https://charts.bitnami.com/bitnami
     condition: postgresql.enabled
 
@@ -40,7 +40,7 @@ dependencies:
     condition: dbpMoodle.backup.enabled
 
   - name: postgresql
-    version: "15.5.7"
+    version: "16.7.2"
     repository: https://charts.bitnami.com/bitnami
     alias: etherpad-postgresql
     condition: etherpad-postgresql.enabled
@@ -52,6 +52,6 @@ dependencies:
     condition: etherpadlite.enabled
 
   - name: sql-exporter
-    version: 0.6.1
+    version: 0.12.3
     repository: "https://burningalchemist.github.io/sql_exporter/"
     condition: sql-exporter.enabled
