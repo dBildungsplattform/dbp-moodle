@@ -131,7 +131,7 @@ dbpMoodle:
     # -- Which kubectl image to use
     repository: "ghcr.io/dbildungsplattform"
     image: moodle-tools
-    tag: "1.1.9"
+    tag: "1.1.12"
 
   moodleUpdatePreparationHook:
     rules:
