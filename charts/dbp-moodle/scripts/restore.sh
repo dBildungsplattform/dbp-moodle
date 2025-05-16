@@ -101,7 +101,6 @@ PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U 
 echo "=== Finished DB restore ==="
 
 echo "=== Scaling deployment replicas to $replicas ==="
-echo "kubectl patch \"deployment/${deployment_name}\" -n \"{{ .Release.Namespace }}\" --type=merge -p \"\$(echo '{\"spec\":{\"replicas\":$replicas}}')\""
 kubectl patch "deployment/${deployment_name}" -n "{{ .Release.Namespace }}" --type=merge -p "$(echo "{\"spec\":{\"replicas\":$replicas}}")"
 
 sleep 2
