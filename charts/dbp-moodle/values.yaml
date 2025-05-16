@@ -131,7 +131,7 @@ dbpMoodle:
     # -- Which kubectl image to use
     repository: "ghcr.io/dbildungsplattform"
     image: moodle-tools
-    tag: "1.1.0"
+    tag: "1.1.12"
 
   moodleUpdatePreparationHook:
     rules:
@@ -186,7 +186,7 @@ dbpMoodle:
     enabled: false
     repository: ghcr.io/dbildungsplattform
     image: moodle-tools
-    tag: 1.1.0
+    tag: 1.1.12
     resources:
       limits:
         cpu: 2000m
@@ -194,6 +194,15 @@ dbpMoodle:
       requests:
         cpu: 1000m
         memory: 8Gi
+    podSecurityContext:
+      fsGroup: 1001
+    securityContext:
+      privileged: false
+      allowPrivilegeEscalation: false
+      runAsGroup: 1001
+      capabilities:
+        drop:
+          - ALL
     existingSecretGPG: ""
     existingSecretDatabaseConfig: "moodle-database"
     existingSecretDatabasePassword: "moodle"
@@ -207,7 +216,7 @@ dbpMoodle:
     rules:
       - apiGroups: ["apps"]
         resources: ["deployments/scale", "deployments"]
-        verbs: ["get", "list", "scale", "patch"]
+        verbs: ["get", "list", "patch"]
 
   # -- Configuration for the moodle-cronjob which runs moodles cron.php. This is required since moodle does not run as root
   moodlecronjob:
@@ -240,7 +249,7 @@ moodle:
     registry: ghcr.io
     repository: dbildungsplattform/moodle
     # -- The dbp-moodle image which is build for this helm chart
-    tag: "4.5.4-debian-12-r0-dbp1"
+    tag: "4.5.4-debian-12-r0-dbp2"
     pullPolicy: Always
     # -- Debug mode for more detailed moodle installation and log output
     debug: false
@@ -314,7 +323,7 @@ moodle:
       nginx.ingress.kubernetes.io/proxy-connect-timeout: "30s"
       nginx.ingress.kubernetes.io/proxy-read-timeout: "20s"
       nginx.ingress.kubernetes.io/proxy-body-size: "200M"
-      nginx.ingress.kubernetes.io/use-forwarded-headers: true
+      nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
       nginx.ingress.kubernetes.io/whitelist-source-range: "0.0.0.0/0"
   metrics:
     enabled: true
@@ -526,7 +535,7 @@ etherpad-postgresql:
 moodlecronjob:
   image:
     repository: "ghcr.io/dbildungsplattform/moodle-tools"
-    tag: "1.1.0"
+    tag: "1.1.12"
   clusterRole:
     create: false
   serviceAccount:
@@ -578,7 +587,7 @@ moodlecronjob:
 backup-cronjob:
   image:
     repository: "ghcr.io/dbildungsplattform/moodle-tools"
-    tag: "1.1.0"
+    tag: "1.1.12"
   clusterRole:
     create: false
   serviceAccount:
@@ -653,6 +662,8 @@ backup-cronjob:
           - secret:
               name: moodle-backup-gpg-keys
         defaultMode: 0644
+  podSecurityContext:
+    fsGroup: 1001
   securityContext:
     privileged: false
     allowPrivilegeEscalation: false

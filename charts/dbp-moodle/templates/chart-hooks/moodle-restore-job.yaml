@@ -41,6 +41,8 @@ spec:
       {{ end }}
       serviceAccountName: "moodle-restore-job"
       serviceAccount: "moodle-restore-job"
+      securityContext:
+        {{- toYaml .Values.dbpMoodle.restore.podSecurityContext | nindent 8 }}
       containers:
       - name:  moodle-restore-job
         image: "{{ .Values.dbpMoodle.restore.repository }}/{{ .Values.dbpMoodle.restore.image }}:{{ .Values.dbpMoodle.restore.tag }}"
@@ -50,7 +52,7 @@ spec:
         args:
           - /scripts/restore-script
         securityContext:
-          privileged: false
+          {{- toYaml .Values.dbpMoodle.restore.securityContext | nindent 10 }}
         livenessProbe:
           exec:
             command:

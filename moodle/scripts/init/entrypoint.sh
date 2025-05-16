@@ -106,7 +106,8 @@ MODULE=dbp info "Start Bitnami setup script after checking for proper version"
 upgrade_if_pending
 
 MODULE=dbp info "Replacing config.php file with ours"
-/bin/cp -p /moodleconfig/config-php/config.php /bitnami/moodle/config.php
+/bin/cp -p /moodleconfig/config-php/config.php /tmp/config.php
+mv /tmp/config.php /bitnami/moodle/config.php
 
 if [ -f "/tmp/de.zip" ] && [ ! -d /bitnami/moodledata/lang/de ]; then \
     MODULE=dbp info "Installing german language pack"
