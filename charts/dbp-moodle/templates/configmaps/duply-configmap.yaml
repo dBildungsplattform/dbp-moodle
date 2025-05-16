@@ -15,7 +15,6 @@ data:
     MAX_AGE={{ include "dbpMoodle.backup.retention_time" . }}
     MAX_FULLBKP_AGE={{ include "dbpMoodle.backup.max_full_backup_age" . }}
     DUPL_PARAMS="$DUPL_PARAMS --full-if-older-than $MAX_FULLBKP_AGE --allow-source-mismatch --s3-endpoint-url  {{ .Values.dbpMoodle.backup.endpoint }}"
-    PROFILE_DIR='/etc/duply/default'
   exclude: |-
     + /tmp/backup
     - **
