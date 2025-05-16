@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM docker.io/bitnami/minideb:bookworm
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -21,3 +21,10 @@ RUN set -x \
         postgresql-client-16 \
         mariadb-client \
     && apt-get clean -y
+
+RUN chown -R 1001:1001 /tmp \
+    && chown -R root:1001 /etc/ssl/certs/ca-certificates.crt \
+    && chmod g+rw /etc/ssl/certs/ca-certificates.crt \
+    && useradd -u 1001 -m nonrootuser
+USER 1001
+   
