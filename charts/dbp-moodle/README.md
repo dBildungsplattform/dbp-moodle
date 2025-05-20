@@ -1,6 +1,6 @@
 # dbp-moodle
 
-![Version: 0.0.33](https://img.shields.io/badge/Version-0.0.33-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.5.4](https://img.shields.io/badge/AppVersion-4.5.4-informational?style=flat-square)
+![Version: 0.0.34](https://img.shields.io/badge/Version-0.0.34-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.5.4](https://img.shields.io/badge/AppVersion-4.5.4-informational?style=flat-square)
 
 This is a Helm Chart bundling some of the bitnami resources to deploy Moodle for DBildungsplattform. Extending them with features such as
 MariaDB and PostgreSQL support, Horizontal Autoscaling capabilities, Redis Session Store, Etherpad-Lite.
@@ -18,8 +18,8 @@ The Chart can be deployed without any modification but it is advised to set own 
 | https://burningalchemist.github.io/sql_exporter/ | sql-exporter | 0.6.1 |
 | https://charts.bitnami.com/bitnami | mariadb | 18.2.2 |
 | https://charts.bitnami.com/bitnami | moodle | 25.2.2 |
-| https://charts.bitnami.com/bitnami | postgresql | 15.5.7 |
-| https://charts.bitnami.com/bitnami | postgresql | 15.5.7 |
+| https://charts.bitnami.com/bitnami | postgresql | 15.5.38 |
+| https://charts.bitnami.com/bitnami | postgresql | 15.5.38 |
 | https://charts.bitnami.com/bitnami | redis | 19.5.3 |
 
 ## Values
@@ -149,6 +149,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | etherpad-postgresql.auth.secretKeys.userPasswordKey | string | `"etherpad-postgresql-password"` |  |
 | etherpad-postgresql.auth.username | string | `"etherpad"` |  |
 | etherpad-postgresql.enabled | bool | `false` |  |
+| etherpad-postgresql.image.tag | string | `"14.18.0-debian-12-r0"` |  |
 | etherpad-postgresql.persistence.existingClaim | string | `"moodle-etherpad-postgresql"` |  |
 | etherpad-postgresql.primary.affinity | object | `{}` |  |
 | etherpad-postgresql.primary.containerSecurityContext.privileged | bool | `false` |  |
@@ -327,7 +328,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | postgresql.auth.secretKeys.userPasswordKey | string | `"mariadb-password"` | Moodle expects its db password key to be mariadb-password |
 | postgresql.auth.username | string | `"moodle"` |  |
 | postgresql.enabled | bool | `false` |  |
-| postgresql.image.tag | string | `"14.8.0-debian-11-r84"` |  |
+| postgresql.image.tag | string | `"14.18.0-debian-12-r0"` |  |
 | postgresql.metrics.enabled | bool | `true` |  |
 | postgresql.metrics.serviceMonitor.enabled | bool | `true` |  |
 | postgresql.primary.affinity | object | `{}` |  |

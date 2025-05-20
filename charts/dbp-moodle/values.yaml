@@ -406,8 +406,9 @@ mariadb:
 
 postgresql:
   enabled: false
+  # usePasswordFiles: false required if we increase the helm chart version
   image:
-    tag: "14.8.0-debian-11-r84"
+    tag: "14.18.0-debian-12-r0"
   auth:
     username: "moodle"
     database: "moodle"
@@ -510,6 +511,9 @@ etherpadlite:
 
 etherpad-postgresql:
   enabled: false
+  # usePasswordFiles: false
+  image:
+    tag: "14.18.0-debian-12-r0"
   auth:
     enablePostgresUser: false
     username: etherpad

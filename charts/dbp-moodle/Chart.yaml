@@ -6,7 +6,7 @@ description: |
   The Chart can be deployed without any modification but it is advised to set own secrets acccording to this readme.
 type: application
 home: https://dbildungsplattform.github.io/dbp-moodle/
-version: 0.0.33
+version: 0.0.34
 appVersion: "4.5.4"
 dependencies:
   - name: moodle
@@ -24,7 +24,7 @@ dependencies:
     condition: mariadb.enabled
 
   - name: postgresql
-    version: "15.5.7"
+    version: "15.5.38"
     repository: https://charts.bitnami.com/bitnami
     condition: postgresql.enabled
 
@@ -40,7 +40,7 @@ dependencies:
     condition: dbpMoodle.backup.enabled
 
   - name: postgresql
-    version: "15.5.7"
+    version: "15.5.38"
     repository: https://charts.bitnami.com/bitnami
     alias: etherpad-postgresql
     condition: etherpad-postgresql.enabled
