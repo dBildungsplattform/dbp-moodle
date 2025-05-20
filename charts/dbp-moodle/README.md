@@ -18,8 +18,8 @@ The Chart can be deployed without any modification but it is advised to set own 
 | https://burningalchemist.github.io/sql_exporter/ | sql-exporter | 0.6.1 |
 | https://charts.bitnami.com/bitnami | mariadb | 18.2.2 |
 | https://charts.bitnami.com/bitnami | moodle | 25.2.2 |
-| https://charts.bitnami.com/bitnami | postgresql | 15.5.7 |
-| https://charts.bitnami.com/bitnami | postgresql | 15.5.7 |
+| https://charts.bitnami.com/bitnami | postgresql | 15.5.38 |
+| https://charts.bitnami.com/bitnami | postgresql | 15.5.38 |
 | https://charts.bitnami.com/bitnami | redis | 19.5.3 |
 
 ## Values
@@ -149,6 +149,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | etherpad-postgresql.auth.secretKeys.userPasswordKey | string | `"etherpad-postgresql-password"` |  |
 | etherpad-postgresql.auth.username | string | `"etherpad"` |  |
 | etherpad-postgresql.enabled | bool | `false` |  |
+| etherpad-postgresql.image.tag | string | `"16.6.0-debian-12-r2"` |  |
 | etherpad-postgresql.persistence.existingClaim | string | `"moodle-etherpad-postgresql"` |  |
 | etherpad-postgresql.primary.affinity | object | `{}` |  |
 | etherpad-postgresql.primary.containerSecurityContext.privileged | bool | `false` |  |
@@ -327,7 +328,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | postgresql.auth.secretKeys.userPasswordKey | string | `"mariadb-password"` | Moodle expects its db password key to be mariadb-password |
 | postgresql.auth.username | string | `"moodle"` |  |
 | postgresql.enabled | bool | `false` |  |
-| postgresql.image.tag | string | `"14.8.0-debian-11-r84"` |  |
+| postgresql.image.tag | string | `"14.18.0-debian-12-r0"` |  |
 | postgresql.metrics.enabled | bool | `true` |  |
 | postgresql.metrics.serviceMonitor.enabled | bool | `true` |  |
 | postgresql.primary.affinity | object | `{}` |  |
