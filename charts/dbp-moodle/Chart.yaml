@@ -58,6 +58,6 @@ dependencies:
 
   - name: clamav
     version: 3.5.0
-    repository: "https://wiremind.github.io/helm-charts" # "oci://registry.gitlab.com/xrow-public/helm-clamav/charts"
+    repository: "https://wiremind.github.io/wiremind-helm-charts" # "oci://registry.gitlab.com/xrow-public/helm-clamav/charts"
     alias: clamav
     condition: clamAV.enabled
