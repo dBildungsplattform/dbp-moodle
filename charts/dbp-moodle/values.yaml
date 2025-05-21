@@ -716,8 +716,8 @@ sql-exporter:
 
 clamav:
   enabled: true
-  privateMirrorEnabled: true
-  privateMirror: test.com
+  # privateMirrorEnabled: true
+  # privateMirror: test.com
   image:
     tag: latest
   service:
@@ -727,13 +727,13 @@ clamav:
     requests:
       cpu: 50m
       memory: 128Mi
-  volumes:
-    - name: clamav-freshclam-conf
-      configMap:
-        name: clamav-freshclam-conf
-        defaultMode: 0644
-  volumeMounts:
-    - name: clamav-freshclam-conf
-      readOnly: true
-      mountPath: /etc/
-      subPath: freshclam.conf
+  # volumes:
+  #   - name: clamav-freshclam-conf
+  #     configMap:
+  #       name: clamav-freshclam-conf
+  #       defaultMode: 0644
+  # volumeMounts:
+  #   - name: clamav-freshclam-conf
+  #     readOnly: true
+  #     mountPath: /etc/
+  #     subPath: freshclam.conf
