@@ -716,8 +716,6 @@ sql-exporter:
 
 clamav:
   enabled: true
-  # privateMirrorEnabled: true
-  # privateMirror: test.com
   image:
     tag: latest
     pullPolicy: "IfNotPresent"
@@ -731,8 +729,21 @@ clamav:
   freshclamConfig: |
     Bytecode yes
     DatabaseDirectory /data
-    DatabaseOwner 2000
+    DatabaseMirror database.clamav.net
+    DatabaseOwner 1001
     LogTime yes
     NotifyClamd /etc/clamav/clamd.conf
     PidFile /tmp/freshclam.pid
     ScriptedUpdates no
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+    runAsGroup: 1001
+    fsGroup: 1001
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    privileged: false
+    capabilities:
+      drop:
+        - ALL
