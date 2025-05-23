@@ -719,7 +719,7 @@ clamav:
   image:
     tag: latest
     pullPolicy: "IfNotPresent"
-  kind: Deployment
+  kind: StatefulSet
   service:
     type: ClusterIP
     port: 3310
