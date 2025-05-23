@@ -56,7 +56,6 @@ $CFG->disableupdateautodeploy = true;
 {{- end }}
 
 {{- if .Values.clamav.enabled }}
-$CFG->forced_plugin_settings['antivirus']['checkantivirus'] = ''; # Still needs the correct value
 $CFG->forced_plugin_settings['antivirus_clamav']['runningmethod'] = 'tcpsocket';
 $CFG->forced_plugin_settings['antivirus_clamav']['tcpsockethost'] = 'moodle-clamav';
 $CFG->forced_plugin_settings['antivirus_clamav']['tcpsocketport'] = 3310;
