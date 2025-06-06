@@ -56,6 +56,7 @@ $CFG->disableupdateautodeploy = true;
 {{- end }}
 
 {{- if .Values.clamav.enabled }}
+$CFG->antiviruses = "clamav"; // Enables the clamav antivirus plugin by default.
 $CFG->forced_plugin_settings['antivirus_clamav']['runningmethod'] = 'tcpsocket';
 $CFG->forced_plugin_settings['antivirus_clamav']['tcpsockethost'] = 'moodle-clamav';
 $CFG->forced_plugin_settings['antivirus_clamav']['tcpsocketport'] = 3310;
@@ -66,7 +67,7 @@ require_once(__DIR__ . '/lib/setup.php');
 {{- if .Values.dbpMoodle.phpConfig.extendedLogging }}
 define('MDL_PERF' , true);
 define('MDL_PERFDB' , true);
-define('MDL_PERFTOLOG' , true); //OK for production
+define('MDL_PERFTOLOG' , true); // OK for production
 {{- end }}
 
 {{ if .Values.dbpMoodle.phpConfig.debug -}}
