@@ -51,13 +51,13 @@ dependencies:
     alias: etherpadlite
     condition: etherpadlite.enabled
 
+  - name: clamav
+    version: 3.5.0
+    repository: "https://wiremind.github.io/wiremind-helm-charts"
+    alias: clamav
+    condition: clamAV.enabled
+
   - name: sql-exporter
     version: 0.6.1
     repository: "https://burningalchemist.github.io/sql_exporter/"
     condition: sql-exporter.enabled
-
-  - name: clamav
-    version: 3.5.0
-    repository: "https://wiremind.github.io/wiremind-helm-charts" # "oci://registry.gitlab.com/xrow-public/helm-clamav/charts"
-    alias: clamav
-    condition: clamAV.enabled
