@@ -130,7 +130,7 @@ dbpMoodle:
     resources: {}
     # -- Which kubectl image to use
     repository: "ghcr.io/dbildungsplattform"
-    image: moodle-tools
+    image: "moodle-tools"
     tag: "1.1.12"
 
   moodleUpdatePreparationHook:
@@ -184,9 +184,9 @@ dbpMoodle:
   # -- This restores moodle to the latest snapshot. Requires an existing s3 backup. ONLY USE FOR ROLLBACK
   restore:
     enabled: false
-    repository: ghcr.io/dbildungsplattform
-    image: moodle-tools
-    tag: 1.1.12
+    repository: "ghcr.io/dbildungsplattform"
+    image: "moodle-tools"
+    tag: "1.1.12"
     resources:
       limits:
         cpu: 2000m
@@ -246,8 +246,8 @@ moodle:
   updateStrategy:
     type: RollingUpdate
   image:
-    registry: ghcr.io
-    repository: dbildungsplattform/moodle
+    registry: "ghcr.io"
+    repository: "dbildungsplattform/moodle"
     # -- The dbp-moodle image which is build for this helm chart
     tag: "4.5.4-debian-12-r0-dbp2"
     pullPolicy: Always
@@ -702,37 +702,10 @@ backup-cronjob:
         initialDelaySeconds: 5
         periodSeconds: 10
 
-sql-exporter:
-  enabled: false
-  image:
-    pullPolicy: "IfNotPresent"
-  securityContext:
-    privileged: false
-    allowPrivilegeEscalation: false
-  affinity: {}
-  tolerations: []
-  resources: {}
-  extraVolumes:
-    - name: moodle-collector-config
-      volume:
-        configMap:
-          name: moodle-sql-exporter-configmap
-          items:
-            - key: moodle-collector-config
-              path: sql_exporter_moodle.yaml
-      mount:
-        readOnly: true
-        mountPath: /etc/sql_exporter/collectors/
-  config:
-    collector_files: ["collectors/sql_exporter_moodle.yaml"]
-    target:
-      data_source_name: ""
-      collectors: [sql_exporter_moodle]
-
 clamav:
   enabled: true
   image:
-    tag: latest
+    tag: "1.4.2-41"
     pullPolicy: "IfNotPresent"
   kind: StatefulSet
   service:
@@ -761,9 +734,39 @@ clamav:
         - ALL
   tolerations: []
   affinity: {}
-  resources: {}
+  resources: 
+    limits:
+      cpu: 1000m
+      memory: 4Gi
+    requests:
+      cpu: 200m
+      memory: 2Gi
   hpa:
     enabled: false
-    maxReplicas: 5
-    # average CPU usage utilization percentage per pod (1-100)
-    cpu: 80
+
+sql-exporter:
+  enabled: false
+  image:
+    pullPolicy: "IfNotPresent"
+  securityContext:
+    privileged: false
+    allowPrivilegeEscalation: false
+  affinity: {}
+  tolerations: []
+  resources: {}
+  extraVolumes:
+    - name: moodle-collector-config
+      volume:
+        configMap:
+          name: moodle-sql-exporter-configmap
+          items:
+            - key: moodle-collector-config
+              path: sql_exporter_moodle.yaml
+      mount:
+        readOnly: true
+        mountPath: /etc/sql_exporter/collectors/
+  config:
+    collector_files: ["collectors/sql_exporter_moodle.yaml"]
+    target:
+      data_source_name: ""
+      collectors: [sql_exporter_moodle]
