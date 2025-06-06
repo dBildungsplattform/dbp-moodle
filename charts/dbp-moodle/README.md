@@ -21,6 +21,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | https://charts.bitnami.com/bitnami | postgresql | 15.5.38 |
 | https://charts.bitnami.com/bitnami | postgresql | 15.5.38 |
 | https://charts.bitnami.com/bitnami | redis | 19.5.3 |
+| https://wiremind.github.io/wiremind-helm-charts | clamav | 3.5.0 |
 
 ## Values
 
@@ -96,6 +97,28 @@ The Chart can be deployed without any modification but it is advised to set own 
 | backup-cronjob.serviceAccount.create | bool | `false` |  |
 | backup-cronjob.serviceAccount.name | string | `"moodle-backup-job"` |  |
 | backup-cronjob.tolerations | list | `[]` |  |
+| clamav.affinity | object | `{}` |  |
+| clamav.enabled | bool | `true` |  |
+| clamav.freshclamConfig | string | `"Bytecode yes\nDatabaseDirectory /data\nDatabaseMirror database.clamav.net\nDatabaseOwner 1001\nLogTime yes\nNotifyClamd /etc/clamav/clamd.conf\nPidFile /tmp/freshclam.pid\nScriptedUpdates yes\n"` |  |
+| clamav.hpa.enabled | bool | `false` |  |
+| clamav.image.pullPolicy | string | `"IfNotPresent"` |  |
+| clamav.image.tag | string | `"1.4.2-41"` |  |
+| clamav.kind | string | `"StatefulSet"` |  |
+| clamav.podSecurityContext.fsGroup | int | `1001` |  |
+| clamav.podSecurityContext.runAsGroup | int | `1001` |  |
+| clamav.podSecurityContext.runAsNonRoot | bool | `true` |  |
+| clamav.podSecurityContext.runAsUser | int | `1001` |  |
+| clamav.resources.limits.cpu | string | `"1000m"` |  |
+| clamav.resources.limits.memory | string | `"4Gi"` |  |
+| clamav.resources.requests.cpu | string | `"200m"` |  |
+| clamav.resources.requests.memory | string | `"2Gi"` |  |
+| clamav.securityContext.allowPrivilegeEscalation | bool | `false` |  |
+| clamav.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| clamav.securityContext.privileged | bool | `false` |  |
+| clamav.securityContext.runAsNonRoot | bool | `true` |  |
+| clamav.service.port | int | `3310` |  |
+| clamav.service.type | string | `"ClusterIP"` |  |
+| clamav.tolerations | list | `[]` |  |
 | dbpMoodle.allowInternalNetworkingOnly | bool | `false` | disallows all egress from release namespace for the moodle deployment |
 | dbpMoodle.backup | object | `{"cluster_name":"","enabled":false,"endpoint":"","gpg_key_names":"","gpgkeys":{"existingSecret":"","gpgkey.dbpinfra.pub.asc":"","gpgkey.dbpinfra.sec.asc":""},"max_full_backup_age":"1W","retention_time":"6M","rules":[{"apiGroups":["apps"],"resources":["deployments"],"verbs":["get","patch","list","watch"]},{"apiGroups":["batch"],"resources":["cronjobs","jobs"],"verbs":["get","patch"]}],"s3_bucket_name":"","s3_certificate_secret":{"enabled":false,"key":"certificate.crt","mountpath":"/certs","name":"s3-certificate"},"secrets":{"existingSecret":"","s3_access_key":"","s3_access_secret":"","s3_endpoint_url":""}}` | Backup configuration. Set enabled=true to enable the backup-cronjob. Also set s3 location credentials |
 | dbpMoodle.backup.gpgkeys.existingSecret | string | `""` | Existing  secret for gpg keys |
