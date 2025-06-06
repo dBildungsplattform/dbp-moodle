@@ -719,6 +719,7 @@ clamav:
     LogTime yes
     NotifyClamd /etc/clamav/clamd.conf
     PidFile /tmp/freshclam.pid
+    ScriptedUpdates yes
   podSecurityContext:
     runAsNonRoot: true
     runAsUser: 1001
