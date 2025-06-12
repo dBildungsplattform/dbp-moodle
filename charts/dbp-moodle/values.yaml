@@ -130,7 +130,7 @@ dbpMoodle:
     resources: {}
     # -- Which kubectl image to use
     repository: "ghcr.io/dbildungsplattform"
-    image: moodle-tools
+    image: "moodle-tools"
     tag: "1.1.12"
 
   moodleUpdatePreparationHook:
@@ -184,9 +184,9 @@ dbpMoodle:
   # -- This restores moodle to the latest snapshot. Requires an existing s3 backup. ONLY USE FOR ROLLBACK
   restore:
     enabled: false
-    repository: ghcr.io/dbildungsplattform
-    image: moodle-tools
-    tag: 1.1.12
+    repository: "ghcr.io/dbildungsplattform"
+    image: "moodle-tools"
+    tag: "1.1.12"
     resources:
       limits:
         cpu: 2000m
@@ -246,8 +246,8 @@ moodle:
   updateStrategy:
     type: RollingUpdate
   image:
-    registry: ghcr.io
-    repository: dbildungsplattform/moodle
+    registry: "ghcr.io"
+    repository: "dbildungsplattform/moodle"
     # -- The dbp-moodle image which is build for this helm chart
     tag: "4.5.4-debian-12-r0-dbp2"
     pullPolicy: Always
@@ -701,6 +701,48 @@ backup-cronjob:
             - /tmp/healthy
         initialDelaySeconds: 5
         periodSeconds: 10
+
+clamav:
+  enabled: true
+  image:
+    tag: "1.4.2-41"
+    pullPolicy: "IfNotPresent"
+  kind: StatefulSet
+  service:
+    type: ClusterIP
+    port: 3310
+  freshclamConfig: |
+    Bytecode yes
+    DatabaseDirectory /data
+    DatabaseMirror database.clamav.net
+    DatabaseOwner 1001
+    LogTime yes
+    NotifyClamd /etc/clamav/clamd.conf
+    PidFile /tmp/freshclam.pid
+    ScriptedUpdates yes
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+    runAsGroup: 1001
+    fsGroup: 1001
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    privileged: false
+    capabilities:
+      drop:
+        - ALL
+  tolerations: []
+  affinity: {}
+  resources: 
+    limits:
+      cpu: 1000m
+      memory: 4Gi
+    requests:
+      cpu: 200m
+      memory: 2Gi
+  hpa:
+    enabled: false
 
 sql-exporter:
   enabled: false

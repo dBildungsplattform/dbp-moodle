@@ -6,7 +6,7 @@ description: |
   The Chart can be deployed without any modification but it is advised to set own secrets acccording to this readme.
 type: application
 home: https://dbildungsplattform.github.io/dbp-moodle/
-version: 0.0.34
+version: 0.0.35
 appVersion: "4.5.4"
 dependencies:
   - name: moodle
@@ -50,6 +50,12 @@ dependencies:
     repository: "file://charts/etherpad"
     alias: etherpadlite
     condition: etherpadlite.enabled
+
+  - name: clamav
+    version: 3.5.0
+    repository: "https://wiremind.github.io/wiremind-helm-charts"
+    alias: clamav
+    condition: clamav.enabled
 
   - name: sql-exporter
     version: 0.6.1
