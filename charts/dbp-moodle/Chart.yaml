@@ -10,7 +10,7 @@ version: 0.0.36
 appVersion: "4.5.4"
 dependencies:
   - name: moodle
-    version: "25.2.2"
+    version: "27.0.2"
     repository: https://charts.bitnami.com/bitnami
 
   - name: redis
