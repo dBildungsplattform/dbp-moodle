@@ -1,6 +1,6 @@
 # dbp-moodle
 
-![Version: 0.0.35](https://img.shields.io/badge/Version-0.0.35-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.5.4](https://img.shields.io/badge/AppVersion-4.5.4-informational?style=flat-square)
+![Version: 0.0.36](https://img.shields.io/badge/Version-0.0.36-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.5.4](https://img.shields.io/badge/AppVersion-4.5.4-informational?style=flat-square)
 
 This is a Helm Chart bundling some of the bitnami resources to deploy Moodle for DBildungsplattform. Extending them with features such as
 MariaDB and PostgreSQL support, Horizontal Autoscaling capabilities, Redis Session Store, Etherpad-Lite.
@@ -17,7 +17,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | file://charts/etherpad | etherpad | 0.1.0 |
 | https://burningalchemist.github.io/sql_exporter/ | sql-exporter | 0.6.1 |
 | https://charts.bitnami.com/bitnami | mariadb | 18.2.2 |
-| https://charts.bitnami.com/bitnami | moodle | 25.2.2 |
+| https://charts.bitnami.com/bitnami | moodle | 27.0.2 |
 | https://charts.bitnami.com/bitnami | postgresql | 15.5.38 |
 | https://charts.bitnami.com/bitnami | postgresql | 15.5.38 |
 | https://charts.bitnami.com/bitnami | redis | 19.5.3 |
@@ -273,6 +273,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.extraVolumeMounts[1].readOnly | bool | `true` |  |
 | moodle.extraVolumes[0] | object | `{"configMap":{"defaultMode":420,"items":[{"key":"php.ini","path":"php.ini"}],"name":"moodle-php-ini"},"name":"moodle-php-ini"}` | The php.ini which installs the php-redis extension to enable the use for redis |
 | moodle.extraVolumes[1] | object | `{"name":"moodle-php-config","secret":{"defaultMode":420,"items":[{"key":"config.php","path":"config.php"}],"secretName":"moodle-php-config"}}` | The custom config.php file that is used to configure moodle to use the database and redis (if activated) |
+| moodle.hostAliases | list | `[]` |  |
 | moodle.image.debug | bool | `false` | Debug mode for more detailed moodle installation and log output |
 | moodle.image.pullPolicy | string | `"Always"` |  |
 | moodle.image.registry | string | `"ghcr.io"` |  |
