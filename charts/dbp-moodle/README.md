@@ -273,7 +273,6 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.extraVolumeMounts[1].readOnly | bool | `true` |  |
 | moodle.extraVolumes[0] | object | `{"configMap":{"defaultMode":420,"items":[{"key":"php.ini","path":"php.ini"}],"name":"moodle-php-ini"},"name":"moodle-php-ini"}` | The php.ini which installs the php-redis extension to enable the use for redis |
 | moodle.extraVolumes[1] | object | `{"name":"moodle-php-config","secret":{"defaultMode":420,"items":[{"key":"config.php","path":"config.php"}],"secretName":"moodle-php-config"}}` | The custom config.php file that is used to configure moodle to use the database and redis (if activated) |
-| moodle.hostAliases | list | `[]` |  |
 | moodle.image.debug | bool | `false` | Debug mode for more detailed moodle installation and log output |
 | moodle.image.pullPolicy | string | `"Always"` |  |
 | moodle.image.registry | string | `"ghcr.io"` |  |
