@@ -260,7 +260,6 @@ moodle:
   moodleUsername: admin
   moodleEmail: ""
   allowEmptyPassword: false
-  hostAliases: []
   extraEnvVars:
     - name: PHP_POST_MAX_SIZE
       value: "200M"
