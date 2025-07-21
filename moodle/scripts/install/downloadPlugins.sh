@@ -27,7 +27,7 @@ moosh plugin-download -v "$major_minor" mod_pdfannotator
 moosh plugin-download -v "$major_minor" mod_skype
 moosh plugin-download -v "$major_minor" mod_zoom
 moosh plugin-download -v "$major_minor" mod_booking
-moosh plugin-download -v "$major_minor" mod_unilabel
+moosh plugin-download -v "$major_minor" --release=2024100100 mod_unilabel #Unilabel 4.5.7
 moosh plugin-download -v "$major_minor" mod_choicegroup
 moosh plugin-download -v "$major_minor" local_staticpage
 moosh plugin-download -v "$major_minor" format_remuiformat
