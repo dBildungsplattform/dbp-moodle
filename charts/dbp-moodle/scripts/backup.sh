@@ -18,6 +18,8 @@ dummy_probe_patch=$(cat <<-EOF
 					"exit 0"
 				]
 			},
+            "httpGet": null,
+            "tcpSocket": null,
 			"initialDelaySeconds": 5,
 			"periodSeconds": 10
     	}
@@ -33,6 +35,8 @@ dummy_probe_patch=$(cat <<-EOF
 					"exit 0"
 				]
 			},
+            "httpGet": null,
+            "tcpSocket": null,
 			"initialDelaySeconds": 5,
 			"periodSeconds": 10
     	}
