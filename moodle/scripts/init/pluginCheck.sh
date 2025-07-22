@@ -1,5 +1,7 @@
 #!/bin/bash
-
+# This script will be called by the entrypoint.sh on Docker Image startup and acts as a way to keep our Plugins up to date.
+# If the PluginsFailed and UpdateFailed Signal Files do not exist, it will move the Plugins from the image to the Moodle installation.
+# This will ensure that always the most up to date Plugins from the Image will be used.
 set -o errexit
 set -o nounset
 set -o pipefail
