@@ -138,6 +138,14 @@ applyKalturaState() {
     fi
 }
 
+get_plugin_version() {
+    local plugin_path="$1"
+    if [ ! -f "$plugin_path/version.php" ]; then
+        return
+    fi
+    grep version "${moodle_path}/version.php" | grep -oP '\s*=\s*\K\d+'
+}
+
 main() {
     rm -f "$update_plugins_path"
 
@@ -174,6 +182,22 @@ main() {
         fi
 
         if [ "$plugin_target_state" = "$plugin_cur_state" ]; then
+            #Check if Plugin Update is required due to newer Version in new Image
+            if [ "$plugin_target_state" = true ]; then
+                installed_plugin_version="$(get_plugin_version $full_path)"
+                unzip -q "${plugin_zip_path}/${plugin_fullname}.zip" -d "$plugin_unzip_path"
+                new_plugin_path="${plugin_unzip_path}/${plugin_name}"
+                new_plugin_version="$(get_plugin_version $new_plugin_path)"
+                #Plugin Version comparison
+                if [ "$new_plugin_version" > "$installed_plugin_version" ]; then
+                    MODULE="dbp-plugins" info "Plugin ${plugin_name} Version Changed (Installed Version: ${installed_plugin_version}, new Version: ${new_plugin_version}). Updating..."
+                    mv "${plugin_unzip_path}${plugin_name}" "${moodle_path}/${plugin_parent_path:?}/"
+                    MODULE="dbp-plugins" info "New Installed Plugin ${plugin_name} Version: ${installed_plugin_version}"
+                    anychange=true
+                else
+                    MODULE="dbp-plugins" info "No Version change of Plugin ${plugin_name} detected or required."
+                fi
+            fi
             continue
         fi
 
