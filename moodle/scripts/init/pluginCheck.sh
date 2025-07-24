@@ -194,6 +194,7 @@ main() {
                 #Plugin Version comparison
                 if [ "$new_plugin_version" -gt "$installed_plugin_version" ]; then
                     MODULE="dbp-plugins" info "Plugin ${plugin_name} Version Changed (Installed Version: ${installed_plugin_version}, new Version: ${new_plugin_version}). Updating..."
+                    rm -rf "${moodle_path}/${plugin_parent_path:?}/"
                     mv "${plugin_unzip_path}${plugin_name}" "${moodle_path}/${plugin_parent_path:?}/"
                     MODULE="dbp-plugins" info "New Installed Plugin ${plugin_name} Version: ${installed_plugin_version}"
                     anychange=true
