@@ -143,7 +143,7 @@ get_plugin_version() {
     if [ ! -f "$plugin_path/version.php" ]; then
         return
     fi
-    grep version "${moodle_path}/version.php" | grep -oP '\s*=\s*\K\d+'
+    grep version "${plugin_path}/version.php" | grep -oP '\s*=\s*\K\d+'
 }
 
 main() {
