@@ -186,18 +186,16 @@ main() {
             #Check if Plugin Update is required due to newer Version in new Image
             if [ "$plugin_target_state" = true ]; then
                 installed_plugin_version="$(get_plugin_version $full_path)"
-                echo "Installed version: start'$installed_plugin_version'end"
                 unzip -q "${plugin_zip_path}/${plugin_fullname}.zip" -d "$plugin_unzip_path"
                 new_plugin_path="${plugin_unzip_path}/${plugin_name}"
                 new_plugin_version="$(get_plugin_version $new_plugin_path)"
-                echo "New version: start'$new_plugin_version'end"
                 #Plugin Version comparison
                 if [ "$new_plugin_version" -gt "$installed_plugin_version" ]; then
                     MODULE="dbp-plugins" info "Plugin ${plugin_name} Version Changed (Installed Version: ${installed_plugin_version}, new Version: ${new_plugin_version}). Updating..."
                     rm -rf "${moodle_path:?}/${plugin_path:?}"
-                    # mkdir -p "${moodle_path}/${plugin_path}"
                     mv "${plugin_unzip_path}${plugin_name}" "${moodle_path}/${plugin_parent_path:?}/"
-                    MODULE="dbp-plugins" info "New Installed Plugin ${plugin_name} Version: ${installed_plugin_version}"
+                    new_installed_plugin_version="$(get_plugin_version $full_path)"
+                    MODULE="dbp-plugins" info "New Installed Plugin ${plugin_name} Version: ${new_installed_plugin_version}"
                     anychange=true
                 else
                     MODULE="dbp-plugins" info "No Version change of Plugin ${plugin_name} detected or required."
