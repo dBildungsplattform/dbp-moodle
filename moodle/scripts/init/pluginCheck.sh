@@ -188,8 +188,9 @@ main() {
                 unzip -q "${plugin_zip_path}/${plugin_fullname}.zip" -d "$plugin_unzip_path"
                 new_plugin_path="${plugin_unzip_path}/${plugin_name}"
                 new_plugin_version="$(get_plugin_version $new_plugin_path)"
+
                 #Plugin Version comparison
-                if [ "$new_plugin_version" > "$installed_plugin_version" ]; then
+                if [ "$new_plugin_version" -gt "$installed_plugin_version" ]; then
                     MODULE="dbp-plugins" info "Plugin ${plugin_name} Version Changed (Installed Version: ${installed_plugin_version}, new Version: ${new_plugin_version}). Updating..."
                     mv "${plugin_unzip_path}${plugin_name}" "${moodle_path}/${plugin_parent_path:?}/"
                     MODULE="dbp-plugins" info "New Installed Plugin ${plugin_name} Version: ${installed_plugin_version}"
