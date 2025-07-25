@@ -6,8 +6,6 @@ backup_dir="/tmp/backup"
 
 readiness_bckp="/tmp/readinessprobe.json"
 liveness_bckp="/tmp/livenessprobe.json"
-            # "httpGet": null,
-            # "tcpSocket": null,
 dummy_probe_patch=$(cat <<-EOF
 	[{
 		"op": "replace",
