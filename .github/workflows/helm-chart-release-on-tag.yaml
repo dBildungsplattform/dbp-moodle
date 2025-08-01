@@ -22,3 +22,28 @@ jobs:
       helm_chart_version_generation: chart_yaml
       image_tag_generation: chart_yaml
       helm_repo_list: bitnami,https://charts.bitnami.com/bitnami,sql_exporter,https://burningalchemist.github.io/sql_exporter/
+  changelog_creation:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false 
+        fetch-depth: 0 
+    - name: Create CHANGELOG.yaml
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN_PAT }}
+      run: |
+        # Use https://github.com/github-changelog-generator/github-changelog-generator to generate changelogs
+        docker run -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator --user dBildungsplattform --project dbp-moodle -t $GITHUB_TOKEN --include-tags-regex "dbp-moodle.*" -o CHANGELOG_dbp-moodle.md
+
+    - name: Commit files
+      run: |
+        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add .
+        git commit -a -m "Changelog"
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN_PAT }}
+        branch: ${{ github.ref_name }}
