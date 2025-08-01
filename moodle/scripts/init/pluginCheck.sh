@@ -1,5 +1,7 @@
 #!/bin/bash
-
+# This script will be called by the entrypoint.sh on Docker Image startup and acts as a way to keep our Plugins up to date.
+# If the PluginsFailed and UpdateFailed Signal Files do not exist, it will move the Plugins from the image to the Moodle installation.
+# This will ensure that always the most up to date Plugins from the Image will be used.
 set -o errexit
 set -o nounset
 set -o pipefail
@@ -136,6 +138,15 @@ applyKalturaState() {
     fi
 }
 
+get_plugin_version() {
+    local plugin_path="$1"
+    if [ ! -f "$plugin_path/version.php" ]; then
+        return
+    fi
+    grep -Po '\$plugin->version\s*=\s*\K\d+' "${plugin_path}/version.php" | head -n 1
+
+}
+
 main() {
     rm -f "$update_plugins_path"
 
@@ -172,6 +183,24 @@ main() {
         fi
 
         if [ "$plugin_target_state" = "$plugin_cur_state" ]; then
+            #Check if Plugin Update is required due to newer Version in new Image
+            if [ "$plugin_target_state" = true ]; then
+                installed_plugin_version="$(get_plugin_version $full_path)"
+                unzip -q "${plugin_zip_path}/${plugin_fullname}.zip" -d "$plugin_unzip_path"
+                new_plugin_path="${plugin_unzip_path}/${plugin_name}"
+                new_plugin_version="$(get_plugin_version $new_plugin_path)"
+                #Plugin Version comparison
+                if [ "$new_plugin_version" -gt "$installed_plugin_version" ]; then
+                    MODULE="dbp-plugins" info "Plugin ${plugin_name} Version Changed (Installed Version: ${installed_plugin_version}, new Version: ${new_plugin_version}). Updating..."
+                    rm -rf "${moodle_path:?}/${plugin_path:?}"
+                    mv "${plugin_unzip_path}${plugin_name}" "${moodle_path}/${plugin_parent_path:?}/"
+                    new_installed_plugin_version="$(get_plugin_version $full_path)"
+                    MODULE="dbp-plugins" info "New Installed Plugin ${plugin_name} Version: ${new_installed_plugin_version}"
+                    anychange=true
+                else
+                    MODULE="dbp-plugins" info "No Version change of Plugin ${plugin_name} detected or required."
+                fi
+            fi
             continue
         fi
 

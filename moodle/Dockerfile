@@ -16,7 +16,8 @@ RUN apt-get update && apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists/*
 
 # Install moosh for plugin management
-RUN curl -L https://github.com/tmuras/moosh/archive/refs/tags/1.27.tar.gz -o moosh.tar.gz && \
+# Because of current problems with moosh and no new release we use commit hashes. This one is the version bump to 1.34
+RUN curl -L https://github.com/tmuras/moosh/archive/1d679882fca0a28facff7ec2b52e5b0f3eb61e2c.tar.gz -o moosh.tar.gz && \
     mkdir /moosh && tar -xzvf moosh.tar.gz -C moosh/ --strip-components=1 && \
     mkdir /.moosh && \
     chmod 774 /.moosh &&\
