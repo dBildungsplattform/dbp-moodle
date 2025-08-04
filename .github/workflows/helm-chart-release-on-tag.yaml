@@ -23,6 +23,8 @@ jobs:
       image_tag_generation: chart_yaml
       helm_repo_list: bitnami,https://charts.bitnami.com/bitnami,sql_exporter,https://burningalchemist.github.io/sql_exporter/
   changelog_creation:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -42,5 +44,5 @@ jobs:
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN_PAT }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: ${{ github.ref_name }}
