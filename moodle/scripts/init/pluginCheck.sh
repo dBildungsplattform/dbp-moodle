@@ -183,7 +183,7 @@ main() {
         fi
 
         if [ "$plugin_target_state" = "$plugin_cur_state" ]; then
-            #Check if Plugin Update is required due to newer Version in new Image
+            # Check if plugin update is required due to newer version in new image
             if [ "$plugin_target_state" = true ]; then
                 installed_plugin_version="$(get_plugin_version $full_path)"
                 unzip -q "${plugin_zip_path}/${plugin_fullname}.zip" -d "$plugin_unzip_path"
