@@ -30,12 +30,9 @@ jobs:
         persist-credentials: false 
         fetch-depth: 0 
     - name: Create CHANGELOG.yaml
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN_PAT }}
       run: |
-        # Use https://github.com/github-changelog-generator/github-changelog-generator to generate changelogs
-        docker run -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator --user dBildungsplattform --project dbp-moodle -t $GITHUB_TOKEN --include-tags-regex "dbp-moodle.*" -o CHANGELOG_dbp-moodle.md
-
+        chmod +x ./changelog-generator.sh
+        ./changelog-generator.sh
     - name: Commit files
       run: |
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
