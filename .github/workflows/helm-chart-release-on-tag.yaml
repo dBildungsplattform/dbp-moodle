@@ -30,7 +30,7 @@ jobs:
     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       with:
         fetch-depth: 0 
-        ssh-key: ${{ secrets.DEPLOYKEY_PRIVATE }}
+        ssh-key: ${{ secrets.DEPLOYKEY }}
     - name: Create CHANGELOG.yaml
       run: |
         chmod +x ./changelog-generator.sh
