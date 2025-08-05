@@ -27,10 +27,10 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       with:
-        persist-credentials: false 
         fetch-depth: 0 
+        ssh-key: ${{ secrets.DEPLOYKEY_PRIVATE }}
     - name: Create CHANGELOG.yaml
       run: |
         chmod +x ./changelog-generator.sh
@@ -41,8 +41,4 @@ jobs:
         git config --local user.name "github-actions[bot]"
         git add .
         git commit -a -m "Changelog"
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ${{ github.ref_name }}
+        git push

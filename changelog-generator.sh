@@ -35,9 +35,13 @@ done
 
 # Add changes from the latest tag to HEAD
 latest_tag=${tags[0]}
-echo "## Unreleased (Changes since $latest_tag)" >> "$changelog_file"
-echo "" >> "$changelog_file"
-git log "$latest_tag"..HEAD --pretty=format:"- %s (%an)" | grep -E "\(#[0-9]+\)" >> "$changelog_file"
-echo -e "\n" >> "$changelog_file"
+unreleased_changes=$(git log "$latest_tag"..HEAD --pretty=format:"- %s (%an)" | grep -E "\(#[0-9]+\)")
+
+if [ -n "$unreleased_changes" ]; then
+    echo "## Unreleased (Changes since $latest_tag)" >> "$changelog_file"
+    echo "" >> "$changelog_file"
+    echo "$unreleased_changes" >> "$changelog_file"
+    echo -e "\n" >> "$changelog_file"
+fi
 
 echo "✅ Changelog written to $changelog_file using tags with prefix '$tag_prefix' (only PRs included)"
