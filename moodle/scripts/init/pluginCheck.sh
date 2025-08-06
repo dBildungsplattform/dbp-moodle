@@ -220,10 +220,25 @@ main() {
             exit 1
         fi
     done
+
+    for plugin in $MOODLE_PLUGINS_SYS_UNINSTALL; do
+        IFS=':' read -r -a parts <<< "$plugin"
+        plugin_name="${parts[0]}"
+        plugin_fullname="${parts[1]}"
+        plugin_path="${parts[2]}"
+        plugin_uninstall="${parts[3]}"
+
+        if [ "$plugin_uninstall" = true ]; then
+            uninstall_plugin "$plugin_fullname" "$plugin_path"
+            anychange=true
+        fi
+    done
     
     
     if [ "$anychange" = true ]; then
         upgrade_if_pending
+        php "${moodle_path}/admin/cli/uninstall_plugins.php" --purge-missing --run
+        php "${moodle_path}/admin/cli/purge_caches.php"
     else
         MODULE="dbp-plugins" info 'No plugin state change detected.'
     fi
