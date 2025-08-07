@@ -95,7 +95,6 @@ usersuspension:tool_usersuspension:admin/tool/usersuspension:   {{- .Values.glob
 {{- end -}}
 
 {{- define "dbpMoodle.pluginConfigMap.sys.uninstall.content" -}}
-{{- if .Values.dbpMoodle.uninstallSystemPlugins }}
 coursefiles:repository_coursefiles:repository/coursefiles:          true{{"\n"}}
 dropbox:repository_dropbox:repository/dropbox:                      true{{"\n"}}
 equella:repository_equella:repository/equella:                      true{{"\n"}}
@@ -113,5 +112,4 @@ mahara:portfolio_mahara:portfolio/mahara:                           true{{"\n"}}
 smsgateway_aws:smsgateway_aws:smsgateway/aws:                       true{{"\n"}}
 enrol_paypal:enrol_paypal:enrol/paypal:                             true{{"\n"}}
 unoconv:fileconverter_unoconv:fileconverter/unoconv:                true{{"\n"}}
-{{- end -}}
 {{- end -}}
