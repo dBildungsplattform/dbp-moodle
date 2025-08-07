@@ -281,6 +281,8 @@ moodle:
         configMapKeyRef:
           name: moodle-plugins
           key: moodle-plugin-sys-uninstall-list
+    - name: TEST_ENV_VAR
+      value: "TEST_VALUE"
   extraEnvVarsSecret: ""
   # --	If this value is unset, the bitnami/moodle chart generates its own secret
   existingSecret: "moodle"
