@@ -95,21 +95,21 @@ usersuspension:tool_usersuspension:admin/tool/usersuspension:   {{- .Values.glob
 {{- end -}}
 
 {{- define "dbpMoodle.pluginConfigMap.sys.uninstall.content" -}}
-coursefiles:repository_coursefiles:repository/coursefiles:          {{- true }}{{"\n"}}
-dropbox:repository_dropbox:repository/dropbox:                      {{- true }}{{"\n"}}
-equella:repository_equella:repository/equella:                      {{- true }}{{"\n"}}
-filesystem:repository_filesystem:repository/filesystem:             {{- true }}{{"\n"}}
-flickr:repository_flickr:repository/flickr:                         {{- true }}{{"\n"}}
-flickr_public:repository_flickr_public:repository/flickr_public:    {{- true }}{{"\n"}}
-googledocs:repository_googledocs:repository/googledocs:             {{- true }}{{"\n"}}
-merlot:repository_merlot:repository/merlot:                         {{- true }}{{"\n"}}
-onedrive:repository_onedrive:repository/onedrive:                   {{- true }}{{"\n"}}
-s3:repository_s3:repository/s3:                                     {{- true }}{{"\n"}}
-webdav:repository_webdav:repository/webdav:                         {{- true }}{{"\n"}}
-youtube:repository_youtube:repository/youtube:                      {{- true }}{{"\n"}}
-flickr:portfolio_flickr:portfolio/flickr:                           {{- true }}{{"\n"}}
-mahara:portfolio_mahara:portfolio/mahara:                           {{- true }}{{"\n"}}
-smsgateway_aws:smsgateway_aws:smsgateway/aws:                       {{- true }}{{"\n"}}
-enrol_paypal:enrol_paypal:enrol/paypal:                             {{- true }}{{"\n"}}
-unoconv:fileconverter_unoconv:fileconverter/unoconv:                {{- true }}{{"\n"}}
+coursefiles:repository_coursefiles:repository/coursefiles:          {{- "true" }}{{"\n"}}
+dropbox:repository_dropbox:repository/dropbox:                      {{- "true" }}{{"\n"}}
+equella:repository_equella:repository/equella:                      {{- "true" }}{{"\n"}}
+filesystem:repository_filesystem:repository/filesystem:             {{- "true" }}{{"\n"}}
+flickr:repository_flickr:repository/flickr:                         {{- "true" }}{{"\n"}}
+flickr_public:repository_flickr_public:repository/flickr_public:    {{- "true" }}{{"\n"}}
+googledocs:repository_googledocs:repository/googledocs:             {{- "true" }}{{"\n"}}
+merlot:repository_merlot:repository/merlot:                         {{- "true" }}{{"\n"}}
+onedrive:repository_onedrive:repository/onedrive:                   {{- "true" }}{{"\n"}}
+s3:repository_s3:repository/s3:                                     {{- "true" }}{{"\n"}}
+webdav:repository_webdav:repository/webdav:                         {{- "true" }}{{"\n"}}
+youtube:repository_youtube:repository/youtube:                      {{- "true" }}{{"\n"}}
+flickr:portfolio_flickr:portfolio/flickr:                           {{- "true" }}{{"\n"}}
+mahara:portfolio_mahara:portfolio/mahara:                           {{- "true" }}{{"\n"}}
+smsgateway_aws:smsgateway_aws:smsgateway/aws:                       {{- "true" }}{{"\n"}}
+enrol_paypal:enrol_paypal:enrol/paypal:                             {{- "true" }}{{"\n"}}
+unoconv:fileconverter_unoconv:fileconverter/unoconv:                {{- "true" }}{{"\n"}}
 {{- end -}}
