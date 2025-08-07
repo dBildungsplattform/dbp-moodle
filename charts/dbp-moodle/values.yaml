@@ -79,7 +79,7 @@ dbpMoodle:
   allowInternalNetworkingOnly: false
 
   # -- use a configmap to determine which system plugins should be uninstalled --
-  uninstallSystemPlugins: true
+  uninstallSystemPlugins: false
 
   phpConfig:
     # -- Extended php logging
