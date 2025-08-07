@@ -78,7 +78,6 @@ dbpMoodle:
   # -- disallows all egress from release namespace for the moodle deployment
   allowInternalNetworkingOnly: false
 
-  # TODO make use of this value
   # -- use a configmap to determine which system plugins should be uninstalled --
   uninstallSystemPlugins: true
 
@@ -281,8 +280,6 @@ moodle:
         configMapKeyRef:
           name: moodle-plugins
           key: moodle-plugin-sys-uninstall-list
-    - name: TEST_ENV_VAR
-      value: "TEST_VALUE"
   extraEnvVarsSecret: ""
   # --	If this value is unset, the bitnami/moodle chart generates its own secret
   existingSecret: "moodle"
