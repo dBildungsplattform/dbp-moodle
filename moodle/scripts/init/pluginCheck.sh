@@ -157,6 +157,7 @@ main() {
 
     anychange=false
 
+    # Update or uninstall third party plugins, depending on the current and target state.
     for plugin in $MOODLE_PLUGINS; do
         IFS=':' read -r -a parts <<< "$plugin"
         plugin_name="${parts[0]}"
@@ -221,6 +222,7 @@ main() {
         fi
     done
 
+    # Uninstall certain standard plugins which are not in use.
     for plugin in $MOODLE_PLUGINS_SYS_UNINSTALL; do
         IFS=':' read -r -a parts <<< "$plugin"
         plugin_name="${parts[0]}"
@@ -230,6 +232,7 @@ main() {
 
         if [ "$plugin_uninstall" = true ]; then
             uninstall_plugin "$plugin_fullname" "$plugin_path"
+            MODULE="dbp-plugins" info "Uninstalling plugin ${plugin_name} (${plugin_fullname}) from path \"${plugin_path}\""
             anychange=true
         fi
     done
