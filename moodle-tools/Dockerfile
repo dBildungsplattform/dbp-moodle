@@ -20,11 +20,12 @@ RUN set -x \
         apt-transport-https \
         postgresql-client-16 \
         mariadb-client \
+        sudo \
     && apt-get clean -y
 
 RUN chown -R 1001:1001 /tmp \
     && chown -R root:1001 /etc/ssl/certs/ca-certificates.crt \
     && chmod g+rw /etc/ssl/certs/ca-certificates.crt \
     && useradd -u 1001 -m nonrootuser
-USER 1001
+USER 0
    
