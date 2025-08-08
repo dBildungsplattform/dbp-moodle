@@ -222,7 +222,7 @@ main() {
         fi
     done
 
-    # Uninstall certain standard plugins which are not in use.
+    # Uninstall certain standard plugins which are not in use. Whether any plugins are uninstall depends on the content of moodle-plugins config map.
     for plugin in $MOODLE_PLUGINS_SYS_UNINSTALL; do
         IFS=':' read -r -a parts <<< "$plugin"
         plugin_name="${parts[0]}"

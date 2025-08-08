@@ -96,7 +96,6 @@ usersuspension:tool_usersuspension:admin/tool/usersuspension:   {{- .Values.glob
 
 {{- define "dbpMoodle.pluginConfigMap.sys.uninstall.content" -}}
 {{- if .Values.dbpMoodle.uninstallSystemPlugins }}
-coursefiles:repository_coursefiles:repository/coursefiles:          {{- "true" }}{{"\n"}}
 dropbox:repository_dropbox:repository/dropbox:                      {{- "true" }}{{"\n"}}
 equella:repository_equella:repository/equella:                      {{- "true" }}{{"\n"}}
 filesystem:repository_filesystem:repository/filesystem:             {{- "true" }}{{"\n"}}
