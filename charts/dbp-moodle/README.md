@@ -166,6 +166,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | dbpMoodle.restore | object | `{"affinity":{},"enabled":false,"existingSecretDatabaseConfig":"moodle-database","existingSecretDatabasePassword":"moodle","existingSecretGPG":"","existingSecretKeyDatabasePassword":"","existingSecretKeyS3Access":"","existingSecretKeyS3Secret":"","existingSecretS3":"","image":"moodle-tools","podSecurityContext":{"fsGroup":1001},"repository":"ghcr.io/dbildungsplattform","resources":{"limits":{"cpu":"2000m","memory":"16Gi"},"requests":{"cpu":"1000m","memory":"8Gi"}},"rules":[{"apiGroups":["apps"],"resources":["deployments/scale","deployments"],"verbs":["get","list","patch"]}],"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"runAsGroup":1001},"tag":"1.1.12","tolerations":[]}` | This restores moodle to the latest snapshot. Requires an existing s3 backup. ONLY USE FOR ROLLBACK |
 | dbpMoodle.secrets | object | `{"database_password":"","database_root_password":"","etherpad_api_key":"","etherpad_postgresql_password":"","moodle_password":"","useChartSecret":true}` | Creates a secret with all relevant credentials for moodle -- Set useChartSecret: false to provide your own secret -- If you create your own secret, also set moodle.existingSecret (and moodle.externalDatabase.existingSecret if you bring your own DB) |
 | dbpMoodle.stage | string | `"infra"` |  |
+| dbpMoodle.uninstallSystemPlugins | bool | `false` |  |
 | etherpad-postgresql.auth.database | string | `"etherpad"` |  |
 | etherpad-postgresql.auth.enablePostgresUser | bool | `false` |  |
 | etherpad-postgresql.auth.existingSecret | string | `"moodle"` |  |
@@ -265,6 +266,9 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.extraEnvVars[3].name | string | `"MOODLE_PLUGINS"` |  |
 | moodle.extraEnvVars[3].valueFrom.configMapKeyRef.key | string | `"moodle-plugin-list"` |  |
 | moodle.extraEnvVars[3].valueFrom.configMapKeyRef.name | string | `"moodle-plugins"` |  |
+| moodle.extraEnvVars[4].name | string | `"MOODLE_PLUGINS_SYS_UNINSTALL"` |  |
+| moodle.extraEnvVars[4].valueFrom.configMapKeyRef.key | string | `"moodle-plugin-sys-uninstall-list"` |  |
+| moodle.extraEnvVars[4].valueFrom.configMapKeyRef.name | string | `"moodle-plugins"` |  |
 | moodle.extraVolumeMounts[0].mountPath | string | `"/moodleconfig/php-ini"` |  |
 | moodle.extraVolumeMounts[0].name | string | `"moodle-php-ini"` |  |
 | moodle.extraVolumeMounts[0].readOnly | bool | `true` |  |
