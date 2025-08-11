@@ -70,6 +70,8 @@ global:
       enabled: false
     usersuspension:
       enabled: false
+    dynamic_cohorts:
+      enabled: false
 
 dbpMoodle:
   name: infra
