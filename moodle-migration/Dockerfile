@@ -4,8 +4,8 @@ ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.5.4"}
 
 COPY scripts/install/downloadMoodle.sh /downloadMoodle.sh
 
-RUN chmod +x /downloadMoodle.sh /downloadPlugins.sh
-
+RUN chmod +x /downloadMoodle.sh 
+# /downloadPlugins.sh
 # Install psql Version 13.x like in the other bitnami moodle image
 RUN apt-get update && \
     apt-get install -y wget gpg curl gnupg ca-certificates && \
