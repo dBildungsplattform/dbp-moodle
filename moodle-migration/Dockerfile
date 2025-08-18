@@ -1,5 +1,10 @@
 FROM moodlehq/moodle-php-apache:8.1-bookworm AS build
 USER root
+ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.5.4"}
+
+COPY scripts/install/downloadMoodle.sh /downloadMoodle.sh
+
+RUN chmod +x /downloadMoodle.sh /downloadPlugins.sh
 
 # Install psql Version 13.x like in the other bitnami moodle image
 RUN apt-get update && \
@@ -9,3 +14,6 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y postgresql-client-13
 
+RUN /downloadMoodle.sh
+# Moodle setup.sh script calls moodle_initialize() which installs moodle
+# COPY scripts/init/entrypoint.sh /scripts/entrypoint.sh
