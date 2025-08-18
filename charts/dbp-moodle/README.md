@@ -172,7 +172,9 @@ The Chart can be deployed without any modification but it is advised to set own 
 | etherpad-postgresql.auth.secretKeys.userPasswordKey | string | `"etherpad-postgresql-password"` |  |
 | etherpad-postgresql.auth.username | string | `"etherpad"` |  |
 | etherpad-postgresql.enabled | bool | `false` |  |
+| etherpad-postgresql.image.repository | string | `"bitnamilegacy/postgresql"` |  |
 | etherpad-postgresql.image.tag | string | `"14.18.0-debian-12-r0"` |  |
+| etherpad-postgresql.metrics.image.repository | string | `"bitnamilegacy/postgres-exporter"` |  |
 | etherpad-postgresql.persistence.existingClaim | string | `"moodle-etherpad-postgresql"` |  |
 | etherpad-postgresql.primary.affinity | object | `{}` |  |
 | etherpad-postgresql.primary.containerSecurityContext.privileged | bool | `false` |  |
@@ -181,6 +183,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | etherpad-postgresql.primary.resources.requests.cpu | string | `"50m"` |  |
 | etherpad-postgresql.primary.resources.requests.memory | string | `"128Mi"` |  |
 | etherpad-postgresql.primary.tolerations | list | `[]` |  |
+| etherpad-postgresql.volumePermisions.image.repository | string | `"bitnamilegacy/os-shell"` |  |
 | etherpadlite.affinity | object | `{}` |  |
 | etherpadlite.enabled | bool | `false` |  |
 | etherpadlite.env[0].name | string | `"DB_TYPE"` |  |
@@ -229,8 +232,10 @@ The Chart can be deployed without any modification but it is advised to set own 
 | mariadb.auth.username | string | `"moodle"` |  |
 | mariadb.enabled | bool | `true` |  |
 | mariadb.global.storageClass | string | `"nfs-client"` |  |
+| mariadb.image.repository | string | `"bitnamilegacy/mariadb"` |  |
 | mariadb.image.tag | string | `"11.3.2-debian-12-r5"` |  |
 | mariadb.metrics.enabled | bool | `true` |  |
+| mariadb.metrics.image.repository | string | `"bitnamilegacy/mysqld-exporter"` |  |
 | mariadb.metrics.serviceMonitor.enabled | bool | `true` |  |
 | mariadb.primary.affinity | object | `{}` |  |
 | mariadb.primary.containerSecurityContext.privileged | bool | `false` |  |
@@ -239,8 +244,10 @@ The Chart can be deployed without any modification but it is advised to set own 
 | mariadb.primary.resources.requests.cpu | string | `"250m"` |  |
 | mariadb.primary.resources.requests.memory | string | `"256Mi"` |  |
 | mariadb.primary.tolerations | list | `[]` |  |
+| mariadb.volumePermisions.image.repository | string | `"bitnamilegacy/os-shell"` |  |
 | moodle.affinity | object | `{}` |  |
 | moodle.allowEmptyPassword | bool | `false` |  |
+| moodle.certificates.image.repository | string | `"bitnamilegacy/os-shell"` |  |
 | moodle.containerPorts.http | int | `8080` |  |
 | moodle.containerPorts.https | int | `8443` |  |
 | moodle.containerSecurityContext.enabled | bool | `true` |  |
@@ -290,6 +297,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.ingress.tls | bool | `true` |  |
 | moodle.mariadb | object | `{"database":"bitnami_moodle","enabled":false,"username":"bn_moodle"}` | The mariadb included in bitnami/moodle chart. For this chart usage of mariadb.enabled with moodle.externalDatabase.type="mariadb" is recommended |
 | moodle.metrics.enabled | bool | `true` |  |
+| moodle.metrics.image.repository | string | `"bitnamilegacy/apache-exporter"` |  |
 | moodle.metrics.resources | object | `{"limits":{"cpu":"200m","memory":"256Mi"},"requests":{"cpu":"10m","memory":"16Mi"}}` | Resources have to be set so that the horizontal pod autoscaler for moodle can read the moodle cpu consumption correctly |
 | moodle.metrics.service.type | string | `"ClusterIP"` |  |
 | moodle.moodleEmail | string | `""` |  |
@@ -311,6 +319,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.tolerations | list | `[]` |  |
 | moodle.updateStrategy.type | string | `"RollingUpdate"` |  |
 | moodle.usePasswordFiles | bool | `false` |  |
+| moodle.volumePermisions.image.repository | string | `"bitnamilegacy/os-shell"` |  |
 | moodlecronjob.affinity | object | `{}` |  |
 | moodlecronjob.clusterRole.create | bool | `false` |  |
 | moodlecronjob.image.repository | string | `"ghcr.io/dbildungsplattform/moodle-tools"` |  |
@@ -351,8 +360,10 @@ The Chart can be deployed without any modification but it is advised to set own 
 | postgresql.auth.secretKeys.userPasswordKey | string | `"mariadb-password"` | Moodle expects its db password key to be mariadb-password |
 | postgresql.auth.username | string | `"moodle"` |  |
 | postgresql.enabled | bool | `false` |  |
+| postgresql.image.repository | string | `"bitnamilegacy/postgresql"` |  |
 | postgresql.image.tag | string | `"14.18.0-debian-12-r0"` |  |
 | postgresql.metrics.enabled | bool | `true` |  |
+| postgresql.metrics.image.repository | string | `"bitnamilegacy/postgres-exporter"` |  |
 | postgresql.metrics.serviceMonitor.enabled | bool | `true` |  |
 | postgresql.primary.affinity | object | `{}` |  |
 | postgresql.primary.containerSecurityContext.privileged | bool | `false` |  |
@@ -362,15 +373,22 @@ The Chart can be deployed without any modification but it is advised to set own 
 | postgresql.primary.resources.requests.cpu | string | `"250m"` |  |
 | postgresql.primary.resources.requests.memory | string | `"256Mi"` |  |
 | postgresql.primary.tolerations | list | `[]` |  |
+| postgresql.volumePermisions.image.repository | string | `"bitnamilegacy/os-shell"` |  |
 | redis.architecture | string | `"standalone"` |  |
 | redis.auth.enabled | bool | `true` |  |
 | redis.auth.existingSecret | string | `"moodle"` |  |
 | redis.auth.existingSecretPasswordKey | string | `"redis-password"` |  |
 | redis.auth.usePasswordFileFromSecret | bool | `true` |  |
 | redis.enabled | bool | `false` |  |
+| redis.image.repository | string | `"bitnamilegacy/redis"` |  |
+| redis.kubectl.image.repository | string | `"bitnamilegacy/kubectl"` |  |
 | redis.master.affinity | object | `{}` |  |
 | redis.master.resources | object | `{}` |  |
 | redis.master.tolerations | list | `[]` |  |
+| redis.metrics.image.repository | string | `"bitnamilegacy/redis-exporter"` |  |
+| redis.sentinel.image.repository | string | `"bitnamilegacy/redis-sentinel"` |  |
+| redis.sysctl.image.repository | string | `"bitnamilegacy/os-shell"` |  |
+| redis.volumePermisions.image.repository | string | `"bitnamilegacy/os-shell"` |  |
 | sql-exporter.affinity | object | `{}` |  |
 | sql-exporter.config.collector_files[0] | string | `"collectors/sql_exporter_moodle.yaml"` |  |
 | sql-exporter.config.target.collectors[0] | string | `"sql_exporter_moodle"` |  |
