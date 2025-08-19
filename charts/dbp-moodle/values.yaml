@@ -331,7 +331,7 @@ moodle:
   certificates:
     image:
       repository: bitnamilegacy/os-shell
-  volumePermisions:
+  volumePermissions:
     image:
       repository: bitnamilegacy/os-shell
   metrics:
@@ -394,7 +394,7 @@ mariadb:
   image:
     tag: "11.3.2-debian-12-r5"
     repository: bitnamilegacy/mariadb
-  volumePermisions:
+  volumePermissions:
     image:
       repository: bitnamilegacy/os-shell
   metrics:
@@ -429,7 +429,7 @@ postgresql:
   image:
     repository: bitnamilegacy/postgresql
     tag: "14.18.0-debian-12-r0"
-  volumePermisions:
+  volumePermissions:
     image:
       repository: bitnamilegacy/os-shell
   metrics:
@@ -473,7 +473,7 @@ redis:
   metrics:
     image:
       repository: bitnamilegacy/redis-exporter
-  volumePermisions:
+  volumePermissions:
     image:
       repository: bitnamilegacy/os-shell
   sysctl:
@@ -559,7 +559,7 @@ etherpad-postgresql:
   image:
     repository: bitnamilegacy/postgresql
     tag: "14.18.0-debian-12-r0"
-  volumePermisions:
+  volumePermissions:
     image:
       repository: bitnamilegacy/os-shell
   metrics:
