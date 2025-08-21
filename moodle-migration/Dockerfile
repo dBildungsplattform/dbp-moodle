@@ -1,7 +1,7 @@
 FROM moodlehq/moodle-php-apache:8.1-bookworm AS build
 USER root
 ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.5.4"}
-ARG MOODLE_PATH="${/dbp-moodle/moodle}"
+ARG MOODLE_PATH="/dbp-moodle/moodle"
 RUN mkdir /dbp-moodle
 
 COPY scripts/install/downloadMoodle.sh /downloadMoodle.sh

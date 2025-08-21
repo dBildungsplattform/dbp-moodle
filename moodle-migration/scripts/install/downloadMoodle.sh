@@ -2,7 +2,6 @@
 
 set -e
 image_version="$MOODLE_VERSION"
-MOODLE_PATH="${/dbp-moodle/moodle}"
 
 # Download Moodle tarball
 echo "Downloading Moodle version ${image_version}..."
