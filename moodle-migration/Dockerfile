@@ -18,8 +18,7 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y postgresql-client-13
 
-RUN /downloadMoodle.sh && \
-    rm /downloadMoodle.sh
+RUN /downloadMoodle.sh
 
 # Install plugins to the image
 RUN mkdir /plugins 
