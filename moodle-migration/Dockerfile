@@ -10,10 +10,11 @@ ARG EXTRA_LOCALES
 ARG WITH_ALL_LOCALES="no"
 RUN mkdir /dbp-moodle
 
-COPY scripts/install/downloadMoodle.sh /downloadMoodle.sh
-# COPY scripts/install/downloadPlugins.sh /downloadPlugins.sh
+COPY scripts/install /scripts/install
+COPY scripts/init /scripts/init
+COPY libraries /scripts
 
-RUN chmod +x /downloadMoodle.sh
+RUN chmod +x /scripts/install/downloadMoodle.sh
 # /downloadPlugins.sh
 
 # Install psql Version 13.x like in the other bitnami moodle image
@@ -24,28 +25,30 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y postgresql-client-13
 
-RUN /downloadMoodle.sh
+RUN /scripts/install/downloadMoodle.sh
 
 # Hardening
-# RUN apt-get update && apt-get upgrade -y && \
-#     apt-get clean && rm -rf /var/lib/apt/lists /var/cache/apt/archives
-# RUN apt-get update && apt-get upgrade -y && \
-#     apt-get clean && rm -rf /var/lib/apt/lists /var/cache/apt/archives
-# RUN find / -perm /6000 -type f -exec chmod a-s {} \; || true
-# RUN sed -i -e '/pam_loginuid.so/ s/^#*/#/' /etc/pam.d/cron
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get clean && rm -rf /var/lib/apt/lists /var/cache/apt/archives
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get clean && rm -rf /var/lib/apt/lists /var/cache/apt/archives
+RUN find / -perm /6000 -type f -exec chmod a-s {} \; || true
+RUN sed -i -e '/pam_loginuid.so/ s/^#*/#/' /etc/pam.d/cron
 
-# Das locale-gen Skript wurde in dem vorherigen Dockerimage nach opt/bitnami kopiert
-# RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && \
-#     locale-gen && \
-#     update-locale LANG=de_DE.UTF-8 LC_MESSAGES=de_DE.UTF-8
+RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && \
+    locale-gen && \
+    update-locale LANG=de_DE.UTF-8 LC_MESSAGES=de_DE.UTF-8
 
+RUN update-locale LANG=C.UTF-8 LC_MESSAGES=POSIX && \
+    DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales && \
+    echo 'de_DE.UTF-8 UTF-8' >> /etc/locale.gen
+RUN chmod +x /scripts/install/generate-locales.sh && \
+    /scripts/install/generate-locales.sh
 
-# RUN /opt/bitnami/scripts/locales/generate-locales.sh
 # RUN /opt/bitnami/scripts/apache/postunpack.sh
 # RUN /opt/bitnami/scripts/php/postunpack.sh
 # RUN /opt/bitnami/scripts/apache-modphp/postunpack.sh
 # RUN /opt/bitnami/scripts/moodle/postunpack.sh
-# RUN /opt/bitnami/scripts/mysql-client/postunpack.sh
 # ENV APACHE_HTTPS_PORT_NUMBER="" \
 #     APACHE_HTTP_PORT_NUMBER="" \
 #     APP_VERSION="5.0.1" \
@@ -60,13 +63,8 @@ RUN /downloadMoodle.sh
 RUN mkdir /plugins 
 # && /downloadPlugins.sh
 
-# COPY scripts/init/entrypoint.sh /scripts/entrypoint.sh
-# COPY scripts/init/updateCheck.sh /scripts/updateCheck.sh
-# COPY scripts/init/pluginCheck.sh /scripts/pluginCheck.sh
-# COPY scripts/install/phpRedisInstall.sh /phpRedisInstall.sh
-
 #Der vorherige Ordner, wo die Bitnami Skripte abgelegt sind
-RUN chown 1001:root -R /opt/bitnami
+RUN chown 1001:root -R /scripts/init
 RUN chown 1001:root -R /plugins
 
-# ENTRYPOINT ["/scripts/entrypoint.sh"]
+# ENTRYPOINT ["/scripts/init/entrypoint.sh"]

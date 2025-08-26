@@ -7,19 +7,19 @@ set -o nounset
 # set -o xtrace # Uncomment this line for debugging purposes
 
 # Load Moodle environment
-. /opt/bitnami/scripts/moodle-env.sh
+. /scripts/init/moodle/moodle-env.sh
 
 # Load libraries
-. /opt/bitnami/scripts/liblog.sh  #Diese werden wir wahrscheinlich übernehmen
-. /opt/bitnami/scripts/libwebserver.sh # Prüfen ob und was notwendig ist
+. /scripts/liblog.sh  #Diese werden wir wahrscheinlich übernehmen
+. /scripts/libwebserver.sh # Prüfen ob und was notwendig ist
 
-moodle_path="/bitnami/moodle"
-moodle_backup_path="/bitnami/moodledata/moodle-backup" # Das Backup script muss bezüglich der Pfade angepasst werden
+moodle_path="/dbp-moodle/moodle"
+moodle_backup_path="/dbp-moodle/moodledata/moodle-backup" # Das Backup script muss bezüglich der Pfade angepasst werden
 
-maintenance_html_path="/bitnami/moodledata/climaintenance.html"
-update_in_progress_path="/bitnami/moodledata/UpdateInProgress"
-update_failed_path="/bitnami/moodledata/UpdateFailed"
-plugin_state_failed_path="/bitnami/moodledata/PluginsFailed"
+maintenance_html_path="/dbp-moodle/moodledata/climaintenance.html"
+update_in_progress_path="/dbp-moodle/moodledata/UpdateInProgress"
+update_failed_path="/dbp-moodle/moodledata/UpdateFailed"
+plugin_state_failed_path="/dbp-moodle/moodledata/PluginsFailed"
 
 printSystemStatus() {
     if [[ -e $maintenance_html_path ]]; then
@@ -65,38 +65,39 @@ upgrade_if_pending() {
     fi
 }
 
-startBitnamiSetup() {
-    info "Starting Bitnami Moodle setup"
-    /opt/bitnami/scripts/"$(web_server_type)"/setup.sh # apacheSetup.sh
-    /opt/bitnami/scripts/php/setup.sh # phpSetup.sh
-    /opt/bitnami/scripts/postgresql-client/setup.sh # postgresSetup.sh
-    MODULE=dbp info "Bitnami Moodle setup finished"
+startDbpMoodleSetup() {
+    info "Starting dbp Moodle setup"
+    /scripts/init/apache/apacheSetup.sh
+    /scripts/init/php/phpSetup.sh
+    /scripts/init/postgres/postgresSetup.sh
+    MODULE=dbp info "Initial Moodle setup finished"
 }
 
 MODULE=dbp info "Starting Moodle"
 printSystemStatus
 
-# Bitnami setup now always runs.
 # Can handle new version and existing version.
-startBitnamiSetup
+startDbpMoodleSetup
 
 MODULE=dbp info "Create php.ini with redis config"
+#This must be adjusted because we install php with apt-get and don't use the binary directly
 /bin/cp /moodleconfig/php-ini/php.ini /opt/bitnami/php/etc/conf.d/php.ini
 
-if [[ ! -f "$update_failed_path" ]]; then
-    MODULE=dbp info "Starting Moodle Update Check"
-    if /scripts/updateCheck.sh; then
-        MODULE=dbp info "Finished Update Check"
-    else
-        MODULE=dbp error "Update failed! Continuing with previously installed moodle.."
-        setStatusFile "$update_failed_path" true
-    fi
-else
-    MODULE=dbp warn "Update failed previously. Skipping update check..."
-fi
+#This is not relevant for the dependency configuration and setup
+# if [[ ! -f "$update_failed_path" ]]; then
+#     MODULE=dbp info "Starting Moodle Update Check"
+#     if /scripts/updateCheck.sh; then
+#         MODULE=dbp info "Finished Update Check"
+#     else
+#         MODULE=dbp error "Update failed! Continuing with previously installed moodle.."
+#         setStatusFile "$update_failed_path" true
+#     fi
+# else
+#     MODULE=dbp warn "Update failed previously. Skipping update check..."
+# fi
 
-MODULE=dbp info "Start Bitnami setup script after checking for proper version"
-/opt/bitnami/scripts/moodle/setup.sh # moodleSetup.sh
+MODULE=dbp info "Start Moodle setup script after checking for proper version"
+/scripts/init/moodle/moodleSetup.sh
 /post-init.sh # https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/post-init.sh
 upgrade_if_pending
 
@@ -110,7 +111,8 @@ if [ -f "/tmp/de.zip" ] && [ ! -d /bitnami/moodledata/lang/de ]; then \
     unzip -q /tmp/de.zip -d /bitnami/moodledata/lang
 fi
 
-upgrade_if_pending
+# Not relevant for dependency setup
+# upgrade_if_pending
 
 if [[ ! -f "$update_failed_path" ]] && [[ ! -f "$plugin_state_failed_path" ]]; then
     MODULE=dbp info "Starting plugin installation"
@@ -124,5 +126,5 @@ else
     MODULE=dbp warn "Update or Plugin check failed previously. Skipping plugin check..."
 fi
 
-MODULE=dbp info "Finished all preparations! Starting Webserver"
-/opt/bitnami/scripts/moodle/run.sh
+# MODULE=dbp info "Finished all preparations! Starting Webserver"
+# /scripts/moodle/run.sh # This script does not exist currently, evaluate during the moodle installation
