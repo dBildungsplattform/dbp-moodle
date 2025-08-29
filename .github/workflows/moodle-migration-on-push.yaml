@@ -1,4 +1,4 @@
-name: Build moodle migration test development image
+name: Build moodle migration development image
 on:
   push:
     branches:
