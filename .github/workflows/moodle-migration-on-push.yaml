@@ -2,7 +2,7 @@ name: Build moodle migration development image
 on:
   push:
     branches:
-      - DBP-1617-Bitnami-Moodle-Vorbereitung-Basisimage
+      - DBP-0000-Moodle-Bitnami-Migration-Main
 
 jobs:
   build_image_on_push:
