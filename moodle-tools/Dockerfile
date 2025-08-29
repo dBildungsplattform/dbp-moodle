@@ -1,4 +1,4 @@
-FROM docker.io/bitnami/minideb:bookworm
+FROM docker.io/bitnamilegacy/minideb:bookworm
 
 ARG DEBIAN_FRONTEND=noninteractive
 
