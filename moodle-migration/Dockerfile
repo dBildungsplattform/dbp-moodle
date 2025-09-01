@@ -2,11 +2,13 @@
 # In dem neuen Moodle Image sind die Abhängigkeiten bereits vorinstalliert, weshalb ein entpacken nicht weiter notwenig ist,
 # jedoch müssen die postunpack.sh Abschnitte der Komponenten beachtet werden, da diese auch Konfigurationsschritte enthalten
 # Für die Abhängigkeiten muss geprüft werden, ob Konfigurationen während der Bauzeit oder Laufzeit eingespielt werden müssen
+
 FROM php:8.1.33-fpm-bookworm AS build
 USER root
 ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.5.4"}
 ARG MOODLE_PATH="/dbp-moodle/moodle"
 ARG EXTRA_LOCALES="de_DE.UTF-8"
+
 ARG WITH_ALL_LOCALES="no"
 RUN mkdir /dbp-moodle
 
@@ -41,7 +43,6 @@ RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && \
 
 # RUN chmod +x /scripts/install/generate-locales.sh && \
 #     /scripts/install/generate-locales.sh
-
 
 # RUN /opt/bitnami/scripts/apache/postunpack.sh
 # RUN /opt/bitnami/scripts/php/postunpack.sh
