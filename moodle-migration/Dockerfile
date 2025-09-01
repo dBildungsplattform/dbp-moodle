@@ -25,7 +25,7 @@ RUN apt-get update && \
     curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     apt-get update && \
-    apt-get install -y postgresql-client-13
+    apt-get install -y postgresql-client-13 apache2 libapache2-mod-fcgid
 
 RUN /scripts/install/downloadMoodle.sh
 
