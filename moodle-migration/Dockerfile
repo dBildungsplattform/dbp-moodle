@@ -2,11 +2,13 @@
 # In dem neuen Moodle Image sind die Abhängigkeiten bereits vorinstalliert, weshalb ein entpacken nicht weiter notwenig ist,
 # jedoch müssen die postunpack.sh Abschnitte der Komponenten beachtet werden, da diese auch Konfigurationsschritte enthalten
 # Für die Abhängigkeiten muss geprüft werden, ob Konfigurationen während der Bauzeit oder Laufzeit eingespielt werden müssen
-FROM moodlehq/moodle-php-apache:8.1-bookworm AS build
+
+FROM php:8.1.33-fpm-bookworm AS build
 USER root
 ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.5.4"}
 ARG MOODLE_PATH="/dbp-moodle/moodle"
-ARG EXTRA_LOCALES
+ARG EXTRA_LOCALES="de_DE.UTF-8"
+
 ARG WITH_ALL_LOCALES="no"
 RUN mkdir /dbp-moodle
 
@@ -19,11 +21,11 @@ RUN chmod +x /scripts/install/downloadMoodle.sh
 
 # Install psql Version 13.x like in the other bitnami moodle image
 RUN apt-get update && \
-    apt-get install -y wget gpg curl acl gnupg jq ca-certificates cron && \
+    apt-get install -y wget gpg curl acl gnupg jq ca-certificates cron locales && \
     curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     apt-get update && \
-    apt-get install -y postgresql-client-13
+    apt-get install -y postgresql-client-13 apache2 libapache2-mod-fcgid
 
 RUN /scripts/install/downloadMoodle.sh
 
@@ -39,11 +41,8 @@ RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && \
     locale-gen && \
     update-locale LANG=de_DE.UTF-8 LC_MESSAGES=de_DE.UTF-8
 
-RUN update-locale LANG=C.UTF-8 LC_MESSAGES=POSIX && \
-    DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales && \
-    echo 'de_DE.UTF-8 UTF-8' >> /etc/locale.gen
-RUN chmod +x /scripts/install/generate-locales.sh && \
-    /scripts/install/generate-locales.sh
+# RUN chmod +x /scripts/install/generate-locales.sh && \
+#     /scripts/install/generate-locales.sh
 
 # RUN /opt/bitnami/scripts/apache/postunpack.sh
 # RUN /opt/bitnami/scripts/php/postunpack.sh
