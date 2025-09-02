@@ -79,6 +79,9 @@ printSystemStatus
 # Can handle new version and existing version.
 startDbpMoodleSetup
 
+# keep container running during development
+while true; do sleep 3600; done
+
 # MODULE=dbp info "Create php.ini with redis config"
 # #This must be adjusted because we install php with apt-get and don't use the binary directly
 # /bin/cp /moodleconfig/php-ini/php.ini /opt/bitnami/php/etc/conf.d/php.ini
