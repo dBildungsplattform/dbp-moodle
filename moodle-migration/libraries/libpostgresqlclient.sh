@@ -267,3 +267,53 @@ EOF
         postgresql_ensure_user_has_database_privileges "${grant_flags[@]}"
     fi
 }
+
+########################
+# Validate settings in POSTGRESQL_CLIENT_* environment variables
+# Globals:
+#   POSTGRESQL_CLIENT_*
+# Arguments:
+#   None
+# Returns:
+#   None
+#########################
+postgresql_client_validate() {
+    info "Validating settings in POSTGRESQL_CLIENT_* env vars"
+    local error_code=0
+
+    # Auxiliary functions
+    print_validation_error() {
+        error "$1"
+        error_code=1
+    }
+
+    empty_password_enabled_warn() {
+        warn "You set the environment variable ALLOW_EMPTY_PASSWORD=${ALLOW_EMPTY_PASSWORD}. For safety reasons, do not use this flag in a production environment."
+    }
+    empty_password_error() {
+        print_validation_error "The $1 environment variable is empty or not set. Set the environment variable ALLOW_EMPTY_PASSWORD=yes to allow the container to be started with blank passwords. This is recommended only for development."
+    }
+
+    # Only validate environment variables if any action needs to be performed
+    local -a database_names
+    read -r -a database_names <<< "$(tr ',;' ' ' <<< "$POSTGRESQL_CLIENT_CREATE_DATABASE_NAMES")"
+    if [[ -n "$POSTGRESQL_CLIENT_CREATE_DATABASE_USERNAME" || "${#database_names[@]}" -gt 0 ]]; then
+        if is_boolean_yes "$ALLOW_EMPTY_PASSWORD"; then
+            empty_password_enabled_warn
+        else
+            if [[ -z "$POSTGRESQL_CLIENT_POSTGRES_PASSWORD" ]]; then
+                empty_password_error "POSTGRESQL_CLIENT_POSTGRES_PASSWORD"
+            fi
+            if [[ -n "$POSTGRESQL_CLIENT_CREATE_DATABASE_USERNAME" ]] && [[ -z "$POSTGRESQL_CLIENT_CREATE_DATABASE_PASSWORD" ]]; then
+                empty_password_error "POSTGRESQL_CLIENT_CREATE_DATABASE_PASSWORD"
+            fi
+        fi
+    fi
+    # When enabling extensions, the DB name must be provided
+    local -a extensions
+    read -r -a extensions <<< "$(tr ',;' ' ' <<< "$POSTGRESQL_CLIENT_CREATE_DATABASE_EXTENSIONS")"
+    if [[ "${#database_names[@]}" -le 0 && "${#extensions[@]}" -gt 0 ]]; then
+        print_validation_error "POSTGRESQL_CLIENT_CREATE_DATABASE_EXTENSIONS requires POSTGRESQL_CLIENT_CREATE_DATABASE_NAMES to be set."
+    fi
+    return "$error_code"
+}

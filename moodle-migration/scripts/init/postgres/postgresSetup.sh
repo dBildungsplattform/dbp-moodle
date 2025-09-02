@@ -12,4 +12,6 @@ set -o pipefail
 . /scripts/init/postgres/postgres-client-env.sh
 
 # Execute the main function:
+postgresql_client_validate
+
 postgresql_client_initialize
