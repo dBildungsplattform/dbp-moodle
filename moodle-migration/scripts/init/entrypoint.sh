@@ -79,52 +79,52 @@ printSystemStatus
 # Can handle new version and existing version.
 startDbpMoodleSetup
 
-MODULE=dbp info "Create php.ini with redis config"
-#This must be adjusted because we install php with apt-get and don't use the binary directly
-/bin/cp /moodleconfig/php-ini/php.ini /opt/bitnami/php/etc/conf.d/php.ini
+# MODULE=dbp info "Create php.ini with redis config"
+# #This must be adjusted because we install php with apt-get and don't use the binary directly
+# /bin/cp /moodleconfig/php-ini/php.ini /opt/bitnami/php/etc/conf.d/php.ini
 
-#This is not relevant for the dependency configuration and setup
-# if [[ ! -f "$update_failed_path" ]]; then
-#     MODULE=dbp info "Starting Moodle Update Check"
-#     if /scripts/updateCheck.sh; then
-#         MODULE=dbp info "Finished Update Check"
-#     else
-#         MODULE=dbp error "Update failed! Continuing with previously installed moodle.."
-#         setStatusFile "$update_failed_path" true
-#     fi
-# else
-#     MODULE=dbp warn "Update failed previously. Skipping update check..."
-# fi
+# #This is not relevant for the dependency configuration and setup
+# # if [[ ! -f "$update_failed_path" ]]; then
+# #     MODULE=dbp info "Starting Moodle Update Check"
+# #     if /scripts/updateCheck.sh; then
+# #         MODULE=dbp info "Finished Update Check"
+# #     else
+# #         MODULE=dbp error "Update failed! Continuing with previously installed moodle.."
+# #         setStatusFile "$update_failed_path" true
+# #     fi
+# # else
+# #     MODULE=dbp warn "Update failed previously. Skipping update check..."
+# # fi
 
-MODULE=dbp info "Start Moodle setup script after checking for proper version"
-/scripts/init/moodle/moodleSetup.sh
-/post-init.sh # https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/post-init.sh
-upgrade_if_pending
-
-MODULE=dbp info "Replacing config.php file with ours"
-/bin/cp -p /moodleconfig/config-php/config.php /tmp/config.php
-mv /tmp/config.php /bitnami/moodle/config.php
-
-if [ -f "/tmp/de.zip" ] && [ ! -d /bitnami/moodledata/lang/de ]; then \
-    MODULE=dbp info "Installing german language pack"
-    mkdir -p /bitnami/moodledata/lang
-    unzip -q /tmp/de.zip -d /bitnami/moodledata/lang
-fi
-
-# Not relevant for dependency setup
+# MODULE=dbp info "Start Moodle setup script after checking for proper version"
+# /scripts/init/moodle/moodleSetup.sh
+# /post-init.sh # https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/post-init.sh
 # upgrade_if_pending
 
-if [[ ! -f "$update_failed_path" ]] && [[ ! -f "$plugin_state_failed_path" ]]; then
-    MODULE=dbp info "Starting plugin installation"
-    if /scripts/pluginCheck.sh; then
-        MODULE=dbp info "Finished Plugin Install"
-    else
-        MODULE=dbp error "Plugin check failed! Continuing to start webserver with possibly compromised plugins"
-        setStatusFile "$plugin_state_failed_path" true
-    fi
-else
-    MODULE=dbp warn "Update or Plugin check failed previously. Skipping plugin check..."
-fi
+# MODULE=dbp info "Replacing config.php file with ours"
+# /bin/cp -p /moodleconfig/config-php/config.php /tmp/config.php
+# mv /tmp/config.php /bitnami/moodle/config.php
+
+# if [ -f "/tmp/de.zip" ] && [ ! -d /bitnami/moodledata/lang/de ]; then \
+#     MODULE=dbp info "Installing german language pack"
+#     mkdir -p /bitnami/moodledata/lang
+#     unzip -q /tmp/de.zip -d /bitnami/moodledata/lang
+# fi
+
+# # Not relevant for dependency setup
+# # upgrade_if_pending
+
+# if [[ ! -f "$update_failed_path" ]] && [[ ! -f "$plugin_state_failed_path" ]]; then
+#     MODULE=dbp info "Starting plugin installation"
+#     if /scripts/pluginCheck.sh; then
+#         MODULE=dbp info "Finished Plugin Install"
+#     else
+#         MODULE=dbp error "Plugin check failed! Continuing to start webserver with possibly compromised plugins"
+#         setStatusFile "$plugin_state_failed_path" true
+#     fi
+# else
+#     MODULE=dbp warn "Update or Plugin check failed previously. Skipping plugin check..."
+# fi
 
 # MODULE=dbp info "Finished all preparations! Starting Webserver"
 # /scripts/moodle/run.sh # This script does not exist currently, evaluate during the moodle installation
