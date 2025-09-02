@@ -66,9 +66,9 @@ upgrade_if_pending() {
 }
 
 startDbpMoodleSetup() {
-    info "Starting dbp Moodle setup"
-    /scripts/init/apache/apacheSetup.sh
-    /scripts/init/php/phpSetup.sh
+    info "Starting dbp Moodle (Postgres) setup"
+    # /scripts/init/apache/apacheSetup.sh
+    # /scripts/init/php/phpSetup.sh
     /scripts/init/postgres/postgresSetup.sh
     MODULE=dbp info "Initial Moodle setup finished"
 }
