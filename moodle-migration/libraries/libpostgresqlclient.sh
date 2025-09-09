@@ -67,59 +67,19 @@ postgresql_client_initialize() {
 # Returns:
 #   None
 postgresql_remote_execute() {
-    "postgresql_remote_execute_print_output" "$@" >/dev/null 2>&1
-}
-
-########################
-# Execute an arbitrary query/queries against a remote PostgreSQL service and print to stdout
-# Stdin:
-#   Query/queries to execute
-# Globals:
-#   DB_*
-# Arguments:
-#   $1 - Remote PostgreSQL service hostname
-#   $2 - Remote PostgreSQL service port
-#   $3 - Database where to run the queries
-#   $4 - User to run queries
-#   $5 - Password
-#   $6 - Extra options (eg. -tA)
-# Returns:
-#   None
-postgresql_remote_execute_print_output() {
     local -r hostname="${1:?hostname is required}"
     local -r port="${2:?port is required}"
-    local -a args=("-h" "$hostname" "-p" "$port")
-    shift 2
-    "postgresql_execute_print_output" "$@" "${args[@]}"
-}
-
-########################
-# Execute an arbitrary query/queries against the running PostgreSQL service and print the output
-# Stdin:
-#   Query/queries to execute
-# Globals:
-#   POSTGRESQL_*
-# Arguments:
-#   $1 - Database where to run the queries
-#   $2 - User to run queries
-#   $3 - Password
-#   $4 - Extra options (eg. -tA)
-# Returns:
-#   None
-#########################
-postgresql_execute_print_output() {
-    local -r db="${1:-}"
-    local -r user="${2:-postgres}"
-    local -r pass="${3:-}"
+    local -r db="${3:?database name is required}"
+    local -r user="${4:?username is required}"
+    local -r pass="${5:?password is required}"
+    local -a args=("-h" "$hostname" "-p" "$port" "-d" "$db" "-U" "$user")
     local opts
-    read -r -a opts <<<"${@:4}"
+    read -r -a opts <<<"${@:6}"
 
-    local args=("-U" "$user" "-p" "${POSTGRESQL_PORT_NUMBER:-5432}" "-h" "127.0.0.1")
-    [[ -n "$db" ]] && args+=("-d" "$db")
     [[ "${#opts[@]}" -gt 0 ]] && args+=("${opts[@]}")
 
     # Execute the Query/queries from stdin
-    PGPASSWORD=$pass psql "${args[@]}"
+    PGPASSWORD=$pass psql "${args[@]}" >/dev/null 2>&1
 }
 
 # from libos.sh
