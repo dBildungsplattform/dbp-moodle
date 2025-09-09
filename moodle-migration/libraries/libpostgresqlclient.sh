@@ -147,6 +147,34 @@ retry_while() {
 }
 
 ########################
+# Ensure a user has all privileges to access a database
+# Arguments:
+#   $1 - database name
+#   $2 - database user
+#   $3 - database host (optional)
+#   $4 - database port (optional)
+# Returns:
+#   None
+#########################
+postgresql_ensure_user_has_database_privileges() {
+    local -r user="${1:?user is required}"
+    local -r database="${2:?db is required}"
+    local -r db_host="${3:-}"
+    local -r db_port="${4:-}"
+
+    local -a postgresql_execute_cmd=("postgresql_execute")
+    [[ -n "$db_host" && -n "$db_port" ]] && postgresql_execute_cmd=("postgresql_remote_execute" "$db_host" "$db_port")
+    # local -a postgresql_execute_flags=("postgres" "$(get_env_var_value POSTGRES_USER)" "$(get_env_var_value POSTGRES_PASSWORD)")
+    local -a postgresql_execute_flags=("postgres" "$POSTGRESQL_CLIENT_POSTGRES_USER" "$POSTGRESQL_CLIENT_POSTGRES_PASSWORD")
+
+    debug "Providing privileges to username ${user} on database ${database}"
+    "${postgresql_execute_cmd[@]}" "${postgresql_execute_flags[@]}" <<EOF
+GRANT ALL PRIVILEGES ON DATABASE "${database}" TO "${user}";
+ALTER DATABASE "${database}" OWNER TO "${user}";
+EOF
+}
+
+########################
 # Optionally create the given database user
 # Flags:
 #   -p|--password - database password
@@ -287,9 +315,6 @@ postgresql_client_validate() {
         error_code=1
     }
 
-    empty_password_enabled_warn() {
-        warn "You set the environment variable ALLOW_EMPTY_PASSWORD=${ALLOW_EMPTY_PASSWORD}. For safety reasons, do not use this flag in a production environment."
-    }
     empty_password_error() {
         print_validation_error "The $1 environment variable is empty or not set. Set the environment variable ALLOW_EMPTY_PASSWORD=yes to allow the container to be started with blank passwords. This is recommended only for development."
     }
@@ -298,15 +323,11 @@ postgresql_client_validate() {
     local -a database_names
     read -r -a database_names <<< "$(tr ',;' ' ' <<< "$POSTGRESQL_CLIENT_CREATE_DATABASE_NAMES")"
     if [[ -n "$POSTGRESQL_CLIENT_CREATE_DATABASE_USERNAME" || "${#database_names[@]}" -gt 0 ]]; then
-        if is_boolean_yes "$ALLOW_EMPTY_PASSWORD"; then
-            empty_password_enabled_warn
-        else
-            if [[ -z "$POSTGRESQL_CLIENT_POSTGRES_PASSWORD" ]]; then
-                empty_password_error "POSTGRESQL_CLIENT_POSTGRES_PASSWORD"
-            fi
-            if [[ -n "$POSTGRESQL_CLIENT_CREATE_DATABASE_USERNAME" ]] && [[ -z "$POSTGRESQL_CLIENT_CREATE_DATABASE_PASSWORD" ]]; then
-                empty_password_error "POSTGRESQL_CLIENT_CREATE_DATABASE_PASSWORD"
-            fi
+        if [[ -z "$POSTGRESQL_CLIENT_POSTGRES_PASSWORD" ]]; then
+            empty_password_error "POSTGRESQL_CLIENT_POSTGRES_PASSWORD"
+        fi
+        if [[ -n "$POSTGRESQL_CLIENT_CREATE_DATABASE_USERNAME" ]] && [[ -z "$POSTGRESQL_CLIENT_CREATE_DATABASE_PASSWORD" ]]; then
+            empty_password_error "POSTGRESQL_CLIENT_CREATE_DATABASE_PASSWORD"
         fi
     fi
     # When enabling extensions, the DB name must be provided
