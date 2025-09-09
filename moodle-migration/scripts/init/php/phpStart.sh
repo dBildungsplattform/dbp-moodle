@@ -31,4 +31,6 @@ else
     info "php-fpm is already running"
 fi
 
+sleep 2000
+
 exit "$error_code"
