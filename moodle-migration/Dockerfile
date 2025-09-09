@@ -27,6 +27,9 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y postgresql-client-13 apache2 libapache2-mod-fcgid
 
+#Install other dependencies
+RUN apt-get install -y gettext libpq5 libedit2 libfontconfig1 libfreetype6 libglib2.0-0 libjpeg62-turbo liblcms2-2 libltdl7 libmagickcore-6.q16-6 libmagickwand-6.q16-6 libmemcached11 libpcre3 libpng16-16 libtidy5deb1 libwebp7 libxslt1.1 libzip4 libbz2-dev
+
 RUN /scripts/install/downloadMoodle.sh
 
 # Hardening
@@ -55,7 +58,14 @@ RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && \
 #     LANG="en_US.UTF-8" \
 #     LANGUAGE="en_US:en" \
 #     PATH="/opt/bitnami/common/bin:/opt/bitnami/php/bin:/opt/bitnami/php/sbin:/opt/bitnami/apache/bin:/opt/bitnami/postgresql/bin:/opt/bitnami/mysql/bin:$PATH"
+# RUN apt-get update
+# RUN apt-get install -y --no-install-recommends libcurl4-openssl-dev libfreetype6-dev libicu-dev libjpeg62-turbo-dev libldap2-dev libmariadb-dev libmemcached-dev libpng-dev libpq-dev libxml2-dev libxslt-dev uuid-dev libbz2-dev libzip-dev zlib1g-dev libgmp-dev libssl-dev libreadline-dev libsqlite3-dev libtidy-dev libjpeg-dev libwebp-dev libxpm-dev pkg-config
 
+
+RUN chmod +x /scripts/init/php/phpSetup.sh
+RUN /scripts/init/php/phpSetup.sh
+
+RUN chmod +x /scripts/init/php/phpStart.sh
 # EXPOSE 8080 8443
 
 # Install plugins to the image
@@ -66,3 +76,6 @@ RUN mkdir /plugins
 RUN chown 1001:root -R /scripts/init
 RUN chown 1001:root -R /plugins
 # ENTRYPOINT ["/scripts/init/entrypoint.sh"]
+# For testing purposes php-fpm will be started here
+# CMD ["php-fpm"]
+ENTRYPOINT ["/scripts/init/php/phpStart.sh"]
