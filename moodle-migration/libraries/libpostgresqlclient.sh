@@ -1,9 +1,9 @@
 # https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/opt/bitnami/scripts/libpostgresqlclient.sh
 
 # Load Generic Libraries
-. /opt/dbp-moodle/scripts/liblog.sh
-. /opt/dbp-moodle/scripts/libos.sh
-. /opt/dbp-moodle/scripts/libvalidations.sh
+. /scripts/liblog.sh
+. /scripts/libos.sh
+. /scripts/libvalidations.sh
 
 ########################
 # Perform actions to a database
