@@ -1,5 +1,10 @@
 # https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/opt/bitnami/scripts/libpostgresqlclient.sh
 
+# Load Generic Libraries
+. /opt/dbp-moodle/scripts/liblog.sh
+. /opt/dbp-moodle/scripts/libos.sh
+. /opt/dbp-moodle/scripts/libvalidations.sh
+
 ########################
 # Perform actions to a database
 # Globals:
@@ -80,30 +85,6 @@ postgresql_remote_execute() {
 
     # Execute the Query/queries from stdin
     PGPASSWORD=$pass psql "${args[@]}" >/dev/null 2>&1
-}
-
-# from libos.sh
-########################
-# Retries a command a given number of times
-# Arguments:
-#   $1 - cmd (as a string)
-#   $2 - max retries. Default: 12
-#   $3 - sleep between retries (in seconds). Default: 5
-# Returns:
-#   Boolean
-#########################
-retry_while() {
-    local cmd="${1:?cmd is missing}"
-    local retries="${2:-12}"
-    local sleep_time="${3:-5}"
-    local return_value=1
-
-    read -r -a command <<<"$cmd"
-    for ((i = 1; i <= retries; i += 1)); do
-        "${command[@]}" && return_value=0 && break
-        sleep "$sleep_time"
-    done
-    return $return_value
 }
 
 ########################
