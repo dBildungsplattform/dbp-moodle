@@ -57,7 +57,9 @@ apt-get autoremove -y
 apt-get clean
 rm -rf /var/lib/apt/lists/*
 
-php_initialize
+# This step copies the provided php.ini template fpr production as the default php.ini whcih can be modified later on
+cp ${PHP_CONF_DIR}/php.ini-production $PHP_CONF_FILE
+
 
 # Fix logging issue when running as root
 ! am_i_root || chmod o+w "$(readlink /dev/stdout)" "$(readlink /dev/stderr)"

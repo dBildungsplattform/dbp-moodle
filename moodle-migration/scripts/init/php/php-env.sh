@@ -41,7 +41,7 @@ unset php_env_vars
 
 # PHP configuration paths (official image layout)
 export PHP_CONF_DIR="${ROOT_DIR}/php"
-export PHP_CONF_FILE="${PHP_CONF_DIR}/php.ini-production"
+export PHP_CONF_FILE="${PHP_CONF_DIR}/php.ini"
 export PHP_INI_SCAN_DIR="${PHP_CONF_DIR}/conf.d"
 export PHP_BIN_DIR="/usr/local/bin"
 export PHP_SBIN_DIR="/usr/local/sbin"
@@ -70,7 +70,7 @@ export PHP_MAX_EXECUTION_TIME="${PHP_MAX_EXECUTION_TIME:-300}"
 export PHP_MAX_INPUT_TIME="${PHP_MAX_INPUT_TIME:-60}"
 export PHP_MAX_INPUT_VARS="${PHP_MAX_INPUT_VARS:-1000}"
 export PHP_MEMORY_LIMIT="${PHP_MEMORY_LIMIT:-256M}"
-export PHP_POST_MAX_SIZE="${PHP_POST_MAX_SIZE:-32M}"
+export PHP_POST_MAX_SIZE="${PHP_POST_MAX_SIZE:-33M}"
 export PHP_UPLOAD_MAX_FILESIZE="${PHP_UPLOAD_MAX_FILESIZE:-32M}"
 export PHP_OUTPUT_BUFFERING="8196"
 
