@@ -63,9 +63,6 @@ RUN mkdir /plugins
 # && /downloadPlugins.sh
 
 #Der vorherige Ordner, wo die Bitnami Skripte abgelegt sind
-# RUN chown 1001:root -R /scripts/init
-# RUN chown 1001:root -R /plugins
-RUN find /scripts/init -type f -exec chmod +x {} \;
-RUN ls -l /scripts/init/
-
-ENTRYPOINT ["/scripts/init/entrypoint.sh"]
+RUN chown 1001:root -R /scripts/init
+RUN chown 1001:root -R /plugins
+# ENTRYPOINT ["/scripts/init/entrypoint.sh"]
