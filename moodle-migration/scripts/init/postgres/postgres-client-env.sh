@@ -50,11 +50,6 @@ for env_var in "${postgresql_client_env_vars[@]}"; do
 done
 unset postgresql_client_env_vars
 
-# Paths
-export POSTGRESQL_BASE_DIR="/opt/bitnami/postgresql"
-export POSTGRESQL_BIN_DIR="$POSTGRESQL_BASE_DIR/bin"
-export PATH="${POSTGRESQL_BIN_DIR}:${PATH}"
-
 # PostgreSQL settings
 export ALLOW_EMPTY_PASSWORD="${ALLOW_EMPTY_PASSWORD:-no}"
 POSTGRESQL_CLIENT_DATABASE_HOST="${POSTGRESQL_CLIENT_DATABASE_HOST:-"${POSTGRESQL_HOST:-}"}"
