@@ -6,8 +6,6 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-. /scripts/liblog.sh    # TODO should work by importing into the entrypoint, but seems to have some issues?
-
 . /scripts/libpostgresqlclient.sh
 
 # Load PostgreSQL Client environment variables
