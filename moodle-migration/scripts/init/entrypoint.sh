@@ -10,8 +10,8 @@ set -o nounset
 . /scripts/init/moodle/moodle-env.sh
 
 # Load libraries
-. /scripts/liblog.sh  #Diese werden wir wahrscheinlich übernehmen
-. /scripts/libwebserver.sh # Prüfen ob und was notwendig ist
+. /scripts/liblog.sh
+. /scripts/libwebserver.sh
 
 moodle_path="/dbp-moodle/moodle"
 moodle_backup_path="/dbp-moodle/moodledata/moodle-backup" # Das Backup script muss bezüglich der Pfade angepasst werden
@@ -67,21 +67,21 @@ upgrade_if_pending() {
 
 startDbpMoodleSetup() {
     info "Starting dbp Moodle setup"
-    /scripts/init/apache/apacheSetup.sh
+    # /scripts/init/apache/apacheSetup.sh
     /scripts/init/php/phpSetup.sh
     /scripts/init/postgres/postgresSetup.sh
     MODULE=dbp info "Initial Moodle setup finished"
 }
 
 MODULE=dbp info "Starting Moodle"
-printSystemStatus
+# printSystemStatus
 
 # Can handle new version and existing version.
 startDbpMoodleSetup
 
-MODULE=dbp info "Create php.ini with redis config"
+# MODULE=dbp info "Create php.ini with redis config"
 #This must be adjusted because we install php with apt-get and don't use the binary directly
-/bin/cp /moodleconfig/php-ini/php.ini /opt/bitnami/php/etc/conf.d/php.ini
+# /bin/cp /moodleconfig/php-ini/php.ini /opt/bitnami/php/etc/conf.d/php.ini
 
 #This is not relevant for the dependency configuration and setup
 # if [[ ! -f "$update_failed_path" ]]; then
@@ -96,35 +96,37 @@ MODULE=dbp info "Create php.ini with redis config"
 #     MODULE=dbp warn "Update failed previously. Skipping update check..."
 # fi
 
-MODULE=dbp info "Start Moodle setup script after checking for proper version"
-/scripts/init/moodle/moodleSetup.sh
-/post-init.sh # https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/post-init.sh
-upgrade_if_pending
-
-MODULE=dbp info "Replacing config.php file with ours"
-/bin/cp -p /moodleconfig/config-php/config.php /tmp/config.php
-mv /tmp/config.php /bitnami/moodle/config.php
-
-if [ -f "/tmp/de.zip" ] && [ ! -d /bitnami/moodledata/lang/de ]; then \
-    MODULE=dbp info "Installing german language pack"
-    mkdir -p /bitnami/moodledata/lang
-    unzip -q /tmp/de.zip -d /bitnami/moodledata/lang
-fi
-
-# Not relevant for dependency setup
+# MODULE=dbp info "Start Moodle setup script after checking for proper version"
+# /scripts/init/moodle/moodleSetup.sh
+# /post-init.sh # https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/post-init.sh
 # upgrade_if_pending
 
-if [[ ! -f "$update_failed_path" ]] && [[ ! -f "$plugin_state_failed_path" ]]; then
-    MODULE=dbp info "Starting plugin installation"
-    if /scripts/pluginCheck.sh; then
-        MODULE=dbp info "Finished Plugin Install"
-    else
-        MODULE=dbp error "Plugin check failed! Continuing to start webserver with possibly compromised plugins"
-        setStatusFile "$plugin_state_failed_path" true
-    fi
-else
-    MODULE=dbp warn "Update or Plugin check failed previously. Skipping plugin check..."
-fi
+# MODULE=dbp info "Replacing config.php file with ours"
+# /bin/cp -p /moodleconfig/config-php/config.php /tmp/config.php
+# mv /tmp/config.php /dbp-moodle/moodle/config.php
+
+# if [ -f "/tmp/de.zip" ] && [ ! -d /bitnami/moodledata/lang/de ]; then \
+#     MODULE=dbp info "Installing german language pack"
+#     mkdir -p /dbp-moodle/moodledata/lang
+#     unzip -q /tmp/de.zip -d /dbp-moodle/moodledata/lang
+# fi
+
+# upgrade_if_pending
+
+# if [[ ! -f "$update_failed_path" ]] && [[ ! -f "$plugin_state_failed_path" ]]; then
+#     MODULE=dbp info "Starting plugin installation"
+#     if /scripts/pluginCheck.sh; then
+#         MODULE=dbp info "Finished Plugin Install"
+#     else
+#         MODULE=dbp error "Plugin check failed! Continuing to start webserver with possibly compromised plugins"
+#         setStatusFile "$plugin_state_failed_path" true
+#     fi
+# else
+#     MODULE=dbp warn "Update or Plugin check failed previously. Skipping plugin check..."
+# fi
 
 # MODULE=dbp info "Finished all preparations! Starting Webserver"
 # /scripts/moodle/run.sh # This script does not exist currently, evaluate during the moodle installation
+
+# SLeep for testing purposes
+sleep 2000
