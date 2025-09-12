@@ -128,5 +128,5 @@ startDbpMoodleSetup
 # MODULE=dbp info "Finished all preparations! Starting Webserver"
 # /scripts/moodle/run.sh # This script does not exist currently, evaluate during the moodle installation
 
-# SLeep for testing purposes
+# Sleep for testing purposes
 sleep 2000
