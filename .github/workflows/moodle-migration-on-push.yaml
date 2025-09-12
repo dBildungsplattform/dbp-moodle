@@ -2,7 +2,7 @@ name: Build moodle migration development image
 on:
   push:
     branches:
-      - DBP-DBP-1671-install-apache-in-image
+      - DBP-1671-install-apache-in-image
 
 jobs:
   build_image_on_push:

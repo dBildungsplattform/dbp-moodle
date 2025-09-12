@@ -129,4 +129,4 @@ startDbpMoodleSetup
 # /scripts/moodle/run.sh # This script does not exist currently, evaluate during the moodle installation
 
 # Sleep for testing purposes
-sleep 3000
+sleep 2000
