@@ -72,7 +72,9 @@ RUN /scripts/init/php/phpInstall.sh
 RUN mkdir /plugins 
 # && /downloadPlugins.sh
 
-RUN chown 1001:root -R /scripts/init
-RUN chown 1001:root -R /plugins
+# RUN chown 1001:root -R /scripts/init
+# RUN chown 1001:root -R /plugins
+RUN find /scripts/init -type f -exec chmod +x {} \;
+
 
 ENTRYPOINT ["/scripts/init/entrypoint.sh"]
