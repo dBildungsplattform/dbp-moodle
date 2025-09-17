@@ -48,7 +48,9 @@ RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && \
 # RUN chmod +x /scripts/install/generate-locales.sh && \
 #     /scripts/install/generate-locales.sh
 
-# RUN /opt/bitnami/scripts/apache/postunpack.sh
+COPY scripts/init/apache/httpd.conf /etc/apache2/apache2.conf
+RUN chmod +x /scripts/init/apache/postunpack.sh
+RUN /scripts/init/apache/postunpack.sh
 # RUN /opt/bitnami/scripts/php/postunpack.sh
 # RUN /opt/bitnami/scripts/apache-modphp/postunpack.sh
 # RUN /opt/bitnami/scripts/moodle/postunpack.sh
