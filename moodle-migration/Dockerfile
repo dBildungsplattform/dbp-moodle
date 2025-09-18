@@ -57,7 +57,7 @@ RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && \
 # RUN chmod +x /scripts/install/generate-locales.sh && \
 #     /scripts/install/generate-locales.sh
 
-COPY scripts/init/apache/httpd.conf /etc/apache2/apache2.conf
+COPY /scripts/init/apache/httpd.conf /etc/apache2/apache2.conf
 RUN chmod +x /scripts/init/apache/postunpack.sh
 RUN /scripts/init/apache/postunpack.sh
 # RUN /opt/bitnami/scripts/php/postunpack.sh
@@ -75,7 +75,7 @@ RUN /scripts/init/apache/postunpack.sh
 
 # Php configuration and installation
 RUN chmod +x /scripts/init/php/phpInstall.sh
-RUN /scripts/init/php/phpInstall.sh
+# RUN /scripts/init/php/phpInstall.sh
 
 # EXPOSE 8080 8443
 
