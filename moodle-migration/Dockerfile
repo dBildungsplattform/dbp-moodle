@@ -78,7 +78,7 @@ RUN /scripts/init/apache/postunpack.sh
 
 # Php configuration and installation
 RUN chmod +x /scripts/init/php/phpInstall.sh
-# RUN /scripts/init/php/phpInstall.sh
+RUN /scripts/init/php/phpInstall.sh
 
 # EXPOSE 8080 8443
 
@@ -86,9 +86,8 @@ RUN chmod +x /scripts/init/php/phpInstall.sh
 RUN mkdir /plugins 
 # && /downloadPlugins.sh
 
-# RUN chown 1001:root -R /scripts/init
-# RUN chown 1001:root -R /plugins
-RUN find /scripts/init -type f -exec chmod +x {} \;
+RUN chown 1001:root -R /scripts/init
+RUN chown 1001:root -R /plugins
 
 
 ENTRYPOINT ["/scripts/init/entrypoint.sh"]
