@@ -8,6 +8,8 @@ USER root
 ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.5.4"}
 ARG MOODLE_PATH="/dbp-moodle/moodle"
 ARG EXTRA_LOCALES="de_DE.UTF-8"
+ARG APACHE_VERSION=${APACHE_VERSION:-"2.4.57"}
+ARG APACHE_DOWNLOAD_URL="https://snapshot.debian.org/archive/debian/20230408T145143Z/pool/main/a/apache2"
 
 ARG WITH_ALL_LOCALES="no"
 RUN mkdir /dbp-moodle
@@ -25,7 +27,17 @@ RUN apt-get update && \
     curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     apt-get update && \
-    apt-get install -y postgresql-client-13 apache2 libapache2-mod-fcgid
+    apt-get install -y postgresql-client-13
+
+# Install apache2 and its dependencies
+RUN apt-get install -y libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-ldap libexpat1 liblua5.3-0 media-types procps && \
+    curl -LO ${APACHE_DOWNLOAD_URL}/apache2-bin_${APACHE_VERSION}-1_amd64.deb && \
+    curl -LO ${APACHE_DOWNLOAD_URL}/apache2-data_${APACHE_VERSION}-1_all.deb && \
+    curl -LO ${APACHE_DOWNLOAD_URL}/apache2-utils_${APACHE_VERSION}-1_amd64.deb && \
+    curl -LO ${APACHE_DOWNLOAD_URL}/apache2_${APACHE_VERSION}-1_amd64.deb && \
+    dpkg -i *.deb && \
+    apt-get install -y libapache2-mod-fcgid && \
+    rm *.deb
 
 #Install other dependencies
 RUN apt-get install -y gettext libpq5 libedit2 libfontconfig1 libfreetype6 libglib2.0-0 libjpeg62-turbo liblcms2-2 libltdl7 libmagickcore-6.q16-6 libmagickwand-6.q16-6 libmemcached11 libpcre3 libpng16-16 libtidy5deb1 libwebp7 libxslt1.1 libzip4 libbz2-dev
@@ -48,7 +60,9 @@ RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && \
 # RUN chmod +x /scripts/install/generate-locales.sh && \
 #     /scripts/install/generate-locales.sh
 
-# RUN /opt/bitnami/scripts/apache/postunpack.sh
+COPY /scripts/init/apache/httpd.conf /etc/apache2/apache2.conf
+RUN chmod +x /scripts/init/apache/apacheInstall.sh
+RUN /scripts/init/apache/apacheInstall.sh
 # RUN /opt/bitnami/scripts/php/postunpack.sh
 # RUN /opt/bitnami/scripts/apache-modphp/postunpack.sh
 # RUN /opt/bitnami/scripts/moodle/postunpack.sh
@@ -74,5 +88,6 @@ RUN mkdir /plugins
 
 RUN chown 1001:root -R /scripts/init
 RUN chown 1001:root -R /plugins
+
 
 ENTRYPOINT ["/scripts/init/entrypoint.sh"]

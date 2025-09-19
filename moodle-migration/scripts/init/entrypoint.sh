@@ -130,3 +130,4 @@ startDbpMoodleSetup
 
 # Sleep for testing purposes
 sleep 2000
+# apache2ctl -D FOREGROUND
