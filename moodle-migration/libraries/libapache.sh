@@ -280,7 +280,7 @@ apache_replace_htaccess_files() {
     local -r app="${1:?missing app}"
     local -r result_file="${APACHE_HTACCESS_DIR}/${app}-htaccess.conf"
     # Default options
-    local document_root="${BITNAMI_ROOT_DIR}/${app}"
+    local document_root="${ROOT_DIR}/${app}"
     local overwrite="yes"
     local -a htaccess_files
     local htaccess_dir
@@ -370,6 +370,8 @@ EOF
 #   true if the configuration was enabled, false otherwise
 ########################
 ensure_apache_app_configuration_exists() {
+    echo "ensure_apache_app_configuration_exists in method. Printing all args"
+    echo "$@"
     local -r app="${1:?missing app}"
     # Default options
     local type=""
@@ -387,7 +389,7 @@ ensure_apache_app_configuration_exists() {
     export additional_https_configuration=""
     export before_vhost_configuration=""
     export allow_override="All"
-    export document_root="${BITNAMI_ROOT_DIR}/${app}"
+    export document_root="${ROOT_DIR}/${app}"
     export extra_directory_configuration=""
     export default_http_port="${APACHE_HTTP_PORT_NUMBER:-"$APACHE_DEFAULT_HTTP_PORT_NUMBER"}"
     export default_https_port="${APACHE_HTTPS_PORT_NUMBER:-"$APACHE_DEFAULT_HTTPS_PORT_NUMBER"}"
@@ -506,7 +508,7 @@ EOF
     # We remove lines that are empty or contain only newspaces with 'sed', so the resulting file looks better
     local template_name="app"
     [[ -n "$type" && "$type" != "php" ]] && template_name="app-${type}"
-    local -r template_dir="${BITNAMI_ROOT_DIR}/scripts/apache/bitnami-templates"
+    local -r template_dir="/scripts/init/apache/templates"
     local http_vhost="${APACHE_VHOSTS_DIR}/${app}-vhost.conf"
     local https_vhost="${APACHE_VHOSTS_DIR}/${app}-https-vhost.conf"
     local -r disable_suffix=".disabled"
@@ -572,6 +574,7 @@ ensure_apache_app_configuration_not_exists() {
 #   true if the configuration was enabled, false otherwise
 ########################
 ensure_apache_prefix_configuration_exists() {
+    echo "ensure_apache_prefix_configuration_exists"
     local -r app="${1:?missing app}"
     # Default options
     local type=""
@@ -581,7 +584,7 @@ ensure_apache_prefix_configuration_exists() {
     # Template variables defaults
     export additional_configuration=""
     export allow_override="All"
-    export document_root="${BITNAMI_ROOT_DIR}/${app}"
+    export document_root="${ROOT_DIR}/${app}"
     export extra_directory_configuration=""
     # Validate arguments
     local var_name
@@ -642,7 +645,7 @@ EOF
     # We remove lines that are empty or contain only newspaces with 'sed', so the resulting file looks better
     local template_name="app"
     [[ -n "$type" && "$type" != "php" ]] && template_name="app-${type}"
-    local -r template_dir="${BITNAMI_ROOT_DIR}/scripts/apache/bitnami-templates"
+    local -r template_dir="${ROOT_DIR}/scripts/apache/bitnami-templates"
     local -r prefix_file="${APACHE_CONF_DIR}/bitnami/${app}.conf"
     if is_file_writable "$prefix_file"; then
         # Create file with root group write privileges, so it can be modified in non-root containers

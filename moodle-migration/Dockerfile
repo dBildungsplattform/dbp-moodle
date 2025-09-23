@@ -61,8 +61,10 @@ RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && \
 #     /scripts/install/generate-locales.sh
 
 COPY /scripts/init/apache/httpd.conf /etc/apache2/apache2.conf
-RUN chmod +x /scripts/init/apache/postunpack.sh
-RUN /scripts/init/apache/postunpack.sh
+# COPY /scripts/init/apache/templates/bitnami /etc/apache2/apache2.conf
+
+RUN chmod +x /scripts/init/apache/apacheInstall.sh
+RUN /scripts/init/apache/apacheInstall.sh
 # RUN /opt/bitnami/scripts/php/postunpack.sh
 # RUN /opt/bitnami/scripts/apache-modphp/postunpack.sh
 # RUN /opt/bitnami/scripts/moodle/postunpack.sh
@@ -86,8 +88,9 @@ RUN /scripts/init/php/phpInstall.sh
 RUN mkdir /plugins 
 # && /downloadPlugins.sh
 
-RUN chown 1001:root -R /scripts/init
-RUN chown 1001:root -R /plugins
+# RUN chown 1001:root -R /scripts/init
+# RUN chown 1001:root -R /plugins
+RUN find /scripts/init -type f -exec chmod +x {} \;
 
 
 ENTRYPOINT ["/scripts/init/entrypoint.sh"]

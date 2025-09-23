@@ -17,20 +17,8 @@ set -o pipefail
 # Load Apache environment
 . /scripts/init/apache/apache-env.sh
 
-########################
-# Sets up the default Bitnami configuration
-# Globals:
-#   APACHE_*
-# Arguments:
-#   None
-# Returns:
-#   None
-#########################
 apache_setup_bitnami_config() {
-    local template_dir="${ROOT_DIR}/scripts/apache/templates"
-
-    # just for development
-    cat "$APACHE_CONF_FILE"
+    local template_dir="/scripts/init/apache/templates"
 
     # Enable Apache modules
     local -a modules_to_enable=(
@@ -42,11 +30,9 @@ apache_setup_bitnami_config() {
         "socache_shmcb_module"
         "ssl_module"
         "status_module"
-        "version_module"
     )
     for module in "${modules_to_enable[@]}"; do
         apache_enable_module "$module"
-        # echo "Would enable $module"
     done
 
     # Disable Apache modules
@@ -60,10 +46,13 @@ apache_setup_bitnami_config() {
         apache_disable_module "$module"
     done
 
-    # Default vhost for testing purpose
-    ensure_dir_exists "${APACHE_CONF_DIR}/test"
-    # render-template "${template_dir}/bitnami.conf.tpl" > "${APACHE_CONF_DIR}/test/test.conf"
-    # render-template "${template_dir}/bitnami-ssl.conf.tpl" > "${APACHE_CONF_DIR}/test/test-ssl.conf"
+    # Default vhost as fallback
+    ensure_dir_exists "${APACHE_VHOSTS_DIR}"
+    envsubst < "${template_dir}/default.conf.tpl" > "${APACHE_VHOSTS_DIR}/default.conf"
+    # envsubst < "${template_dir}/bitnami-ssl.conf.tpl" > "${APACHE_VHOSTS_DIR}/default-ssl.conf"
+    ensure_dir_exists "${APACHE_BASE_DIR}/htdocs"
+    echo "works!" > "${APACHE_BASE_DIR}/htdocs/index.html"
+    chmod 644 "${APACHE_BASE_DIR}/htdocs/index.html"
 
     # Add new configuration only once, to avoid a second postunpack run breaking Apache
     local apache_conf_add
@@ -72,9 +61,10 @@ PidFile "${APACHE_PID_FILE}"
 TraceEnable Off
 ServerTokens ${APACHE_SERVER_TOKENS}
 IncludeOptional "${APACHE_CONF_DIR}/*.conf"
-IncludeOptional "${APACHE_VHOSTS_DIR}/*.conf"
 IncludeOptional "${APACHE_BASE_DIR}/mods-enabled/*.load"
 IncludeOptional "${APACHE_BASE_DIR}/mods-enabled/*.conf"
+IncludeOptional "${APACHE_BASE_DIR}/sites-enabled/*.conf"
+IncludeOptional "${APACHE_VHOSTS_DIR}/*.conf"
 EOF
 )"
     ensure_apache_configuration_exists "$apache_conf_add" "TraceEnable Off" # "${APACHE_CONF_DIR}/test/test.conf"
