@@ -39,6 +39,10 @@ RUN apt-get install -y libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-l
     apt-get install -y libapache2-mod-fcgid && \
     rm *.deb
 
+# https://www.debacher.de/wiki/Verschiedene_PHP-Versionen_f%C3%BCr_Apache
+# we need php_module for apache (either via a2enmod, or LoadModule)
+# Since we use php 8.1 we cant simply do an install libapache2-mod-php, but need libapache2-mod-php8.1
+
 #Install other dependencies
 RUN apt-get install -y gettext libpq5 libedit2 libfontconfig1 libfreetype6 libglib2.0-0 libjpeg62-turbo liblcms2-2 libltdl7 libmagickcore-6.q16-6 libmagickwand-6.q16-6 libmemcached11 libpcre3 libpng16-16 libtidy5deb1 libwebp7 libxslt1.1 libzip4 libbz2-dev
 

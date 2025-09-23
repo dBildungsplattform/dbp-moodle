@@ -17,9 +17,13 @@ set -o pipefail
 # Load Apache environment
 . /scripts/init/apache/apache-env.sh
 
-apache_setup_bitnami_config() {
+apache_setup_config() {
     local template_dir="/scripts/init/apache/templates"
 
+    # Disable modules which are shipped with the default apache installation and are not configured via LoadModule in the root config.
+    a2dismod mpm_event
+    a2enmod mpm_prefork_module
+    
     # Enable Apache modules
     local -a modules_to_enable=(
         "deflate_module"
@@ -30,6 +34,7 @@ apache_setup_bitnami_config() {
         "socache_shmcb_module"
         "ssl_module"
         "status_module"
+        "mpm_prefork_module"
     )
     for module in "${modules_to_enable[@]}"; do
         apache_enable_module "$module"
@@ -73,34 +78,11 @@ EOF
     apache_configure_http_port "$APACHE_DEFAULT_HTTP_PORT_NUMBER"
     apache_configure_https_port "$APACHE_DEFAULT_HTTPS_PORT_NUMBER"
 
-    # Patch the HTTPoxy vulnerability - see: https://docs.bitnami.com/general/security/security-2016-07-18/
-    apache_patch_httpoxy_vulnerability
-
     # Remove unnecessary directories that come with the tarball
     rm -rf "${ROOT_DIR}/certs" "${ROOT_DIR}/conf"
 }
 
-########################
-# Patches the HTTPoxy vulnerability - see: https://docs.bitnami.com/general/security/security-2016-07-18/
-# Globals:
-#   APACHE_CONF_FILE
-# Arguments:
-#   None
-# Returns:
-#   None
-#########################
-apache_patch_httpoxy_vulnerability() {
-    # Apache HTTPD includes the HTTPoxy fix since 2016, so we only add it if not present
-    if ! grep -q "RequestHeader unset Proxy" "$APACHE_CONF_FILE"; then
-        cat >>"$APACHE_CONF_FILE" <<EOF
-<IfModule mod_headers.c>
-  RequestHeader unset Proxy
-</IfModule>
-EOF
-    fi
-}
-
-apache_setup_bitnami_config
+apache_setup_config
 
 # Ensure non-root user has write permissions on a set of directories
 chmod g+w "$APACHE_BASE_DIR"
@@ -120,7 +102,3 @@ ln -sf "/dev/stderr" "${APACHE_LOGS_DIR}/error_log"
 # Source: https://stackoverflow.com/questions/94445/using-openssl-what-does-unable-to-write-random-state-mean
 
 touch /.rnd && chmod g+rw /.rnd
-
-# Copy all initially generated configuration files to the default directory
-# (this is to avoid breaking when entrypoint is being overridden)
-# cp -r "$APACHE_CONF_DIR"/* "$APACHE_DEFAULT_CONF_DIR"
