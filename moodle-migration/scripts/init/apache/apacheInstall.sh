@@ -19,10 +19,6 @@ set -o pipefail
 
 apache_setup_config() {
     local template_dir="/scripts/init/apache/templates"
-
-    # Disable modules which are shipped with the default apache installation and are not configured via LoadModule in the root config.
-    a2dismod mpm_event
-    a2enmod mpm_prefork_module
     
     # Enable Apache modules
     local -a modules_to_enable=(
@@ -34,7 +30,6 @@ apache_setup_config() {
         "socache_shmcb_module"
         "ssl_module"
         "status_module"
-        "mpm_prefork_module"
     )
     for module in "${modules_to_enable[@]}"; do
         apache_enable_module "$module"
@@ -56,8 +51,9 @@ apache_setup_config() {
     envsubst < "${template_dir}/default.conf.tpl" > "${APACHE_VHOSTS_DIR}/default.conf"
     # envsubst < "${template_dir}/bitnami-ssl.conf.tpl" > "${APACHE_VHOSTS_DIR}/default-ssl.conf"
     ensure_dir_exists "${APACHE_BASE_DIR}/htdocs"
-    echo "works!" > "${APACHE_BASE_DIR}/htdocs/index.html"
-    chmod 644 "${APACHE_BASE_DIR}/htdocs/index.html"
+    echo "<?php echo "Hello World!"; ?>" > "${APACHE_BASE_DIR}/htdocs/index.php"
+    # echo "works!" > "${APACHE_BASE_DIR}/htdocs/index.html"
+    chmod 644 "${APACHE_BASE_DIR}/htdocs/index.php"
 
     # Add new configuration only once, to avoid a second postunpack run breaking Apache
     local apache_conf_add
@@ -82,7 +78,17 @@ EOF
     rm -rf "${ROOT_DIR}/certs" "${ROOT_DIR}/conf"
 }
 
+apache_setup_php_config() {
+    apache_php_conf_file="${APACHE_CONF_DIR}/php.conf"
+    cat > "$apache_php_conf_file" <<EOF
+AddType application/x-httpd-php .php
+DirectoryIndex index.html index.htm index.php
+EOF
+    ensure_apache_configuration_exists "Include \"${apache_php_conf_file}\""
+}
+
 apache_setup_config
+apache_setup_php_config
 
 # Ensure non-root user has write permissions on a set of directories
 chmod g+w "$APACHE_BASE_DIR"
