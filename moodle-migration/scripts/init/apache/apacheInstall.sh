@@ -51,7 +51,7 @@ apache_setup_config() {
     envsubst < "${template_dir}/default.conf.tpl" > "${APACHE_VHOSTS_DIR}/default.conf"
     # envsubst < "${template_dir}/bitnami-ssl.conf.tpl" > "${APACHE_VHOSTS_DIR}/default-ssl.conf"
     ensure_dir_exists "${APACHE_BASE_DIR}/htdocs"
-    echo "<?php echo "Hello World!"; ?>" > "${APACHE_BASE_DIR}/htdocs/index.php"
+    echo '<?php echo "Hello World!";' > "${APACHE_BASE_DIR}/htdocs/index.php"
     # echo "works!" > "${APACHE_BASE_DIR}/htdocs/index.html"
     chmod 644 "${APACHE_BASE_DIR}/htdocs/index.php"
 
