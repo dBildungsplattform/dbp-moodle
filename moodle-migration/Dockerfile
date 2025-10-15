@@ -25,8 +25,9 @@ COPY libraries /scripts
 RUN apt-get update && \
     apt-get install -y wget gpg curl acl gnupg jq ca-certificates cron locales && \
     curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
-    apt-get update && \
+    echo "deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list
+
+RUN apt-get update && \
     apt-get install -y postgresql-client-13
 
 # Install apache2 and its dependencies
@@ -61,6 +62,7 @@ RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && \
 #     /scripts/install/generate-locales.sh
 
 COPY /scripts/init/apache/httpd.conf /etc/apache2/apache2.conf
+
 RUN chmod +x /scripts/init/apache/apacheInstall.sh
 RUN /scripts/init/apache/apacheInstall.sh
 # RUN /opt/bitnami/scripts/php/postunpack.sh

@@ -46,17 +46,14 @@ export WEB_SERVER_TYPE="apache"
 
 # Paths
 export APACHE_BASE_DIR="${ROOT_DIR}/apache2"
-export APACHE_CONF_DIR="${APACHE_BASE_DIR}/conf-enabled"      # TODO Discuss whether we actually need this abstraction of default and used configs. Files are copied from Default conf-dir to conf-dir in the entrypoint. Also in the default apache logic symlinks are used and bitnami uses copy instead.
+export APACHE_CONF_DIR="${APACHE_BASE_DIR}/conf-enabled"
 export APACHE_DEFAULT_CONF_DIR="${APACHE_BASE_DIR}/conf-available"
-export APACHE_VHOSTS_DIR="${APACHE_CONF_DIR}/vhosts"
+export APACHE_VHOSTS_DIR="${APACHE_BASE_DIR}/vhosts"
 export APACHE_CONF_FILE="${APACHE_BASE_DIR}/apache2.conf"
 
-
-# export APACHE_HTDOCS_DIR="${APACHE_BASE_DIR}/htdocs" -> Removed, only contains "it works" index.html
-# export APACHE_TMP_DIR="${APACHE_BASE_DIR}/var/run" -> Removed, contains only pid file anyways
-export APACHE_LOGS_DIR="${APACHE_BASE_DIR}/logs" # from bitnami 
-export APACHE_LOG_DIR="${APACHE_BASE_DIR}/logs" # from default apache
-# export APACHE_HTACCESS_DIR="${APACHE_VHOSTS_DIR}/htaccess" -> Removed, empty anyways
+export APACHE_LOGS_DIR="${APACHE_BASE_DIR}/logs"
+export APACHE_LOG_DIR="${APACHE_BASE_DIR}/logs"
+export APACHE_HTACCESS_DIR="${APACHE_VHOSTS_DIR}/htaccess" 
 export APACHE_PID_FILE="${APACHE_BASE_DIR}/httpd.pid"  # pid id file is needed for other services to reliably identify the apache service
 
 # System users (when running with a privileged user)
