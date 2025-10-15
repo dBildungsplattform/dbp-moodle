@@ -223,19 +223,20 @@ main() {
     done
 
     # Uninstall certain standard plugins which are not in use. Whether any plugins are uninstall depends on the content of moodle-plugins config map.
-    for plugin in $MOODLE_PLUGINS_SYS_UNINSTALL; do
-        IFS=':' read -r -a parts <<< "$plugin"
-        plugin_name="${parts[0]}"
-        plugin_fullname="${parts[1]}"
-        plugin_path="${parts[2]}"
-        plugin_uninstall="${parts[3]}"
+    # Currently not in use but can just be commented in when required.
+    # for plugin in $MOODLE_PLUGINS_SYS_UNINSTALL; do
+    #     IFS=':' read -r -a parts <<< "$plugin"
+    #     plugin_name="${parts[0]}"
+    #     plugin_fullname="${parts[1]}"
+    #     plugin_path="${parts[2]}"
+    #     plugin_uninstall="${parts[3]}"
 
-        if [ "$plugin_uninstall" = true ]; then
-            uninstall_plugin "$plugin_fullname" "$plugin_path"
-            MODULE="dbp-plugins" info "Uninstalling plugin ${plugin_name} (${plugin_fullname}) from path \"${plugin_path}\""
-            anychange=true
-        fi
-    done
+    #     if [ "$plugin_uninstall" = true ]; then
+    #         uninstall_plugin "$plugin_fullname" "$plugin_path"
+    #         MODULE="dbp-plugins" info "Uninstalling plugin ${plugin_name} (${plugin_fullname}) from path \"${plugin_path}\""
+    #         anychange=true
+    #     fi
+    # done
     
     
     if [ "$anychange" = true ]; then
