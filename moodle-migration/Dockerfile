@@ -27,11 +27,6 @@ RUN apt-get update && \
     curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list
 
-
-# TODO only a temporary fix, which helps with zscaler issues sometimes when building locally
-# RUN echo 'Acquire::https::Verify-Peer "false"; Acquire::https::Verify-Host "false";' > /etc/apt/apt.conf.d/99insecure
-
-
 RUN apt-get update && \
     apt-get install -y postgresql-client-13
 
@@ -67,7 +62,6 @@ RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && \
 #     /scripts/install/generate-locales.sh
 
 COPY /scripts/init/apache/httpd.conf /etc/apache2/apache2.conf
-# COPY /scripts/init/apache/templates/bitnami /etc/apache2/apache2.conf
 
 RUN chmod +x /scripts/init/apache/apacheInstall.sh
 RUN /scripts/init/apache/apacheInstall.sh
@@ -94,9 +88,8 @@ RUN /scripts/init/php/phpInstall.sh
 RUN mkdir /plugins 
 # && /downloadPlugins.sh
 
-# RUN chown 1001:root -R /scripts/init
-# RUN chown 1001:root -R /plugins
-RUN find /scripts/init -type f -exec chmod +x {} \;
+RUN chown 1001:root -R /scripts/init
+RUN chown 1001:root -R /plugins
 
 
 ENTRYPOINT ["/scripts/init/entrypoint.sh"]

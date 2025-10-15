@@ -370,8 +370,6 @@ EOF
 #   true if the configuration was enabled, false otherwise
 ########################
 ensure_apache_app_configuration_exists() {
-    echo "ensure_apache_app_configuration_exists in method. Printing all args"
-    echo "$@"
     local -r app="${1:?missing app}"
     # Default options
     local type=""
@@ -574,7 +572,6 @@ ensure_apache_app_configuration_not_exists() {
 #   true if the configuration was enabled, false otherwise
 ########################
 ensure_apache_prefix_configuration_exists() {
-    echo "ensure_apache_prefix_configuration_exists"
     local -r app="${1:?missing app}"
     # Default options
     local type=""
