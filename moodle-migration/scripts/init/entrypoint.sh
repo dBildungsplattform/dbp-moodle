@@ -96,10 +96,10 @@ startDbpMoodleSetup
 #     MODULE=dbp warn "Update failed previously. Skipping update check..."
 # fi
 
-# MODULE=dbp info "Start Moodle setup script after checking for proper version"
-# /scripts/init/moodle/moodleSetup.sh
-# /post-init.sh # https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/post-init.sh
-# upgrade_if_pending
+MODULE=dbp info "Start Moodle setup script after checking for proper version"
+/scripts/init/moodle/moodleSetup.sh
+/post-init.sh # https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/post-init.sh
+upgrade_if_pending
 
 # MODULE=dbp info "Replacing config.php file with ours"
 # /bin/cp -p /moodleconfig/config-php/config.php /tmp/config.php

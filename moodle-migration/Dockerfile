@@ -44,7 +44,7 @@ RUN apt-get install -y libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-l
 RUN apt-get install -y gettext libpq5 libedit2 libfontconfig1 libfreetype6 libglib2.0-0 libjpeg62-turbo liblcms2-2 libltdl7 libmagickcore-6.q16-6 libmagickwand-6.q16-6 libmemcached11 libpcre3 libpng16-16 libtidy5deb1 libwebp7 libxslt1.1 libzip4 libbz2-dev
 
 # For testing we will skip the moodle download step to speed up build time
-# RUN /scripts/install/downloadMoodle.sh
+RUN /scripts/install/downloadMoodle.sh
 
 # Hardening
 RUN apt-get update && apt-get upgrade -y && \
@@ -67,7 +67,16 @@ RUN chmod +x /scripts/init/apache/apacheInstall.sh
 RUN /scripts/init/apache/apacheInstall.sh
 # RUN /opt/bitnami/scripts/php/postunpack.sh
 # RUN /opt/bitnami/scripts/apache-modphp/postunpack.sh
-# RUN /opt/bitnami/scripts/moodle/postunpack.sh
+
+# Php configuration and installation
+RUN chmod +x /scripts/init/php/phpInstall.sh
+RUN /scripts/init/php/phpInstall.sh
+
+# Prepare Moodle
+RUN chmod +x /scripts/init/moodle/moodleInstall.sh
+RUN /scripts/init/moodle/moodleInstall.sh
+
+#TODO
 # ENV APACHE_HTTPS_PORT_NUMBER="" \
 #     APACHE_HTTP_PORT_NUMBER="" \
 #     APP_VERSION="5.0.1" \
@@ -78,9 +87,6 @@ RUN /scripts/init/apache/apacheInstall.sh
 # RUN apt-get update
 # RUN apt-get install -y --no-install-recommends libcurl4-openssl-dev libfreetype6-dev libicu-dev libjpeg62-turbo-dev libldap2-dev libmariadb-dev libmemcached-dev libpng-dev libpq-dev libxml2-dev libxslt-dev uuid-dev libbz2-dev libzip-dev zlib1g-dev libgmp-dev libssl-dev libreadline-dev libsqlite3-dev libtidy-dev libjpeg-dev libwebp-dev libxpm-dev pkg-config
 
-# Php configuration and installation
-RUN chmod +x /scripts/init/php/phpInstall.sh
-RUN /scripts/init/php/phpInstall.sh
 
 # EXPOSE 8080 8443
 
