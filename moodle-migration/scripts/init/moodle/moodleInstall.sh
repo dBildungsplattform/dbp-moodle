@@ -48,29 +48,29 @@ php_conf_set extension "pgsql"
 # TODO
 info "Creating default web server configuration for Moodle"
 # web_server_validate
-ensure_web_server_app_configuration_exists "moodle" --type php --apache-additional-configuration '
-RewriteEngine On
+# ensure_web_server_app_configuration_exists "moodle" --type php --apache-additional-configuration '
+# RewriteEngine On
 
-RewriteRule ^/phpmyadmin - [L,NC]
-RewriteRule "(\/vendor\/)" - [F]
-RewriteRule "(\/node_modules\/)" - [F]
-RewriteRule "(^|/)\.(?!well-known\/)" - [F]
-RewriteRule "(composer\.json)" - [F]
-RewriteRule "(\.lock)" - [F]
-RewriteRule "(\/environment.xml)" - [F]
-Options -Indexes
-RewriteRule "(\/install.xml)" - [F]
-RewriteRule "(\/README)" - [F]
-RewriteRule "(\/readme)" - [F]
-RewriteRule "(\/moodle_readme)" - [F]
-RewriteRule "(\/upgrade\.txt)" - [F]
-RewriteRule "(phpunit\.xml\.dist)" - [F]
-RewriteRule "(\/tests\/behat\/)" - [F]
-RewriteRule "(\/fixtures\/)" - [F]
+# RewriteRule ^/phpmyadmin - [L,NC]
+# RewriteRule "(\/vendor\/)" - [F]
+# RewriteRule "(\/node_modules\/)" - [F]
+# RewriteRule "(^|/)\.(?!well-known\/)" - [F]
+# RewriteRule "(composer\.json)" - [F]
+# RewriteRule "(\.lock)" - [F]
+# RewriteRule "(\/environment.xml)" - [F]
+# Options -Indexes
+# RewriteRule "(\/install.xml)" - [F]
+# RewriteRule "(\/README)" - [F]
+# RewriteRule "(\/readme)" - [F]
+# RewriteRule "(\/moodle_readme)" - [F]
+# RewriteRule "(\/upgrade\.txt)" - [F]
+# RewriteRule "(phpunit\.xml\.dist)" - [F]
+# RewriteRule "(\/tests\/behat\/)" - [F]
+# RewriteRule "(\/fixtures\/)" - [F]
 
-RewriteRule "(\/package\.json)" - [F]
-RewriteRule "(\/Gruntfile\.js)" - [F]
-'
+# RewriteRule "(\/package\.json)" - [F]
+# RewriteRule "(\/Gruntfile\.js)" - [F]
+#'
 
 # Copy all initially generated configuration files to the default directory
 # (this is to avoid breaking when entrypoint is being overridden)
