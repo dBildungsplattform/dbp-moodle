@@ -98,7 +98,7 @@ startDbpMoodleSetup
 
 MODULE=dbp info "Start Moodle setup script after checking for proper version"
 /scripts/init/moodle/moodleSetup.sh
-/post-init.sh # https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/post-init.sh
+/scripts/init/post-init.sh # https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/post-init.sh
 upgrade_if_pending
 
 # MODULE=dbp info "Replacing config.php file with ours"
@@ -126,7 +126,7 @@ upgrade_if_pending
 # fi
 
 # MODULE=dbp info "Finished all preparations! Starting Webserver"
-# /scripts/moodle/run.sh # This script does not exist currently, evaluate during the moodle installation
+# /scripts/moodle/run.sh
 
 # Sleep for testing purposes
 sleep 2000

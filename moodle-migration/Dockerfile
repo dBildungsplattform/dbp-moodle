@@ -18,13 +18,14 @@ COPY scripts/install /scripts/install
 COPY scripts/init /scripts/init
 COPY libraries /scripts
 
-# RUN chmod +x /scripts/install/downloadMoodle.sh
+RUN chmod +x /scripts/install/downloadMoodle.sh
 # /downloadPlugins.sh
 
 # Install psql Version 13.x like in the other bitnami moodle image
+# Currently permission problems here
 RUN apt-get update && \
-    apt-get install -y wget gpg curl acl gnupg jq ca-certificates cron locales && \
-    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql.gpg && \
+    apt-get install -y wget gpg curl acl gnupg jq ca-certificates cron locales
+RUN curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list
 
 RUN apt-get update && \

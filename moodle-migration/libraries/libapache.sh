@@ -753,6 +753,7 @@ apache_update_app_configuration() {
         fi
     }
     # Disable and enable configuration files
+    # Migration: Check if we already set the config by default or still need to overwrite it
     rename_conf_file() {
         local -r origin="$1"
         local -r destination="$2"

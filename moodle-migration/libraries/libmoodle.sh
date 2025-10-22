@@ -77,10 +77,10 @@ moodle_validate() {
         warn "Found 'moodledata' directory inside ${MOODLE_VOLUME_DIR}. Support for this configuration is deprecated and will be removed soon. Please create a new volume mountpoint at ${MOODLE_DATA_DIR}, and copy all its files there."
     fi
 
-    # Support for MySQL and MariaDB TODO
-    check_multi_value "MOODLE_DATABASE_TYPE" "mysqli mariadb pgsql auroramysql"
+    # Supports only postgres in our version
+    check_multi_value "MOODLE_DATABASE_TYPE" "pgsql"
 
-    # Check that the web server is properly set up
+    # Check that the apache web server is properly set up
     web_server_validate || print_validation_error "Web server validation failed"
 
     # Check yes/no env. variables
@@ -101,6 +101,7 @@ moodle_validate() {
 # Returns:
 #   None
 #########################
+# Migration: We use postgresql, check if this function is still required
 moodle_fix_manageddb_check() {
     info "Changing minimum required MariaDB version to $MOODLE_DATABASE_MIN_VERSION"
     replace_in_file "$MOODLE_BASE_DIR/admin/environment.xml" "name=\"mariadb\" version=\"[^\"]+\"" "name=\"mariadb\" version=\"$MOODLE_DATABASE_MIN_VERSION\""
@@ -162,9 +163,9 @@ moodle_initialize() {
             [[ "$db_type" = "pgsql" ]] && db_remote_execute="postgresql_remote_execute"
             local -a db_execute_args=("$db_host" "$db_port" "$db_name" "$db_user" "$db_pass")
             # Configure no-reply e-mail address for SMTP
-	    echo "INSERT INTO ${mdl_prefix}config (name, value) VALUES ('noreplyaddress', '${MOODLE_EMAIL}')" | "$db_remote_execute" "${db_execute_args[@]}"
+	        echo "INSERT INTO ${mdl_prefix}config (name, value) VALUES ('noreplyaddress', '${MOODLE_EMAIL}')" | "$db_remote_execute" "${db_execute_args[@]}"
             # Additional Bitnami customizations
-            echo "UPDATE ${mdl_prefix}course SET summary='Moodle powered by Bitnami' WHERE id='1'" | "$db_remote_execute" "${db_execute_args[@]}"
+            echo "UPDATE ${mdl_prefix}course SET summary='dbp Moodle' WHERE id='1'" | "$db_remote_execute" "${db_execute_args[@]}"
             # SMTP configuration
             if ! is_empty_value "$MOODLE_SMTP_HOST"; then
                 info "Configuring SMTP credentials"
@@ -218,7 +219,7 @@ EOF
     fi
 
     # Ensure Moodle cron jobs are created when running setup with a root user
-    local -a cron_cmd=("${PHP_BIN_DIR}/php" "${MOODLE_BASE_DIR}/admin/cli/cron.php")
+    local -a cron_cmd=("php" "${MOODLE_BASE_DIR}/admin/cli/cron.php")
     if am_i_root; then
         generate_cron_conf "moodle" "${cron_cmd[*]} > /dev/null 2>> ${MOODLE_DATA_DIR}/moodle-cron.log" --run-as "$WEB_SERVER_DAEMON_USER" --schedule "*/${MOODLE_CRON_MINUTES} * * * *"
     else
@@ -287,7 +288,7 @@ moodle_wait_for_postgresql_connection() {
 moodle_install() {
     local -r http_port="${WEB_SERVER_HTTP_PORT_NUMBER:-"$WEB_SERVER_DEFAULT_HTTP_PORT_NUMBER"}"
     local -a moodle_install_args=(
-        "${PHP_BIN_DIR}/php"
+        "php"
         "admin/cli/install.php"
         "--lang=${MOODLE_LANG}"
         "--chmod=2775"
@@ -329,7 +330,7 @@ moodle_install() {
 moodle_upgrade() {
     pushd "$MOODLE_BASE_DIR" >/dev/null || exit
     local -a moodle_upgrade_args=(
-        "${PHP_BIN_DIR}/php"
+        "php"
         "admin/cli/upgrade.php"
         "--non-interactive"
         "--allow-unstable"

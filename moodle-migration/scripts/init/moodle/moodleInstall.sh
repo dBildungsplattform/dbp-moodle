@@ -25,10 +25,9 @@ set -o pipefail
 . /scripts/libos.sh
 . /scripts/liblog.sh
 . /scripts/libwebserver.sh
-. /scripts/libapache.sh
 
 # Load web server environment and functions (after Moodle environment file so MODULE is not set to a wrong value)
-. "/scripts/init/apache/apache-env.sh"
+. /scripts/init/apache/apache-env.sh
 
 # Ensure the Moodle base directory exists and has proper permissions
 info "Configuring file permissions for Moodle"
@@ -76,7 +75,8 @@ RewriteRule "(\/Gruntfile\.js)" - [F]
 # Copy all initially generated configuration files to the default directory
 # (this is to avoid breaking when entrypoint is being overridden)
 # TODO adjust paths
-# cp -r "/opt/bitnami/$(web_server_type)/conf"/* "/opt/bitnami/$(web_server_type)/conf.default"
+# cp -r "/opt/bitnami/apache/conf"/* "/opt/bitnami/apache/conf.default"
+# cp -r "$APACHE_CONF_DIR/* "/opt/bitnami/apache/conf.default"
 
 # This is necessary for the libpersistence.sh scripts to work when running as non-root
 # chmod g+w /opt/bitnami

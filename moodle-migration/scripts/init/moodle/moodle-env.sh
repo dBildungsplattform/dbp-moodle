@@ -15,7 +15,7 @@
 . /scripts/liblog.sh
 
 export ROOT_DIR="/etc"
-export VOLUME_DIR="/dbp"
+export VOLUME_DIR="/dbp-moodle"
 
 # Logging configuration
 export MODULE="${MODULE:-moodle}"

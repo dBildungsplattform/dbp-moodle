@@ -7,9 +7,9 @@
 # shellcheck disable=SC1090,SC1091
 
 # Load generic libraries
-. /opt/bitnami/scripts/liblog.sh
+. /scripts/liblog.sh
 
-# Because this is a general wrapper around the apache webserver, i intend to strip it away and use the apache functions directly if possible
+# This is a general wrapper around the apache webserver used by moodle setup
 
 ########################
 # Execute a command (or list of commands) with the web server environment and library loaded
@@ -40,9 +40,9 @@ web_server_execute() {
 # Returns:
 #   None
 #########################
+# Migrated
 web_server_validate() {
     local error_code=0
-    local supported_web_servers=("apache")
 
     # Auxiliary functions
     print_validation_error() {
@@ -50,27 +50,13 @@ web_server_validate() {
         error_code=1
     }
 
-    if [[ -z "$(web_server_type)" || ! " ${supported_web_servers[*]} " == *" $(web_server_type) "* ]]; then
-        print_validation_error "Could not detect any supported web servers. It must be one of: ${supported_web_servers[*]}"
-    elif ! web_server_execute "$(web_server_type)" type -t "is_$(web_server_type)_running" >/dev/null; then
-        print_validation_error "Could not load the $(web_server_type) web server library from /opt/bitnami/scripts. Check that it exists and is readable."
+    if ! web_server_execute apache type -t "is_apache_running" >/dev/null; then
+        print_validation_error "Could not load the apache web server library from /scripts. Check that it exists and is readable."
     fi
 
     return "$error_code"
 }
 
-########################
-# Check whether the web server is running
-# Globals:
-#   *
-# Arguments:
-#   None
-# Returns:
-#   true if the web server is running, false otherwise
-#########################
-is_web_server_running() {
-    "is_$(web_server_type)_running"
-}
 
 ########################
 # Start web server
@@ -83,11 +69,7 @@ is_web_server_running() {
 #########################
 web_server_start() {
     info "Starting $(web_server_type) in background"
-    if [[ "${BITNAMI_SERVICE_MANAGER:-}" = "systemd" ]]; then
-        systemctl start "bitnami.$(web_server_type).service"
-    else
-        "${BITNAMI_ROOT_DIR}/scripts/$(web_server_type)/start.sh"
-    fi
+    "/scripts/init/apache/run.sh"
 }
 
 ########################
@@ -110,6 +92,8 @@ web_server_start() {
 # Returns:
 #   true if the configuration was updated, false otherwise
 ########################
+# Migration: With only one call and only one argument, the whole case section wont be run at all
+# Basically just calls web_server_execute which executes apache_update_app_configuration "moodle"
 web_server_update_app_configuration() {
     local app="${1:?missing app}"
     shift
@@ -144,4 +128,107 @@ web_server_update_app_configuration() {
         shift
     done
     web_server_execute apache "apache_update_app_configuration" "${args[@]}"
+}
+
+########################
+# Ensure a web server application configuration exists (i.e. Apache virtual host format or NGINX server block)
+# It serves as a wrapper for the specific web server function
+# Globals:
+#   *
+# Arguments:
+#   $1 - App name
+# Flags:
+#   --type - Application type, which has an effect on which configuration template to use
+#   --hosts - Host listen addresses
+#   --server-name - Server name
+#   --server-aliases - Server aliases
+#   --allow-remote-connections - Whether to allow remote connections or to require local connections
+#   --disable - Whether to render server configurations with a .disabled prefix
+#   --disable-http - Whether to render the app's HTTP server configuration with a .disabled prefix
+#   --disable-https - Whether to render the app's HTTPS server configuration with a .disabled prefix
+#   --http-port - HTTP port number
+#   --https-port - HTTPS port number
+#   --document-root - Path to document root directory
+# Apache-specific flags:
+#   --apache-additional-configuration - Additional vhost configuration (no default)
+#   --apache-additional-http-configuration - Additional HTTP vhost configuration (no default)
+#   --apache-additional-https-configuration - Additional HTTPS vhost configuration (no default)
+#   --apache-before-vhost-configuration - Configuration to add before the <VirtualHost> directive (no default)
+#   --apache-allow-override - Whether to allow .htaccess files (only allowed when --move-htaccess is set to 'no' and type is not defined)
+#   --apache-extra-directory-configuration - Extra configuration for the document root directory
+#   --apache-proxy-address - Address where to proxy requests
+#   --apache-proxy-configuration - Extra configuration for the proxy
+#   --apache-proxy-http-configuration - Extra configuration for the proxy HTTP vhost
+#   --apache-proxy-https-configuration - Extra configuration for the proxy HTTPS vhost
+#   --apache-move-htaccess - Move .htaccess files to a common place so they can be loaded during Apache startup (only allowed when type is not defined)
+# NGINX-specific flags:
+#   --nginx-additional-configuration - Additional server block configuration (no default)
+#   --nginx-external-configuration - Configuration external to server block (no default)
+# Returns:
+#   true if the configuration was enabled, false otherwise
+########################
+ensure_web_server_app_configuration_exists() {
+    local app="${1:?missing app}"
+    shift
+    local -a apache_args nginx_args web_servers args_var
+    apache_args=("$app")
+    nginx_args=("$app")
+    # Validate arguments
+    while [[ "$#" -gt 0 ]]; do
+        case "$1" in
+            # Common flags
+            --disable \
+            | --disable-http \
+            | --disable-https \
+            )
+                apache_args+=("$1")
+                nginx_args+=("$1")
+                ;;
+            --hosts \
+            | --server-name \
+            | --server-aliases \
+            | --type \
+            | --allow-remote-connections \
+            | --http-port \
+            | --https-port \
+            | --document-root \
+            )
+                apache_args+=("$1" "${2:?missing value}")
+                nginx_args+=("$1" "${2:?missing value}")
+                shift
+                ;;
+
+            # Specific Apache flags
+            --apache-additional-configuration \
+            | --apache-additional-http-configuration \
+            | --apache-additional-https-configuration \
+            | --apache-before-vhost-configuration \
+            | --apache-allow-override \
+            | --apache-extra-directory-configuration \
+            | --apache-proxy-address \
+            | --apache-proxy-configuration \
+            | --apache-proxy-http-configuration \
+            | --apache-proxy-https-configuration \
+            | --apache-move-htaccess \
+            )
+                apache_args+=("${1//apache-/}" "${2:?missing value}")
+                shift
+                ;;
+
+            # Specific NGINX flags
+            --nginx-additional-configuration \
+            | --nginx-external-configuration)
+                nginx_args+=("${1//nginx-/}" "${2:?missing value}")
+                shift
+                ;;
+
+            *)
+                echo "Invalid command line flag $1" >&2
+                return 1
+                ;;
+        esac
+        shift
+    done
+    args_var="apache_args[@]"
+    web_server_execute "apache" "ensure_apache_app_configuration_exists" "${!args_var}"
 }
