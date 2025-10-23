@@ -13,16 +13,12 @@ annotations:
   tanzuCategory: application
 apiVersion: v2
 appVersion: 5.0.2
-dependencies:
-- condition: mariadb.enabled
-  name: mariadb
-  repository: oci://registry-1.docker.io/bitnamicharts
-  version: 22.x.x
-- name: common
-  repository: oci://registry-1.docker.io/bitnamicharts
-  tags:
-  - bitnami-common
-  version: 2.x.x
+# dependencies:
+# - name: common
+#   repository: oci://registry-1.docker.io/bitnamicharts
+#   tags:
+#   - bitnami-common
+#   version: 2.x.x
 description: Moodle(TM) LMS is an open source online Learning Management System widely
   used at universities, schools, and corporations. It is modular and highly adaptable
   to any type of online learning.

@@ -173,7 +173,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ include "moodle.databaseSecretName" . }}
-                  key: mariadb-password
+                  key: db-password
             {{- end }}
             - name: MOODLE_SKIP_BOOTSTRAP
               value: {{ ternary "yes" "no" .Values.moodleSkipInstall | quote }}

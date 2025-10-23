@@ -31,16 +31,9 @@ spec:
           protocol: UDP
         - port: 53
           protocol: TCP
-    # Allow outbound connections to MariaDB
+    # Allow outbound connections to DB
     - ports:
         - port: {{ include "moodle.databasePort" . }}
-      {{- if .Values.mariadb.enabled }}
-      to: 
-        - podSelector:
-            matchLabels:
-              app.kubernetes.io/name: mariadb
-              app.kubernetes.io/instance: {{ .Release.Name }}
-      {{- end }}
     {{- if .Values.networkPolicy.extraEgress }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.networkPolicy.extraEgress "context" $ ) | nindent 4 }}
     {{- end }}
