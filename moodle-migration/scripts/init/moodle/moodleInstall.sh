@@ -46,7 +46,7 @@ php_conf_set extension "pgsql"
 
 # Enable default web server configuration for Moodle
 # TODO
-info "Creating default web server configuration for Moodle"
+info "Creating default web server configuration for Moodle - Skipped"
 # web_server_validate
 # ensure_web_server_app_configuration_exists "moodle" --type php --apache-additional-configuration '
 # RewriteEngine On
