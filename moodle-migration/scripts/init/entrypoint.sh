@@ -127,7 +127,9 @@ upgrade_if_pending
 
 # MODULE=dbp info "Finished all preparations! Starting Webserver"
 # /scripts/moodle/run.sh
+MODULE=dbp info "Starting Webserver"
+/scripts/init/apache/run.sh
 
 # Sleep for testing purposes
+MODULE=dbp info "Entering sleep"
 sleep 2000
-# apache2ctl -D FOREGROUND

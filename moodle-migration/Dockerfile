@@ -6,13 +6,15 @@
 FROM php:8.1.33-fpm-bookworm AS build
 USER root
 ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.5.4"}
-ARG MOODLE_PATH="/dbp-moodle/moodle"
+#This is the path moodle will be placed after downloading for our Moodle Update Pipeline
+ARG MOODLE_PATH="/opt/dbp-moodle/moodle"
 ARG EXTRA_LOCALES="de_DE.UTF-8"
 ARG APACHE_VERSION=${APACHE_VERSION:-"2.4.57"}
 ARG APACHE_DOWNLOAD_URL="https://snapshot.debian.org/archive/debian/20230408T145143Z/pool/main/a/apache2"
 
 ARG WITH_ALL_LOCALES="no"
-RUN mkdir /dbp-moodle
+RUN mkdir /bitnami 
+# /dbp-moodle TODO
 
 COPY scripts/install /scripts/install
 COPY scripts/init /scripts/init
@@ -20,7 +22,7 @@ COPY libraries /scripts
 
 RUN chmod +x /scripts/install/downloadMoodle.sh
 # /downloadPlugins.sh
-
+RUN chmod -R +x /scripts/
 # Install psql Version 13.x like in the other bitnami moodle image
 # Currently permission problems here
 RUN apt-get update && \

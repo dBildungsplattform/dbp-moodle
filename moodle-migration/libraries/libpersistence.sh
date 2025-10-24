@@ -30,7 +30,7 @@ persist_app() {
     local -r app="${1:?missing app}"
     local -a files_to_restore
     read -r -a files_to_persist <<< "$(tr ',;:' ' ' <<< "$2")"
-    local -r install_dir="${ROOT_DIR}/${app}"   # /opt/bitnami/moodle -> /etc/moodle ?
+    local -r install_dir="${ROOT_DIR}/${app}"   # /opt/bitnami/moodle -> /etc/moodle
     local -r persist_dir="${VOLUME_DIR}/${app}"  # /bitnami/moodle -> /dbp-moodle/moodle
     # Persist the individual files
     if [[ "${#files_to_persist[@]}" -le 0 ]]; then

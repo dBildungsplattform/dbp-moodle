@@ -14,8 +14,8 @@
 # shellcheck disable=SC1090,SC1091
 . /scripts/liblog.sh
 
-export ROOT_DIR="/etc"
-export VOLUME_DIR="/dbp-moodle"
+export ROOT_DIR="/opt/dbp-moodle"
+export VOLUME_DIR="/bitnami"  #"/dbp-moodle" TODO
 
 # Logging configuration
 export MODULE="${MODULE:-moodle}"
