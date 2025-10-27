@@ -13,12 +13,15 @@ ARG APACHE_VERSION=${APACHE_VERSION:-"2.4.57"}
 ARG APACHE_DOWNLOAD_URL="https://snapshot.debian.org/archive/debian/20230408T145143Z/pool/main/a/apache2"
 
 ARG WITH_ALL_LOCALES="no"
-RUN mkdir /bitnami 
-# /dbp-moodle TODO
+RUN mkdir /bitnami
+RUN mkdir /dbp-moodle
 
 COPY scripts/install /scripts/install
 COPY scripts/init /scripts/init
 COPY libraries /scripts
+
+#Add user with ID 1001
+RUN useradd moodle -u 1001
 
 RUN chmod +x /scripts/install/downloadMoodle.sh
 # /downloadPlugins.sh
@@ -97,8 +100,11 @@ RUN /scripts/init/moodle/moodleInstall.sh
 RUN mkdir /plugins 
 # && /downloadPlugins.sh
 
-RUN chown 1001:root -R /scripts/init
-RUN chown 1001:root -R /plugins
+# RUN chmod -R g+w /opt
 
+RUN chown 1001:root -R /scripts
+RUN chown 1001:root -R /plugins
+RUN chown 1001:1001 -R /dbp-moodle
+USER 1001
 
 ENTRYPOINT ["/scripts/init/entrypoint.sh"]

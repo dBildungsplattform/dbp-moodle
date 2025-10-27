@@ -7,7 +7,7 @@
 # Einige moodlehq default env vars:
 # https://github.com/moodlehq/moodle-php-apache/blob/main/root/usr/local/etc/php/conf.d/10-docker-php-moodle.ini
 
-export ROOT_DIR="/usr/local/etc/"
+export ROOT_DIR="/usr/local/etc"
 
 # Logging configuration (optional)
 export MODULE="${MODULE:-php}"
@@ -53,7 +53,7 @@ export PHP_FPM_CONF_FILE="${ROOT_DIR}/php-fpm.conf"
 export PHP_FPM_POOL_CONF_DIR="${ROOT_DIR}/php-fpm.d"
 export PHP_FPM_POOL_CONF_FILE="${PHP_FPM_POOL_CONF_DIR}/www.conf"
 
-export PHP_FPM_PID_FILE="${ROOT_DIR}/php-fpm.pid"
+export PHP_FPM_PID_FILE="/dbp-moodle/php-fpm.pid"
 export PHP_FPM_LISTEN_ADDRESS="${PHP_FPM_LISTEN_ADDRESS:-/var/run/php-fpm.sock}" # Default missing
 export PHP_FPM_LOG_FILE="/proc/self/fd/2"  # logs to stderr by default
 

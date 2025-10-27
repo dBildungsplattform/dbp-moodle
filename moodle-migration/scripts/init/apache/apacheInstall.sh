@@ -91,7 +91,7 @@ apache_setup_config
 apache_setup_php_config
 
 # Ensure non-root user has write permissions on a set of directories
-chmod g+w "$APACHE_BASE_DIR"
+chmod -R g+w "$APACHE_BASE_DIR"
 for dir in "$APACHE_CONF_DIR" "$APACHE_LOGS_DIR" "$APACHE_VHOSTS_DIR" "$APACHE_DEFAULT_CONF_DIR"; do
     ensure_dir_exists "$dir"
     chmod -R g+rwX "$dir"
