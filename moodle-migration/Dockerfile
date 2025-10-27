@@ -105,6 +105,8 @@ RUN mkdir /plugins
 RUN chown 1001:root -R /scripts
 RUN chown 1001:root -R /plugins
 RUN chown 1001:1001 -R /dbp-moodle
+RUN chown 1001:1001 -R /var/log/apache2
+RUN chown 1001:1001 -R /etc/apache2
 USER 1001
 
 ENTRYPOINT ["/scripts/init/entrypoint.sh"]

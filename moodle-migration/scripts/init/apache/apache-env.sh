@@ -54,7 +54,7 @@ export APACHE_CONF_FILE="${APACHE_BASE_DIR}/apache2.conf"
 export APACHE_LOGS_DIR="${APACHE_BASE_DIR}/logs"
 export APACHE_LOG_DIR="${APACHE_BASE_DIR}/logs"
 export APACHE_HTACCESS_DIR="${APACHE_VHOSTS_DIR}/htaccess" 
-export APACHE_PID_FILE="/opt/dbp-moodle/apache-httpd.pid"  # pid id file is needed for other services to reliably identify the apache service
+export APACHE_PID_FILE="/dbp-moodle/apache-httpd.pid"  # pid id file is needed for other services to reliably identify the apache service
 
 # System users (when running with a privileged user)
 export APACHE_DAEMON_USER="daemon"
