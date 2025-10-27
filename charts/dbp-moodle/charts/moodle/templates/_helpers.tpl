@@ -42,8 +42,16 @@ Return the proper Docker Image Registry Secret Names
 Return  the proper Storage Class
 */}}
 {{- define "moodle.storageClass" -}}
-{{- include "common.storage.class" (dict "persistence" .Values.persistence "global" .Values.global) -}}
+{{- $storageClass := .Values.global.storageClass | default .Values.persistence.storageClass | default .Values.global.defaultStorageClass | default "" -}}
+{{- if $storageClass -}}
+  {{- if eq $storageClass "-" -}}
+    {{- printf "storageClassName: \"\"" -}}
+  {{- else -}}
+    {{- printf "storageClassName: %s" $storageClass -}}
+  {{- end -}}
 {{- end -}}
+{{- end -}}
+
 
 {{/*
  Create the name of the service account to use
