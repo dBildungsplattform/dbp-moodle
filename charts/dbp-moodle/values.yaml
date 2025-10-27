@@ -299,18 +299,13 @@ moodle:
     limits:
       cpu: 6
       memory: 3Gi
-  # -- The mariadb included in bitnami/moodle chart. For this chart usage of mariadb.enabled with moodle.externalDatabase.type="mariadb" is recommended
-  mariadb:
-    enabled: false
-    database: bitnami_moodle
-    username: bn_moodle
   externalDatabase:
     # -- Type of DB to provision, possible values are "mariadb" and "pgsql"
-    type: "mariadb"
+    type: "pgsql"
     # -- Host of the existing database
-    host: "moodle-mariadb"
+    host: "moodle-pgsql"
     # -- Port of the existing database
-    port: 3306
+    port: 5432
     # -- Existing username in the external db
     user: "moodle"
     # -- Password for the above username
