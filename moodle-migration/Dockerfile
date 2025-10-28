@@ -107,6 +107,7 @@ RUN chown 1001:root -R /plugins
 RUN chown 1001:1001 -R /dbp-moodle
 RUN chown 1001:1001 -R /var/log/apache2
 RUN chown 1001:1001 -R /etc/apache2
+RUN chown 1001:1001 -R ${MOODLE_PATH}
 USER 1001
 
 ENTRYPOINT ["/scripts/init/entrypoint.sh"]

@@ -96,6 +96,10 @@ startDbpMoodleSetup
 #     MODULE=dbp warn "Update failed previously. Skipping update check..."
 # fi
 
+MODULE=dbp info "Placing the config.php in root dir"
+/bin/cp -p /moodleconfig/config-php/config.php /tmp/config.php
+mv /tmp/config.php /opt/dbp-moodle/moodle/config.php
+
 #TODO commented out for apache and php-fpm tests
 MODULE=dbp info "Start Moodle setup script after checking for proper version"
 /scripts/init/moodle/moodleSetup.sh
