@@ -107,7 +107,7 @@ restore_persisted_app() {
 ########################
 # Check if an application directory was already persisted
 # Globals:
-#   BITNAMI_VOLUME_DIR
+#   VOLUME_DIR
 # Arguments:
 #   $1 - App folder name
 # Returns:

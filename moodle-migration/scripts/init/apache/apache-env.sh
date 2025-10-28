@@ -15,7 +15,7 @@
 . /scripts/liblog.sh
 
 export ROOT_DIR="/etc"
-export VOLUME_DIR="/dbp-moodle"
+export VOLUME_DIR="/bitnami"    # "/dbp-moodle"
 
 # Logging configuration
 export MODULE="${MODULE:-apache}"

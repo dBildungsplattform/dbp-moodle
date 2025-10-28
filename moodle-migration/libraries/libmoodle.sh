@@ -120,6 +120,7 @@ moodle_initialize() {
     local -r app_name="moodle"
     if ! is_app_initialized "$app_name"; then
         # Ensure Moodle persisted directories exist (i.e. when a volume has been mounted to /bitnami)
+        # If we go into this loop, the persistent directory (/bitnami/moodle) is empty
         info "Ensuring Moodle directories exist"
         for dir in "$MOODLE_VOLUME_DIR" "$MOODLE_DATA_DIR"; do
             ensure_dir_exists "$dir"
@@ -152,7 +153,7 @@ moodle_initialize() {
         done
         # Setup Moodle
         if ! is_boolean_yes "$MOODLE_SKIP_BOOTSTRAP"; then
-            info "Running Moodle install script"
+            info "Running Moodle install script to setup database"
             # Create the configuration file and populate the database
             moodle_install "${moodle_install_args[@]}"
             # Configure additional settings in the database according to user inputs
@@ -172,6 +173,7 @@ UPDATE ${mdl_prefix}config SET value='${MOODLE_SMTP_USER}' WHERE name='smtpuser'
 UPDATE ${mdl_prefix}config SET value='${MOODLE_SMTP_PASSWORD}' WHERE name='smtppass';
 UPDATE ${mdl_prefix}config SET value='${MOODLE_SMTP_PROTOCOL}' WHERE name='smtpsecure';
 EOF
+            info "Finished initial database setup"
             fi
         else
             info "An already initialized Moodle database was provided, it will not be re-initialized"
@@ -182,8 +184,10 @@ EOF
             info "Running database upgrade"
             moodle_upgrade
         fi
+        info "Making additional custom configuration"
         # Change wwwroot configuration so the Moodle site can be accessible from anywhere
         moodle_configure_wwwroot
+        info "Making additional custom configuration step 2"
         # Turn on Moodle's reverseproxy (also sslproxy if using ssl) so we can use the reverse proxy
         moodle_configure_reverseproxy
 
