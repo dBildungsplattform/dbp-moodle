@@ -153,9 +153,10 @@ moodle_initialize() {
         done
         # Setup Moodle
         if ! is_boolean_yes "$MOODLE_SKIP_BOOTSTRAP"; then
-            info "Running Moodle install script to setup database"
+            info "Running Moodle install script to setup database - Debugging Run"
             # Create the configuration file and populate the database
             moodle_install "${moodle_install_args[@]}"
+            info "Moodle_install call finished"
             # Configure additional settings in the database according to user inputs
             local db_remote_execute="mysql_remote_execute"
             [[ "$db_type" = "pgsql" ]] && db_remote_execute="postgresql_remote_execute"
