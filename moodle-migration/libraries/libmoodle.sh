@@ -13,10 +13,7 @@
 . /scripts/libvalidations.sh
 . /scripts/libpersistence.sh
 . /scripts/libwebserver.sh
-
-if [[ -f scripts/libpostgresqlclient.sh ]]; then
-    . /scripts/libpostgresqlclient.sh
-fi
+. /scripts/libpostgresqlclient.sh
 
 ########################
 # Validate settings in MOODLE_* env vars
