@@ -291,7 +291,7 @@ moodle_install() {
     local -r http_port="${WEB_SERVER_HTTP_PORT_NUMBER:-"$WEB_SERVER_DEFAULT_HTTP_PORT_NUMBER"}"
     local -a moodle_install_args=(
         "php"
-        "admin/cli/install.php"
+        "/opt/dbp-moodle/moodle/admin/cli/install.php"
         "--lang=${MOODLE_LANG}"
         "--chmod=2775"
         "--wwwroot=http://localhost:${http_port}"
@@ -306,6 +306,7 @@ moodle_install() {
         "--agree-license"
         "$@"
     )
+    info "$moodle_install_args"
     # HACK: Change database version check for Azure Database for MariaDB
     ! is_empty_value "$MOODLE_DATABASE_MIN_VERSION" && moodle_fix_manageddb_check
     pushd "$MOODLE_BASE_DIR" >/dev/null || exit
