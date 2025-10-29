@@ -37,7 +37,6 @@ persist_app() {
         warn "No files are configured to be persisted"
         return
     fi
-    info "File To Persist: $file_to_persist"
     info "Install Dir: $install_dir"
     pushd "$install_dir" >/dev/null || exit
     local file_to_persist_relative file_to_persist_destination file_to_persist_destination_folder
