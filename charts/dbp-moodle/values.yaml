@@ -303,7 +303,7 @@ moodle:
     # -- Type of DB to provision, possible values are "mariadb" and "pgsql"
     type: "pgsql"
     # -- Host of the existing database
-    host: "moodle-pgsql"
+    host: "moodle-postgresql"
     # -- Port of the existing database
     port: 5432
     # -- Existing username in the external db
@@ -313,7 +313,7 @@ moodle:
     # -- Name of the existing database
     database: "moodle"
     # -- Name of an existing secret resource containing the DB password
-    existingSecret: "moodle"
+    existingSecret: "moodle-test-secret"
   service:
     type: ClusterIP
   ingress:
@@ -340,7 +340,7 @@ moodle:
   metrics:
     enabled: true
     image:
-      repository: bitnamilegacy/apache-exporter
+      repository: lusotycoon/apache-exporter
     service:
       type: ClusterIP
     # -- Resources have to be set so that the horizontal pod autoscaler for moodle can read the moodle cpu consumption correctly
@@ -426,7 +426,7 @@ mariadb:
         memory: 3Gi
 
 postgresql:
-  enabled: false
+  enabled: true
   # usePasswordFiles: false required if we increase the helm chart version
   # Switch to bitnamilegacy, see https://github.com/bitnami/charts/issues/35164
   image:
