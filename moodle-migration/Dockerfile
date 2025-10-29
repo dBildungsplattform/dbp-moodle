@@ -49,7 +49,6 @@ RUN apt-get install -y libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-l
 #Install other dependencies
 RUN apt-get install -y gettext libpq5 libedit2 libfontconfig1 libfreetype6 libglib2.0-0 libjpeg62-turbo liblcms2-2 libltdl7 libmagickcore-6.q16-6 libmagickwand-6.q16-6 libmemcached11 libpcre3 libpng16-16 libtidy5deb1 libwebp7 libxslt1.1 libzip4 libbz2-dev
 
-# For testing we will skip the moodle download step to speed up build time
 RUN /scripts/install/downloadMoodle.sh
 
 # Hardening
@@ -83,24 +82,25 @@ RUN chmod +x /scripts/init/moodle/moodleInstall.sh
 RUN /scripts/init/moodle/moodleInstall.sh
 
 #TODO
-# ENV APACHE_HTTPS_PORT_NUMBER="" \
-#     APACHE_HTTP_PORT_NUMBER="" \
-#     APP_VERSION="5.0.1" \
-#     BITNAMI_APP_NAME="moodle" \
-#     LANG="en_US.UTF-8" \
-#     LANGUAGE="en_US:en" \
-#     PATH="/opt/bitnami/common/bin:/opt/bitnami/php/bin:/opt/bitnami/php/sbin:/opt/bitnami/apache/bin:/opt/bitnami/postgresql/bin:/opt/bitnami/mysql/bin:$PATH"
+ENV APACHE_HTTPS_PORT_NUMBER="" \
+    APACHE_HTTP_PORT_NUMBER="" \
+    APP_VERSION="5.0.1" \
+    BITNAMI_APP_NAME="moodle" \
+    LANG="en_US.UTF-8" \
+    LANGUAGE="en_US:en" \
+    PATH="/opt/bitnami/common/bin:/opt/bitnami/php/bin:/opt/bitnami/php/sbin:/opt/bitnami/apache/bin:/opt/bitnami/postgresql/bin:/opt/bitnami/mysql/bin:$PATH"
 # RUN apt-get update
 # RUN apt-get install -y --no-install-recommends libcurl4-openssl-dev libfreetype6-dev libicu-dev libjpeg62-turbo-dev libldap2-dev libmariadb-dev libmemcached-dev libpng-dev libpq-dev libxml2-dev libxslt-dev uuid-dev libbz2-dev libzip-dev zlib1g-dev libgmp-dev libssl-dev libreadline-dev libsqlite3-dev libtidy-dev libjpeg-dev libwebp-dev libxpm-dev pkg-config
 
 
-# EXPOSE 8080 8443
+EXPOSE 8080 8443
 
 # Install plugins to the image, skipped for now
 RUN mkdir /plugins 
 # && /downloadPlugins.sh
 
 # RUN chmod -R g+w /opt
+# RUN uninstall_packages curl
 
 RUN chown 1001:root -R /scripts
 RUN chown 1001:root -R /plugins

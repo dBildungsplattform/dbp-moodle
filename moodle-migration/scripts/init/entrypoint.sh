@@ -96,19 +96,16 @@ startDbpMoodleSetup
 #     MODULE=dbp warn "Update failed previously. Skipping update check..."
 # fi
 
-# MODULE=dbp info "Placing the config.php in root dir"
-# /bin/cp -p /moodleconfig/config-php/config.php /tmp/config.php
-# mv /tmp/config.php /opt/dbp-moodle/moodle/config.php
 
 #TODO commented out for apache and php-fpm tests
 MODULE=dbp info "Start Moodle setup script after checking for proper version"
 /scripts/init/moodle/moodleSetup.sh
-# /scripts/init/post-init.sh # TODO adjust paths https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/post-init.sh
-# upgrade_if_pending does not work currently
+/scripts/init/post-init.sh # TODO adjust paths https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/post-init.sh
+upgrade_if_pending
 
-# MODULE=dbp info "Replacing config.php file with ours"
-# /bin/cp -p /moodleconfig/config-php/config.php /tmp/config.php
-# mv /tmp/config.php /dbp-moodle/moodle/config.php
+MODULE=dbp info "Replacing config.php file with ours"
+/bin/cp -p /moodleconfig/config-php/config.php /tmp/config.php
+mv /tmp/config.php /dbp-moodle/moodle/config.php
 
 # if [ -f "/tmp/de.zip" ] && [ ! -d /bitnami/moodledata/lang/de ]; then \
 #     MODULE=dbp info "Installing german language pack"
@@ -130,10 +127,10 @@ MODULE=dbp info "Start Moodle setup script after checking for proper version"
 #     MODULE=dbp warn "Update or Plugin check failed previously. Skipping plugin check..."
 # fi
 
-# MODULE=dbp info "Finished all preparations! Starting Webserver"
-# /scripts/moodle/run.sh
-MODULE=dbp info "Starting Webserver"
-/scripts/init/apache/run.sh
+MODULE=dbp info "Finished all preparations! Starting Webserver"
+/scripts/moodle/run.sh
+# MODULE=dbp info "Starting Webserver"
+# /scripts/init/apache/run.sh
 
 # Sleep for testing purposes
 MODULE=dbp info "Entering sleep"
