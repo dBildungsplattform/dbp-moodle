@@ -30,7 +30,7 @@ persist_app() {
     local -r app="${1:?missing app}"
     local -a files_to_restore
     read -r -a files_to_persist <<< "$(tr ',;:' ' ' <<< "$2")"
-    local -r install_dir="${ROOT_DIR}/${app}"   # /opt/bitnami/moodle -> /etc/moodle
+    local -r install_dir="${ROOT_DIR}/${app}"   # /opt/bitnami/moodle -> /etc/moodle    /opt/dbp-moodle/moodle
     local -r persist_dir="${VOLUME_DIR}/${app}"  # /bitnami/moodle -> /dbp-moodle/moodle
     # Persist the individual files
     if [[ "${#files_to_persist[@]}" -le 0 ]]; then
@@ -45,6 +45,8 @@ persist_app() {
             error "Cannot persist '${file_to_persist}' because it does not exist"
             return 1
         fi
+        info "File To Persist: $file_to_persist"
+        info "Install Dir: $install_dir"
         file_to_persist_relative="$(relativize "$file_to_persist" "$install_dir")"
         file_to_persist_destination="${persist_dir}/${file_to_persist_relative}"
         file_to_persist_destination_folder="$(dirname "$file_to_persist_destination")"
