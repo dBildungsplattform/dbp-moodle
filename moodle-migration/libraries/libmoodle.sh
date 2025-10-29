@@ -174,8 +174,8 @@ UPDATE ${mdl_prefix}config SET value='${MOODLE_SMTP_USER}' WHERE name='smtpuser'
 UPDATE ${mdl_prefix}config SET value='${MOODLE_SMTP_PASSWORD}' WHERE name='smtppass';
 UPDATE ${mdl_prefix}config SET value='${MOODLE_SMTP_PROTOCOL}' WHERE name='smtpsecure';
 EOF
-            info "Finished initial database setup"
             fi
+            info "Finished initial database setup"
         else
             info "An already initialized Moodle database was provided, it will not be re-initialized"
             # Create the configuration file

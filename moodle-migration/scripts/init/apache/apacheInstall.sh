@@ -75,7 +75,7 @@ EOF
     apache_configure_https_port "$APACHE_DEFAULT_HTTPS_PORT_NUMBER"
 
     # Remove unnecessary directories that come with the tarball
-    rm -rf "${ROOT_DIR}/certs" "${ROOT_DIR}/conf"
+    rm -rf "${APACHE_ROOT_DIR}/certs" "${APACHE_ROOT_DIR}/conf"
 }
 
 apache_setup_php_config() {
@@ -98,7 +98,7 @@ for dir in "$APACHE_CONF_DIR" "$APACHE_LOGS_DIR" "$APACHE_VHOSTS_DIR" "$APACHE_D
 done
 
 # Create 'apache2' symlink pointing to the 'apache' directory, for compatibility with Bitnami Docs guides
-ln -sf apache "${ROOT_DIR}/apache2"
+ln -sf apache "${APACHE_ROOT_DIR}/apache2"
 
 ln -sf "/dev/stdout" "${APACHE_LOGS_DIR}/access_log"
 ln -sf "/dev/stderr" "${APACHE_LOGS_DIR}/error_log"

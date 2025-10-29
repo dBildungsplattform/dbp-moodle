@@ -14,7 +14,7 @@
 # shellcheck disable=SC1090,SC1091
 . /scripts/liblog.sh
 
-export ROOT_DIR="/etc"
+export APACHE_ROOT_DIR="/etc"
 export VOLUME_DIR="/bitnami"    # "/dbp-moodle"
 
 # Logging configuration
@@ -45,7 +45,7 @@ unset apache_env_vars
 export WEB_SERVER_TYPE="apache"
 
 # Paths
-export APACHE_BASE_DIR="${ROOT_DIR}/apache2"
+export APACHE_BASE_DIR="${APACHE_ROOT_DIR}/apache2"
 export APACHE_CONF_DIR="${APACHE_BASE_DIR}/conf-enabled"
 export APACHE_DEFAULT_CONF_DIR="${APACHE_BASE_DIR}/conf-available"
 export APACHE_VHOSTS_DIR="${APACHE_BASE_DIR}/vhosts"
