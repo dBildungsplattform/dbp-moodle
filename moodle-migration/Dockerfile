@@ -82,13 +82,13 @@ RUN chmod +x /scripts/init/moodle/moodleInstall.sh
 RUN /scripts/init/moodle/moodleInstall.sh
 
 #TODO
-ENV APACHE_HTTPS_PORT_NUMBER="" \
-    APACHE_HTTP_PORT_NUMBER="" \
-    APP_VERSION="5.0.1" \
-    BITNAMI_APP_NAME="moodle" \
-    LANG="en_US.UTF-8" \
-    LANGUAGE="en_US:en" \
-    PATH="/opt/bitnami/common/bin:/opt/bitnami/php/bin:/opt/bitnami/php/sbin:/opt/bitnami/apache/bin:/opt/bitnami/postgresql/bin:/opt/bitnami/mysql/bin:$PATH"
+# ENV APACHE_HTTPS_PORT_NUMBER="" \
+#     APACHE_HTTP_PORT_NUMBER="" \
+#     APP_VERSION="5.0.1" \
+#     BITNAMI_APP_NAME="moodle" \
+#     LANG="en_US.UTF-8" \
+#     LANGUAGE="en_US:en" \
+#     PATH="/opt/bitnami/common/bin:/opt/bitnami/php/bin:/opt/bitnami/php/sbin:/opt/bitnami/apache/bin:/opt/bitnami/postgresql/bin:/opt/bitnami/mysql/bin:$PATH"
 # RUN apt-get update
 # RUN apt-get install -y --no-install-recommends libcurl4-openssl-dev libfreetype6-dev libicu-dev libjpeg62-turbo-dev libldap2-dev libmariadb-dev libmemcached-dev libpng-dev libpq-dev libxml2-dev libxslt-dev uuid-dev libbz2-dev libzip-dev zlib1g-dev libgmp-dev libssl-dev libreadline-dev libsqlite3-dev libtidy-dev libjpeg-dev libwebp-dev libxpm-dev pkg-config
 
@@ -99,12 +99,12 @@ EXPOSE 8080 8443
 RUN mkdir /plugins 
 # && /downloadPlugins.sh
 
-# RUN chmod -R g+w /opt
+RUN chmod -R g+w /opt/dbp-moodle
 # RUN uninstall_packages curl
 
 RUN chown 1001:root -R /scripts
 RUN chown 1001:root -R /plugins
-RUN chown 1001:1001 -R /dbp-moodle
+RUN chown 1001:1001 -R /bitnami
 RUN chown 1001:1001 -R /var/log/apache2
 RUN chown 1001:1001 -R /etc/apache2
 RUN chown 1001:1001 -R ${MOODLE_PATH}

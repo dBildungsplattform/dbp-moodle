@@ -13,7 +13,7 @@ set -o nounset
 . /scripts/liblog.sh
 . /scripts/libwebserver.sh
 
-moodle_path="/dbp-moodle/moodle"
+moodle_path="/bitnami/moodle"
 moodle_backup_path="/dbp-moodle/moodledata/moodle-backup" # Das Backup script muss bezüglich der Pfade angepasst werden
 
 maintenance_html_path="/dbp-moodle/moodledata/climaintenance.html"
