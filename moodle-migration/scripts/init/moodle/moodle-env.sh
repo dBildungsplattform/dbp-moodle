@@ -19,7 +19,7 @@ export VOLUME_DIR="/bitnami"  #"/dbp-moodle" TODO
 
 # Logging configuration
 export MODULE="${MODULE:-moodle}"
-export BITNAMI_DEBUG="${BITNAMI_DEBUG:-false}"
+export BITNAMI_DEBUG="${BITNAMI_DEBUG:-true}"
 
 # By setting an environment variable matching *_FILE to a file path, the prefixed environment
 # variable will be overridden with the value specified in that file
