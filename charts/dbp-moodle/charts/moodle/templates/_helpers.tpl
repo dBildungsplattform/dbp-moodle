@@ -110,9 +110,5 @@ Return the DB User
 Return the DB Secret Name
 */}}
 {{- define "moodle.databaseSecretName" -}}
-{{- if .Values.externalDatabase.existingSecret -}}
     {{- printf "%s" .Values.externalDatabase.existingSecret -}}
-{{- else -}}
-    {{- printf "%s-%s" (include "common.names.fullname" .) "externaldb" -}}
-{{- end -}}
 {{- end -}}
