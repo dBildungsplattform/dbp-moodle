@@ -648,7 +648,7 @@ ingress:
 externalDatabase:
   ## @param externalDatabase.type Type of the existing database
   ##
-  type: ""
+  type: "pgsql"
   ## @param externalDatabase.host Host of the existing database
   ##
   host: ""
@@ -657,14 +657,14 @@ externalDatabase:
   port: 5432
   ## @param externalDatabase.user Existing username in the external db
   ##
-  user: user_moodle
+  user: moodle
   ## @param externalDatabase.password Password for the above username
   ##
   password: ""
   ## @param externalDatabase.database Name of the existing database
   ##
-  database: db_moodle
-  ## @param externalDatabase.existingSecret Name of an existing secret resource containing the DB password
+  database: moodle
+  ## @param externalDatabase.existingSecret Name of an existing secret resource containing the DB password with the key 'db-password'. Overrides externalDatabase.password 
   ##
   existingSecret: ""
 ## @section Volume Permissions parameters

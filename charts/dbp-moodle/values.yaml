@@ -300,7 +300,7 @@ moodle:
       cpu: 6
       memory: 3Gi
   externalDatabase:
-    # -- Type of DB to provision, possible values are "mariadb" and "pgsql"
+    # -- Type of DB to provision, possible values are "pgsql"
     type: "pgsql"
     # -- Host of the existing database
     host: "moodle-postgresql"
@@ -312,7 +312,7 @@ moodle:
     password: ""
     # -- Name of the existing database
     database: "moodle"
-    # -- Name of an existing secret resource containing the DB password
+    # -- Name of an existing secret resource containing the DB password with the key 'db-password'
     existingSecret: "moodle-test-secret"
   service:
     type: ClusterIP
@@ -391,39 +391,39 @@ moodle:
   networkPolicy:
     enabled: false
 
-mariadb:
-  enabled: true
-  # Switch to bitnamilegacy, see https://github.com/bitnami/charts/issues/35164
-  image:
-    tag: "11.3.2-debian-12-r5"
-    repository: bitnamilegacy/mariadb
-  volumePermissions:
-    image:
-      repository: bitnamilegacy/os-shell
-  metrics:
-    enabled: true
-    image:
-      repository: bitnamilegacy/mysqld-exporter
-    serviceMonitor:
-      enabled: true
-  global:
-    storageClass: "nfs-client"    
-  auth:
-    username: "moodle"
-    database: "moodle"
-    existingSecret: "moodle"
-  primary:
-    containerSecurityContext:
-      privileged: false
-    affinity: {}
-    tolerations: []
-    resources:
-      requests:
-        cpu: 250m
-        memory: 256Mi
-      limits:
-        cpu: 9
-        memory: 3Gi
+# mariadb:
+#   enabled: true
+#   # Switch to bitnamilegacy, see https://github.com/bitnami/charts/issues/35164
+#   image:
+#     tag: "11.3.2-debian-12-r5"
+#     repository: bitnamilegacy/mariadb
+#   volumePermissions:
+#     image:
+#       repository: bitnamilegacy/os-shell
+#   metrics:
+#     enabled: true
+#     image:
+#       repository: bitnamilegacy/mysqld-exporter
+#     serviceMonitor:
+#       enabled: true
+#   global:
+#     storageClass: "nfs-client"    
+#   auth:
+#     username: "moodle"
+#     database: "moodle"
+#     existingSecret: "moodle"
+#   primary:
+#     containerSecurityContext:
+#       privileged: false
+#     affinity: {}
+#     tolerations: []
+#     resources:
+#       requests:
+#         cpu: 250m
+#         memory: 256Mi
+#       limits:
+#         cpu: 9
+#         memory: 3Gi
 
 postgresql:
   enabled: true
@@ -447,8 +447,8 @@ postgresql:
     existingSecret: "moodle"
     secretKeys:
       adminPasswordKey: "pgsql-admin-password"
-      # -- Moodle expects its db password key to be mariadb-password
-      userPasswordKey: "mariadb-password"
+      # -- Moodle expects its db password key to be db-password
+      userPasswordKey: "db-password"
   primary:
     extendedConfiguration: |
       max_connections = 800
