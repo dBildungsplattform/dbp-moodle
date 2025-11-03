@@ -128,7 +128,7 @@ mv /tmp/config.php /bitnami/moodle/config.php
 # fi
 
 MODULE=dbp info "Finished all preparations! Starting Webserver"
-/scripts/moodle/run.sh
+/scripts/init/moodle/run.sh
 # MODULE=dbp info "Starting Webserver"
 # /scripts/init/apache/run.sh
 
