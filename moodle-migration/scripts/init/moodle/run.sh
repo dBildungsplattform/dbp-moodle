@@ -10,7 +10,7 @@ set -o pipefail
 # set -o xtrace # Uncomment this line for debugging purposes
 
 # Load Moodle environment
-. scripts/init/moodle/moodle-env.sh
+. /scripts/init/moodle/moodle-env.sh
 
 # Load libraries
 . /scripts/libos.sh
