@@ -82,8 +82,8 @@ RUN chmod +x /scripts/init/moodle/moodleInstall.sh
 RUN /scripts/init/moodle/moodleInstall.sh
 
 #TODO
-# ENV APACHE_HTTPS_PORT_NUMBER="" \
-#     APACHE_HTTP_PORT_NUMBER="" \
+# ENV APACHE_HTTPS_PORT_NUMBER="8080" \
+#     APACHE_HTTP_PORT_NUMBER="8443" \
 #     APP_VERSION="5.0.1" \
 #     BITNAMI_APP_NAME="moodle" \
 #     LANG="en_US.UTF-8" \

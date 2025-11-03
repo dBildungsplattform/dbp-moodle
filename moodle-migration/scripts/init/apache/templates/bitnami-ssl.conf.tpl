@@ -13,12 +13,12 @@ SSLSessionCache "shmcb:{{APACHE_LOGS_DIR}}/ssl_scache(512000)"
 SSLSessionCacheTimeout  300
 
 <VirtualHost _default_:443>
-  DocumentRoot "{{APACHE_BASE_DIR}}/htdocs"
+  DocumentRoot "/etc/dbp-moodle/moodle"
   SSLEngine on
   SSLCertificateFile "{{APACHE_CONF_DIR}}/bitnami/certs/tls.crt"
   SSLCertificateKeyFile "{{APACHE_CONF_DIR}}/bitnami/certs/tls.key"
 
-  <Directory "{{APACHE_BASE_DIR}}/htdocs">
+  <Directory "/etc/dbp-moodle/moodle">
     Options Indexes FollowSymLinks
     AllowOverride All
     Require all granted
