@@ -100,6 +100,7 @@ RUN mkdir /plugins
 # && /downloadPlugins.sh
 
 RUN chmod -R g+w /opt/dbp-moodle
+RUN chmod -R g+w /dbp-moodle
 # RUN uninstall_packages curl
 
 RUN chown 1001:root -R /scripts
@@ -108,6 +109,7 @@ RUN chown 1001:1001 -R /bitnami
 RUN chown 1001:1001 -R /var/log/apache2
 RUN chown 1001:1001 -R /etc/apache2
 RUN chown 1001:1001 -R ${MOODLE_PATH}
+RUN chown 1001:1001 -R /dbp-moodle
 USER 1001
 
 ENTRYPOINT ["/scripts/init/entrypoint.sh"]
