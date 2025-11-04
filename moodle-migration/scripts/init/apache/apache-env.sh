@@ -45,7 +45,7 @@ unset apache_env_vars
 export WEB_SERVER_TYPE="apache"
 
 # Paths
-export APACHE_BASE_DIR="${APACHE_ROOT_DIR}/apache2"
+export APACHE_BASE_DIR="${APACHE_ROOT_DIR}/apache2" # /etc/apache2
 export APACHE_CONF_DIR="${APACHE_BASE_DIR}/conf-enabled"
 export APACHE_DEFAULT_CONF_DIR="${APACHE_BASE_DIR}/conf-available"
 export APACHE_VHOSTS_DIR="${APACHE_BASE_DIR}/vhosts"

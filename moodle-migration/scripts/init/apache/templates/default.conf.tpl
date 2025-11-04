@@ -4,8 +4,8 @@
 SetEnvIf X-Forwarded-Proto https HTTPS=on
 
 <VirtualHost _default_:8080>
-  DocumentRoot "/etc/dbp-moodle/moodle"
-  <Directory "/etc/dbp-moodle/moodle">
+  DocumentRoot "/opt/dbp-moodle/moodle"
+  <Directory "/opt/dbp-moodle/moodle">
     Options Indexes FollowSymLinks
     AllowOverride All
     Require all granted
