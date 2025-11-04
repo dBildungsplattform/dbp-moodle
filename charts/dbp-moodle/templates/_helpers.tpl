@@ -95,5 +95,5 @@ usersuspension:tool_usersuspension:admin/tool/usersuspension:   {{- .Values.glob
 dynamic_cohorts:tool_dynamic_cohorts:admin/tool/dynamic_cohorts:{{- .Values.global.moodlePlugins.dynamic_cohorts.enabled }}{{"\n"}}
 shortcodes:filter_shortcodes:filter/shortcodes:                 {{- .Values.global.moodlePlugins.shortcodes.enabled }}{{"\n"}}
 filtercodes:filter_filtercodes:filter/filtercodes:              {{- .Values.global.moodlePlugins.filtercodes.enabled }}{{"\n"}}
-customfield_dynamic:customfield_dynamic:customfield/field/dynamic:{{- .Values.global.moodlePlugins.dynamic.enabled }}{{"\n"}}
+dynamic:customfield_dynamic:customfield/field/dynamic:          {{- .Values.global.moodlePlugins.dynamic.enabled }}{{"\n"}}
 {{- end -}}
