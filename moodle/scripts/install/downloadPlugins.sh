@@ -43,3 +43,6 @@ moosh plugin-download -v "$major_minor" theme_boost_union
 moosh plugin-download -v "$major_minor" theme_boost_magnific
 moosh plugin-download -v "$major_minor" tool_usersuspension
 moosh plugin-download -v "$major_minor" tool_dynamic_cohorts
+moosh plugin-download -v 3.7 customfield_dynamic
+moosh plugin-download -v "$major_minor" filter_shortcodes
+moosh plugin-download -v "$major_minor" filter_filtercodes
