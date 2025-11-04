@@ -1,13 +1,10 @@
 dependencies:
 - name: moodle
-  repository: https://charts.bitnami.com/bitnami
+  repository: file://charts/moodle
   version: 27.0.2
 - name: redis
   repository: https://charts.bitnami.com/bitnami
   version: 19.5.3
-- name: mariadb
-  repository: https://charts.bitnami.com/bitnami
-  version: 18.2.2
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 15.5.38
@@ -29,5 +26,5 @@ dependencies:
 - name: sql-exporter
   repository: https://burningalchemist.github.io/sql_exporter/
   version: 0.6.1
-digest: sha256:95144a857a39cca1f875748c69ad3491790ad8a85c592d260349fbbb47c48b70
-generated: "2025-09-12T08:42:46.637550276+02:00"
+digest: sha256:d8854103510b87f1d473d93238260ddd267121e4aa54eb28f0cebf75c4c39480
+generated: "2025-10-28T14:49:16.330643775Z"
