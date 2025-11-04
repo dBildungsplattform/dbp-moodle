@@ -76,7 +76,7 @@ global:
       enabled: false
     filtercodes:
       enabled: false
-    dynamic:
+    customfield_dynamic:
       enabled: false
 
 dbpMoodle:
