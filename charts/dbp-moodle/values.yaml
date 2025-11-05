@@ -78,6 +78,8 @@ global:
       enabled: false
     customfield_dynamic:
       enabled: false
+    availability_cohort:
+      enabled: false
 
 dbpMoodle:
   name: infra
