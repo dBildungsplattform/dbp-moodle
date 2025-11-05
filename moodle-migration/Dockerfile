@@ -108,7 +108,7 @@ RUN chown 1001:root -R /plugins
 RUN chown 1001:1001 -R /bitnami
 RUN chown 1001:1001 -R /var/log/apache2
 RUN chown 1001:1001 -R /etc/apache2
-RUN chown 1001:1001 -R ${MOODLE_PATH}
+RUN chown 1001:1001 -R /opt/dbp-moodle
 RUN chown 1001:1001 -R /dbp-moodle
 USER 1001
 
