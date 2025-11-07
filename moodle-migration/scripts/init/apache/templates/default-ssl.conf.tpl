@@ -12,7 +12,7 @@ SSLPassPhraseDialog  builtin
 SSLSessionCache "shmcb:{{APACHE_LOGS_DIR}}/ssl_scache(512000)"
 SSLSessionCacheTimeout  300
 
-<VirtualHost _default_:443>
+<VirtualHost _default_:8443>
   DocumentRoot "/opt/dbp-moodle/moodle"
   SSLEngine on
   SSLCertificateFile "/opt/dbp-moodle/apache/certs/tls.crt"
