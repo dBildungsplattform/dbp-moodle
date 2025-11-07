@@ -4,7 +4,7 @@
   LoadModule ssl_module modules/mod_ssl.so
 </IfModule>
 
-Listen 443
+Listen 8443
 SSLProtocol all -SSLv2 -SSLv3
 SSLHonorCipherOrder on
 SSLCipherSuite "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS !EDH !RC4"
