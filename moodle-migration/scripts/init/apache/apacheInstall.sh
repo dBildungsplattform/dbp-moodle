@@ -49,7 +49,7 @@ apache_setup_config() {
     # Default vhost as fallback
     ensure_dir_exists "${APACHE_VHOSTS_DIR}"
     envsubst < "${template_dir}/default.conf.tpl" > "${APACHE_VHOSTS_DIR}/default.conf"
-    # envsubst < "${template_dir}/bitnami-ssl.conf.tpl" > "${APACHE_VHOSTS_DIR}/default-ssl.conf"
+    envsubst < "${template_dir}/default-ssl.conf.tpl" > "${APACHE_VHOSTS_DIR}/default-ssl.conf"
     ensure_dir_exists "${APACHE_BASE_DIR}/htdocs"
     echo '<?php echo "Hello World!";' > "${APACHE_BASE_DIR}/htdocs/index.php" # TODO remove later after debugging
     # echo "works!" > "${APACHE_BASE_DIR}/htdocs/index.html"
@@ -75,7 +75,7 @@ EOF
     apache_configure_https_port "$APACHE_DEFAULT_HTTPS_PORT_NUMBER"
 
     # Remove unnecessary directories that come with the tarball
-    rm -rf "${APACHE_ROOT_DIR}/certs" "${APACHE_ROOT_DIR}/conf"
+    # rm -rf "${APACHE_ROOT_DIR}/certs" "${APACHE_ROOT_DIR}/conf" TODO check later on
 }
 
 apache_setup_php_config() {

@@ -23,7 +23,31 @@ apache_validate
 # Ensure Apache daemon user exists when running as 'root'
 am_i_root && ensure_user_exists "$APACHE_DAEMON_USER" --group "$APACHE_DAEMON_GROUP"
 
-# TODO SSL configuration
+# Define custom certs directory
+SSL_CERTS_DIR="/opt/dbp-moodle/apache/certs"
+
+# Generate SSL certs (without a passphrase)
+mkdir -p "$SSL_CERTS_DIR"
+if [[ ! -f "$SSL_CERTS_DIR/tls.crt" ]]; then
+    echo "Generating sample certificates"
+    SSL_KEY_FILE="$SSL_CERTS_DIR/tls.key"
+    SSL_CERT_FILE="$SSL_CERTS_DIR/tls.crt"
+    SSL_CSR_FILE="$SSL_CERTS_DIR/tls.csr"
+    SSL_SUBJ="/CN=example.com"
+    SSL_EXT="subjectAltName=DNS:example.com,DNS:www.example.com,IP:127.0.0.1"
+
+    rm -f "$SSL_KEY_FILE" "$SSL_CERT_FILE"
+    openssl genrsa -out "$SSL_KEY_FILE" 4096
+
+    if [[ "$(openssl version | grep -oE "[0-9]+\.[0-9]+")" == "1.0" ]]; then
+        openssl req -new -sha256 -out "$SSL_CSR_FILE" -key "$SSL_KEY_FILE" -nodes -subj "$SSL_SUBJ"
+    else
+        openssl req -new -sha256 -out "$SSL_CSR_FILE" -key "$SSL_KEY_FILE" -nodes -subj "$SSL_SUBJ" -addext "$SSL_EXT"
+    fi
+
+    openssl x509 -req -sha256 -in "$SSL_CSR_FILE" -signkey "$SSL_KEY_FILE" -out "$SSL_CERT_FILE" -days 1825 -extfile <(echo -n "$SSL_EXT")
+    rm -f "$SSL_CSR_FILE"
+fi
 
 # Update ports in configuration
 [[ -n "$APACHE_HTTP_PORT_NUMBER" ]] && info "Configuring the HTTP port" && apache_configure_http_port "$APACHE_HTTP_PORT_NUMBER"

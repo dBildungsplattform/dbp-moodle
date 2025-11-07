@@ -15,8 +15,8 @@ SSLSessionCacheTimeout  300
 <VirtualHost _default_:443>
   DocumentRoot "/opt/dbp-moodle/moodle"
   SSLEngine on
-  SSLCertificateFile "{{APACHE_CONF_DIR}}/bitnami/certs/tls.crt"
-  SSLCertificateKeyFile "{{APACHE_CONF_DIR}}/bitnami/certs/tls.key"
+  SSLCertificateFile "/opt/dbp-moodle/apache/certs/tls.crt"
+  SSLCertificateKeyFile "/opt/dbp-moodle/apache/certs/tls.key"
 
   <Directory "/opt/dbp-moodle/moodle">
     Options Indexes FollowSymLinks

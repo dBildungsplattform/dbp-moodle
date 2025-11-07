@@ -98,7 +98,7 @@ moodle_validate() {
 # Returns:
 #   None
 #########################
-# Migration: We use postgresql, check if this function is still required
+# TODO Migration: We use postgresql, check if this function is still required
 moodle_fix_manageddb_check() {
     info "Changing minimum required MariaDB version to $MOODLE_DATABASE_MIN_VERSION"
     replace_in_file "$MOODLE_BASE_DIR/admin/environment.xml" "name=\"mariadb\" version=\"[^\"]+\"" "name=\"mariadb\" version=\"$MOODLE_DATABASE_MIN_VERSION\""
