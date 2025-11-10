@@ -63,15 +63,13 @@ RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && \
     locale-gen && \
     update-locale LANG=de_DE.UTF-8 LC_MESSAGES=de_DE.UTF-8
 
-# RUN chmod +x /scripts/install/generate-locales.sh && \
-#     /scripts/install/generate-locales.sh
+RUN chmod +x /scripts/install/generate-locales.sh && \
+    /scripts/install/generate-locales.sh
 
 COPY /scripts/init/apache/httpd.conf /etc/apache2/apache2.conf
 
 RUN chmod +x /scripts/init/apache/apacheInstall.sh
 RUN /scripts/init/apache/apacheInstall.sh
-# RUN /opt/bitnami/scripts/php/postunpack.sh
-# RUN /opt/bitnami/scripts/apache-modphp/postunpack.sh
 
 # Php configuration and installation
 RUN chmod +x /scripts/init/php/phpInstall.sh
@@ -81,35 +79,26 @@ RUN /scripts/init/php/phpInstall.sh
 RUN chmod +x /scripts/init/moodle/moodleInstall.sh
 RUN /scripts/init/moodle/moodleInstall.sh
 
-#TODO
-# ENV APACHE_HTTPS_PORT_NUMBER="8080" \
-#     APACHE_HTTP_PORT_NUMBER="8443" \
-#     APP_VERSION="5.0.1" \
-#     BITNAMI_APP_NAME="moodle" \
-#     LANG="en_US.UTF-8" \
-#     LANGUAGE="en_US:en" \
-#     PATH="/opt/bitnami/common/bin:/opt/bitnami/php/bin:/opt/bitnami/php/sbin:/opt/bitnami/apache/bin:/opt/bitnami/postgresql/bin:/opt/bitnami/mysql/bin:$PATH"
-# RUN apt-get update
-# RUN apt-get install -y --no-install-recommends libcurl4-openssl-dev libfreetype6-dev libicu-dev libjpeg62-turbo-dev libldap2-dev libmariadb-dev libmemcached-dev libpng-dev libpq-dev libxml2-dev libxslt-dev uuid-dev libbz2-dev libzip-dev zlib1g-dev libgmp-dev libssl-dev libreadline-dev libsqlite3-dev libtidy-dev libjpeg-dev libwebp-dev libxpm-dev pkg-config
-
-
 EXPOSE 8080 8443
 
 # Install plugins to the image, skipped for now
-RUN mkdir /plugins 
-# && /downloadPlugins.sh
+RUN mkdir /plugins && /downloadPlugins.sh
+
+RUN uninstall_packages curl
 
 RUN chmod -R g+w /opt/dbp-moodle
+#TODO replace the current /bitnami/moodle with /dbp-moodle/moodle
 RUN chmod -R g+w /dbp-moodle
-# RUN uninstall_packages curl
+RUN chown 1001:1001 -R /bitnami
+RUN chown 1001:1001 -R /dbp-moodle
 
 RUN chown 1001:root -R /scripts
 RUN chown 1001:root -R /plugins
-RUN chown 1001:1001 -R /bitnami
+
 RUN chown 1001:1001 -R /var/log/apache2
 RUN chown 1001:1001 -R /etc/apache2
 RUN chown 1001:1001 -R /opt/dbp-moodle
-RUN chown 1001:1001 -R /dbp-moodle
+
 USER 1001
 
 ENTRYPOINT ["/scripts/init/entrypoint.sh"]

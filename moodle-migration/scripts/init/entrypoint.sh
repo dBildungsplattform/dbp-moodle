@@ -129,9 +129,3 @@ mv /tmp/config.php /bitnami/moodle/config.php
 
 MODULE=dbp info "Finished all preparations! Starting Webserver"
 /scripts/init/moodle/run.sh
-# MODULE=dbp info "Starting Webserver"
-# /scripts/init/apache/run.sh
-
-# Sleep for testing purposes
-MODULE=dbp info "Entering sleep"
-sleep 2000
