@@ -8,7 +8,7 @@ USER root
 ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.5.4"}
 #This is the path moodle will be placed after downloading for our Moodle Update Pipeline
 ARG MOODLE_PATH="/opt/dbp-moodle/moodle"
-ARG EXTRA_LOCALES="de_DE.UTF-8"
+ARG EXTRA_LOCALES=""
 ARG APACHE_VERSION=${APACHE_VERSION:-"2.4.57"}
 ARG APACHE_DOWNLOAD_URL="https://snapshot.debian.org/archive/debian/20230408T145143Z/pool/main/a/apache2"
 
@@ -59,9 +59,9 @@ RUN apt-get update && apt-get upgrade -y && \
 RUN find / -perm /6000 -type f -exec chmod a-s {} \; || true
 RUN sed -i -e '/pam_loginuid.so/ s/^#*/#/' /etc/pam.d/cron
 
-RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen && \
+RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
     locale-gen && \
-    update-locale LANG=de_DE.UTF-8 LC_MESSAGES=de_DE.UTF-8
+    update-locale LANG=C.UTF-8 LC_MESSAGES=en_US.UTF-8
 
 RUN chmod +x /scripts/install/generate-locales.sh && \
     /scripts/install/generate-locales.sh
@@ -82,9 +82,11 @@ RUN /scripts/init/moodle/moodleInstall.sh
 EXPOSE 8080 8443
 
 # Install plugins to the image, skipped for now
-RUN mkdir /plugins && /downloadPlugins.sh
+RUN mkdir /plugins 
+# && /downloadPlugins.sh
 
-RUN uninstall_packages curl
+RUN apt-get remove -y curl && \
+    apt-get autoremove -y
 
 RUN chmod -R g+w /opt/dbp-moodle
 #TODO replace the current /bitnami/moodle with /dbp-moodle/moodle
