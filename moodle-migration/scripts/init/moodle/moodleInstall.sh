@@ -35,7 +35,7 @@ ensure_user_exists "$WEB_SERVER_DAEMON_USER" --group "$WEB_SERVER_DAEMON_GROUP"
 for dir in "$MOODLE_BASE_DIR" "$MOODLE_VOLUME_DIR" "$MOODLE_DATA_DIR"; do
     ensure_dir_exists "$dir"
     # Use daemon:root ownership for compatibility when running as a non-root user
-    configure_permissions_ownership "$dir" -d "775" -f "664" -u "$WEB_SERVER_DAEMON_USER" -g "root"
+    configure_permissions_ownership "$dir" -d "775" -f "664" -u "1001" -g "1001"
 done
 
 # Configure required PHP options for application to work properly, based on build-time defaults
@@ -46,31 +46,31 @@ php_conf_set extension "pgsql"
 
 # Enable default web server configuration for Moodle
 # TODO
-info "Creating default web server configuration for Moodle - Skipped"
-# web_server_validate
-# ensure_web_server_app_configuration_exists "moodle" --type php --apache-additional-configuration '
-# RewriteEngine On
+info "Creating default web server configuration for Moodle"
+web_server_validate
+ensure_web_server_app_configuration_exists "moodle" --type php --apache-additional-configuration '
+RewriteEngine On
 
-# RewriteRule ^/phpmyadmin - [L,NC]
-# RewriteRule "(\/vendor\/)" - [F]
-# RewriteRule "(\/node_modules\/)" - [F]
-# RewriteRule "(^|/)\.(?!well-known\/)" - [F]
-# RewriteRule "(composer\.json)" - [F]
-# RewriteRule "(\.lock)" - [F]
-# RewriteRule "(\/environment.xml)" - [F]
-# Options -Indexes
-# RewriteRule "(\/install.xml)" - [F]
-# RewriteRule "(\/README)" - [F]
-# RewriteRule "(\/readme)" - [F]
-# RewriteRule "(\/moodle_readme)" - [F]
-# RewriteRule "(\/upgrade\.txt)" - [F]
-# RewriteRule "(phpunit\.xml\.dist)" - [F]
-# RewriteRule "(\/tests\/behat\/)" - [F]
-# RewriteRule "(\/fixtures\/)" - [F]
+RewriteRule ^/phpmyadmin - [L,NC]
+RewriteRule "(\/vendor\/)" - [F]
+RewriteRule "(\/node_modules\/)" - [F]
+RewriteRule "(^|/)\.(?!well-known\/)" - [F]
+RewriteRule "(composer\.json)" - [F]
+RewriteRule "(\.lock)" - [F]
+RewriteRule "(\/environment.xml)" - [F]
+Options -Indexes
+RewriteRule "(\/install.xml)" - [F]
+RewriteRule "(\/README)" - [F]
+RewriteRule "(\/readme)" - [F]
+RewriteRule "(\/moodle_readme)" - [F]
+RewriteRule "(\/upgrade\.txt)" - [F]
+RewriteRule "(phpunit\.xml\.dist)" - [F]
+RewriteRule "(\/tests\/behat\/)" - [F]
+RewriteRule "(\/fixtures\/)" - [F]
 
-# RewriteRule "(\/package\.json)" - [F]
-# RewriteRule "(\/Gruntfile\.js)" - [F]
-#'
+RewriteRule "(\/package\.json)" - [F]
+RewriteRule "(\/Gruntfile\.js)" - [F]
+'
 
 # Copy all initially generated configuration files to the default directory
 # (this is to avoid breaking when entrypoint is being overridden)
@@ -79,4 +79,4 @@ info "Creating default web server configuration for Moodle - Skipped"
 # cp -r "$APACHE_CONF_DIR/* "/opt/bitnami/apache/conf.default"
 
 # This is necessary for the libpersistence.sh scripts to work when running as non-root
-# chmod g+w /opt/bitnami
+chmod g+w /opt/dbp-moodle
