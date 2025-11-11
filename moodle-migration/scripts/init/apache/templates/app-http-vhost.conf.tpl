@@ -11,5 +11,23 @@
   </Directory>
   {{additional_http_configuration}}
   {{additional_configuration}}
-  {{htaccess_include}}
+  RewriteEngine On
+  RewriteRule ^/phpmyadmin - [L,NC]
+  RewriteRule "(\/vendor\/)" - [F]
+  RewriteRule "(\/node_modules\/)" - [F]
+  RewriteRule "(^|/)\.(?!well-known\/)" - [F]
+  RewriteRule "(composer\.json)" - [F]
+  RewriteRule "(\.lock)" - [F]
+  RewriteRule "(\/environment.xml)" - [F]
+  Options -Indexes
+  RewriteRule "(\/install.xml)" - [F]
+  RewriteRule "(\/README)" - [F]
+  RewriteRule "(\/readme)" - [F]
+  RewriteRule "(\/moodle_readme)" - [F]
+  RewriteRule "(\/upgrade\.txt)" - [F]
+  RewriteRule "(phpunit\.xml\.dist)" - [F]
+  RewriteRule "(\/tests\/behat\/)" - [F]
+  RewriteRule "(\/fixtures\/)" - [F]
+  RewriteRule "(\/package\.json)" - [F]
+  RewriteRule "(\/Gruntfile\.js)" - [F]
 </VirtualHost>
