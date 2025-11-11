@@ -76,6 +76,7 @@ RUN chmod +x /scripts/init/php/phpInstall.sh
 RUN /scripts/init/php/phpInstall.sh
 
 # Prepare Moodle
+RUN chmod -R g+w /etc/apache2/vhosts/htaccess
 RUN chmod +x /scripts/init/moodle/moodleInstall.sh
 RUN /scripts/init/moodle/moodleInstall.sh
 
