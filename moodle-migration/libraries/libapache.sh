@@ -125,15 +125,19 @@ apache_configure_https_port() {
 # Returns:
 #   None
 #########################
-apache_configure_server_tokens() {
-    local -r value=${1:?missing value}
-    local -r server_tokens_exp="s|^\s*ServerTokens\s+\w+\s*$|ServerTokens ${value}|"
+apache_configure_security_settings() {
+    local -r token_value=${1:?missing value}
+    local -r signature_value=${2:?missing value}
+    local -r server_tokens_exp="s|^\s*ServerTokens\s+\w+\s*$|ServerTokens ${token_value}|"
+    local -r server_signature_exp="s|^\s*ServerSignature\s+\w+\s*$|ServerSignature ${signature_value}|"
     local apache_configuration
 
-     if [[ -w "$APACHE_CONF_FILE" ]]; then
-        debug "Configuring ServerTokens ${value} on file ${APACHE_CONF_FILE}"
-        apache_configuration="$(sed -E -e "$server_tokens_exp" "$APACHE_CONF_FILE")"
-        echo "$apache_configuration" > "$APACHE_CONF_FILE"
+     if [[ -w "$APACHE_SECURITY_FILE" ]]; then
+        debug "Configuring Security Settings on file ${APACHE_SECURITY_FILE}"
+        apache_token_configuration="$(sed -E -e "$server_tokens_exp" "$APACHE_SECURITY_FILE")"
+        apache_server_signature_configuration="$(sed -E -e "$server_signature_exp" "$APACHE_SECURITY_FILE")"
+        echo "$apache_token_configuration" > "$APACHE_SECURITY_FILE"
+        echo "$apache_server_signature_configuration" > "$APACHE_SECURITY_FILE"
     fi
 }
 
