@@ -134,6 +134,7 @@ apache_configure_security_settings() {
 
      if [[ -w "$APACHE_SECURITY_FILE" ]]; then
         debug "Configuring Security Settings on file ${APACHE_SECURITY_FILE}"
+        info "Apache token value ${token_value} will be configured"
         apache_token_configuration="$(sed -E -e "$server_tokens_exp" "$APACHE_SECURITY_FILE")"
         apache_server_signature_configuration="$(sed -E -e "$server_signature_exp" "$APACHE_SECURITY_FILE")"
         echo "$apache_token_configuration" > "$APACHE_SECURITY_FILE"
