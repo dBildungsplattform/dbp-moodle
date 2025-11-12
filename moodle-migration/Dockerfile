@@ -86,8 +86,8 @@ EXPOSE 8080 8443
 RUN mkdir /plugins 
 # && /downloadPlugins.sh
 
-RUN apt-get remove -y curl && \
-    apt-get autoremove -y
+# RUN apt-get remove -y curl && \
+#     apt-get autoremove -y
 
 RUN chmod -R g+w /opt/dbp-moodle
 #TODO replace the current /bitnami/moodle with /dbp-moodle/moodle
