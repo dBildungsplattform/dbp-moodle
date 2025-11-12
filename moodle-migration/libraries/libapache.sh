@@ -142,7 +142,7 @@ apache_configure_security_settings() {
     fi
 
     # This file is removed because it overwrites our own configuration and comes from apache by default
-    rm -r APACHE_SECURITY_FILE
+    rm -rf "$APACHE_SECURITY_FILE"
 }
 
 ########################
