@@ -132,14 +132,17 @@ apache_configure_security_settings() {
     local -r server_signature_exp="s|^\s*ServerSignature\s+\w+\s*$|ServerSignature ${signature_value}|"
     local apache_configuration
 
-     if [[ -w "$APACHE_SECURITY_FILE" ]]; then
-        debug "Configuring Security Settings on file ${APACHE_SECURITY_FILE}"
+     if [[ -w "$APACHE_CONF_FILE" ]]; then
+        debug "Configuring Security Settings on file ${APACHE_CONF_FILE}"
         info "Apache token value ${token_value} will be configured"
-        apache_token_configuration="$(sed -E -e "$server_tokens_exp" "$APACHE_SECURITY_FILE")"
-        apache_server_signature_configuration="$(sed -E -e "$server_signature_exp" "$APACHE_SECURITY_FILE")"
-        echo "$apache_token_configuration" > "$APACHE_SECURITY_FILE"
-        echo "$apache_server_signature_configuration" > "$APACHE_SECURITY_FILE"
+        apache_token_configuration="$(sed -E -e "$server_tokens_exp" "$APACHE_CONF_FILE")"
+        apache_server_signature_configuration="$(sed -E -e "$server_signature_exp" "$APACHE_CONF_FILE")"
+        echo "$apache_token_configuration" > "$APACHE_CONF_FILE"
+        echo "$apache_server_signature_configuration" > "$APACHE_CONF_FILE"
     fi
+
+    # This file is removed because it overwrites our own configuration and comes from apache by default
+    rm -r APACHE_SECURITY_FILE
 }
 
 ########################
