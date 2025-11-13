@@ -115,8 +115,6 @@ is_file_writable() {
 relativize() {
     local -r path="${1:?missing path}"
     local -r base="${2:?missing base}"
-    info "Path: $path"
-    info "Base: $base"
     pushd "$base" >/dev/null || exit
     realpath -q --no-symlinks --relative-base="$base" "$path" | sed -e 's|^/$|.|' -e 's|^/||'
     popd >/dev/null || exit
