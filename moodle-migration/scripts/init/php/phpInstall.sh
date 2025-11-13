@@ -65,5 +65,3 @@ chmod -R g+w "$PHP_CONF_DIR"
 ! am_i_root || chmod o+w "$(readlink /dev/stdout)" "$(readlink /dev/stderr)"
 
 # Prüfen ob wir hardening für das default PHP und unsere settings benötigen
-
-# Ich muss die php extensions noch installieren
