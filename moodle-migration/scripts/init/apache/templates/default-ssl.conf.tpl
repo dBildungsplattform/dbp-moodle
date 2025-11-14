@@ -1,19 +1,32 @@
-{{https_listen_configuration}}
-{{before_vhost_configuration}}
-<VirtualHost {{https_listen_addresses}}>
-  {{server_name_configuration}}
+# Default SSL Virtual Host configuration.
+
+<IfModule !ssl_module>
+  LoadModule ssl_module modules/mod_ssl.so
+</IfModule>
+
+Listen 8443
+SSLProtocol all -SSLv2 -SSLv3
+SSLHonorCipherOrder on
+SSLCipherSuite "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS !EDH !RC4"
+SSLPassPhraseDialog  builtin
+SSLSessionCache "shmcb:{{APACHE_LOGS_DIR}}/ssl_scache(512000)"
+SSLSessionCacheTimeout  300
+
+<VirtualHost _default_:8443>
+  DocumentRoot "/opt/dbp-moodle/moodle"
   SSLEngine on
   SSLCertificateFile "/opt/dbp-moodle/apache/certs/tls.crt"
   SSLCertificateKeyFile "/opt/dbp-moodle/apache/certs/tls.key"
-  DocumentRoot {{document_root}}
-  <Directory "{{document_root}}">
-    Options -Indexes +FollowSymLinks -MultiViews
-    AllowOverride {{allow_override}}
-    {{acl_configuration}}
-    {{extra_directory_configuration}}
+
+  <Directory "/opt/dbp-moodle/moodle">
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Require all granted
   </Directory>
-  {{additional_https_configuration}}
-  {{additional_configuration}}
+
+  # Error Documents
+  ErrorDocument 503 /503.html
+
   RewriteEngine On
   RewriteRule ^/phpmyadmin - [L,NC]
   RewriteRule "(\/vendor\/)" - [F]

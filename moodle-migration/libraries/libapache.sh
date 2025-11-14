@@ -125,16 +125,24 @@ apache_configure_https_port() {
 # Returns:
 #   None
 #########################
-apache_configure_server_tokens() {
-    local -r value=${1:?missing value}
-    local -r server_tokens_exp="s|^\s*ServerTokens\s+\w+\s*$|ServerTokens ${value}|"
+apache_configure_security_settings() {
+    local -r token_value=${1:?missing value}
+    local -r signature_value=${2:?missing value}
+    local -r server_tokens_exp="s|^\s*ServerTokens\s+\w+\s*$|ServerTokens ${token_value}|"
+    local -r server_signature_exp="s|^\s*ServerSignature\s+\w+\s*$|ServerSignature ${signature_value}|"
     local apache_configuration
 
      if [[ -w "$APACHE_CONF_FILE" ]]; then
-        debug "Configuring ServerTokens ${value} on file ${APACHE_CONF_FILE}"
-        apache_configuration="$(sed -E -e "$server_tokens_exp" "$APACHE_CONF_FILE")"
-        echo "$apache_configuration" > "$APACHE_CONF_FILE"
+        debug "Configuring Security Settings on file ${APACHE_CONF_FILE}"
+        info "Apache token value ${token_value} will be configured"
+        apache_token_configuration="$(sed -E -e "$server_tokens_exp" "$APACHE_CONF_FILE")"
+        apache_server_signature_configuration="$(sed -E -e "$server_signature_exp" "$APACHE_CONF_FILE")"
+        echo "$apache_token_configuration" > "$APACHE_CONF_FILE"
+        echo "$apache_server_signature_configuration" > "$APACHE_CONF_FILE"
     fi
+
+    # This file is removed because it overwrites our own configuration and comes from apache by default
+    rm -rf "$APACHE_SECURITY_FILE"
 }
 
 ########################
@@ -280,7 +288,7 @@ apache_replace_htaccess_files() {
     local -r app="${1:?missing app}"
     local -r result_file="${APACHE_HTACCESS_DIR}/${app}-htaccess.conf"
     # Default options
-    local document_root="${ROOT_DIR}/${app}"
+    local document_root="${APACHE_ROOT_DIR}/${app}"
     local overwrite="yes"
     local -a htaccess_files
     local htaccess_dir
@@ -387,7 +395,7 @@ ensure_apache_app_configuration_exists() {
     export additional_https_configuration=""
     export before_vhost_configuration=""
     export allow_override="All"
-    export document_root="${ROOT_DIR}/${app}"
+    export document_root="${APACHE_ROOT_DIR}/${app}"
     export extra_directory_configuration=""
     export default_http_port="${APACHE_HTTP_PORT_NUMBER:-"$APACHE_DEFAULT_HTTP_PORT_NUMBER"}"
     export default_https_port="${APACHE_HTTPS_PORT_NUMBER:-"$APACHE_DEFAULT_HTTPS_PORT_NUMBER"}"
@@ -581,7 +589,7 @@ ensure_apache_prefix_configuration_exists() {
     # Template variables defaults
     export additional_configuration=""
     export allow_override="All"
-    export document_root="${ROOT_DIR}/${app}"
+    export document_root="${APACHE_ROOT_DIR}/${app}"
     export extra_directory_configuration=""
     # Validate arguments
     local var_name
@@ -642,7 +650,7 @@ EOF
     # We remove lines that are empty or contain only newspaces with 'sed', so the resulting file looks better
     local template_name="app"
     [[ -n "$type" && "$type" != "php" ]] && template_name="app-${type}"
-    local -r template_dir="${ROOT_DIR}/scripts/apache/bitnami-templates"
+    local -r template_dir="${APACHE_ROOT_DIR}/scripts/apache/bitnami-templates"
     local -r prefix_file="${APACHE_CONF_DIR}/bitnami/${app}.conf"
     if is_file_writable "$prefix_file"; then
         # Create file with root group write privileges, so it can be modified in non-root containers
@@ -753,6 +761,7 @@ apache_update_app_configuration() {
         fi
     }
     # Disable and enable configuration files
+    # Migration: Check if we already set the config by default or still need to overwrite it
     rename_conf_file() {
         local -r origin="$1"
         local -r destination="$2"

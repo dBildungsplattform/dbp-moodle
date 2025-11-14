@@ -14,8 +14,8 @@
 # shellcheck disable=SC1090,SC1091
 . /scripts/liblog.sh
 
-export ROOT_DIR="/etc"
-export VOLUME_DIR="/dbp"
+export APACHE_ROOT_DIR="/etc"
+export VOLUME_DIR="/bitnami"    # "/dbp-moodle"
 
 # Logging configuration
 export MODULE="${MODULE:-apache}"
@@ -45,16 +45,17 @@ unset apache_env_vars
 export WEB_SERVER_TYPE="apache"
 
 # Paths
-export APACHE_BASE_DIR="${ROOT_DIR}/apache2"
+export APACHE_BASE_DIR="${APACHE_ROOT_DIR}/apache2" # /etc/apache2
 export APACHE_CONF_DIR="${APACHE_BASE_DIR}/conf-enabled"
 export APACHE_DEFAULT_CONF_DIR="${APACHE_BASE_DIR}/conf-available"
 export APACHE_VHOSTS_DIR="${APACHE_BASE_DIR}/vhosts"
 export APACHE_CONF_FILE="${APACHE_BASE_DIR}/apache2.conf"
+export APACHE_SECURITY_FILE="${APACHE_CONF_DIR}/security.conf"
 
 export APACHE_LOGS_DIR="${APACHE_BASE_DIR}/logs"
 export APACHE_LOG_DIR="${APACHE_BASE_DIR}/logs"
 export APACHE_HTACCESS_DIR="${APACHE_VHOSTS_DIR}/htaccess" 
-export APACHE_PID_FILE="${APACHE_BASE_DIR}/httpd.pid"  # pid id file is needed for other services to reliably identify the apache service
+export APACHE_PID_FILE="/dbp-moodle/apache-httpd.pid"  # pid id file is needed for other services to reliably identify the apache service
 
 # System users (when running with a privileged user)
 export APACHE_DAEMON_USER="daemon"
@@ -75,5 +76,6 @@ APACHE_HTTPS_PORT_NUMBER="${APACHE_HTTPS_PORT_NUMBER:-"${APACHE_HTTPS_PORT:-}"}"
 export APACHE_HTTPS_PORT_NUMBER="${APACHE_HTTPS_PORT_NUMBER:-}"
 export WEB_SERVER_HTTPS_PORT_NUMBER="$APACHE_HTTPS_PORT_NUMBER"
 export APACHE_SERVER_TOKENS="${APACHE_SERVER_TOKENS:-Prod}"
+export APACHE_SERVER_SIGNATURE="${APACHE_SERVER_SIGNATURE:-Off}"
 
 # Custom environment variables may be defined below

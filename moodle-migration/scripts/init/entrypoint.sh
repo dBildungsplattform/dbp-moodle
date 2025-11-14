@@ -13,7 +13,7 @@ set -o nounset
 . /scripts/liblog.sh
 . /scripts/libwebserver.sh
 
-moodle_path="/dbp-moodle/moodle"
+moodle_path="/bitnami/moodle"
 moodle_backup_path="/dbp-moodle/moodledata/moodle-backup" # Das Backup script muss bezüglich der Pfade angepasst werden
 
 maintenance_html_path="/dbp-moodle/moodledata/climaintenance.html"
@@ -96,14 +96,16 @@ startDbpMoodleSetup
 #     MODULE=dbp warn "Update failed previously. Skipping update check..."
 # fi
 
-# MODULE=dbp info "Start Moodle setup script after checking for proper version"
-# /scripts/init/moodle/moodleSetup.sh
-# /post-init.sh # https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/post-init.sh
-# upgrade_if_pending
 
-# MODULE=dbp info "Replacing config.php file with ours"
-# /bin/cp -p /moodleconfig/config-php/config.php /tmp/config.php
-# mv /tmp/config.php /dbp-moodle/moodle/config.php
+#TODO commented out for apache and php-fpm tests
+MODULE=dbp info "Start Moodle setup script after checking for proper version"
+/scripts/init/moodle/moodleSetup.sh
+/scripts/init/post-init.sh # TODO adjust paths https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/post-init.sh
+upgrade_if_pending
+
+MODULE=dbp info "Replacing config.php file with ours"
+/bin/cp -p /moodleconfig/config-php/config.php /tmp/config.php
+mv /tmp/config.php /bitnami/moodle/config.php
 
 # if [ -f "/tmp/de.zip" ] && [ ! -d /bitnami/moodledata/lang/de ]; then \
 #     MODULE=dbp info "Installing german language pack"
@@ -125,9 +127,5 @@ startDbpMoodleSetup
 #     MODULE=dbp warn "Update or Plugin check failed previously. Skipping plugin check..."
 # fi
 
-# MODULE=dbp info "Finished all preparations! Starting Webserver"
-# /scripts/moodle/run.sh # This script does not exist currently, evaluate during the moodle installation
-
-# Sleep for testing purposes
-sleep 2000
-# apache2ctl -D FOREGROUND
+MODULE=dbp info "Finished all preparations! Starting Webserver"
+/scripts/init/moodle/run.sh
