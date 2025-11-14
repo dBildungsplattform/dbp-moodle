@@ -54,7 +54,8 @@ fi
 [[ -n "$APACHE_HTTPS_PORT_NUMBER" ]] && info "Configuring the HTTPS port" && apache_configure_https_port "$APACHE_HTTPS_PORT_NUMBER"
 
 # Configure Apache Security settings
-[[ -n "$APACHE_SERVER_TOKENS" ]] && info "Configuring Apache ServerTokens directive and ServerSignature" && apache_configure_security_settings "$APACHE_SERVER_TOKENS" "$APACHE_SERVER_SIGNATURE"
+#[[ -n "$APACHE_SERVER_TOKENS" ]] && info "Configuring Apache ServerTokens directive and ServerSignature" && apache_configure_security_settings "$APACHE_SERVER_TOKENS" "$APACHE_SERVER_SIGNATURE"
+rm -rf "$APACHE_SECURITY_FILE"
 
 # Fix logging issue when running as root
 ! am_i_root || chmod o+w "$(readlink /dev/stdout)" "$(readlink /dev/stderr)"
