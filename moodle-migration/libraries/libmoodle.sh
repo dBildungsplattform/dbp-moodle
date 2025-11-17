@@ -304,7 +304,6 @@ moodle_install() {
         "--agree-license"
         "$@"
     )
-    info "${moodle_install_args[@]}"
     # HACK: Change database version check for Azure Database for MariaDB
     ! is_empty_value "$MOODLE_DATABASE_MIN_VERSION" && moodle_fix_manageddb_check
     pushd "$MOODLE_BASE_DIR" >/dev/null || exit
