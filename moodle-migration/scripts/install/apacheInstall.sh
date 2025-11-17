@@ -49,11 +49,9 @@ apache_setup_config() {
     # Default vhost as fallback
     ensure_dir_exists "${APACHE_VHOSTS_DIR}"
     envsubst < "${template_dir}/default.conf.tpl" > "${APACHE_VHOSTS_DIR}/default.conf"
-    # envsubst < "${template_dir}/bitnami-ssl.conf.tpl" > "${APACHE_VHOSTS_DIR}/default-ssl.conf"
+    envsubst < "${template_dir}/default-ssl.conf.tpl" > "${APACHE_VHOSTS_DIR}/default-ssl.conf"
     ensure_dir_exists "${APACHE_BASE_DIR}/htdocs"
-    echo '<?php echo "Hello World!";' > "${APACHE_BASE_DIR}/htdocs/index.php"
-    # echo "works!" > "${APACHE_BASE_DIR}/htdocs/index.html"
-    chmod 644 "${APACHE_BASE_DIR}/htdocs/index.php"
+    # chmod 644 "${APACHE_BASE_DIR}/htdocs/index.php"
 
     # Add new configuration only once, to avoid a second postunpack run breaking Apache
     local apache_conf_add
@@ -75,7 +73,7 @@ EOF
     apache_configure_https_port "$APACHE_DEFAULT_HTTPS_PORT_NUMBER"
 
     # Remove unnecessary directories that come with the tarball
-    rm -rf "${ROOT_DIR}/certs" "${ROOT_DIR}/conf"
+    # rm -rf "${APACHE_ROOT_DIR}/certs" "${APACHE_ROOT_DIR}/conf" TODO check later on
 }
 
 apache_setup_php_config() {
@@ -91,14 +89,14 @@ apache_setup_config
 apache_setup_php_config
 
 # Ensure non-root user has write permissions on a set of directories
-chmod g+w "$APACHE_BASE_DIR"
+chmod -R g+w "$APACHE_BASE_DIR"
 for dir in "$APACHE_CONF_DIR" "$APACHE_LOGS_DIR" "$APACHE_VHOSTS_DIR" "$APACHE_DEFAULT_CONF_DIR"; do
     ensure_dir_exists "$dir"
     chmod -R g+rwX "$dir"
 done
 
 # Create 'apache2' symlink pointing to the 'apache' directory, for compatibility with Bitnami Docs guides
-ln -sf apache "${ROOT_DIR}/apache2"
+ln -sf apache "${APACHE_ROOT_DIR}/apache2"
 
 ln -sf "/dev/stdout" "${APACHE_LOGS_DIR}/access_log"
 ln -sf "/dev/stderr" "${APACHE_LOGS_DIR}/error_log"

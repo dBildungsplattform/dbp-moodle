@@ -60,10 +60,8 @@ rm -rf /var/lib/apt/lists/*
 # This step copies the provided php.ini template fpr production as the default php.ini whcih can be modified later on
 cp ${PHP_CONF_DIR}/php.ini-production $PHP_CONF_FILE
 
-
+chmod -R g+w "$PHP_CONF_DIR"
 # Fix logging issue when running as root
 ! am_i_root || chmod o+w "$(readlink /dev/stdout)" "$(readlink /dev/stderr)"
 
 # Prüfen ob wir hardening für das default PHP und unsere settings benötigen
-
-# Ich muss die php extensions noch installieren
