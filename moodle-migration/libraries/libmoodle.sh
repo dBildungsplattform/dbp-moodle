@@ -185,10 +185,8 @@ EOF
             info "Running database upgrade"
             moodle_upgrade
         fi
-        info "Making additional custom configuration"
         # Change wwwroot configuration so the Moodle site can be accessible from anywhere
         moodle_configure_wwwroot
-        info "Making additional custom configuration step 2"
         # Turn on Moodle's reverseproxy (also sslproxy if using ssl) so we can use the reverse proxy
         moodle_configure_reverseproxy
 

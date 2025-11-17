@@ -37,7 +37,6 @@ persist_app() {
         warn "No files are configured to be persisted"
         return
     fi
-    info "Install Dir: $install_dir"
     pushd "$install_dir" >/dev/null || exit
     local file_to_persist_relative file_to_persist_destination file_to_persist_destination_folder
     local -r tmp_file="/tmp/perms.acl"
@@ -46,8 +45,6 @@ persist_app() {
             error "Cannot persist '${file_to_persist}' because it does not exist"
             return 1
         fi
-        info "File To Persist: $file_to_persist"
-        info "Install Dir: $install_dir"
         file_to_persist_relative="$(relativize "$file_to_persist" "$install_dir")"
         file_to_persist_destination="${persist_dir}/${file_to_persist_relative}"
         file_to_persist_destination_folder="$(dirname "$file_to_persist_destination")"
