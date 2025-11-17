@@ -68,16 +68,13 @@ RUN chmod +x /scripts/install/generate-locales.sh && \
 
 COPY /scripts/init/apache/httpd.conf /etc/apache2/apache2.conf
 
-RUN chmod +x /scripts/init/apache/apacheInstall.sh
 RUN /scripts/init/apache/apacheInstall.sh
 
 # Php configuration and installation
-RUN chmod +x /scripts/init/php/phpInstall.sh
 RUN /scripts/init/php/phpInstall.sh
 
 # Prepare Moodle
 RUN chmod -R g+w /etc/apache2/
-RUN chmod +x /scripts/init/moodle/moodleInstall.sh
 RUN /scripts/init/moodle/moodleInstall.sh
 
 EXPOSE 8080 8443
