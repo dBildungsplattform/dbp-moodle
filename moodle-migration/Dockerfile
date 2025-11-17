@@ -23,7 +23,6 @@ COPY libraries /scripts
 #Add user with ID 1001
 RUN useradd moodle -u 1001
 
-RUN chmod +x /scripts/install/downloadMoodle.sh
 # /downloadPlugins.sh
 RUN chmod -R +x /scripts/
 # Install psql Version 13.x like in the other bitnami moodle image
@@ -68,14 +67,14 @@ RUN chmod +x /scripts/install/generate-locales.sh && \
 
 COPY /scripts/init/apache/httpd.conf /etc/apache2/apache2.conf
 
-RUN /scripts/init/apache/apacheInstall.sh
+RUN /scripts/install/apacheInstall.sh
 
 # Php configuration and installation
-RUN /scripts/init/php/phpInstall.sh
+RUN /scripts/install/phpInstall.sh
 
 # Prepare Moodle
 RUN chmod -R g+w /etc/apache2/
-RUN /scripts/init/moodle/moodleInstall.sh
+RUN /scripts/install/moodleInstall.sh
 
 EXPOSE 8080 8443
 
