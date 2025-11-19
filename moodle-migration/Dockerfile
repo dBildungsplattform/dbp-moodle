@@ -93,7 +93,7 @@ RUN /scripts/install/moodleInstall.sh
 EXPOSE 8080 8443
 
 # Install plugins to the image
-RUN mkdir /plugins && /downloadPlugins.sh
+RUN mkdir /plugins && /scripts/install/downloadPlugins.sh
 
 # RUN apt-get remove -y curl && \
 #     apt-get autoremove -y
