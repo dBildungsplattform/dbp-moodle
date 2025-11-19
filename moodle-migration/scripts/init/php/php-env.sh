@@ -7,7 +7,7 @@
 # Einige moodlehq default env vars:
 # https://github.com/moodlehq/moodle-php-apache/blob/main/root/usr/local/etc/php/conf.d/10-docker-php-moodle.ini
 
-export ROOT_DIR="/usr/local/etc/"
+export PHP_ROOT_DIR="/usr/local/etc"
 
 # Logging configuration (optional)
 export MODULE="${MODULE:-php}"
@@ -40,7 +40,7 @@ done
 unset php_env_vars
 
 # PHP configuration paths (official image layout)
-export PHP_CONF_DIR="${ROOT_DIR}/php"
+export PHP_CONF_DIR="${PHP_ROOT_DIR}/php"
 export PHP_CONF_FILE="${PHP_CONF_DIR}/php.ini"
 export PHP_INI_SCAN_DIR="${PHP_CONF_DIR}/conf.d"
 export PHP_BIN_DIR="/usr/local/bin"
@@ -49,11 +49,11 @@ export PHP_EXTENSION_DIR="/usr/local/lib/php/extensions/no-debug-non-zts-2021090
 export PHP_INCLUDE_PATH=".:/usr/local/lib/php"
 
 # PHP-FPM configuration
-export PHP_FPM_CONF_FILE="${ROOT_DIR}/php-fpm.conf"
-export PHP_FPM_POOL_CONF_DIR="${ROOT_DIR}/php-fpm.d"
+export PHP_FPM_CONF_FILE="${PHP_ROOT_DIR}/php-fpm.conf"
+export PHP_FPM_POOL_CONF_DIR="${PHP_ROOT_DIR}/php-fpm.d"
 export PHP_FPM_POOL_CONF_FILE="${PHP_FPM_POOL_CONF_DIR}/www.conf"
 
-export PHP_FPM_PID_FILE="${ROOT_DIR}/php-fpm.pid"
+export PHP_FPM_PID_FILE="/dbp-moodle/php-fpm.pid"
 export PHP_FPM_LISTEN_ADDRESS="${PHP_FPM_LISTEN_ADDRESS:-/var/run/php-fpm.sock}" # Default missing
 export PHP_FPM_LOG_FILE="/proc/self/fd/2"  # logs to stderr by default
 

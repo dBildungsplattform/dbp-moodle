@@ -3,8 +3,8 @@
 <VirtualHost {{https_listen_addresses}}>
   {{server_name_configuration}}
   SSLEngine on
-  SSLCertificateFile "{{APACHE_CONF_DIR}}/bitnami/certs/tls.crt"
-  SSLCertificateKeyFile "{{APACHE_CONF_DIR}}/bitnami/certs/tls.key"
+  SSLCertificateFile "/opt/dbp-moodle/apache/certs/tls.crt"
+  SSLCertificateKeyFile "/opt/dbp-moodle/apache/certs/tls.key"
   {{proxy_configuration}}
   {{proxy_https_configuration}}
   ProxyPass / {{proxy_address}}
