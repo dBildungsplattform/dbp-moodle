@@ -23,7 +23,6 @@ COPY libraries /scripts
 #Add user with ID 1001
 RUN useradd moodle -u 1001
 
-# /downloadPlugins.sh
 RUN chmod -R +x /scripts/
 # Install psql Version 13.x like in the other bitnami moodle image
 # Currently permission problems here
@@ -47,6 +46,16 @@ RUN apt-get install -y libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-l
 
 #Install other dependencies
 RUN apt-get install -y nano gettext libpq5 libedit2 libfontconfig1 libfreetype6 libglib2.0-0 libjpeg62-turbo liblcms2-2 libltdl7 libmagickcore-6.q16-6 libmagickwand-6.q16-6 libmemcached11 libpcre3 libpng16-16 libtidy5deb1 libwebp7 libxslt1.1 libzip4 libbz2-dev
+
+# Install moosh for plugin management
+# Because of current problems with moosh and no new release we use commit hashes. This one is the version bump to 1.34
+RUN curl -L https://github.com/tmuras/moosh/archive/1d679882fca0a28facff7ec2b52e5b0f3eb61e2c.tar.gz -o moosh.tar.gz && \
+    mkdir /moosh && tar -xzvf moosh.tar.gz -C moosh/ --strip-components=1 && \
+    mkdir /.moosh && \
+    chmod 774 /.moosh &&\
+    cd /moosh/ && \
+    composer install && \
+    ln -s /moosh/moosh.php /usr/local/bin/moosh
 
 RUN /scripts/install/downloadMoodle.sh
 
@@ -78,9 +87,8 @@ RUN /scripts/install/moodleInstall.sh
 
 EXPOSE 8080 8443
 
-# Install plugins to the image, skipped for now
-RUN mkdir /plugins 
-# && /downloadPlugins.sh
+# Install plugins to the image
+RUN mkdir /plugins && /downloadPlugins.sh
 
 # RUN apt-get remove -y curl && \
 #     apt-get autoremove -y

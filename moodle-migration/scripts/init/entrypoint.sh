@@ -115,17 +115,17 @@ mv /tmp/config.php /bitnami/moodle/config.php
 
 # upgrade_if_pending
 
-# if [[ ! -f "$update_failed_path" ]] && [[ ! -f "$plugin_state_failed_path" ]]; then
-#     MODULE=dbp info "Starting plugin installation"
-#     if /scripts/pluginCheck.sh; then
-#         MODULE=dbp info "Finished Plugin Install"
-#     else
-#         MODULE=dbp error "Plugin check failed! Continuing to start webserver with possibly compromised plugins"
-#         setStatusFile "$plugin_state_failed_path" true
-#     fi
-# else
-#     MODULE=dbp warn "Update or Plugin check failed previously. Skipping plugin check..."
-# fi
+if [[ ! -f "$update_failed_path" ]] && [[ ! -f "$plugin_state_failed_path" ]]; then
+    MODULE=dbp info "Starting plugin installation"
+    if /scripts/pluginCheck.sh; then
+        MODULE=dbp info "Finished Plugin Install"
+    else
+        MODULE=dbp error "Plugin check failed! Continuing to start webserver with possibly compromised plugins"
+        setStatusFile "$plugin_state_failed_path" true
+    fi
+else
+    MODULE=dbp warn "Update or Plugin check failed previously. Skipping plugin check..."
+fi
 
 MODULE=dbp info "Finished all preparations! Starting Webserver"
 /scripts/init/moodle/run.sh
