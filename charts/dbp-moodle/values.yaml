@@ -299,25 +299,20 @@ moodle:
     limits:
       cpu: 6
       memory: 3Gi
-  # -- The mariadb included in bitnami/moodle chart. For this chart usage of mariadb.enabled with moodle.externalDatabase.type="mariadb" is recommended
-  mariadb:
-    enabled: false
-    database: bitnami_moodle
-    username: bn_moodle
   externalDatabase:
-    # -- Type of DB to provision, possible values are "mariadb" and "pgsql"
-    type: "mariadb"
+    # -- Type of DB to provision, possible values are "pgsql"
+    type: "pgsql"
     # -- Host of the existing database
-    host: "moodle-mariadb"
+    host: ""
     # -- Port of the existing database
-    port: 3306
+    port: 5432
     # -- Existing username in the external db
     user: "moodle"
     # -- Password for the above username
     password: ""
     # -- Name of the existing database
     database: "moodle"
-    # -- Name of an existing secret resource containing the DB password
+    # -- Name of an existing secret resource containing the DB password with the key 'db-password'
     existingSecret: "moodle"
   service:
     type: ClusterIP
@@ -345,7 +340,7 @@ moodle:
   metrics:
     enabled: true
     image:
-      repository: bitnamilegacy/apache-exporter
+      repository: lusotycoon/apache-exporter
     service:
       type: ClusterIP
     # -- Resources have to be set so that the horizontal pod autoscaler for moodle can read the moodle cpu consumption correctly
@@ -396,42 +391,8 @@ moodle:
   networkPolicy:
     enabled: false
 
-mariadb:
-  enabled: true
-  # Switch to bitnamilegacy, see https://github.com/bitnami/charts/issues/35164
-  image:
-    tag: "11.3.2-debian-12-r5"
-    repository: bitnamilegacy/mariadb
-  volumePermissions:
-    image:
-      repository: bitnamilegacy/os-shell
-  metrics:
-    enabled: true
-    image:
-      repository: bitnamilegacy/mysqld-exporter
-    serviceMonitor:
-      enabled: true
-  global:
-    storageClass: "nfs-client"    
-  auth:
-    username: "moodle"
-    database: "moodle"
-    existingSecret: "moodle"
-  primary:
-    containerSecurityContext:
-      privileged: false
-    affinity: {}
-    tolerations: []
-    resources:
-      requests:
-        cpu: 250m
-        memory: 256Mi
-      limits:
-        cpu: 9
-        memory: 3Gi
-
 postgresql:
-  enabled: false
+  enabled: true
   # usePasswordFiles: false required if we increase the helm chart version
   # Switch to bitnamilegacy, see https://github.com/bitnami/charts/issues/35164
   image:
@@ -451,9 +412,9 @@ postgresql:
     database: "moodle"
     existingSecret: "moodle"
     secretKeys:
-      adminPasswordKey: "pgsql-admin-password"
-      # -- Moodle expects its db password key to be mariadb-password
-      userPasswordKey: "mariadb-password"
+      adminPasswordKey: "db-admin-password"
+      # -- Moodle expects its db password key to be db-password
+      userPasswordKey: "db-password"
   primary:
     extendedConfiguration: |
       max_connections = 800
