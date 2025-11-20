@@ -6,7 +6,7 @@ global:
     allowInsecureImages: true
   # -- All plugins are disabled by default. if enabled, the plugin is installed on image startup
   moodlePlugins:
-    kaltura:
+    kaltura: #TODO remove
       enabled: false
     etherpadlite:
       enabled: false
