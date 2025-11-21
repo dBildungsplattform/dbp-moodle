@@ -83,18 +83,17 @@ startDbpMoodleSetup
 #This must be adjusted because we install php with apt-get and don't use the binary directly
 # /bin/cp /moodleconfig/php-ini/php.ini /opt/bitnami/php/etc/conf.d/php.ini
 
-#This is not relevant for the dependency configuration and setup
-# if [[ ! -f "$update_failed_path" ]]; then
-#     MODULE=dbp info "Starting Moodle Update Check"
-#     if /scripts/updateCheck.sh; then
-#         MODULE=dbp info "Finished Update Check"
-#     else
-#         MODULE=dbp error "Update failed! Continuing with previously installed moodle.."
-#         setStatusFile "$update_failed_path" true
-#     fi
-# else
-#     MODULE=dbp warn "Update failed previously. Skipping update check..."
-# fi
+if [[ ! -f "$update_failed_path" ]]; then
+    MODULE=dbp info "Starting Moodle Update Check"
+    if /scripts/init/updateCheck.sh; then
+        MODULE=dbp info "Finished Update Check"
+    else
+        MODULE=dbp error "Update failed! Continuing with previously installed moodle.."
+        setStatusFile "$update_failed_path" true
+    fi
+else
+    MODULE=dbp warn "Update failed previously. Skipping update check..."
+fi
 
 
 #TODO commented out for apache and php-fpm tests
