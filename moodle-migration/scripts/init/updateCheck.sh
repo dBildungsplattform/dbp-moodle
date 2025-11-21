@@ -56,7 +56,7 @@ install_new_version() {
 main() {
     
     installed_version="$(get_installed_moodle_version)"
-    image_version="$APP_VERSION"
+    image_version="$MOODLE_VERSION"
 
     if [[ -z "$installed_version" ]]; then
         MODULE="dbp-update" info "No installed Moodle version detected, continuing with Bitnami fresh install"
