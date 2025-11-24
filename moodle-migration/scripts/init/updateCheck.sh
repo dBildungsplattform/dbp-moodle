@@ -31,11 +31,11 @@ compare_semver() {
     fi
 }
 
-get_installed_moodle_version() {
-    if [ ! -f "${moodle_path}/version.php" ]; then
+get_moodle_version_by_path() {
+    if [ ! -f "$1/version.php" ]; then
         return
     fi
-    grep release "${moodle_path}/version.php" | grep -oP '\d+\.\d+\.\d+'
+    grep release "$1/version.php" | grep -oP '\d+\.\d+\.\d+'
 }
 
 create_backup() {
@@ -55,8 +55,8 @@ install_new_version() {
 
 main() {
     
-    installed_version="$(get_installed_moodle_version)"
-    image_version="$MOODLE_VERSION"
+    installed_version="$(get_moodle_version_by_path "${moodle_path}")"
+    image_version="$(get_moodle_version_by_path "/opt/dbp-moodle/moodle")"
 
     if [[ -z "$installed_version" ]]; then
         MODULE="dbp-update" info "No installed Moodle version detected, continuing with Bitnami fresh install"
