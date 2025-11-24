@@ -50,9 +50,7 @@ install_new_version() {
     local image_version="$1"
     MODULE="dbp-update" info "Installing new Moodle (${image_version})"
     mkdir -p "$moodle_path"
-    mkdir -p /tmp/moodle
-    tar --strip-components=1 -xzf "/tmp/moodle-${image_version}.tgz" -C "/tmp/moodle"
-    mv /tmp/moodle/* "${moodle_path}"
+    tar --strip-components=1 -xzf "/tmp/moodle-${image_version}.tgz" -C "$moodle_path"
 }
 
 main() {
