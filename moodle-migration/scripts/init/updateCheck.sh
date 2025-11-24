@@ -52,7 +52,7 @@ install_new_version() {
     mkdir -p "$moodle_path"
     mkdir -p /tmp/moodle
     tar --strip-components=1 -xzf "/tmp/moodle-${image_version}.tgz" -C "/tmp/moodle"
-    cp -rp /tmp/moodle/* "${moodle_path}"
+    mv /tmp/moodle/* "${moodle_path}"
 }
 
 main() {
