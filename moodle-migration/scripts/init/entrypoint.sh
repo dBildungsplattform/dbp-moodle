@@ -84,6 +84,7 @@ startDbpMoodleSetup
 # /bin/cp /moodleconfig/php-ini/php.ini /opt/bitnami/php/etc/conf.d/php.ini
 
 if [[ ! -f "$update_failed_path" ]]; then
+    # At this point in time we did not enter the Moodle persist step yet and /opt/dbp-moodle/moodle contains the moodle image version which in case of the update, is the new moodle version
     MODULE=dbp info "Starting Moodle Update Check"
     if /scripts/init/updateCheck.sh; then
         MODULE=dbp info "Finished Update Check"
