@@ -76,8 +76,8 @@ main() {
         MODULE="dbp-update" error "Exiting update..."
         exit 1
     fi
-    MODULE="dbp-update" info "Creating local backup"
-    create_backup
+    MODULE="dbp-update" info "Creating local backup - skipped"
+    # create_backup
     MODULE="dbp-update" info "Unpacking new moodle version"
 
     if [[ -n "$installed_version" ]]; then
