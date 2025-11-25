@@ -43,14 +43,16 @@ create_backup() {
         rm -rf "$moodle_backup_path"
     fi
     mkdir -p "$moodle_backup_path"
-    cp -rp "${moodle_path}/"* "$moodle_backup_path"
+    # cp -rp "${moodle_path}/"* "$moodle_backup_path"
+    cp -rp "/tmp/moodle"* "$moodle_backup_path"
 }
 
 install_new_version() {
     local image_version="$1"
     MODULE="dbp-update" info "Installing new Moodle (${image_version})"
     mkdir -p "$moodle_path"
-    tar --strip-components=1 -xzf "/tmp/moodle-${image_version}.tgz" -C "$moodle_path"
+    # tar --strip-components=1 -xzf "/tmp/moodle-${image_version}.tgz" -C "$moodle_path"
+    cp -rp "/tmp/moodle/"* "$moodle_path"
 }
 
 main() {
@@ -76,8 +78,10 @@ main() {
         MODULE="dbp-update" error "Exiting update..."
         exit 1
     fi
-    MODULE="dbp-update" info "Creating local backup - skipped"
-    # create_backup
+    MODULE="dbp-update" info "Creating local backup - simulated"
+    mkdir /tmp/moodle
+    tar --strip-components=1 -xzf "/tmp/moodle-${image_version}.tgz" -C "/tmp/moodle"
+    create_backup
     MODULE="dbp-update" info "Unpacking new moodle version"
 
     if [[ -n "$installed_version" ]]; then
