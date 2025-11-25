@@ -10,15 +10,15 @@ set -o pipefail
 # Load Moodle environment
 . /scripts/liblog.sh
 
-moodle_path="/bitnami/moodle"
+moodle_path="/dbp-moodle/moodle"
 plugin_zip_path="/plugins"
 plugin_unzip_path="/tmp/plugins/"
 
 # indicator files
-update_plugins_path="/bitnami/moodledata/UpdatePlugins"
-update_failed_path="/bitnami/moodledata/UpdateFailed"
-update_cli_path="/bitnami/moodledata/CliUpdate"
-maintenance_html_path="/bitnami/moodledata/climaintenance.html"
+update_plugins_path="/dbp-moodle/moodledata/UpdatePlugins"
+update_failed_path="/dbp-moodle/moodledata/UpdateFailed"
+update_cli_path="/dbp-moodle/moodledata/CliUpdate"
+maintenance_html_path="/dbp-moodle/moodledata/climaintenance.html"
 
 last_installed_plugin=""
 cleanup_failed_install() {

@@ -15,7 +15,7 @@
 . /scripts/liblog.sh
 
 export ROOT_DIR="/opt/dbp-moodle"
-export VOLUME_DIR="/bitnami"  #"/dbp-moodle" TODO
+export VOLUME_DIR="/dbp-moodle"
 
 # Logging configuration
 export MODULE="${MODULE:-moodle}"

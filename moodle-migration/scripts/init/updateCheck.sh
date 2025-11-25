@@ -4,10 +4,10 @@ set -o nounset
 
 . /scripts/liblog.sh
 
-moodle_path="/bitnami/moodle"
+moodle_path="/dbp-moodle/moodle"
 
 # data folders
-moodle_backup_path="/bitnami/moodledata/moodle-backup"
+moodle_backup_path="/dbp-moodle/moodledata/moodle-backup"
 
 onErrorRestoreBackup() {
     mv "${moodle_path}" "${moodle_path}-failed"
@@ -79,7 +79,6 @@ main() {
         exit 1
     fi
     MODULE="dbp-update" info "Creating local backup - simulated"
-    mkdir /tmp/moodle
     create_backup
     MODULE="dbp-update" info "Unpacking new moodle version"
 

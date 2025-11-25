@@ -13,13 +13,13 @@ set -o nounset
 . /scripts/liblog.sh
 . /scripts/libwebserver.sh
 
-moodle_path="/bitnami/moodle"
-moodle_backup_path="/bitnami/moodledata/moodle-backup" # Das Backup script muss bezüglich der Pfade angepasst werden
+moodle_path="/dbp-moodle/moodle"
+moodle_backup_path="/dbp-moodle/moodledata/moodle-backup" # Das Backup script muss bezüglich der Pfade angepasst werden
 
-maintenance_html_path="/bitnami/moodledata/climaintenance.html"
-update_in_progress_path="/bitnami/moodledata/UpdateInProgress"
-update_failed_path="/bitnami/moodledata/UpdateFailed"
-plugin_state_failed_path="/bitnami/moodledata/PluginsFailed"
+maintenance_html_path="/dbp-moodle/moodledata/climaintenance.html"
+update_in_progress_path="/dbp-moodle/moodledata/UpdateInProgress"
+update_failed_path="/dbp-moodle/moodledata/UpdateFailed"
+plugin_state_failed_path="/dbp-moodle/moodledata/PluginsFailed"
 
 printSystemStatus() {
     if [[ -e $maintenance_html_path ]]; then
@@ -105,7 +105,7 @@ upgrade_if_pending
 
 MODULE=dbp info "Replacing config.php file with ours"
 /bin/cp -p /moodleconfig/config-php/config.php /tmp/config.php
-mv /tmp/config.php /bitnami/moodle/config.php
+mv /tmp/config.php /dbp-moodle/moodle/config.php
 
 # if [ -f "/tmp/de.zip" ] && [ ! -d /bitnami/moodledata/lang/de ]; then \
 #     MODULE=dbp info "Installing german language pack"

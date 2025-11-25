@@ -21,7 +21,7 @@ $_SERVER['HTTP_HOST'] = '{{ .Values.moodle.ingress.hostname }}';
 
 $CFG->wwwroot   = 'https://{{ .Values.moodle.ingress.hostname }}';
 
-$CFG->dataroot  = '/bitnami/moodledata';
+$CFG->dataroot  = '/dbp-moodle/moodledata';
 $CFG->admin     = 'admin';
 $CFG->directorypermissions = 02775;
 
