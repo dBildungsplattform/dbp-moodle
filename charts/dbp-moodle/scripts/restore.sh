@@ -59,18 +59,18 @@ ln -s /etc/duply /home/nonrootuser/.duply
 export DUPLY_HOME="/etc/duply"
 /usr/bin/duply default restore Full
 echo "=== Clear PVC ==="
-rm -rf /bitnami/moodle/*
-rm -rf /bitnami/moodle/.[!.]*
-rm -rf /bitnami/moodledata/*
-rm -rf /bitnami/moodle/.[!.]*
+rm -rf /dbp-moodle/moodle/*
+rm -rf /dbp-moodle/moodle/.[!.]*
+rm -rf /dbp-moodle/moodledata/*
+rm -rf /dbp-moodle/moodle/.[!.]*
 echo "=== Extract backup files ==="
 tar -xzf /tmp/Full/tmp/backup/moodle.tar.gz -C /tmp/ --no-same-owner
 tar -xzf /tmp/Full/tmp/backup/moodledata.tar.gz -C /tmp/ --no-same-owner
 echo "=== Move backup files ==="
-mv /tmp/mountData/moodle/* /bitnami/moodle/
-mv /tmp/mountData/moodle/.[!.]* /bitnami/moodle/
-mv /tmp/mountData/moodledata/* /bitnami/moodledata/
-mv /tmp/mountData/moodledata/.[!.]* /bitnami/moodledata/
+mv /tmp/mountData/moodle/* /dbp-moodle/moodle/
+mv /tmp/mountData/moodle/.[!.]* /dbp-moodle/moodle/
+mv /tmp/mountData/moodledata/* /dbp-moodle/moodledata/
+mv /tmp/mountData/moodledata/.[!.]* /dbp-moodle/moodledata/
 
 cd /bitnami/
 echo "=== Clear DB ==="
