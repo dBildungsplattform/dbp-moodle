@@ -99,9 +99,7 @@ RUN mkdir /plugins && /scripts/install/downloadPlugins.sh
 #     apt-get autoremove -y
 
 RUN chmod -R g+w /opt/dbp-moodle
-#TODO replace the current /bitnami/moodle with /dbp-moodle/moodle
 RUN chmod -R g+w /dbp-moodle
-RUN chmod 777 /dbp-moodle
 RUN chown 1001:1001 -R /bitnami
 RUN chown 1001:1001 -R /dbp-moodle
 
