@@ -72,7 +72,7 @@ mv /tmp/mountData/moodle/.[!.]* /dbp-moodle/moodle/
 mv /tmp/mountData/moodledata/* /dbp-moodle/moodledata/
 mv /tmp/mountData/moodledata/.[!.]* /dbp-moodle/moodledata/
 
-cd /bitnami/
+cd /dbp-moodle/
 echo "=== Clear DB ==="
 {{ if .Values.mariadb.enabled -}}
 MYSQL_PWD="$DATABASE_PASSWORD" mariadb -h "$DATABASE_HOST" -u "$DATABASE_USER" -P "$DATABASE_PORT" -e "DROP DATABASE ${DATABASE_NAME};"
