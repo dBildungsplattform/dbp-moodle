@@ -24,10 +24,11 @@ COPY libraries /scripts
 RUN useradd moodle -u 1001
 
 RUN chmod -R +x /scripts/
-# Install psql Version 13.x like in the other bitnami moodle image
-# Currently permission problems here
+
 RUN apt-get update && \
-    apt-get install -y wget gpg curl acl gnupg jq ca-certificates cron locales git unzip autoconf
+    apt-get install -y wget gpg curl acl gnupg jq ca-certificates cron locales git unzip autoconf php-redis
+
+# Install psql Version 13.x like in the other bitnami moodle image
 RUN curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list
 
@@ -47,6 +48,7 @@ RUN apt-get install -y libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-l
 #Install other dependencies
 RUN apt-get install -y nano gettext libpq5 libedit2 libfontconfig1 libfreetype6 libglib2.0-0 libjpeg62-turbo liblcms2-2 libltdl7 libmagickcore-6.q16-6 libmagickwand-6.q16-6 libmemcached11 libpcre3 libpng16-16 libtidy5deb1 libwebp7 libxslt1.1 libzip4 libbz2-dev
 
+RUN /scripts/init/phpRedisInstall.sh
 
 # Install Composer globally
 RUN curl -sS https://getcomposer.org/installer | php -- \
