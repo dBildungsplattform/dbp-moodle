@@ -49,6 +49,7 @@ for env_var in "${postgresql_client_env_vars[@]}"; do
             warn "Skipping export of '${env_var}'. '${!file_env_var:-}' is not readable."
         fi
     fi
+    info "value of ${env_var}=${!env_var}"
 done
 unset postgresql_client_env_vars
 
