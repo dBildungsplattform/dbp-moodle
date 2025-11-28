@@ -2,7 +2,7 @@ name: Build moodle migration development image
 on:
   push:
     branches:
-      - DBP-0000-Moodle-Bitnami-Migration-Main
+      - DBP-1650-Eval-managed-postgres
 
 jobs:
   build_image_on_push:
