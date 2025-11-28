@@ -39,9 +39,11 @@ postgresql_client_env_vars=(
 )
 for env_var in "${postgresql_client_env_vars[@]}"; do
     file_env_var="${env_var}_FILE"
+    info "setting pgclient var: ${env_var}"
     if [[ -n "${!file_env_var:-}" ]]; then
         if [[ -r "${!file_env_var:-}" ]]; then
             export "${env_var}=$(< "${!file_env_var}")"
+            echo "$env_var"
             unset "${file_env_var}"
         else
             warn "Skipping export of '${env_var}'. '${!file_env_var:-}' is not readable."
