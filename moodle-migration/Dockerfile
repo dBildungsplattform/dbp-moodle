@@ -1,8 +1,3 @@
-# Our old Dockerfile build on top of this one: https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/Dockerfile
-# In dem neuen Moodle Image sind die Abhängigkeiten bereits vorinstalliert, weshalb ein entpacken nicht weiter notwenig ist,
-# jedoch müssen die postunpack.sh Abschnitte der Komponenten beachtet werden, da diese auch Konfigurationsschritte enthalten
-# Für die Abhängigkeiten muss geprüft werden, ob Konfigurationen während der Bauzeit oder Laufzeit eingespielt werden müssen
-
 FROM php:8.1.33-fpm-bookworm AS build
 USER root
 ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.5.6"}
@@ -25,9 +20,10 @@ RUN useradd moodle -u 1001
 
 RUN chmod -R +x /scripts/
 
+# Redis is the php extension php-redis required to connect to the redis session store
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y wget gpg curl acl gnupg jq ca-certificates cron locales git unzip autoconf && \
-    pecl install redis && \
+    pecl install redis && \ 
     docker-php-ext-enable redis
 
 # Install psql Version 13.x like in the other bitnami moodle image
