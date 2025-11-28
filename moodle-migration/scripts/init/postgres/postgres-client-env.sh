@@ -49,9 +49,8 @@ for env_var in "${postgresql_client_env_vars[@]}"; do
             warn "Skipping export of '${env_var}'. '${!file_env_var:-}' is not readable."
         fi
     fi
-    info "value of ${env_var}=${!env_var}"
 done
-unset postgresql_client_env_vars
+#unset postgresql_client_env_vars
 
 # PostgreSQL settings
 export ALLOW_EMPTY_PASSWORD="${ALLOW_EMPTY_PASSWORD:-no}"
@@ -74,5 +73,13 @@ export POSTGRESQL_CLIENT_CREATE_DATABASE_USERNAME="${POSTGRESQL_CLIENT_CREATE_DA
 export POSTGRESQL_CLIENT_CREATE_DATABASE_PASSWORD="${POSTGRESQL_CLIENT_CREATE_DATABASE_PASSWORD:-}" # only used during the first initialization
 export POSTGRESQL_CLIENT_CREATE_DATABASE_EXTENSIONS="${POSTGRESQL_CLIENT_CREATE_DATABASE_EXTENSIONS:-}" # only used during the first initialization
 export POSTGRESQL_CLIENT_EXECUTE_SQL="${POSTGRESQL_CLIENT_EXECUTE_SQL:-}" # only used during the first initialization
+
+info "Checking all env vars after exports"
+for env_var in "${postgresql_client_env_vars[@]}"; do
+    value="${!env_var:-<unset>}"
+    info "value of ${env_var}=${value}"
+done
+
+unset postgresql_client_env_vars
 
 # https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/opt/bitnami/scripts/postgresql-client-env.sh
