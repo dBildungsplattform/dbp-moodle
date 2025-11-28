@@ -135,6 +135,7 @@ moodle_initialize() {
         db_name="$MOODLE_DATABASE_NAME"
         db_user="$MOODLE_DATABASE_USER"
         db_pass="$MOODLE_DATABASE_PASSWORD"
+        info "db_user=$db_user"
         [[ "$db_type" = "pgsql" ]] && moodle_wait_for_postgresql_connection "$db_host" "$db_port" "$db_name" "$db_user" "$db_pass"
 
         # Create Moodle install argument list, allowing to pass custom options via 'MOODLE_INSTALL_EXTRA_ARGS'
@@ -203,6 +204,7 @@ EOF
         db_name="$(moodle_conf_get "\$CFG->dbname")"
         db_user="$(moodle_conf_get "\$CFG->dbuser")"
         db_pass="$(moodle_conf_get "\$CFG->dbpass")"
+        info "db_user=$db_user"
         [[ "$db_type" = "pgsql" ]] && moodle_wait_for_postgresql_connection "$db_host" "$db_port" "$db_name" "$db_user" "$db_pass"
 
         # Perform Moodle database schema upgrade
