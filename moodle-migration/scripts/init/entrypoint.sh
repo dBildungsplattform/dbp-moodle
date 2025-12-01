@@ -80,7 +80,7 @@ MODULE=dbp info "Starting Moodle"
 startDbpMoodleSetup
 
 # Copy the dbp-php.ini to the conf.d directory to set new settings
-cp /scripts/init/dbp-php.ini /usr/local/etc/php/conf.d/dbp-php.ini
+cp /scripts/init/php/dbp-php.ini /usr/local/etc/php/conf.d/dbp-php.ini
 
 if [[ ! -f "$update_failed_path" ]]; then
     # At this point in time we did not enter the Moodle persist step yet and /opt/dbp-moodle/moodle contains the moodle image version which in case of the update, is the new moodle version
@@ -96,7 +96,6 @@ else
 fi
 
 
-#TODO commented out for apache and php-fpm tests
 MODULE=dbp info "Start Moodle setup script after checking for proper version"
 /scripts/init/moodle/moodleSetup.sh
 /scripts/init/post-init.sh # TODO adjust paths https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/post-init.sh
