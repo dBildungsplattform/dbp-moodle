@@ -79,9 +79,8 @@ MODULE=dbp info "Starting Moodle"
 # Can handle new version and existing version.
 startDbpMoodleSetup
 
-# MODULE=dbp info "Create php.ini with redis config"
-#This must be adjusted because we install php with apt-get and don't use the binary directly
-# /bin/cp /moodleconfig/php-ini/php.ini /opt/bitnami/php/etc/conf.d/php.ini
+# Copy the dbp-php.ini to the conf.d directory to set new settings
+cp /scripts/init/dbp-php.ini /usr/local/etc/php/conf.d/dbp-php.ini
 
 if [[ ! -f "$update_failed_path" ]]; then
     # At this point in time we did not enter the Moodle persist step yet and /opt/dbp-moodle/moodle contains the moodle image version which in case of the update, is the new moodle version

@@ -353,21 +353,10 @@ moodle:
         cpu: 200m
         memory: 256Mi
   extraVolumeMounts:
-    - name: moodle-php-ini
-      readOnly: true
-      mountPath: /moodleconfig/php-ini
     - name: moodle-php-config
       readOnly: true
       mountPath: /moodleconfig/config-php
   extraVolumes:
-    # -- The php.ini which installs the php-redis extension to enable the use for redis
-    - name: moodle-php-ini
-      configMap:
-        name: moodle-php-ini
-        items:
-          - key: php.ini
-            path: php.ini
-        defaultMode: 0644
     # -- The custom config.php file that is used to configure moodle to use the database and redis (if activated)
     - name: moodle-php-config
       secret:

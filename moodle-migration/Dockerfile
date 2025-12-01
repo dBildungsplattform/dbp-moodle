@@ -6,7 +6,7 @@ ARG MOODLE_PATH="/opt/dbp-moodle/moodle"
 ARG EXTRA_LOCALES=""
 ARG APACHE_VERSION=${APACHE_VERSION:-"2.4.57"}
 ARG APACHE_DOWNLOAD_URL="https://snapshot.debian.org/archive/debian/20230408T145143Z/pool/main/a/apache2"
-
+WORKDIR /
 ARG WITH_ALL_LOCALES="no"
 RUN mkdir /bitnami
 RUN mkdir /dbp-moodle
@@ -48,13 +48,13 @@ RUN apt-get install -y nano gettext libpq5 libedit2 libfontconfig1 libfreetype6 
 
 RUN /scripts/init/phpRedisInstall.sh
 
-# Install Composer globally
+# Install Composer globally (Required for the Moosh installation)
 RUN curl -sS https://getcomposer.org/installer | php -- \
     --install-dir=/usr/local/bin --filename=composer
 
 # Install moosh for plugin management
-# Because of current problems with moosh and no new release we use commit hashes. This one is the version bump to 1.34
-RUN curl -L https://github.com/tmuras/moosh/archive/1d679882fca0a28facff7ec2b52e5b0f3eb61e2c.tar.gz -o moosh.tar.gz && \
+# Because of current problems with moosh and no new release we use commit hashes. This one is the version bump to 1.38
+RUN curl -L https://github.com/tmuras/moosh/archive/12bf474815d0be2395a6689f9fa833eb0a7b83b0.tar.gz -o moosh.tar.gz && \
     mkdir /moosh && tar -xzvf moosh.tar.gz -C /moosh/ --strip-components=1
 RUN mkdir /.moosh &&\
     chmod 774 /.moosh &&\
@@ -95,12 +95,13 @@ EXPOSE 8080 8443
 # Install plugins to the image
 RUN mkdir /plugins && /scripts/install/downloadPlugins.sh
 
-# RUN apt-get remove -y curl && \
-#     apt-get autoremove -y
+RUN apt-get remove -y curl && \
+    apt-get autoremove -y
 
 RUN chmod -R g+w /opt/dbp-moodle
+RUN chown 1001:1001 -R /opt/dbp-moodle
+
 RUN chmod -R g+w /dbp-moodle
-RUN chown 1001:1001 -R /bitnami
 RUN chown 1001:1001 -R /dbp-moodle
 
 RUN chown 1001:root -R /scripts
@@ -109,7 +110,6 @@ RUN chown 1001:root -R /plugins
 RUN chown 1001:1001 -R /var/log/apache2
 RUN chown 1001:1001 -R /etc/apache2
 RUN chown 1001:1001 -R /usr/local/etc/php
-RUN chown 1001:1001 -R /opt/dbp-moodle
 
 USER 1001
 
