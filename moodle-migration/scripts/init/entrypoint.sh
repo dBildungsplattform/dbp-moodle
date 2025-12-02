@@ -98,7 +98,7 @@ fi
 
 MODULE=dbp info "Start Moodle setup script after checking for proper version"
 /scripts/init/moodle/moodleSetup.sh
-/scripts/init/post-init.sh # TODO adjust paths https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/post-init.sh
+# /scripts/init/post-init.sh
 
 MODULE=dbp info "Replacing config.php file with ours"
 /bin/cp -p /moodleconfig/config-php/config.php /tmp/config.php
