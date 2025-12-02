@@ -1,0 +1,23 @@
+name: Sync OICD Repo with eLeDia GitLab
+on:
+  push:
+    branches:
+      - DBP-1783-Support-OIDC-plugin
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout GitHub repo
+        uses: actions/checkout@v3
+
+      - name: Install Git
+        run: sudo apt-get update && sudo apt-get install -y git
+
+      - name: Clone GitLab repo
+        env:
+          GLPAT: ${{ secrets.ELEDIA_GLPAT }}
+        run: |
+          git clone --mirror https://oauth2:$GLPAT@gitlab.eledia.de/restricted/dataport/oidc gitlab-mirror
+          ls gitlab-mirror
