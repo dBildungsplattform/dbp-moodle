@@ -1,4 +1,6 @@
 name: Sync OICD Repo with eLeDia GitLab
+
+# TODO this will be replaced by a cron trigger
 on:
   push:
     branches:
@@ -21,3 +23,9 @@ jobs:
         run: |
           git clone --mirror https://oauth2:$GLPAT@gitlab.eledia.de/restricted/dataport/oidc gitlab-mirror
           ls gitlab-mirror
+
+      - name: Push to GitHub Mirror (dbp-moodle-plugins)
+        run: |
+          cd gitlab-mirror
+          git remote set-url --push origin https://github.com/dBildungsplattform/dbp-moodle-plugins.git
+          git push --mirror
