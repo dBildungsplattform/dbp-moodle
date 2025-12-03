@@ -18,7 +18,7 @@ download_oidc() {
     cd dbp-moodle-plugin-oidc/ || exit 1
     git checkout ${target_branch}
     # create the zip archive in the initial directory, s.t. it can be treated equally to the other plugins
-    zip -r ../auth_oidc.zip auth/oidc/
+    (cd auth && zip -r ../../auth_oidc.zip oidc)
     cd ..
     rm -rf dbp-moodle-plugin-oidc/
 }
