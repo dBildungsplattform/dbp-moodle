@@ -360,7 +360,7 @@ moodle:
   extraVolumeMounts:
     - name: moodle-additional-php-ini-file
       readOnly: true
-      mountPath: /usr/local/etc/php/conf.d/
+      mountPath: /moodleconfig/
     - name: moodle-php-config
       readOnly: true
       mountPath: /moodleconfig/config-php
@@ -371,7 +371,7 @@ moodle:
         name: moodle-additional-php-ini-file
         items:
           - key: moodle-php.ini
-            path: 01-moodle-php.ini
+            path: 01-dbp-php.ini
         defaultMode: 0644
     # -- The custom config.php file that is used to configure moodle to use the database and redis (if activated)
     - name: moodle-php-config
