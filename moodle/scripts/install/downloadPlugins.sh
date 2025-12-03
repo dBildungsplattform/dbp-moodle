@@ -15,10 +15,12 @@ download_oidc() {
     target_branch="v_45" # eLeDia currently doesn't use any tags, we always use the latest version on branch v_45
 
     git clone https://github.com/dBildungsplattform/dbp-moodle-plugin-oidc.git
-    cd dbp-moodle-plugin-oidc/ || return 1
+    cd dbp-moodle-plugin-oidc/ || exit 1
     git checkout ${target_branch}
     # create the zip archive in the initial directory, s.t. it can be treated equally to the other plugins
     zip -r ../auth_oidc.zip auth/oidc/
+    cd ..
+    rm -r dbp-moodle-plugin-oidc/    
 }
 
 cd /plugins || exit 1
