@@ -104,15 +104,13 @@ MODULE=dbp info "Replacing config.php file with ours"
 /bin/cp -p /moodleconfig/config-php/config.php /tmp/config.php
 mv /tmp/config.php /dbp-moodle/moodle/config.php
 
+if [ -f "/tmp/de.zip" ] && [ ! -d /bitnami/moodledata/lang/de ]; then \
+    MODULE=dbp info "Installing german language pack"
+    mkdir -p /dbp-moodle/moodledata/lang
+    unzip -q /tmp/de.zip -d /dbp-moodle/moodledata/lang
+fi
+
 upgrade_if_pending
-
-# if [ -f "/tmp/de.zip" ] && [ ! -d /bitnami/moodledata/lang/de ]; then \
-#     MODULE=dbp info "Installing german language pack"
-#     mkdir -p /dbp-moodle/moodledata/lang
-#     unzip -q /tmp/de.zip -d /dbp-moodle/moodledata/lang
-# fi
-
-# upgrade_if_pending
 
 if [[ ! -f "$update_failed_path" ]] && [[ ! -f "$plugin_state_failed_path" ]]; then
     MODULE=dbp info "Starting plugin installation"

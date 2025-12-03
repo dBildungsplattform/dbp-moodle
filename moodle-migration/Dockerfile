@@ -64,6 +64,9 @@ RUN mkdir /.moosh &&\
 
 RUN /scripts/install/downloadMoodle.sh
 
+RUN MAJOR_MINOR=$(echo "$MOODLE_VERSION" | cut -d. -f1,2) && \
+    curl -L https://download.moodle.org/download.php/direct/langpack/${MAJOR_MINOR}/de.zip --output /tmp/de.zip
+
 # Hardening
 RUN apt-get update && apt-get upgrade -y && \
     apt-get clean && rm -rf /var/lib/apt/lists /var/cache/apt/archives
