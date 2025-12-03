@@ -744,7 +744,7 @@ apache_update_app_configuration() {
         [[ -z "${http_listen_addresses:-}" ]] && http_listen_addresses="$http_listen" || http_listen_addresses="${http_listen_addresses} ${http_listen}"
         [[ -z "${https_listen_addresses:-}" ]] && https_listen_addresses="$https_listen" || https_listen_addresses="${https_listen_addresses} ${https_listen}"
     done
-    # Update configuration
+    # Update configuration TODO - do we really need this? We do everything with the default configs
     local -r http_vhost="${APACHE_VHOSTS_DIR}/${app}-vhost.conf"
     local -r https_vhost="${APACHE_VHOSTS_DIR}/${app}-https-vhost.conf"
     local -r disable_suffix=".disabled"

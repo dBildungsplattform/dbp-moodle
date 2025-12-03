@@ -77,7 +77,7 @@ MODULE=dbp info "Starting Moodle"
 # printSystemStatus
 
 # Copy the dbp-php.ini to the conf.d directory to set new settings
-cp /scripts/init/php/dbp-php.ini /usr/local/etc/php/conf.d/dbp-php.ini
+cp /scripts/init/php/dbp-php.ini /usr/local/etc/php/conf.d/00-dbp-php.ini
 
 # Start the dbp Moodle dependency setup process
 startDbpMoodleSetup

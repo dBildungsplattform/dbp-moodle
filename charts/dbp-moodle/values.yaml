@@ -101,6 +101,11 @@ dbpMoodle:
     # -- Remember to adjust moodle.extraVolumes & moodle.extraVolumeMounts when setting this.
     # -- Secret key is by default expected to be config.php
     existingConfig: ""
+    # -- A string filled with additional php.ini configuration that overwrites the default one
+    additionalPhpIni: |
+      memory_limit = 513M
+      upload_max_filesize = 201M
+      post_max_size = 150M
 
   # -- Configurations for the optional redis
   redis:
@@ -353,10 +358,21 @@ moodle:
         cpu: 200m
         memory: 256Mi
   extraVolumeMounts:
+    - name: moodle-additional-php-ini-file
+      readOnly: true
+      mountPath: /usr/local/etc/php/conf.d/
     - name: moodle-php-config
       readOnly: true
       mountPath: /moodleconfig/config-php
   extraVolumes:
+    # -- The additional php.ini which gets filled with custom values
+    - name: moodle-additional-php-ini-file
+      configMap:
+        name: moodle-additional-php-ini-file
+        items:
+          - key: moodle-php.ini
+            path: 01-moodle-php.ini
+        defaultMode: 0644
     # -- The custom config.php file that is used to configure moodle to use the database and redis (if activated)
     - name: moodle-php-config
       secret:
