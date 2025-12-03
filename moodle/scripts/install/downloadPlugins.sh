@@ -20,7 +20,7 @@ download_oidc() {
     # create the zip archive in the initial directory, s.t. it can be treated equally to the other plugins
     zip -r ../auth_oidc.zip auth/oidc/
     cd ..
-    rm -r dbp-moodle-plugin-oidc/    
+    rm -rf dbp-moodle-plugin-oidc/
 }
 
 cd /plugins || exit 1
