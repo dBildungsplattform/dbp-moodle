@@ -11,9 +11,22 @@ download_kaltura() {
      curl -L -o kaltura.zip "$latest_zip_url"
  }
 
+download_oidc() {
+    target_branch="v_45" # eLeDia currently doesn't use any tags, we always use the latest version on branch v_45
+
+    git clone https://github.com/dBildungsplattform/dbp-moodle-plugin-oidc.git
+    cd dbp-moodle-plugin-oidc/ || exit 1
+    git checkout ${target_branch}
+    # create the zip archive in the initial directory, s.t. it can be treated equally to the other plugins
+    (cd auth && zip -r ../../auth_oidc.zip oidc)
+    cd ..
+    rm -rf dbp-moodle-plugin-oidc/
+}
+
 cd /plugins || exit 1
 
 download_kaltura "$major_minor"
+download_oidc
 moosh plugin-list > /dev/null
 
 # Dependencies
@@ -35,7 +48,6 @@ moosh plugin-download -v "$major_minor" format_tiles
 moosh plugin-download -v "$major_minor" format_topcoll
 moosh plugin-download -v "$major_minor" format_flexsections
 moosh plugin-download -v "$major_minor" format_multitopic
-moosh plugin-download -v "$major_minor" auth_oidc
 moosh plugin-download -v "$major_minor" block_xp
 moosh plugin-download -v "$major_minor" mod_coursecertificate
 moosh plugin-download -v "$major_minor" theme_adaptable
