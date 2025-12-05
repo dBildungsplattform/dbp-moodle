@@ -475,14 +475,20 @@ etherpadlite:
     - name: DB_PORT
       value: "5432"
     - name: DB_NAME
-      value: "etherpad"
+      valueFrom:
+        secretKeyRef:
+          name: "moodle"
+          key: "db-name-etherpad"
     - name: DB_USER
-      value: "etherpad"
+      valueFrom:
+        secretKeyRef:
+          name: "moodle"
+          key: "db-user-etherpad"
     - name: DB_PASS
       valueFrom:
         secretKeyRef:
           name: "moodle"
-          key: "etherpad-postgresql-password"
+          key: "db-password-etherpad"
     - name: REQUIRE_SESSION
       value: "true"
   volumes:
