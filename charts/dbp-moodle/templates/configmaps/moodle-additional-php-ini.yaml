@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "moodle-additional-php-ini-file"
+  namespace: "{{ .Release.Namespace }}"
+data:
+  moodle-php.ini: |-
+{{ tpl ( .Files.Get "scripts/moodle-php.ini" ) . | nindent 4 }}

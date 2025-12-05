@@ -39,4 +39,4 @@ else
 fi
 
 # Start Apache
-exec "/scripts/init/apache/run.sh"
+web_server_start
