@@ -104,7 +104,7 @@ MODULE=dbp info "Replacing config.php file with ours"
 /bin/cp -p /moodleconfig/config-php/config.php /tmp/config.php
 mv /tmp/config.php /dbp-moodle/moodle/config.php
 
-if [ -f "/tmp/de.zip" ] && [ ! -d /bitnami/moodledata/lang/de ]; then \
+if [ -f "/tmp/de.zip" ] && [ ! -d /dbp-moodle/moodledata/lang/de ]; then \
     MODULE=dbp info "Installing german language pack"
     mkdir -p /dbp-moodle/moodledata/lang
     unzip -q /tmp/de.zip -d /dbp-moodle/moodledata/lang
