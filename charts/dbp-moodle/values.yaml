@@ -498,10 +498,19 @@ etherpadlite:
         items:
           - key: "etherpad-api-key"
             path: "APIKEY.txt"
+    - name: "etherpad-settings"
+      configmap:
+        name: "etherpad-settings"
+        items:
+          - key: settings
+            path: settings.json
   volumeMounts:
     - name: "api-key"
       mountPath: "/opt/etherpad-lite/APIKEY.txt"
       subPath: "APIKEY.txt"
+    - name: "etherpad-settings"
+      mountPath: "/opt/etherpad-lite/settings.json"
+      subPath: settings.json
   ingress:
     enabled: true
     annotations:
