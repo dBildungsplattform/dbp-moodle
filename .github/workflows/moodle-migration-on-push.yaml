@@ -2,7 +2,7 @@ name: Build moodle migration development image
 on:
   push:
     branches:
-      - DBP-1650-Eval-managed-postgres
+      - DBP-1651-Migrate-to-managed-pg
 
 jobs:
   build_image_on_push:
