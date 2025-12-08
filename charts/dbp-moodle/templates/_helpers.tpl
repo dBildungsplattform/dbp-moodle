@@ -59,7 +59,6 @@
 {{- end -}}
 
 {{- define "dbpMoodle.pluginConfigMap.content" -}}
-kaltura:kaltura:: {{- .Values.global.moodlePlugins.kaltura.enabled }}{{"\n"}}
 wunderbyte_table:local_wunderbyte_table:local/wunderbyte_table: {{- .Values.global.moodlePlugins.booking.enabled}}{{"\n"}}
 certificate:tool_certificate:admin/tool/certificate:            {{- or .Values.global.moodlePlugins.certificate.enabled .Values.global.moodlePlugins.coursecertificate.enabled }}{{"\n"}}
 etherpadlite:mod_etherpadlite:mod/etherpadlite:                 {{- .Values.global.moodlePlugins.etherpadlite.enabled }}{{"\n"}}

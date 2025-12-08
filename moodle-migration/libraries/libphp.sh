@@ -11,7 +11,6 @@
 . /scripts/libfs.sh
 . /scripts/libservice.sh
 . /scripts/libvalidations.sh
-# . /scripts/libwebserver.sh
 
 ########################
 # Add or modify an entry in the main PHP configuration file (php.ini)
@@ -35,7 +34,7 @@ php_conf_set() {
         pattern="^[; ]*${key}\s*=\s*[\"]?${value}(\.so)?[\"]?\s*$"
     fi
     local -r entry="${key} = ${value}"
-    if is_file_writable "$file"; then # MIGRATION
+    if is_file_writable "$file"; then # TODO MIGRATION
         # Not using the ini-file tool since it does not play well with php.ini
         if grep -q -E "$pattern" "$file"; then
             replace_in_file "$file" "$pattern" "$entry"

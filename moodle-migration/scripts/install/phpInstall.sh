@@ -24,32 +24,16 @@ BUILD_PACKAGES="libcurl4-openssl-dev libfreetype6-dev libicu-dev libjpeg62-turbo
 
 apt-get update && apt-get install -y --no-install-recommends $BUILD_PACKAGES
 
-
-# Prüfen was wir hier brauchen
-# https://github.com/moodlehq/moodle-php-apache/blob/main/root/tmp/setup/php-extensions.sh
-# All the extensions from bitnami: apcu.so  imagick.so  maxminddb.so  memcached.so  mongodb.so  opcache.so  pdo_dblib.so  pdo_pgsql.so  pgsql.so  redis.so  xdebug.so
-
 # ZIP
 docker-php-ext-configure zip --with-zip
 docker-php-ext-install zip
 
 docker-php-ext-install -j$(nproc) \
-    exif intl mysqli opcache pgsql soap xsl bcmath bz2 calendar exif gmp iconv intl ldap pcntl pdo pdo_mysql pgsql soap sockets tidy xsl zip
+    exif intl mysqli opcache pgsql soap xsl bcmath bz2 calendar exif gmp iconv intl ldap pcntl pdo pdo_mysql soap sockets tidy xsl zip
 
 # GD.
 docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/
 docker-php-ext-install -j$(nproc) gd
-
-# # Ensure PHP-FPM daemon user exists and required folder belongs to this user when running as 'root'
-# if am_i_root; then
-#     ensure_user_exists "$PHP_FPM_DAEMON_USER" --group "$PHP_FPM_DAEMON_GROUP"
-#     ensure_dir_exists "$PHP_TMP_DIR"
-#     chown -R "${PHP_FPM_DAEMON_USER}:${PHP_FPM_DAEMON_GROUP}" "$PHP_TMP_DIR"
-#     # Enable daemon configuration
-#     if [[ ! -f "${PHP_CONF_DIR}/common.conf" ]]; then
-#         cp "${PHP_CONF_DIR}/common.conf.disabled" "${PHP_CONF_DIR}/common.conf"
-#     fi
-# fi
 
 # Cleanup after source build
 apt-get remove --purge -y $BUILD_PACKAGES

@@ -13,7 +13,7 @@ set -o nounset
 . /scripts/liblog.sh
 . /scripts/libwebserver.sh
 
-moodle_path="/bitnami/moodle"
+moodle_path="/dbp-moodle/moodle"
 moodle_backup_path="/dbp-moodle/moodledata/moodle-backup" # Das Backup script muss bezüglich der Pfade angepasst werden
 
 maintenance_html_path="/dbp-moodle/moodledata/climaintenance.html"
@@ -76,56 +76,53 @@ startDbpMoodleSetup() {
 MODULE=dbp info "Starting Moodle"
 # printSystemStatus
 
-# Can handle new version and existing version.
+# Copy the dbp-php.ini to the conf.d directory to set new settings
+cp /scripts/init/php/dbp-php.ini /usr/local/etc/php/conf.d/00-dbp-php.ini
+cp /moodleconfig/01-dbp-php.ini /usr/local/etc/php/conf.d/01-dbp-php.ini
+
+# Start the dbp Moodle dependency setup process
 startDbpMoodleSetup
 
-# MODULE=dbp info "Create php.ini with redis config"
-#This must be adjusted because we install php with apt-get and don't use the binary directly
-# /bin/cp /moodleconfig/php-ini/php.ini /opt/bitnami/php/etc/conf.d/php.ini
-
-#This is not relevant for the dependency configuration and setup
-# if [[ ! -f "$update_failed_path" ]]; then
-#     MODULE=dbp info "Starting Moodle Update Check"
-#     if /scripts/updateCheck.sh; then
-#         MODULE=dbp info "Finished Update Check"
-#     else
-#         MODULE=dbp error "Update failed! Continuing with previously installed moodle.."
-#         setStatusFile "$update_failed_path" true
-#     fi
-# else
-#     MODULE=dbp warn "Update failed previously. Skipping update check..."
-# fi
+if [[ ! -f "$update_failed_path" ]]; then
+    # At this point in time we did not enter the Moodle persist step yet and /opt/dbp-moodle/moodle contains the moodle image version which in case of the update, is the new moodle version
+    MODULE=dbp info "Starting Moodle Update Check"
+    if /scripts/init/updateCheck.sh; then
+        MODULE=dbp info "Finished Update Check"
+    else
+        MODULE=dbp error "Update failed! Continuing with previously installed moodle.."
+        setStatusFile "$update_failed_path" true
+    fi
+else
+    MODULE=dbp warn "Update failed previously. Skipping update check..."
+fi
 
 
-#TODO commented out for apache and php-fpm tests
 MODULE=dbp info "Start Moodle setup script after checking for proper version"
 /scripts/init/moodle/moodleSetup.sh
-/scripts/init/post-init.sh # TODO adjust paths https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/post-init.sh
-upgrade_if_pending
 
 MODULE=dbp info "Replacing config.php file with ours"
 /bin/cp -p /moodleconfig/config-php/config.php /tmp/config.php
-mv /tmp/config.php /bitnami/moodle/config.php
+mv /tmp/config.php /dbp-moodle/moodle/config.php
 
-# if [ -f "/tmp/de.zip" ] && [ ! -d /bitnami/moodledata/lang/de ]; then \
-#     MODULE=dbp info "Installing german language pack"
-#     mkdir -p /dbp-moodle/moodledata/lang
-#     unzip -q /tmp/de.zip -d /dbp-moodle/moodledata/lang
-# fi
+if [ -f "/tmp/de.zip" ] && [ ! -d /dbp-moodle/moodledata/lang/de ]; then \
+    MODULE=dbp info "Installing german language pack"
+    mkdir -p /dbp-moodle/moodledata/lang
+    unzip -q /tmp/de.zip -d /dbp-moodle/moodledata/lang
+fi
 
-# upgrade_if_pending
+upgrade_if_pending
 
-# if [[ ! -f "$update_failed_path" ]] && [[ ! -f "$plugin_state_failed_path" ]]; then
-#     MODULE=dbp info "Starting plugin installation"
-#     if /scripts/pluginCheck.sh; then
-#         MODULE=dbp info "Finished Plugin Install"
-#     else
-#         MODULE=dbp error "Plugin check failed! Continuing to start webserver with possibly compromised plugins"
-#         setStatusFile "$plugin_state_failed_path" true
-#     fi
-# else
-#     MODULE=dbp warn "Update or Plugin check failed previously. Skipping plugin check..."
-# fi
+if [[ ! -f "$update_failed_path" ]] && [[ ! -f "$plugin_state_failed_path" ]]; then
+    MODULE=dbp info "Starting plugin installation"
+    if /scripts/init/pluginCheck.sh; then
+        MODULE=dbp info "Finished Plugin Install"
+    else
+        MODULE=dbp error "Plugin check failed! Continuing to start webserver with possibly compromised plugins"
+        setStatusFile "$plugin_state_failed_path" true
+    fi
+else
+    MODULE=dbp warn "Update or Plugin check failed previously. Skipping plugin check..."
+fi
 
 MODULE=dbp info "Finished all preparations! Starting Webserver"
 /scripts/init/moodle/run.sh

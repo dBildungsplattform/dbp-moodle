@@ -51,7 +51,6 @@ apache_setup_config() {
     envsubst < "${template_dir}/default.conf.tpl" > "${APACHE_VHOSTS_DIR}/default.conf"
     envsubst < "${template_dir}/default-ssl.conf.tpl" > "${APACHE_VHOSTS_DIR}/default-ssl.conf"
     ensure_dir_exists "${APACHE_BASE_DIR}/htdocs"
-    # chmod 644 "${APACHE_BASE_DIR}/htdocs/index.php"
 
     # Add new configuration only once, to avoid a second postunpack run breaking Apache
     local apache_conf_add
