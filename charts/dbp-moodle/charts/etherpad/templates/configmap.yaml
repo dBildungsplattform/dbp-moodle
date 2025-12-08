@@ -7,7 +7,7 @@ metadata:
 data:
   settings: |
     /**
-    * THIS IS THE SETTINGS FILE THAT IS COPIED INSIDE THE DOCKER CONTAINER.
+    * THIS IS THE SETTINGS FILE THAT IS MOUNTED VIA K8S CONFIGMAP.
     *
     * By default, some runtime customizations are supported (see the
     * documentation).
