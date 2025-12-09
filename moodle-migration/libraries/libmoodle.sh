@@ -270,6 +270,7 @@ moodle_wait_for_postgresql_connection() {
     check_postgresql_connection() {
         echo "SELECT 1" | postgresql_remote_execute "$db_host" "$db_port" "$db_name" "$db_user" "$db_pass"
     }
+    info "check_postgresql_connection for db_host=$db_host db_name=$db_name db_user=$db_user"
     if ! retry_while "check_postgresql_connection"; then
         error "Could not connect to the database"
         return 1

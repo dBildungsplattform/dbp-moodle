@@ -72,4 +72,5 @@ export POSTGRESQL_CLIENT_CREATE_DATABASE_PASSWORD="${POSTGRESQL_CLIENT_CREATE_DA
 export POSTGRESQL_CLIENT_CREATE_DATABASE_EXTENSIONS="${POSTGRESQL_CLIENT_CREATE_DATABASE_EXTENSIONS:-}" # only used during the first initialization
 export POSTGRESQL_CLIENT_EXECUTE_SQL="${POSTGRESQL_CLIENT_EXECUTE_SQL:-}" # only used during the first initialization
 
+
 # https://github.com/bitnami/containers/blob/main/bitnami/moodle/5.0/debian-12/rootfs/opt/bitnami/scripts/postgresql-client-env.sh
