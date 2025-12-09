@@ -235,6 +235,7 @@ data:
     *
     * For a complete list of the supported drivers, please refer to:
     * https://www.npmjs.com/package/ueberdb2
+    * We could also use a connection string like this in the dbSettings: "connectionString": "${DB_URL:undefined}"
     */
 
     "dbType": "${DB_TYPE:dirty}",
@@ -247,7 +248,7 @@ data:
         "charset":    "${DB_CHARSET:undefined}",
         "filename":   "${DB_FILENAME:var/dirty.db}",
         "collection": "${DB_COLLECTION:undefined}",
-        "url":        "${DB_URL:undefined}"
+        "ssl": true
     },
 
     /*
