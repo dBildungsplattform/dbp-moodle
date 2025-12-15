@@ -471,7 +471,7 @@ etherpadlite:
     - name: DB_TYPE
       value: "postgres"
     - name: DB_HOST
-      value: "moodle-etherpad-postgresql"
+      value: "" # Must be set dynamically
     - name: DB_PORT
       value: "5432"
     - name: DB_NAME
