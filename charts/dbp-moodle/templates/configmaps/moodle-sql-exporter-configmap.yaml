@@ -8,6 +8,16 @@ data:
   moodle-collector-config: |-
     collector_name: sql_exporter_moodle
     metrics:
+    - metric_name: sql_moodle_distinct_ips_current_month
+      type: gauge
+      values: [metric]
+      help: Distinct ip addresses in month.
+      query: |
+        SELECT COUNT(DISTINCT(ip)) AS metric
+        FROM mdl_logstore_standard_log 
+        WHERE userid = (SELECT id AS userid FROM mdl_user WHERE username = 'guest') 
+        AND eventname = '\core\event\user_loggedin' 
+        AND timecreated >= EXTRACT(EPOCH FROM DATE_TRUNC('MONTH', CURRENT_TIMESTAMP));
     - metric_name: sql_moodle_total_session_count
       type: gauge
       values: [metric]
