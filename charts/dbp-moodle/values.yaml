@@ -80,6 +80,8 @@ global:
       enabled: false
     availability_cohort:
       enabled: false
+    board:
+      enabled: false
 
 dbpMoodle:
   name: infra
