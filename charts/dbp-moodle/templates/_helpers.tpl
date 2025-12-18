@@ -97,4 +97,5 @@ shortcodes:filter_shortcodes:filter/shortcodes:                 {{- .Values.glob
 filtercodes:filter_filtercodes:filter/filtercodes:              {{- .Values.global.moodlePlugins.filtercodes.enabled }}{{"\n"}}
 dynamic:customfield_dynamic:customfield/field/dynamic:          {{- .Values.global.moodlePlugins.customfield_dynamic.enabled }}{{"\n"}}
 cohort:availability_cohort:availability/condition/cohort:       {{- .Values.global.moodlePlugins.availability_cohort.enabled }}{{"\n"}}
+board:mod_board:mod/board:                                      {{- .Values.global.moodlePlugins.board.enabled }}{{"\n"}}
 {{- end -}}
