@@ -8,6 +8,19 @@ data:
   moodle-collector-config: |-
     collector_name: sql_exporter_moodle
     metrics:
+    - metric_name: sql_moodle_guest_user_ips
+      type: counter
+      help: Guest User Identifiers
+      query: |
+        SELECT md5(ip::text) AS ip, 1 AS value 
+        FROM mdl_logstore_standard_log 
+        WHERE userid = (SELECT id FROM mdl_user WHERE username = 'guest') 
+        AND eventname = '\core\event\user_loggedin' 
+        AND timecreated >= EXTRACT(EPOCH FROM NOW() - INTERVAL '5 minutes');
+      key_labels:
+        - ip
+      values:
+        - value
     - metric_name: sql_moodle_distinct_ips_current_month
       type: gauge
       values: [metric]
