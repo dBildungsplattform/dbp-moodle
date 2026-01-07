@@ -42,6 +42,7 @@ moosh plugin-download -v "$major_minor" mod_zoom
 moosh plugin-download -v "$major_minor" mod_booking
 moosh plugin-download -v "$major_minor" mod_unilabel
 moosh plugin-download -v "$major_minor" mod_choicegroup
+moosh plugin-download -v "$major_minor" mod_board
 moosh plugin-download -v "$major_minor" local_staticpage
 moosh plugin-download -v "$major_minor" format_remuiformat
 moosh plugin-download -v "$major_minor" format_tiles
