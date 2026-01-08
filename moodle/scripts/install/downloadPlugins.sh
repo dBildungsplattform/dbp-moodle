@@ -61,4 +61,4 @@ moosh plugin-download -v "$major_minor" filter_shortcodes
 moosh plugin-download -v "$major_minor" filter_filtercodes
 moosh plugin-download -v "$major_minor" availability_cohort
 moosh plugin-download -v "$major_minor" tool_heartbeat
-moosh plugin-download -v "$major_minor" block_sharing_cart
+moosh plugin-download -v "$major_minor" block_sharing_cart #
