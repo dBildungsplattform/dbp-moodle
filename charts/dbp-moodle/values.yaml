@@ -73,6 +73,16 @@ global:
       enabled: false
     dynamic_cohorts:
       enabled: false
+    shortcodes:
+      enabled: false
+    filtercodes:
+      enabled: false
+    customfield_dynamic:
+      enabled: false
+    availability_cohort:
+      enabled: false
+    board:
+      enabled: false
 
 dbpMoodle:
   name: infra
