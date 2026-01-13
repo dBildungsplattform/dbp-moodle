@@ -1,6 +1,6 @@
 FROM php:8.1.33-fpm-bookworm AS build
 USER root
-ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.5.4"}
+ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.5.8"}
 #This is the path moodle will be placed after downloading for our Moodle Update Pipeline
 ARG MOODLE_PATH="/opt/dbp-moodle/moodle"
 ARG EXTRA_LOCALES=""
