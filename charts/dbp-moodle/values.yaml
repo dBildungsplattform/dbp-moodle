@@ -82,6 +82,8 @@ global:
       enabled: false
     board:
       enabled: false
+    qtype_stack:
+      emabled: false
 
 dbpMoodle:
   name: infra
