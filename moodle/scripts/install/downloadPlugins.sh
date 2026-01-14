@@ -61,3 +61,24 @@ moosh plugin-download -v "$major_minor" filter_shortcodes
 moosh plugin-download -v "$major_minor" filter_filtercodes
 moosh plugin-download -v "$major_minor" availability_cohort
 moosh plugin-download -v "$major_minor" tool_heartbeat
+moosh plugin-download -v "$major_minor" qbehaviour_adaptivemultipart
+moosh plugin-download -v "$major_minor" qbehaviour_dfexplicitvaildate
+moosh plugin-download -v "$major_minor" qbehaviour_dfcbmexplicitvaildate
+moosh plugin-download -v "$major_minor" qtype_stack
+# format_remuiformat /course/format/remuiformat
+# mod_checklist -> /mod/checklist
+# block_sharing_cart -> /blocks/sharing_cart
+# qtype_stack -> /question/type/stack/ ## ERROR: Fehler: core\plugin_manager::remove_plugin_folder(): Argument #1 ($plugin) must be of type core\plugininfo\base, null given, called in [dirroot]/lib/classes/plugin_manager.php on line 1429
+# block_stash -> /blocks/stash
+# block_completion_progress -> /blocks/completion_progress
+# tool_coursearchiver -> /admin/tool/coursearchiver
+
+
+# php_extension	yaml Für STACK wird die Installation der YAML-Bibliothek empfohlen.
+# php_extension	mbstring muss installiert und aktiviert sein
+
+# Dependencies for qtype_stack
+# qbehaviour_adaptivemultipart (2020103000) Fehlend Verfügbar Plugin-Info -> /question/behaviour/adaptivemultipart
+# qbehaviour_dfexplicitvaildate (2018080600) Fehlend Verfügbar Plugin-Info -> /question/behaviour/qbehaviour_dfexplicitvaildate
+# qbehaviour_dfcbmexplicitvaildate (2018080600) Fehlend Verfügbar Plugin-Info -> /question/behaviour/qbehaviour_dfcbmexplicitvaildate
+
