@@ -12,7 +12,7 @@ annotations:
   licenses: Apache-2.0
   tanzuCategory: application
 apiVersion: v2
-appVersion: 4.5.4
+appVersion: 4.5.8
 description: Moodle(TM) LMS is an open source online Learning Management System widely
   used at universities, schools, and corporations. It is modular and highly adaptable
   to any type of online learning.
@@ -28,4 +28,4 @@ maintainers:
 name: moodle
 sources:
 - https://github.com/bitnami/charts/tree/main/bitnami/moodle
-version: 27.0.2
+version: 27.0.3

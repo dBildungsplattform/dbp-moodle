@@ -10,7 +10,7 @@ version: 0.0.41
 appVersion: "4.5.8"
 dependencies:
   - name: moodle
-    version: "27.0.2"
+    version: "27.0.3"
     repository: "file://charts/moodle"
 
   # TODO noch nicht klar wie beim Rechenzentrum hiermit umgegangen werden soll / welche Alternative genutzt wird
