@@ -101,7 +101,6 @@ board:mod_board:mod/board:                                      {{- .Values.glob
 adaptivemultipart:qbehaviour_adaptivemultipart:question/behaviour/adaptivemultipart: {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
 dfexplicitvaildate:qbehaviour_dfexplicitvaildate:question/behaviour/qbehaviour_dfexplicitvaildate: {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
 dfcbmexplicitvaildate:qbehaviour_dfcbmexplicitvaildate:question/behaviour/qbehaviour_dfcbmexplicitvaildate: {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
-# qtype_stack depends on adaptivemultipart, dfexplicitvaildate, dfcbmexplicitvaildate. Make sure to keep the dependencies above as it reflects installation order.
 stack:qtype_stack:question/type/stack:                          {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
 checklist:mod_checklist:mod/checklist:                          {{- .Values.global.moodlePlugins.mod_checklist.enabled }}{{"\n"}}
 stash:block_stash:blocks/stash:                                 {{- .Values.global.moodlePlugins.block_stash.enabled }}{{"\n"}}
