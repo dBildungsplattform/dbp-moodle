@@ -101,5 +101,5 @@ board:mod_board:mod/board:                                      {{- .Values.glob
 adaptivemultipart:qbehaviour_adaptivemultipart:question/behaviour/adaptivemultipart: {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
 dfexplicitvaildate:qbehaviour_dfexplicitvaildate:question/behaviour/qbehaviour_dfexplicitvaildate: {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
 dfcbmexplicitvaildate:qbehaviour_dfcbmexplicitvaildate:question/behaviour/qbehaviour_dfcbmexplicitvaildate: {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
-qtype_stack:qtype_stack:question/type/stack:                    {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
+stack:qtype_stack:question/type/stack:                          {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
 {{- end -}}
