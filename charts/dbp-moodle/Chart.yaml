@@ -7,7 +7,7 @@ description: |
 type: application
 home: https://dbildungsplattform.github.io/dbp-moodle/
 version: 0.0.41
-appVersion: "4.5.8"
+appVersion: "4.5.4"
 dependencies:
   - name: moodle
     version: "27.0.3"
