@@ -61,10 +61,12 @@ moosh plugin-download -v "$major_minor" filter_shortcodes
 moosh plugin-download -v "$major_minor" filter_filtercodes
 moosh plugin-download -v "$major_minor" availability_cohort
 moosh plugin-download -v "$major_minor" tool_heartbeat
+sleep 60 # prevent 429 Too Many Requests 
 moosh plugin-download -v "$major_minor" qbehaviour_adaptivemultipart
 moosh plugin-download -v "$major_minor" qbehaviour_dfexplicitvaildate
 moosh plugin-download -v "$major_minor" qbehaviour_dfcbmexplicitvaildate
 moosh plugin-download -v "$major_minor" qtype_stack
+
 # format_remuiformat /course/format/remuiformat
 # mod_checklist -> /mod/checklist
 # block_sharing_cart -> /blocks/sharing_cart
