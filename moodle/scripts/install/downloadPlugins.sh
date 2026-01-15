@@ -32,6 +32,9 @@ moosh plugin-list > /dev/null
 # Dependencies
 moosh plugin-download -v "$major_minor" local_wunderbyte_table # Dependency of mod_booking
 moosh plugin-download -v "$major_minor" tool_certificate # Dependency of mod_coursecertificate
+moosh plugin-download -v "$major_minor" qbehaviour_adaptivemultipart # Dependency of qtype_stack
+moosh plugin-download -v "$major_minor" qbehaviour_dfexplicitvaildate # Dependency of qtype_stack
+moosh plugin-download -v "$major_minor" qbehaviour_dfcbmexplicitvaildate # Dependency of qtype_stack
 
 # Plugins
 moosh plugin-download -v "$major_minor" mod_etherpadlite
@@ -57,14 +60,11 @@ moosh plugin-download -v "$major_minor" theme_boost_magnific
 moosh plugin-download -v "$major_minor" tool_usersuspension
 moosh plugin-download -v "$major_minor" tool_dynamic_cohorts
 moosh plugin-download -v 3.7 customfield_dynamic
+sleep 60 # prevent Error 429 Too Many Requests 
 moosh plugin-download -v "$major_minor" filter_shortcodes
 moosh plugin-download -v "$major_minor" filter_filtercodes
 moosh plugin-download -v "$major_minor" availability_cohort
 moosh plugin-download -v "$major_minor" tool_heartbeat
-sleep 60 # prevent Error 429 Too Many Requests 
-moosh plugin-download -v "$major_minor" qbehaviour_adaptivemultipart # dependency of qtype_stack
-moosh plugin-download -v "$major_minor" qbehaviour_dfexplicitvaildate # dependency of qtype_stack
-moosh plugin-download -v "$major_minor" qbehaviour_dfcbmexplicitvaildate # dependency of qtype_stack
 moosh plugin-download -v "$major_minor" qtype_stack
 moosh plugin-download -v "$major_minor" format_remuiformat
 moosh plugin-download -v "$major_minor" mod_checklist
@@ -72,21 +72,3 @@ moosh plugin-download -v "$major_minor" block_stash
 moosh plugin-download -v "$major_minor" block_completion_progress
 moosh plugin-download -v "$major_minor" tool_coursearchiver
 moosh plugin-download -v "$major_minor" block_sharing_cart
-
-# format_remuiformat /course/format/remuiformat
-# mod_checklist -> /mod/checklist
-# block_sharing_cart -> /blocks/sharing_cart
-# qtype_stack -> /question/type/stack/ ## ERROR: Fehler: core\plugin_manager::remove_plugin_folder(): Argument #1 ($plugin) must be of type core\plugininfo\base, null given, called in [dirroot]/lib/classes/plugin_manager.php on line 1429
-# block_stash -> /blocks/stash
-# block_completion_progress -> /blocks/completion_progress
-# tool_coursearchiver -> /admin/tool/coursearchiver
-
-
-# php_extension	yaml Für STACK wird die Installation der YAML-Bibliothek empfohlen.
-# php_extension	mbstring muss installiert und aktiviert sein
-
-# Dependencies for qtype_stack
-# qbehaviour_adaptivemultipart (2020103000) Fehlend Verfügbar Plugin-Info -> /question/behaviour/adaptivemultipart
-# qbehaviour_dfexplicitvaildate (2018080600) Fehlend Verfügbar Plugin-Info -> /question/behaviour/qbehaviour_dfexplicitvaildate
-# qbehaviour_dfcbmexplicitvaildate (2018080600) Fehlend Verfügbar Plugin-Info -> /question/behaviour/qbehaviour_dfcbmexplicitvaildate
-
