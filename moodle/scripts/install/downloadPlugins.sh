@@ -61,11 +61,17 @@ moosh plugin-download -v "$major_minor" filter_shortcodes
 moosh plugin-download -v "$major_minor" filter_filtercodes
 moosh plugin-download -v "$major_minor" availability_cohort
 moosh plugin-download -v "$major_minor" tool_heartbeat
-sleep 60 # prevent 429 Too Many Requests 
-moosh plugin-download -v "$major_minor" qbehaviour_adaptivemultipart
-moosh plugin-download -v "$major_minor" qbehaviour_dfexplicitvaildate
-moosh plugin-download -v "$major_minor" qbehaviour_dfcbmexplicitvaildate
+sleep 60 # prevent Error 429 Too Many Requests 
+moosh plugin-download -v "$major_minor" qbehaviour_adaptivemultipart # dependency of qtype_stack
+moosh plugin-download -v "$major_minor" qbehaviour_dfexplicitvaildate # dependency of qtype_stack
+moosh plugin-download -v "$major_minor" qbehaviour_dfcbmexplicitvaildate # dependency of qtype_stack
 moosh plugin-download -v "$major_minor" qtype_stack
+moosh plugin-download -v "$major_minor" format_remuiformat
+moosh plugin-download -v "$major_minor" mod_checklist
+moosh plugin-download -v "$major_minor" block_stash
+moosh plugin-download -v "$major_minor" block_completion_progress
+moosh plugin-download -v "$major_minor" tool_coursearchiver
+moosh plugin-download -v "$major_minor" block_sharing_cart
 
 # format_remuiformat /course/format/remuiformat
 # mod_checklist -> /mod/checklist

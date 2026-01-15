@@ -84,6 +84,14 @@ global:
       enabled: false
     qtype_stack:
       enabled: false
+    mod_checklist:
+      enabled: false
+    block_stash:
+      enabled: false
+    completion_progress:
+      enabled: false
+    coursearchiver:
+      enabled: false
 
 dbpMoodle:
   name: infra
