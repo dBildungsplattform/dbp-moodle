@@ -98,4 +98,12 @@ filtercodes:filter_filtercodes:filter/filtercodes:              {{- .Values.glob
 dynamic:customfield_dynamic:customfield/field/dynamic:          {{- .Values.global.moodlePlugins.customfield_dynamic.enabled }}{{"\n"}}
 cohort:availability_cohort:availability/condition/cohort:       {{- .Values.global.moodlePlugins.availability_cohort.enabled }}{{"\n"}}
 board:mod_board:mod/board:                                      {{- .Values.global.moodlePlugins.board.enabled }}{{"\n"}}
+adaptivemultipart:qbehaviour_adaptivemultipart:question/behaviour/adaptivemultipart: {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
+dfexplicitvaildate:qbehaviour_dfexplicitvaildate:question/behaviour/qbehaviour_dfexplicitvaildate: {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
+dfcbmexplicitvaildate:qbehaviour_dfcbmexplicitvaildate:question/behaviour/qbehaviour_dfcbmexplicitvaildate: {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
+stack:qtype_stack:question/type/stack:                          {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
+checklist:mod_checklist:mod/checklist:                          {{- .Values.global.moodlePlugins.mod_checklist.enabled }}{{"\n"}}
+stash:block_stash:blocks/stash:                                 {{- .Values.global.moodlePlugins.block_stash.enabled }}{{"\n"}}
+completion_progress:block_completion_progress:blocks/completion_progress: {{- .Values.global.moodlePlugins.completion_progress.enabled }}{{"\n"}}
+coursearchiver:tool_coursearchiver:admin/tool/coursearchiver:   {{- .Values.global.moodlePlugins.coursearchiver.enabled }}{{"\n"}}
 {{- end -}}
