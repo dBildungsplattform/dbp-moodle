@@ -43,7 +43,6 @@ create_backup() {
         rm -rf "$moodle_backup_path"
     fi
     mkdir -p "$moodle_backup_path"
-    # cp -rp "${moodle_path}/"* "$moodle_backup_path"
     tar -czf "${moodle_backup_path}/moodle-backup.tar.gz" -C "${moodle_path}" .
 }
 
@@ -52,7 +51,6 @@ install_new_version() {
     MODULE="dbp-update" info "Installing new Moodle (${image_version})"
     mkdir -p "$moodle_path"
     tar --strip-components=1 -xzf "/tmp/moodle-${image_version}.tgz" -C "$moodle_path"
-    # cp -rp "/tmp/moodle/"* "$moodle_path"
 }
 
 main() {
@@ -78,7 +76,7 @@ main() {
         MODULE="dbp-update" error "Exiting update..."
         exit 1
     fi
-    MODULE="dbp-update" info "Creating local backup - simulated"
+    MODULE="dbp-update" info "Creating local backup"
     create_backup
     MODULE="dbp-update" info "Unpacking new moodle version"
 

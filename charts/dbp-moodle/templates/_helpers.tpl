@@ -92,6 +92,11 @@ boost_magnific:theme_boost_magnific:theme/boost_magnific:       {{- .Values.glob
 snap:theme_snap:theme/snap:                                     {{- .Values.global.moodlePlugins.snap.enabled }}{{"\n"}}
 usersuspension:tool_usersuspension:admin/tool/usersuspension:   {{- .Values.global.moodlePlugins.usersuspension.enabled }}{{"\n"}}
 dynamic_cohorts:tool_dynamic_cohorts:admin/tool/dynamic_cohorts:{{- .Values.global.moodlePlugins.dynamic_cohorts.enabled }}{{"\n"}}
+shortcodes:filter_shortcodes:filter/shortcodes:                 {{- .Values.global.moodlePlugins.shortcodes.enabled }}{{"\n"}}
+filtercodes:filter_filtercodes:filter/filtercodes:              {{- .Values.global.moodlePlugins.filtercodes.enabled }}{{"\n"}}
+dynamic:customfield_dynamic:customfield/field/dynamic:          {{- .Values.global.moodlePlugins.customfield_dynamic.enabled }}{{"\n"}}
+cohort:availability_cohort:availability/condition/cohort:       {{- .Values.global.moodlePlugins.availability_cohort.enabled }}{{"\n"}}
+board:mod_board:mod/board:                                      {{- .Values.global.moodlePlugins.board.enabled }}{{"\n"}}
 {{- end -}}
 
 {{- define "dbpMoodle.pluginConfigMap.sys.uninstall.content" -}}
