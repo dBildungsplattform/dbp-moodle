@@ -31,4 +31,4 @@ jobs:
       image: dbildungsplattform/moodle
       tag: ${{ needs.pre_build.outputs.tag }}
       suffix: ${{ needs.pre_build.outputs.suffix }}
-      context: "./moodle-migration/"
+      context: "./moodle/"

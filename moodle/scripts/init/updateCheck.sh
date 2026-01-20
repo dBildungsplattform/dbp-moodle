@@ -2,12 +2,12 @@
 
 set -o nounset
 
-. /opt/bitnami/scripts/liblog.sh
+. /scripts/liblog.sh
 
-moodle_path="/bitnami/moodle"
+moodle_path="/dbp-moodle/moodle"
 
 # data folders
-moodle_backup_path="/bitnami/moodledata/moodle-backup"
+moodle_backup_path="/dbp-moodle/moodledata/moodle-backup"
 
 onErrorRestoreBackup() {
     mv "${moodle_path}" "${moodle_path}-failed"
@@ -31,11 +31,11 @@ compare_semver() {
     fi
 }
 
-get_installed_moodle_version() {
-    if [ ! -f "${moodle_path}/version.php" ]; then
+get_moodle_version_by_path() {
+    if [ ! -f "$1/version.php" ]; then
         return
     fi
-    grep release "${moodle_path}/version.php" | grep -oP '\d+\.\d+\.\d+'
+    grep release "$1/version.php" | grep -oP '\d+\.\d+\.\d+'
 }
 
 create_backup() {
@@ -43,20 +43,20 @@ create_backup() {
         rm -rf "$moodle_backup_path"
     fi
     mkdir -p "$moodle_backup_path"
-    cp -rp "${moodle_path}/"* "$moodle_backup_path"
+    tar -czf "${moodle_backup_path}/moodle-backup.tar.gz" -C "${moodle_path}" .
 }
 
 install_new_version() {
     local image_version="$1"
     MODULE="dbp-update" info "Installing new Moodle (${image_version})"
     mkdir -p "$moodle_path"
-    tar --strip-components=1 -xzf "/moodle-${image_version}.tgz" -C "$moodle_path"
+    tar --strip-components=1 -xzf "/tmp/moodle-${image_version}.tgz" -C "$moodle_path"
 }
 
 main() {
     
-    installed_version="$(get_installed_moodle_version)"
-    image_version="$APP_VERSION"
+    installed_version="$(get_moodle_version_by_path "${moodle_path}")"
+    image_version="$(get_moodle_version_by_path "/opt/dbp-moodle/moodle")"
 
     if [[ -z "$installed_version" ]]; then
         MODULE="dbp-update" info "No installed Moodle version detected, continuing with Bitnami fresh install"
