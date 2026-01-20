@@ -8,6 +8,44 @@ data:
   moodle-collector-config: |-
     collector_name: sql_exporter_moodle
     metrics:
+    - metric_name: sql_moodle_guest_user_ips
+      type: counter
+      help: Guest User Identifiers
+      query: |
+        SELECT md5(ip::text) AS ip, 1 AS value 
+        FROM mdl_logstore_standard_log 
+        WHERE userid = (SELECT id FROM mdl_user WHERE username = 'guest') 
+        AND eventname = '\core\event\user_loggedin' 
+        AND timecreated >= EXTRACT(EPOCH FROM NOW() - INTERVAL '5 minutes');
+      key_labels:
+        - ip
+      values:
+        - value
+    - metric_name: sql_moodle_distinct_ips_current_month
+      type: gauge
+      values: [metric]
+      help: Distinct ip addresses in month.
+      query: |
+        SELECT COUNT(DISTINCT(ip)) AS metric
+        FROM mdl_logstore_standard_log 
+        WHERE userid = (SELECT id AS userid FROM mdl_user WHERE username = 'guest') 
+        AND eventname = '\core\event\user_loggedin' 
+        AND timecreated >= EXTRACT(EPOCH FROM DATE_TRUNC('MONTH', CURRENT_TIMESTAMP));
+    - metric_name: sql_moodle_total_session_count
+      type: gauge
+      values: [metric]
+      help: Total number of sessions in this instance.
+      query: |
+        SELECT COUNT(*) AS metric
+        FROM mdl_sessions;
+    - metric_name: sql_moodle_guest_user_session_count
+      type: gauge
+      values: [metric]
+      help: Total number of registed users in this instance.
+      query: |
+        SELECT COUNT(*) AS metric 
+        FROM mdl_sessions 
+        WHERE userid = (SELECT id FROM mdl_user WHERE username = 'guest');
     - metric_name: sql_moodle_total_user_count
       type: gauge
       values: [metric]

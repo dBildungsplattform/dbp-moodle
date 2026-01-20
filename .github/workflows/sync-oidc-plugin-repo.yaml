@@ -1,0 +1,41 @@
+name: Sync OIDC Repo with eLeDia GitLab
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 * * * *' # Hourly sync
+
+# The necessary values for the secrets to be added to GitHub can be found in this 1PW secret: "Gitlab-Zugang bei eLeDia"
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone GitLab repo
+        env:
+          GLPAT: ${{ secrets.GL_PAT_ELEDIA }}
+        run: |
+          git clone --mirror https://oauth2:$GLPAT@gitlab.eledia.de/restricted/dataport/oidc gitlab-mirror
+      - name: Check if push is needed
+        id: check_push
+        env:
+          GHPAT: ${{ secrets.GH_PAT_DBP_MOODLE_PLUGIN_OIDC }}
+        run: |
+          cd gitlab-mirror
+          git remote set-url --push origin https://x-access-token:$GHPAT@github.com/dBildungsplattform/dbp-moodle-plugin-oidc.git
+          # Dry-run push to see if there are changes
+          git push --mirror --dry-run
+          if git push --mirror --dry-run 2>&1 | grep -q -- '->'; then
+            echo "needs_push=true" >> $GITHUB_ENV
+          else
+            echo "needs_push=false" >> $GITHUB_ENV
+          fi
+
+      - name: Push to GitHub Mirror (dbp-moodle-plugin-oidc)
+        if: env.needs_push == 'true'
+        env:
+          GHPAT: ${{ secrets.GH_PAT_DBP_MOODLE_PLUGIN_OIDC }}
+        run: |
+          cd gitlab-mirror
+          git remote set-url --push origin https://x-access-token:$GHPAT@github.com/dBildungsplattform/dbp-moodle-plugin-oidc.git
+          git push --mirror

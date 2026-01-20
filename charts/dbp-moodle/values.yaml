@@ -81,6 +81,16 @@ global:
       enabled: false
     board:
       enabled: false
+    qtype_stack:
+      enabled: false
+    mod_checklist:
+      enabled: false
+    block_stash:
+      enabled: false
+    completion_progress:
+      enabled: false
+    coursearchiver:
+      enabled: false
 
 dbpMoodle:
   name: infra
@@ -268,7 +278,7 @@ moodle:
     registry: "ghcr.io"
     repository: "dbildungsplattform/moodle"
     # -- The dbp-moodle image which is build for this helm chart
-    tag: "4.5.4-debian-12-r0-dbp2"
+    tag: "4.5.4-debian-12-r0-dbp7"
     pullPolicy: Always
     # -- Debug mode for more detailed moodle installation and log output
     debug: false
