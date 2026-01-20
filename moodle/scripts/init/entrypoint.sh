@@ -1,5 +1,4 @@
 #!/bin/bash
-# This entrypoint script needs to be adjusted to function without bitnami
 
 # set -o errexit
 set -o nounset
@@ -14,7 +13,7 @@ set -o nounset
 . /scripts/libwebserver.sh
 
 moodle_path="/dbp-moodle/moodle"
-moodle_backup_path="/dbp-moodle/moodledata/moodle-backup" # Das Backup script muss bezüglich der Pfade angepasst werden
+moodle_backup_path="/dbp-moodle/moodledata/moodle-backup"
 
 maintenance_html_path="/dbp-moodle/moodledata/climaintenance.html"
 update_in_progress_path="/dbp-moodle/moodledata/UpdateInProgress"
