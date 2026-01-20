@@ -23,9 +23,7 @@ touch "${health_file}"
 printf "Checking if update preparations are needed\n"
 
 new_image="{{- .Values.moodle.image.registry -}}/{{- .Values.moodle.image.repository -}}:{{- .Values.moodle.image.tag -}}"
-printf "New Image: $new_image"
 cur_image="$(get_current_deployment_image)"
-printf "Current Image: $cur_image"
 
 printf 'Comparing old image "%s" against new image "%s"\n' "$cur_image" "$new_image"
 
