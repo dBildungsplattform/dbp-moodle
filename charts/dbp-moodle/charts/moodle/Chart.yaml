@@ -22,10 +22,5 @@ keywords:
 - moodle
 - learning
 - php
-maintainers:
-- name: Broadcom, Inc. All Rights Reserved.
-  url: https://github.com/bitnami/charts
 name: moodle
-sources:
-- https://github.com/bitnami/charts/tree/main/bitnami/moodle
-version: 27.0.2
+version: 27.0.3

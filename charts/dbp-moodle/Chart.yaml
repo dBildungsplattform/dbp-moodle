@@ -6,11 +6,11 @@ description: |
   The Chart can be deployed without any modification but it is advised to set own secrets acccording to this readme.
 type: application
 home: https://dbildungsplattform.github.io/dbp-moodle/
-version: 0.0.37
-appVersion: "4.5.4"
+version: 0.0.42
+appVersion: "4.5.8"
 dependencies:
   - name: moodle
-    version: "27.0.2"
+    version: "27.0.3"
     repository: "file://charts/moodle"
 
   # TODO noch nicht klar wie beim Rechenzentrum hiermit umgegangen werden soll / welche Alternative genutzt wird

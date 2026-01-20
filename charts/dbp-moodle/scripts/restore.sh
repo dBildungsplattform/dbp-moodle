@@ -74,30 +74,16 @@ mv /tmp/mountData/moodledata/.[!.]* /dbp-moodle/moodledata/
 
 cd /dbp-moodle/
 echo "=== Clear DB ==="
-{{ if .Values.mariadb.enabled -}}
-MYSQL_PWD="$DATABASE_PASSWORD" mariadb -h "$DATABASE_HOST" -u "$DATABASE_USER" -P "$DATABASE_PORT" -e "DROP DATABASE ${DATABASE_NAME};"
-MYSQL_PWD="$DATABASE_PASSWORD" mariadb -h "$DATABASE_HOST" -u "$DATABASE_USER" -P "$DATABASE_PORT" -e "CREATE DATABASE ${DATABASE_NAME};"
-{{- else -}}
 # This command helps with - ERROR: database "moodle" is being accessed by other users
 PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" -c "REVOKE CONNECT ON DATABASE ${DATABASE_NAME} FROM public;SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND pg_stat_activity.datname = '${DATABASE_NAME}';"
 PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" -d postgres -c "DROP DATABASE ${DATABASE_NAME}"
 PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" -d postgres -c "CREATE DATABASE ${DATABASE_NAME}"
-{{- end }}
 
 echo "=== Copy dump to DB ==="
-{{ if .Values.mariadb.enabled -}}
-gunzip /tmp/Full/tmp/backup/moodle_mariadb_dump_*
-mv /tmp/Full/tmp/backup/moodle_mariadb_dump_* /tmp/moodledb_dump.sql
-{{- else -}}
 gunzip /tmp/Full/tmp/backup/moodle_postgresqldb_dump_*
 mv /tmp/Full/tmp/backup/moodle_postgresqldb_dump_* /tmp/moodledb_dump.sql
-{{- end }}
 
-{{ if .Values.mariadb.enabled -}}
-MYSQL_PWD="$DATABASE_PASSWORD" mariadb -h "$DATABASE_HOST" -P "$DATABASE_PORT" -u "$DATABASE_USER" "$DATABASE_NAME" < /tmp/moodledb_dump.sql
-{{- else -}}
 PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" "$DATABASE_NAME"  < /tmp/moodledb_dump.sql
-{{- end }}
 echo "=== Finished DB restore ==="
 
 echo "=== Scaling deployment replicas to $replicas ==="

@@ -73,6 +73,16 @@ global:
       enabled: false
     dynamic_cohorts:
       enabled: false
+    shortcodes:
+      enabled: false
+    filtercodes:
+      enabled: false
+    customfield_dynamic:
+      enabled: false
+    availability_cohort:
+      enabled: false
+    board:
+      enabled: false
 
 dbpMoodle:
   name: infra
@@ -201,10 +211,10 @@ dbpMoodle:
     resources:
       limits:
         cpu: 2000m
-        memory: 16Gi
+        memory: 4Gi
       requests:
         cpu: 1000m
-        memory: 8Gi
+        memory: 2Gi
     podSecurityContext:
       fsGroup: 1001
     securityContext:
