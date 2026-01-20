@@ -14,7 +14,6 @@ set -o errexit
 set -o pipefail
 
 plugin_base_list=$(cat <<EOF
-kaltura:kaltura:
 wunderbyte_table:local_wunderbyte_table:local/wunderbyte_table
 certificate:tool_certificate:admin/tool/certificate
 etherpadlite:mod_etherpadlite:mod/etherpadlite

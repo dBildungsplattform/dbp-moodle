@@ -6,7 +6,6 @@ metadata:
 data:
   # contains plugin dependencies first, followed by enabled plugins
   # plugin_name:plugin_fullname:plugin_install_path:plugin_enabled
-  # kaltura is installed straight into moodle install, so empty dir
   # include values are defined in _helpers.tpl file
   moodle-plugin-list: {{ include "dbpMoodle.pluginConfigMap.content" . | nindent 4 }}
 

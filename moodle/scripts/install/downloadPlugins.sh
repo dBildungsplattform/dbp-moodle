@@ -2,18 +2,8 @@
 
 major_minor="${MOODLE_VERSION%.*}"
 
-download_kaltura() {
-     local target_version="$1"
-     latest_tag="$(curl -s https://api.github.com/repos/kaltura/moodle_plugin/releases | jq -r '.[].tag_name' | grep "$target_version" | head -1)"
-     echo "latest_tag: ${latest_tag}"
-     latest_zip_url="$(curl -s https://api.github.com/repos/kaltura/moodle_plugin/releases | jq -r ".[] | select(.tag_name == \"${latest_tag}\") | .assets[].browser_download_url")"
-     echo "latest_zip_url: ${latest_zip_url}"
-     curl -L -o kaltura.zip "$latest_zip_url"
- }
-
 cd /plugins || exit 1
 
-download_kaltura "$major_minor"
 moosh plugin-list > /dev/null
 
 # Dependencies
