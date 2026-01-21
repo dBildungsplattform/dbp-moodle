@@ -311,6 +311,8 @@ spec:
         - name: metrics
           image: {{ template "moodle.metrics.image" . }}
           imagePullPolicy: {{ .Values.metrics.image.pullPolicy | quote }}
+          securityContext:
+            allowPrivilegeEscalation: false
           command: [ '/bin/apache_exporter', '--scrape_uri', 'http://status.localhost:{{ .Values.containerPorts.http }}/server-status/?auto' ]
           ports:
             - name: metrics
