@@ -6,23 +6,20 @@ description: |
   The Chart can be deployed without any modification but it is advised to set own secrets acccording to this readme.
 type: application
 home: https://dbildungsplattform.github.io/dbp-moodle/
-version: 0.0.41
-appVersion: "4.5.4"
+version: 0.0.42
+appVersion: "4.5.8"
 dependencies:
   - name: moodle
-    version: "27.0.2"
-    repository: https://charts.bitnami.com/bitnami
+    version: "27.0.3"
+    repository: "file://charts/moodle"
 
+  # TODO noch nicht klar wie beim Rechenzentrum hiermit umgegangen werden soll / welche Alternative genutzt wird
   - name: redis
     version: "19.5.3"
     repository: https://charts.bitnami.com/bitnami
     condition: redis.enabled
 
-  - name: mariadb
-    version: "18.2.2"
-    repository: https://charts.bitnami.com/bitnami
-    condition: mariadb.enabled
-
+  # Replaced by managed postgres
   - name: postgresql
     version: "15.5.38"
     repository: https://charts.bitnami.com/bitnami
@@ -39,6 +36,7 @@ dependencies:
     repository: "file://charts/cronjob"
     condition: dbpMoodle.backup.enabled
 
+  # replaced by managed postgres
   - name: postgresql
     version: "15.5.38"
     repository: https://charts.bitnami.com/bitnami

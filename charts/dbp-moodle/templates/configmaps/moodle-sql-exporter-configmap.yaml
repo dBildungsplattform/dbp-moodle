@@ -58,12 +58,7 @@ data:
       values: [metric]
       help: 'Total number of logged in users in this instance for the current month.'
       query: |
-        {{- if .Values.mariadb.enabled }}
-        SELECT COUNT(*) AS metric
-        FROM mdl_user
-        WHERE currentlogin >= UNIX_TIMESTAMP(DATE_FORMAT(CURDATE(), '%Y-%m-01'))
-        OR lastaccess >= UNIX_TIMESTAMP(DATE_FORMAT(CURDATE(), '%Y-%m-01'));
-        {{- else if .Values.postgresql.enabled }}
+        {{- if .Values.postgresql.enabled }}
         SELECT COUNT(*) AS metric
         FROM mdl_user
         WHERE currentlogin >= EXTRACT(EPOCH FROM DATE_TRUNC('MONTH', CURRENT_TIMESTAMP))
@@ -74,12 +69,7 @@ data:
       values: [metric]
       help: 'The amount of users logged in to moodle in the last 30 days.'
       query: |
-        {{- if .Values.mariadb.enabled }}
-        SELECT COUNT(*) AS metric
-        FROM mdl_user
-        WHERE currentlogin >= UNIX_TIMESTAMP(CURRENT_DATE - INTERVAL 30 DAY)
-        OR lastaccess >= UNIX_TIMESTAMP(CURRENT_DATE - INTERVAL 30 DAY);
-        {{- else if .Values.postgresql.enabled }}
+        {{- if .Values.postgresql.enabled }}
         SELECT COUNT(*) AS metric
         FROM mdl_user
         WHERE currentlogin >= EXTRACT(EPOCH FROM CURRENT_DATE - INTERVAL '30 days')
@@ -90,12 +80,7 @@ data:
       values: [metric]
       help: 'Total number of currently logged in users in this instance.'
       query: |
-        {{- if .Values.mariadb.enabled }}
-        SELECT COUNT(*) AS metric
-        FROM mdl_user
-        WHERE currentlogin >= UNIX_TIMESTAMP(NOW() - INTERVAL 10 MINUTE)
-        OR lastaccess >= UNIX_TIMESTAMP(NOW() - INTERVAL 10 MINUTE);
-        {{- else if .Values.postgresql.enabled }}
+        {{- if .Values.postgresql.enabled }}
         SELECT COUNT(*) AS metric
         FROM mdl_user
         WHERE currentlogin >= EXTRACT(EPOCH FROM CURRENT_TIMESTAMP - INTERVAL '10 minutes')

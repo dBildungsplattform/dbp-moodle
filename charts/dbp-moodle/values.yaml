@@ -6,8 +6,6 @@ global:
     allowInsecureImages: true
   # -- All plugins are disabled by default. if enabled, the plugin is installed on image startup
   moodlePlugins:
-    kaltura:
-      enabled: false
     etherpadlite:
       enabled: false
     hvp:
@@ -100,6 +98,9 @@ dbpMoodle:
   # -- disallows all egress from release namespace for the moodle deployment
   allowInternalNetworkingOnly: false
 
+  # -- use a configmap to determine which system plugins should be uninstalled --
+  uninstallSystemPlugins: false
+
   phpConfig:
     # -- Extended php logging
     extendedLogging: false
@@ -117,6 +118,11 @@ dbpMoodle:
     # -- Remember to adjust moodle.extraVolumes & moodle.extraVolumeMounts when setting this.
     # -- Secret key is by default expected to be config.php
     existingConfig: ""
+    # -- A string filled with additional php.ini configuration that overwrites the default one
+    additionalPhpIni: |
+      memory_limit = 513M
+      upload_max_filesize = 201M
+      post_max_size = 150M
 
   # -- Configurations for the optional redis
   redis:
@@ -212,10 +218,10 @@ dbpMoodle:
     resources:
       limits:
         cpu: 2000m
-        memory: 16Gi
+        memory: 4Gi
       requests:
         cpu: 1000m
-        memory: 8Gi
+        memory: 2Gi
     podSecurityContext:
       fsGroup: 1001
     securityContext:
@@ -294,6 +300,11 @@ moodle:
         configMapKeyRef:
           name: moodle-plugins
           key: moodle-plugin-list
+    - name: MOODLE_PLUGINS_SYS_UNINSTALL
+      valueFrom:
+        configMapKeyRef:
+          name: moodle-plugins
+          key: moodle-plugin-sys-uninstall-list
   extraEnvVarsSecret: ""
   # --	If this value is unset, the bitnami/moodle chart generates its own secret
   existingSecret: "moodle"
@@ -311,25 +322,20 @@ moodle:
     limits:
       cpu: 6
       memory: 3Gi
-  # -- The mariadb included in bitnami/moodle chart. For this chart usage of mariadb.enabled with moodle.externalDatabase.type="mariadb" is recommended
-  mariadb:
-    enabled: false
-    database: bitnami_moodle
-    username: bn_moodle
   externalDatabase:
-    # -- Type of DB to provision, possible values are "mariadb" and "pgsql"
-    type: "mariadb"
+    # -- Type of DB to provision, possible values are "pgsql"
+    type: "pgsql"
     # -- Host of the existing database
-    host: "moodle-mariadb"
+    host: ""
     # -- Port of the existing database
-    port: 3306
+    port: 5432
     # -- Existing username in the external db
     user: "moodle"
     # -- Password for the above username
     password: ""
     # -- Name of the existing database
     database: "moodle"
-    # -- Name of an existing secret resource containing the DB password
+    # -- Name of an existing secret resource containing the DB password with the key 'db-password'
     existingSecret: "moodle"
   service:
     type: ClusterIP
@@ -357,7 +363,7 @@ moodle:
   metrics:
     enabled: true
     image:
-      repository: bitnamilegacy/apache-exporter
+      repository: lusotycoon/apache-exporter
     service:
       type: ClusterIP
     # -- Resources have to be set so that the horizontal pod autoscaler for moodle can read the moodle cpu consumption correctly
@@ -369,20 +375,20 @@ moodle:
         cpu: 200m
         memory: 256Mi
   extraVolumeMounts:
-    - name: moodle-php-ini
+    - name: moodle-additional-php-ini-file
       readOnly: true
-      mountPath: /moodleconfig/php-ini
+      mountPath: /moodleconfig/
     - name: moodle-php-config
       readOnly: true
       mountPath: /moodleconfig/config-php
   extraVolumes:
-    # -- The php.ini which installs the php-redis extension to enable the use for redis
-    - name: moodle-php-ini
+    # -- The additional php.ini which gets filled with custom values
+    - name: moodle-additional-php-ini-file
       configMap:
-        name: moodle-php-ini
+        name: moodle-additional-php-ini-file
         items:
-          - key: php.ini
-            path: php.ini
+          - key: moodle-php.ini
+            path: 01-dbp-php.ini
         defaultMode: 0644
     # -- The custom config.php file that is used to configure moodle to use the database and redis (if activated)
     - name: moodle-php-config
@@ -408,42 +414,8 @@ moodle:
   networkPolicy:
     enabled: false
 
-mariadb:
-  enabled: true
-  # Switch to bitnamilegacy, see https://github.com/bitnami/charts/issues/35164
-  image:
-    tag: "11.3.2-debian-12-r5"
-    repository: bitnamilegacy/mariadb
-  volumePermissions:
-    image:
-      repository: bitnamilegacy/os-shell
-  metrics:
-    enabled: true
-    image:
-      repository: bitnamilegacy/mysqld-exporter
-    serviceMonitor:
-      enabled: true
-  global:
-    storageClass: "nfs-client"    
-  auth:
-    username: "moodle"
-    database: "moodle"
-    existingSecret: "moodle"
-  primary:
-    containerSecurityContext:
-      privileged: false
-    affinity: {}
-    tolerations: []
-    resources:
-      requests:
-        cpu: 250m
-        memory: 256Mi
-      limits:
-        cpu: 9
-        memory: 3Gi
-
 postgresql:
-  enabled: false
+  enabled: true
   # usePasswordFiles: false required if we increase the helm chart version
   # Switch to bitnamilegacy, see https://github.com/bitnami/charts/issues/35164
   image:
@@ -463,9 +435,9 @@ postgresql:
     database: "moodle"
     existingSecret: "moodle"
     secretKeys:
-      adminPasswordKey: "pgsql-admin-password"
-      # -- Moodle expects its db password key to be mariadb-password
-      userPasswordKey: "mariadb-password"
+      adminPasswordKey: "db-admin-password"
+      # -- Moodle expects its db password key to be db-password
+      userPasswordKey: "db-password"
   primary:
     extendedConfiguration: |
       max_connections = 800
