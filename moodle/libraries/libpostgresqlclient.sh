@@ -45,6 +45,7 @@ postgresql_client_initialize() {
             [[ -n "$POSTGRESQL_CLIENT_CREATE_DATABASE_USERNAME" ]] && createdb_args+=("-u" "$POSTGRESQL_CLIENT_CREATE_DATABASE_USERNAME")
             postgresql_ensure_database_exists "${createdb_args[@]}"
             # TODO I think this not used by us and can be removed?  Ensure the list of extensions are enabled in the specified database
+            echo "Start check for extensions!"
             if [[ "${#extensions[@]}" -gt 0 ]]; then
                 echo "We have php extensions!"
                 for extension_to_create in "${extensions[@]}"; do
