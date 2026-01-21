@@ -153,7 +153,7 @@ moodle_initialize() {
         done
         # Setup Moodle
         if ! is_boolean_yes "$MOODLE_SKIP_BOOTSTRAP"; then
-            info "Running Moodle install script to setup database - Debugging Run"
+            info "Running Moodle install script to setup database"
             # Create the configuration file and populate the database
             moodle_install "${moodle_install_args[@]}"
             info "Moodle_install call finished"

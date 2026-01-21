@@ -15,6 +15,7 @@
 #   None
 #########################
 postgresql_client_initialize() {
+    info "Starting postgresql_client_initialize function"
     local -a database_names
     read -r -a database_names <<< "$(tr ',;' ' ' <<< "$POSTGRESQL_CLIENT_CREATE_DATABASE_NAMES")"
     # Wait for the database to be accessible if any action needs to be performed
