@@ -15,7 +15,6 @@
 #   None
 #########################
 postgresql_client_initialize() {
-    info "Starting postgresql_client_initialize function"
     local -a database_names
     read -r -a database_names <<< "$(tr ',;' ' ' <<< "$POSTGRESQL_CLIENT_CREATE_DATABASE_NAMES")"
     # Wait for the database to be accessible if any action needs to be performed
@@ -45,10 +44,7 @@ postgresql_client_initialize() {
             createdb_args=("$database_name" "--host" "$POSTGRESQL_CLIENT_DATABASE_HOST" "--port" "$POSTGRESQL_CLIENT_DATABASE_PORT_NUMBER")
             [[ -n "$POSTGRESQL_CLIENT_CREATE_DATABASE_USERNAME" ]] && createdb_args+=("-u" "$POSTGRESQL_CLIENT_CREATE_DATABASE_USERNAME")
             postgresql_ensure_database_exists "${createdb_args[@]}"
-            # TODO I think this not used by us and can be removed?  Ensure the list of extensions are enabled in the specified database
-            info "Start check for extensions!"
             if [[ "${#extensions[@]}" -gt 0 ]]; then
-                info "We have php extensions!"
                 for extension_to_create in "${extensions[@]}"; do
                     echo "CREATE EXTENSION IF NOT EXISTS ${extension_to_create}" | postgresql_remote_execute "$POSTGRESQL_CLIENT_DATABASE_HOST" "$POSTGRESQL_CLIENT_DATABASE_PORT_NUMBER" "$database_name" "$POSTGRESQL_CLIENT_POSTGRES_USER" "$POSTGRESQL_CLIENT_POSTGRES_PASSWORD"
                 done
