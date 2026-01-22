@@ -4,6 +4,19 @@ major_minor="${MOODLE_VERSION%.*}"
 
 cd /plugins || exit 1
 
+download_oidc() {
+    target_branch="v_45" # eLeDia currently doesn't use any tags, we always use the latest version on branch v_45
+
+    git clone https://github.com/dBildungsplattform/dbp-moodle-plugin-oidc.git
+    cd dbp-moodle-plugin-oidc/ || exit 1
+    git checkout ${target_branch}
+    # create the zip archive in the initial directory, s.t. it can be treated equally to the other plugins
+    (cd auth && zip -r ../../auth_oidc.zip oidc)
+    cd ..
+    rm -rf dbp-moodle-plugin-oidc/
+}
+
+download_oidc
 moosh plugin-list > /dev/null
 
 # Dependencies
