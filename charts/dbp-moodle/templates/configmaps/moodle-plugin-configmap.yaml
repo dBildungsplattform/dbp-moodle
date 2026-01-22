@@ -3,6 +3,8 @@ kind: ConfigMap
 metadata:
   name: moodle-plugins
   namespace: {{ .Release.Namespace }}
+  labels:
+    randomString: thisisjusttotriggerredeploy
 data:
   # contains plugin dependencies first, followed by enabled plugins
   # plugin_name:plugin_fullname:plugin_install_path:plugin_enabled
