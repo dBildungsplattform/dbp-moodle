@@ -56,6 +56,7 @@ RUN if [[ "$DEBUG" = true ]]; then chmod +x /scripts/test-plugin-install-uninsta
 
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y curl unzip autoconf php-dev php-redis; \
+    apt-get install maxima && apt-get install gnuplot; \ 
     [[ "$DEBUG" = true ]] && apt-get install -y nano; \
     rm -rf /var/lib/apt/lists/*
 
