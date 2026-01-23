@@ -109,10 +109,19 @@ MODULE=dbp info "Replacing config.php file with ours"
 /bin/cp -p /moodleconfig/config-php/config.php /tmp/config.php
 mv /tmp/config.php /bitnami/moodle/config.php
 
-if [ -f "/tmp/de.zip" ] && [ ! -d /bitnami/moodledata/lang/de ]; then \
-    MODULE=dbp info "Installing german language pack"
+if [ -f "/tmp/de.zip" ]; then \
+    if [ -d /bitnami/moodledata/lang/de ]; then \
+        MODULE=dbp info "Removing previous german language pack"
+        rm -r /bitnami/moodledata/lang/de
+    fi
+    if [ -d /bitnami/moodledata/lang/en ]; then \
+        MODULE=dbp info "Removing previous german language pack"
+        rm -r /bitnami/moodledata/lang/en
+    fi
+    MODULE=dbp info "Installing language packs"
     mkdir -p /bitnami/moodledata/lang
     unzip -q /tmp/de.zip -d /bitnami/moodledata/lang
+    unzip -q /tmp/en.zip -d /bitnami/moodledata/lang
 fi
 
 upgrade_if_pending
