@@ -4,7 +4,7 @@
 annotations:
   images: |
     - name: apache-exporter
-      image: docker.io/lusotycoon/apache-exporter:v1.0.10
+      image: docker.io/lusotycoon/apache-exporter:v1.0.12
     - name: moodle
       image: ghcr.io/dbildungsplattform/moodle:4.5.8-debian-12-r0-dbp1
     - name: os-shell
