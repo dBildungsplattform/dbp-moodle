@@ -60,7 +60,7 @@ RUN apt-get update && apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists/*
 
 # dependencies for stack plugin
-RUN apt-get install -y maxima gnuplot;
+RUN apt-get update && apt-get install -y maxima gnuplot;
 
 # Install redis-php which is required for moodle to use redis
 RUN /phpRedisInstall.sh
