@@ -49,14 +49,6 @@ if [[ ! -f "$SSL_CERTS_DIR/tls.crt" ]]; then
     rm -f "$SSL_CSR_FILE"
 fi
 
-#Add Locales during Apache Setup
-cat >> /etc/locale.gen <<'EOF'
-en_US.UTF-8 UTF-8
-en_AU.UTF-8 UTF-8
-de_DE.UTF-8 UTF-8
-EOF
-
-
 # Update ports in configuration
 [[ -n "$APACHE_HTTP_PORT_NUMBER" ]] && info "Configuring the HTTP port" && apache_configure_http_port "$APACHE_HTTP_PORT_NUMBER"
 [[ -n "$APACHE_HTTPS_PORT_NUMBER" ]] && info "Configuring the HTTPS port" && apache_configure_https_port "$APACHE_HTTPS_PORT_NUMBER"
