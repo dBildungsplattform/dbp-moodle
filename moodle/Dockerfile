@@ -75,9 +75,12 @@ RUN apt-get update && apt-get upgrade -y && \
 RUN find / -perm /6000 -type f -exec chmod a-s {} \; || true
 RUN sed -i -e '/pam_loginuid.so/ s/^#*/#/' /etc/pam.d/cron
 
-RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
-    locale-gen && \
-    update-locale LANG=C.UTF-8 LC_MESSAGES=en_US.UTF-8
+RUN update-locale LANG=C.UTF-8 LC_MESSAGES=POSIX && \
+    DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales && \
+    echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen
+RUN echo 'en_AU.UTF-8 UTF-8' >> /etc/locale.gen
+RUN echo 'de_DE.UTF-8 UTF-8' >> /etc/locale.gen
+RUN /scripts/install/generate-locales.sh
 
 RUN chmod +x /scripts/install/generate-locales.sh && \
     /scripts/install/generate-locales.sh
