@@ -59,7 +59,6 @@
 {{- end -}}
 
 {{- define "dbpMoodle.pluginConfigMap.content" -}}
-kaltura:kaltura:: {{- .Values.global.moodlePlugins.kaltura.enabled }}{{"\n"}}
 wunderbyte_table:local_wunderbyte_table:local/wunderbyte_table: {{- .Values.global.moodlePlugins.booking.enabled}}{{"\n"}}
 certificate:tool_certificate:admin/tool/certificate:            {{- or .Values.global.moodlePlugins.certificate.enabled .Values.global.moodlePlugins.coursecertificate.enabled }}{{"\n"}}
 etherpadlite:mod_etherpadlite:mod/etherpadlite:                 {{- .Values.global.moodlePlugins.etherpadlite.enabled }}{{"\n"}}
@@ -93,6 +92,19 @@ boost_magnific:theme_boost_magnific:theme/boost_magnific:       {{- .Values.glob
 snap:theme_snap:theme/snap:                                     {{- .Values.global.moodlePlugins.snap.enabled }}{{"\n"}}
 usersuspension:tool_usersuspension:admin/tool/usersuspension:   {{- .Values.global.moodlePlugins.usersuspension.enabled }}{{"\n"}}
 dynamic_cohorts:tool_dynamic_cohorts:admin/tool/dynamic_cohorts:{{- .Values.global.moodlePlugins.dynamic_cohorts.enabled }}{{"\n"}}
+shortcodes:filter_shortcodes:filter/shortcodes:                 {{- .Values.global.moodlePlugins.shortcodes.enabled }}{{"\n"}}
+filtercodes:filter_filtercodes:filter/filtercodes:              {{- .Values.global.moodlePlugins.filtercodes.enabled }}{{"\n"}}
+dynamic:customfield_dynamic:customfield/field/dynamic:          {{- .Values.global.moodlePlugins.customfield_dynamic.enabled }}{{"\n"}}
+cohort:availability_cohort:availability/condition/cohort:       {{- .Values.global.moodlePlugins.availability_cohort.enabled }}{{"\n"}}
+board:mod_board:mod/board:                                      {{- .Values.global.moodlePlugins.board.enabled }}{{"\n"}}
+adaptivemultipart:qbehaviour_adaptivemultipart:question/behaviour/adaptivemultipart: {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
+dfexplicitvaildate:qbehaviour_dfexplicitvaildate:question/behaviour/qbehaviour_dfexplicitvaildate: {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
+dfcbmexplicitvaildate:qbehaviour_dfcbmexplicitvaildate:question/behaviour/qbehaviour_dfcbmexplicitvaildate: {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
+stack:qtype_stack:question/type/stack:                          {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
+checklist:mod_checklist:mod/checklist:                          {{- .Values.global.moodlePlugins.mod_checklist.enabled }}{{"\n"}}
+stash:block_stash:blocks/stash:                                 {{- .Values.global.moodlePlugins.block_stash.enabled }}{{"\n"}}
+completion_progress:block_completion_progress:blocks/completion_progress: {{- .Values.global.moodlePlugins.completion_progress.enabled }}{{"\n"}}
+coursearchiver:tool_coursearchiver:admin/tool/coursearchiver:   {{- .Values.global.moodlePlugins.coursearchiver.enabled }}{{"\n"}}
 {{- end -}}
 
 {{- define "dbpMoodle.pluginConfigMap.sys.uninstall.content" -}}

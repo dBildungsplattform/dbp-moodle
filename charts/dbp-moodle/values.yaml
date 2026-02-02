@@ -6,8 +6,6 @@ global:
     allowInsecureImages: true
   # -- All plugins are disabled by default. if enabled, the plugin is installed on image startup
   moodlePlugins:
-    kaltura:
-      enabled: false
     etherpadlite:
       enabled: false
     hvp:
@@ -72,6 +70,26 @@ global:
       enabled: false
     dynamic_cohorts:
       enabled: false
+    shortcodes:
+      enabled: false
+    filtercodes:
+      enabled: false
+    customfield_dynamic:
+      enabled: false
+    availability_cohort:
+      enabled: false
+    board:
+      enabled: false
+    qtype_stack:
+      enabled: false
+    mod_checklist:
+      enabled: false
+    block_stash:
+      enabled: false
+    completion_progress:
+      enabled: false
+    coursearchiver:
+      enabled: false
 
 dbpMoodle:
   name: infra
@@ -100,6 +118,11 @@ dbpMoodle:
     # -- Remember to adjust moodle.extraVolumes & moodle.extraVolumeMounts when setting this.
     # -- Secret key is by default expected to be config.php
     existingConfig: ""
+    # -- A string filled with additional php.ini configuration that overwrites the default one
+    additionalPhpIni: |
+      memory_limit = 513M
+      upload_max_filesize = 201M
+      post_max_size = 150M
 
   # -- Configurations for the optional redis
   redis:
@@ -136,7 +159,7 @@ dbpMoodle:
     # -- Which kubectl image to use
     repository: "ghcr.io/dbildungsplattform"
     image: "moodle-tools"
-    tag: "1.1.12"
+    tag: "1.1.13"
 
   moodleUpdatePreparationHook:
     rules:
@@ -191,14 +214,14 @@ dbpMoodle:
     enabled: false
     repository: "ghcr.io/dbildungsplattform"
     image: "moodle-tools"
-    tag: "1.1.12"
+    tag: "1.1.13"
     resources:
       limits:
         cpu: 2000m
-        memory: 16Gi
+        memory: 4Gi
       requests:
         cpu: 1000m
-        memory: 8Gi
+        memory: 2Gi
     podSecurityContext:
       fsGroup: 1001
     securityContext:
@@ -254,7 +277,7 @@ moodle:
     registry: "ghcr.io"
     repository: "dbildungsplattform/moodle"
     # -- The dbp-moodle image which is build for this helm chart
-    tag: "4.5.4-debian-12-r0-dbp2"
+    tag: "4.5.8-fpm-bookworm-8.1.34-dbp3"
     pullPolicy: Always
     # -- Debug mode for more detailed moodle installation and log output
     debug: false
@@ -352,20 +375,20 @@ moodle:
         cpu: 200m
         memory: 256Mi
   extraVolumeMounts:
-    - name: moodle-php-ini
+    - name: moodle-additional-php-ini-file
       readOnly: true
-      mountPath: /moodleconfig/php-ini
+      mountPath: /moodleconfig/
     - name: moodle-php-config
       readOnly: true
       mountPath: /moodleconfig/config-php
   extraVolumes:
-    # -- The php.ini which installs the php-redis extension to enable the use for redis
-    - name: moodle-php-ini
+    # -- The additional php.ini which gets filled with custom values
+    - name: moodle-additional-php-ini-file
       configMap:
-        name: moodle-php-ini
+        name: moodle-additional-php-ini-file
         items:
-          - key: php.ini
-            path: php.ini
+          - key: moodle-php.ini
+            path: 01-dbp-php.ini
         defaultMode: 0644
     # -- The custom config.php file that is used to configure moodle to use the database and redis (if activated)
     - name: moodle-php-config
@@ -571,7 +594,7 @@ etherpad-postgresql:
 moodlecronjob:
   image:
     repository: "ghcr.io/dbildungsplattform/moodle-tools"
-    tag: "1.1.12"
+    tag: "1.1.13"
   clusterRole:
     create: false
   serviceAccount:
@@ -623,7 +646,7 @@ moodlecronjob:
 backup-cronjob:
   image:
     repository: "ghcr.io/dbildungsplattform/moodle-tools"
-    tag: "1.1.12"
+    tag: "1.1.13"
   clusterRole:
     create: false
   serviceAccount:
