@@ -267,6 +267,9 @@ moodle_wait_for_postgresql_connection() {
     local -r db_name="${3:?missing database name}"
     local -r db_user="${4:?missing database user}"
     local -r db_pass="${5:-}"
+
+    info "wait for postgresql connection on $db_host:$db_port $db_name"
+
     check_postgresql_connection() {
         echo "SELECT 1" | postgresql_remote_execute "$db_host" "$db_port" "$db_name" "$db_user" "$db_pass"
     }
