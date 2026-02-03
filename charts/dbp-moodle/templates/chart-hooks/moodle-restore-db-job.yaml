@@ -1,0 +1,119 @@
+{{- if .Values.dbpMoodle.restore.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "moodle-restore-db-job"
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: {{ .Values.dbpMoodle.restore.backoffLimit | default "4" }}
+  template:
+    spec:
+      volumes:
+      - name: moodle-data
+        persistentVolumeClaim:
+          claimName: {{ include "dbpMoodle.moodlePvc.name" . }}
+      - name: moodle-restore-db-script
+        configMap:
+          name: "moodle-restore-db-script"
+          defaultMode: 0711
+      - name: duply
+        projected:
+          sources:
+            - configMap:
+                name: "moodle-backup-duply"
+                items:
+                  - key: conf
+                    path: conf
+                  - key: exclude
+                    path: exclude
+            - secret:
+                name: {{ .Values.dbpMoodle.restore.existingSecretGPG }}
+          defaultMode: 0644
+      {{ if and .Values.dbpMoodle.backup.s3_certificate_secret.mountpath .Values.dbpMoodle.backup.s3_certificate_secret.key }}
+      - name: "{{ .Values.dbpMoodle.backup.s3_certificate_secret.name }}"
+        secret:
+          secretName: "{{ .Values.dbpMoodle.backup.s3_certificate_secret.name }}"
+          defaultMode: 0644
+      {{ end }}
+      serviceAccountName: "moodle-restore-job"
+      serviceAccount: "moodle-restore-job"
+      securityContext:
+        {{- toYaml .Values.dbpMoodle.restore.podSecurityContext | nindent 8 }}
+      containers:
+      - name:  moodle-restore-db-job
+        image: "{{ .Values.dbpMoodle.restore.repository }}/{{ .Values.dbpMoodle.restore.image }}:{{ .Values.dbpMoodle.restore.tag }}"
+        command:
+          - /bin/sh
+          - -c
+        args:
+          - /scripts/restore-script
+        securityContext:
+          {{- toYaml .Values.dbpMoodle.restore.securityContext | nindent 10 }}
+        livenessProbe:
+          exec:
+            command:
+              - cat
+              - /tmp/healthy
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        resources: 
+          {{- .Values.dbpMoodle.restore.resources | toYaml | nindent 10 }}
+        volumeMounts:
+        - name: moodle-data
+          mountPath: /dbp-moodle/moodle
+          subPath: moodle
+        - name: moodle-data
+          mountPath: /dbp-moodle/moodledata
+          subPath: moodledata
+        - name: moodle-restore-db-script
+          mountPath: /scripts/
+        - name: duply
+          mountPath: /etc/duply/default/
+        {{ if .Values.dbpMoodle.backup.s3_certificate_secret.enabled }}
+        - name: "{{ .Values.dbpMoodle.backup.s3_certificate_secret.name }}"
+          mountPath: {{ .Values.dbpMoodle.backup.s3_certificate_secret.mountpath }}
+        {{ end }}
+        env:
+        - name: DATABASE_HOST
+          valueFrom: 
+            secretKeyRef:
+              name: {{ .Values.dbpMoodle.restore.existingSecretDatabaseConfig }}
+              key: host
+        - name: DATABASE_PORT
+          valueFrom: 
+            secretKeyRef:
+              name: {{ .Values.dbpMoodle.restore.existingSecretDatabaseConfig }}
+              key: port
+        - name: DATABASE_NAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.dbpMoodle.restore.existingSecretDatabaseConfig }}
+              key: name
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.dbpMoodle.restore.existingSecretDatabaseConfig }}
+              key: user
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.dbpMoodle.restore.existingSecretDatabasePassword }}
+              key: {{ .Values.dbpMoodle.restore.existingSecretKeyDatabasePassword }}
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.dbpMoodle.restore.existingSecretS3 }}
+              key: {{ .Values.dbpMoodle.restore.existingSecretKeyS3Access }}
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.dbpMoodle.restore.existingSecretS3 }}
+              key: {{ .Values.dbpMoodle.restore.existingSecretKeyS3Secret }}
+      affinity: {{ .Values.dbpMoodle.restore.affinity | toYaml }}
+      tolerations: {{ .Values.dbpMoodle.restore.tolerations | toYaml }}
+      restartPolicy: Never
+{{- end }}
