@@ -198,15 +198,13 @@ EOF
         info "Restoring persisted Moodle installation"
         restore_persisted_app "$app_name" "$MOODLE_DATA_TO_PERSIST"
 
-        info "Trying to connect to the database server"
+        info "Trying to connect to the database server $MOODLE_DATABASE_HOST:$MOODLE_DATABASE_PORT_NUMBER $MOODLE_DATABASE_NAME"
         db_type="$(moodle_conf_get "\$CFG->dbtype")"
         db_host="$(moodle_conf_get "\$CFG->dbhost")"
         db_port="$(moodle_conf_get "'dbport'")"
         db_name="$(moodle_conf_get "\$CFG->dbname")"
         db_user="$(moodle_conf_get "\$CFG->dbuser")"
         db_pass="$(moodle_conf_get "\$CFG->dbpass")"
-        info "Wait for postgresql connection on $db_host:$db_port $db_name"
-        info "$MOODLE_DATABASE_HOST"
         [[ "$db_type" = "pgsql" ]] && moodle_wait_for_postgresql_connection "$db_host" "$db_port" "$db_name" "$db_user" "$db_pass"
 
         # Perform Moodle database schema upgrade
