@@ -364,6 +364,7 @@ moodle:
     enabled: true
     image:
       repository: lusotycoon/apache-exporter
+      tag: v1.0.12
     service:
       type: ClusterIP
     # -- Resources have to be set so that the horizontal pod autoscaler for moodle can read the moodle cpu consumption correctly
