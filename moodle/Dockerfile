@@ -22,7 +22,7 @@ RUN chmod -R +x /scripts/
 
 # Redis is the php extension php-redis required to connect to the redis session store
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y wget gpg curl acl gnupg jq ca-certificates cron locales git unzip zip autoconf && \
+    apt-get install -y wget gpg curl acl gnupg jq ca-certificates cron locales git unzip zip autoconf netstat && \
     pecl install redis && \ 
     docker-php-ext-enable redis
 
