@@ -73,18 +73,33 @@ mv /tmp/mountData/moodledata/* /dbp-moodle/moodledata/
 mv /tmp/mountData/moodledata/.[!.]* /dbp-moodle/moodledata/
 
 cd /dbp-moodle/
-echo "=== Clear DB ==="
+echo "=== Clear DB (moodle) ==="
 # This command helps with - ERROR: database "moodle" is being accessed by other users
 PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" -c "REVOKE CONNECT ON DATABASE ${DATABASE_NAME} FROM public;SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND pg_stat_activity.datname = '${DATABASE_NAME}';"
 PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" -d postgres -c "DROP DATABASE ${DATABASE_NAME}"
 PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" -d postgres -c "CREATE DATABASE ${DATABASE_NAME}"
 
-echo "=== Copy dump to DB ==="
+echo "=== Copy dump to DB (moodle) ==="
 gunzip /tmp/Full/tmp/backup/moodle_postgresqldb_dump_*
 mv /tmp/Full/tmp/backup/moodle_postgresqldb_dump_* /tmp/moodledb_dump.sql
 
 PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" "$DATABASE_NAME"  < /tmp/moodledb_dump.sql
-echo "=== Finished DB restore ==="
+echo "=== Finished DB restore (moodle) ==="
+
+{{ if .Values.etherpadlite.enabled }}
+echo "=== Clear DB (etherpad) ==="
+# This command helps with - ERROR: database "moodle" is being accessed by other users
+PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" psql -h "$DATABASE_HOST_ETHERPAD" -p "$DATABASE_PORT_ETHERPAD" -U "$DATABASE_USER_ETHERPAD" -c "REVOKE CONNECT ON DATABASE ${DATABASE_NAME_ETHERPAD} FROM public;SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND pg_stat_activity.datname = '${DATABASE_NAME}';"
+PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" psql -h "$DATABASE_HOST_ETHERPAD" -p "$DATABASE_PORT_ETHERPAD" -U "$DATABASE_USER_ETHERPAD" -d postgres -c "DROP DATABASE ${DATABASE_NAME_ETHERPAD}"
+PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" psql -h "$DATABASE_HOST_ETHERPAD" -p "$DATABASE_PORT_ETHERPAD" -U "$DATABASE_USER_ETHERPAD" -d postgres -c "CREATE DATABASE ${DATABASE_NAME_ETHERPAD}"
+
+echo "=== Copy dump to DB (etherpad) ==="
+gunzip /tmp/Full/tmp/backup/etherpad_postgresqldb_dump_*
+mv /tmp/Full/tmp/backup/etherpad_postgresqldb_dump_* /tmp/etherpaddb_dump.sql
+
+PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" psql -h "$DATABASE_HOST_ETHERPAD" -p "$DATABASE_PORT_ETHERPAD" -U "$DATABASE_USER_ETHERPAD" "$DATABASE_NAME_ETHERPAD"  < /tmp/etherpaddb_dump.sql
+echo "=== Finished DB restore (etherpad) ==="
+{{ end }}
 
 echo "=== Scaling deployment replicas to $replicas ==="
 kubectl patch "deployment/${deployment_name}" -n "{{ .Release.Namespace }}" --type=merge -p "$(echo "{\"spec\":{\"replicas\":$replicas}}")"
