@@ -30,12 +30,24 @@
 {{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.moodle_password }}
 {{- end -}}
 
+{{- define "dbpMoodle.secrets.moodle_user" -}}
+{{- default "moodle" .Values.dbpMoodle.secrets.moodle_user }}
+{{- end -}}
+
 {{- define "dbpMoodle.secrets.database_password" -}}
     {{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.database_password }}
 {{- end -}}
 
-{{- define "dbpMoodle.secrets.database_root_password" -}}
-{{- default (randAlphaNum 16) .Values.dbpMoodle.secrets.mariadb_root_password }}
+{{- define "dbpMoodle.secrets.database_user" -}}
+{{- default "moodle" .Values.dbpMoodle.secrets.database_user }}
+{{- end -}}
+
+{{- define "dbpMoodle.secrets.database_name" -}}
+{{- default "moodle" .Values.dbpMoodle.secrets.database_name }}
+{{- end -}}
+
+{{- define "dbpMoodle.secrets.database_admin_password" -}}
+{{- default (randAlphaNum 32) .Values.dbpMoodle.secrets.database_root_password }}
 {{- end -}}
 
 {{- define "dbpMoodle.secrets.redis_password" -}}

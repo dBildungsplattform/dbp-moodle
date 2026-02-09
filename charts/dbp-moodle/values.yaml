@@ -145,7 +145,11 @@ dbpMoodle:
   secrets:
     useChartSecret: true
     moodle_password: ""
+    moodle_user: ""
+    database_admin_password: ""
     database_password: ""
+    database_user: ""
+    database_name: ""
     database_root_password: ""
     etherpad_postgresql_password: ""
     etherpad_api_key: ""
