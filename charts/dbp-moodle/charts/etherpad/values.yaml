@@ -50,6 +50,24 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
+externalDatabase:
+  # -- Type of DB to provision, possible values are "postgres"
+  type: "postgres"
+  # -- Host of the existing database
+  host: ""
+  # -- Port of the existing database
+  port: 5432
+  # -- Existing username in the external db
+  user: ""
+  # -- Password for the above username
+  password: ""
+  # -- Name of the existing database
+  database: ""
+  # -- Name of an existing secret resource containing the DB password
+  existingSecret: ""
+  # -- Name of the key holding the DB password in the existing Secret
+  existingSecretKey: ""
+
 env: []
   # - name: DB_TYPE
   #   value:

@@ -133,12 +133,18 @@ date +%Y%m%d_%H%M%S%Z
 
 cd "${backup_dir}"
 # Get dump of db
-echo "=== Start DB dump ==="
+echo "=== Start DB dump (moodle) ==="
 export DATE=$( date "+%Y-%m-%d" )
 
 # shellcheck disable=all
 PGPASSWORD="$DATABASE_PASSWORD" pg_dump -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" "$DATABASE_NAME" > "moodle_postgresqldb_dump_${DATE}.sql"
 gzip "moodle_postgresqldb_dump_${DATE}.sql"
+
+{{ if .Values.etherpadlite.enabled }}
+echo "=== Start DB dump (etherpad) ==="
+PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" pg_dump -h "$DATABASE_HOST_ETHERPAD" -p "$DATABASE_PORT_ETHERPAD" -U "$DATABASE_USER_ETHERPAD" "$DATABASE_NAME_ETHERPAD" > "etherpad_postgresqldb_dump_${DATE}.sql"
+{{ end }}
+
 
 # Get moodle folder
 echo "=== Start moodle directory backup ==="
