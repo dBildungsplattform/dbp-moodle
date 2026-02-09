@@ -128,7 +128,6 @@ dbpMoodle:
   redis:
     host: "moodle-redis-master"
     port: 6379
-    password: ""
 
   external_pvc:
     enabled: true
@@ -153,6 +152,7 @@ dbpMoodle:
     database_root_password: ""
     etherpad_postgresql_password: ""
     etherpad_api_key: ""
+    redis_password: ""
 
   # -- A preperation job which disables the php-cronjob, scales down the deployment and creates a backup if dbpMoodle.backup.enabled=true
   moodleUpdatePreparationJob:
