@@ -1,6 +1,6 @@
 # moodle
 
-![Version: 27.0.3](https://img.shields.io/badge/Version-27.0.3-informational?style=flat-square) ![AppVersion: 4.5.8](https://img.shields.io/badge/AppVersion-4.5.8-informational?style=flat-square)
+![Version: 27.0.4](https://img.shields.io/badge/Version-27.0.4-informational?style=flat-square) ![AppVersion: 4.5.8](https://img.shields.io/badge/AppVersion-4.5.8-informational?style=flat-square)
 
 Moodle(TM) LMS is an open source online Learning Management System widely used at universities, schools, and corporations. It is modular and highly adaptable to any type of online learning.
 
@@ -113,7 +113,7 @@ Moodle(TM) LMS is an open source online Learning Management System widely used a
 | metrics.image.pullSecrets | list | `[]` |  |
 | metrics.image.registry | string | `"docker.io"` |  |
 | metrics.image.repository | string | `"lusotycoon/apache-exporter"` |  |
-| metrics.image.tag | string | `"v1.0.10"` |  |
+| metrics.image.tag | string | `"v1.0.12"` |  |
 | metrics.podAnnotations."prometheus.io/port" | string | `"{{ .Values.metrics.service.port }}"` |  |
 | metrics.podAnnotations."prometheus.io/scrape" | string | `"true"` |  |
 | metrics.resources | object | `{}` |  |
