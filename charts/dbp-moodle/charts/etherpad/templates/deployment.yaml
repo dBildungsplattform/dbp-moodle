@@ -38,7 +38,7 @@ spec:
           # With the introduction of the externalDatabase variable we can integrate these values as env vars and remove the need for the env vars in the values.
           env:
             - name: DB_SSL
-              value: {{ .Values.externalDatabase.ssl }}
+              value: {{ .Values.externalDatabase.ssl | quote }}
             {{- toYaml .Values.env | nindent 12 }}
           {{- with .Values.envFrom }}
           envFrom:
