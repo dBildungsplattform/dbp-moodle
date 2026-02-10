@@ -490,7 +490,7 @@ etherpadlite:
   image:
     repository: "ghcr.io/dbildungsplattform/etherpad"
     tag: "2.2.7.0"
-  # Currently this data is doubled with the env vars
+  # Currently this data is doubled with the env vars because we need the fields for backup and retore jobs
   externalDatabase:
     # -- Type of DB to provision, possible values are "postgres"
     type: "postgres"
@@ -508,6 +508,8 @@ etherpadlite:
     existingSecret: "moodle"
     # -- Name of the key holding the DB password in the existing Secret
     existingSecretKey: "etherpad-postgresql-password"
+    # -- -- Use ssl to communicate with the database
+    ssl: false
   env:
     - name: DB_TYPE
       value: "postgres"

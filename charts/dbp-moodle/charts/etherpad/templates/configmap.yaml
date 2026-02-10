@@ -9,6 +9,8 @@ data:
     /**
     * THIS IS THE SETTINGS FILE THAT IS MOUNTED VIA K8S CONFIGMAP.
     *
+    * By default there also exists a settings.json file in the container, which we need to override by this (the content was initially copied from there and adjusted).
+    *
     * Ionos Managed DB requires SSL, so we have to use this settings file.
     * For more info see: https://docs.etherpad.org/docker.html
     * https://github.com/ether/etherpad-lite/blob/master/settings.json.template
@@ -254,7 +256,7 @@ data:
         "charset":    "${DB_CHARSET:undefined}",
         "filename":   "${DB_FILENAME:var/dirty.db}",
         "collection": "${DB_COLLECTION:undefined}",
-        "ssl": true
+        "ssl":        "${DB_SSL:false}"
     },
 
     /*

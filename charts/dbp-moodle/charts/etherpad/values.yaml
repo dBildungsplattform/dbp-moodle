@@ -67,6 +67,8 @@ externalDatabase:
   existingSecret: ""
   # -- Name of the key holding the DB password in the existing Secret
   existingSecretKey: ""
+  # -- Use ssl to communicate with the database
+  ssl: false
 
 env: []
   # - name: DB_TYPE
