@@ -212,6 +212,8 @@ dbpMoodle:
   # -- This restores moodle to the latest snapshot. Requires an existing s3 backup. ONLY USE FOR ROLLBACK
   restore:
     enabled: false
+    # replace_db_user_during_restore is only added for the migration from local to managed postgres as the restore script needs to be adjusted dynamically
+    replace_db_user_during_restore: false
     repository: "ghcr.io/dbildungsplattform"
     image: "moodle-tools"
     tag: "1.1.13"

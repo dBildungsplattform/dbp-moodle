@@ -83,6 +83,12 @@ echo "=== Copy dump to DB (moodle) ==="
 gunzip /tmp/Full/tmp/backup/moodle_postgresqldb_dump_*
 mv /tmp/Full/tmp/backup/moodle_postgresqldb_dump_* /tmp/moodledb_dump.sql
 
+{{ if .Values.dbpMoodle.restore.replace_db_user_during_restore }}
+# Only necessary during migration process from local postgres to managed postgres.
+# Prior to managed PG database name and user name were 'moodle', post migration they are 'moodle_<instance-name>' so we need to adjust this in the sql commands.
+sed -i -e "s/OWNER TO moodle/OWNER TO {{ .Values.moodle.externalDatabase.user }}/g" /tmp/moodledb_dump.sql
+{{ end }}
+
 PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" "$DATABASE_NAME"  < /tmp/moodledb_dump.sql
 echo "=== Finished DB restore (moodle) ==="
 
@@ -96,6 +102,12 @@ PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" psql -h "$DATABASE_HOST_ETHERPAD" -p "$
 echo "=== Copy dump to DB (etherpad) ==="
 gunzip /tmp/Full/tmp/backup/etherpad_postgresqldb_dump_*
 mv /tmp/Full/tmp/backup/etherpad_postgresqldb_dump_* /tmp/etherpaddb_dump.sql
+
+{{ if .Values.dbpMoodle.restore.replace_db_user_during_restore }}
+# Only necessary during migration process from local postgres to managed postgres.
+# Prior to managed PG database name and user name were 'etherpad', post migration they are 'etherpad_<instance-name>' so we need to adjust this in the sql commands.
+sed -i -e "s/OWNER TO etherpad/OWNER TO {{ .Values.etherpadlite.externalDatabase.user }}/g" /tmp/etherpaddb_dump.sql
+{{ end }}
 
 PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" psql -h "$DATABASE_HOST_ETHERPAD" -p "$DATABASE_PORT_ETHERPAD" -U "$DATABASE_USER_ETHERPAD" "$DATABASE_NAME_ETHERPAD"  < /tmp/etherpaddb_dump.sql
 echo "=== Finished DB restore (etherpad) ==="
