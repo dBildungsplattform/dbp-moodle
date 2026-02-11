@@ -143,6 +143,7 @@ gzip "moodle_postgresqldb_dump_${DATE}.sql"
 {{ if .Values.etherpadlite.enabled }}
 echo "=== Start DB dump (etherpad) ==="
 PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" pg_dump -h "$DATABASE_HOST_ETHERPAD" -p "$DATABASE_PORT_ETHERPAD" -U "$DATABASE_USER_ETHERPAD" "$DATABASE_NAME_ETHERPAD" > "etherpad_postgresqldb_dump_${DATE}.sql"
+gzip "etherpad_postgresqldb_dump_${DATE}.sql"
 {{ end }}
 
 
