@@ -1,0 +1,23 @@
+name: Build moodle migration development image
+on:
+  push:
+    branches:
+      - DBP-1651-Migrate-to-managed-pg
+
+jobs:
+  build_image_on_push:
+    name: "Publish image and scan with trivy"
+    if: ${{ github.event_name == 'push' }}
+    permissions:
+      packages: write
+      security-events: write
+      contents: read
+    uses: dBildungsplattform/dbp-github-workflows/.github/workflows/image-publish-trivy.yaml@7
+    with:
+      image_name: "moodle-migration"
+      run_trivy_scan: false
+      image_tag_generation: ticket_from_branch
+      add_latest_tag: false
+      container_registry: "ghcr.io"
+      fail_on_vulnerabilites: false
+      context: "./moodle-migration/"

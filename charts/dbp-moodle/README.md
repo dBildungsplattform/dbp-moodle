@@ -190,15 +190,17 @@ The Chart can be deployed without any modification but it is advised to set own 
 | etherpadlite.env[0].name | string | `"DB_TYPE"` |  |
 | etherpadlite.env[0].value | string | `"postgres"` |  |
 | etherpadlite.env[1].name | string | `"DB_HOST"` |  |
-| etherpadlite.env[1].value | string | `"moodle-etherpad-postgresql"` |  |
+| etherpadlite.env[1].value | string | `""` |  |
 | etherpadlite.env[2].name | string | `"DB_PORT"` |  |
 | etherpadlite.env[2].value | string | `"5432"` |  |
 | etherpadlite.env[3].name | string | `"DB_NAME"` |  |
-| etherpadlite.env[3].value | string | `"etherpad"` |  |
+| etherpadlite.env[3].valueFrom.secretKeyRef.key | string | `"db-name-etherpad"` |  |
+| etherpadlite.env[3].valueFrom.secretKeyRef.name | string | `"moodle"` |  |
 | etherpadlite.env[4].name | string | `"DB_USER"` |  |
-| etherpadlite.env[4].value | string | `"etherpad"` |  |
+| etherpadlite.env[4].valueFrom.secretKeyRef.key | string | `"db-user-etherpad"` |  |
+| etherpadlite.env[4].valueFrom.secretKeyRef.name | string | `"moodle"` |  |
 | etherpadlite.env[5].name | string | `"DB_PASS"` |  |
-| etherpadlite.env[5].valueFrom.secretKeyRef.key | string | `"etherpad-postgresql-password"` |  |
+| etherpadlite.env[5].valueFrom.secretKeyRef.key | string | `"db-password-etherpad"` |  |
 | etherpadlite.env[5].valueFrom.secretKeyRef.name | string | `"moodle"` |  |
 | etherpadlite.env[6].name | string | `"REQUIRE_SESSION"` |  |
 | etherpadlite.env[6].value | string | `"true"` |  |
@@ -220,10 +222,15 @@ The Chart can be deployed without any modification but it is advised to set own 
 | etherpadlite.volumeMounts[0].mountPath | string | `"/opt/etherpad-lite/APIKEY.txt"` |  |
 | etherpadlite.volumeMounts[0].name | string | `"api-key"` |  |
 | etherpadlite.volumeMounts[0].subPath | string | `"APIKEY.txt"` |  |
+| etherpadlite.volumeMounts[1].mountPath | string | `"/opt/etherpad-lite/settings.json"` |  |
+| etherpadlite.volumeMounts[1].name | string | `"etherpad-settings"` |  |
+| etherpadlite.volumeMounts[1].subPath | string | `"settings"` |  |
 | etherpadlite.volumes[0].name | string | `"api-key"` |  |
 | etherpadlite.volumes[0].secret.items[0].key | string | `"etherpad-api-key"` |  |
 | etherpadlite.volumes[0].secret.items[0].path | string | `"APIKEY.txt"` |  |
 | etherpadlite.volumes[0].secret.secretName | string | `"moodle"` |  |
+| etherpadlite.volumes[1].configMap.name | string | `"etherpad-settings"` |  |
+| etherpadlite.volumes[1].name | string | `"etherpad-settings"` |  |
 | global.kubectl_version | string | `"1.28.7"` |  |
 | global.moodlePlugins | object | `{"adaptable":{"enabled":false},"availability_cohort":{"enabled":false},"block_stash":{"enabled":false},"board":{"enabled":false},"booking":{"enabled":false},"boost_magnific":{"enabled":false},"boost_union":{"enabled":false},"certificate":{"enabled":false},"choicegroup":{"enabled":false},"completion_progress":{"enabled":false},"coursearchiver":{"enabled":false},"coursecertificate":{"enabled":false},"customfield_dynamic":{"enabled":false},"dash":{"enabled":false},"dynamic_cohorts":{"enabled":false},"etherpadlite":{"enabled":false},"filtercodes":{"enabled":false},"flexsections":{"enabled":false},"geogebra":{"enabled":false},"groupselect":{"enabled":false},"heartbeat":{"enabled":false},"hvp":{"enabled":false},"jitsi":{"enabled":false},"mod_checklist":{"enabled":false},"multitopic":{"enabled":false},"oidc":{"enabled":false},"pdfannotator":{"enabled":false},"qtype_stack":{"enabled":false},"reengagement":{"enabled":false},"remuiformat":{"enabled":false},"saml2":{"enabled":false},"sharing_cart":{"enabled":false},"shortcodes":{"enabled":false},"skype":{"enabled":false},"snap":{"enabled":false},"staticpage":{"enabled":false},"tiles":{"enabled":false},"topcoll":{"enabled":false},"unilabel":{"enabled":false},"usersuspension":{"enabled":false},"xp":{"enabled":false},"zoom":{"enabled":false}}` | All plugins are disabled by default. if enabled, the plugin is installed on image startup |
 | global.security.allowInsecureImages | bool | `true` |  |
