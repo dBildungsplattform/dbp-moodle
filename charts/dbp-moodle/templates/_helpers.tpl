@@ -70,6 +70,10 @@
 {{- default "1W" .Values.dbpMoodle.backup.max_full_backup_age }}
 {{- end -}}
 
+{{- define "moodle.redis.enabled" -}}
+{{- .Values.redis.enabled }}
+{{- end -}}
+
 {{- define "dbpMoodle.pluginConfigMap.content" -}}
 wunderbyte_table:local_wunderbyte_table:local/wunderbyte_table: {{- .Values.global.moodlePlugins.booking.enabled}}{{"\n"}}
 certificate:tool_certificate:admin/tool/certificate:            {{- or .Values.global.moodlePlugins.certificate.enabled .Values.global.moodlePlugins.coursecertificate.enabled }}{{"\n"}}

@@ -189,7 +189,7 @@ spec:
                   name: {{ include "moodle.secretName" . }}
                   key: moodle-password
             {{- end }}
-            {{- if $.Values.redis.enabled }}
+            {{- if .Values.redis.enabled }}
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
