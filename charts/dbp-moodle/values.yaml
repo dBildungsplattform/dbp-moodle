@@ -275,6 +275,8 @@ dbpMoodle:
     scaleup_cooldown: 15
 
 moodle:
+  redis:
+    enabled: '{{- include "moodle.redis.enabled" . -}}'
   updateStrategy:
     type: RollingUpdate
   image:
