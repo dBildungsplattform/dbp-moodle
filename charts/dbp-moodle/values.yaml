@@ -216,6 +216,7 @@ dbpMoodle:
   # -- This restores moodle to the latest snapshot. Requires an existing s3 backup. ONLY USE FOR ROLLBACK
   restore:
     enabled: false
+    restoreDate: ""
     repository: "ghcr.io/dbildungsplattform"
     image: "moodle-tools"
     tag: "1.1.13"
