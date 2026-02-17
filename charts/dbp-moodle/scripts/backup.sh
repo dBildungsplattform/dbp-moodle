@@ -137,6 +137,7 @@ echo "=== Start DB dump (moodle) ==="
 export DATE=$( date "+%Y-%m-%d" )
 
 # shellcheck disable=all
+{{ if eq (default "full" .Values.dbpMoodle.backup.dump_kind) "full" }}
 PGPASSWORD="$DATABASE_PASSWORD" pg_dump -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" "$DATABASE_NAME" > "moodle_postgresqldb_dump_${DATE}.sql"
 gzip "moodle_postgresqldb_dump_${DATE}.sql"
 
@@ -145,7 +146,18 @@ echo "=== Start DB dump (etherpad) ==="
 PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" pg_dump -h "$DATABASE_HOST_ETHERPAD" -p "$DATABASE_PORT_ETHERPAD" -U "$DATABASE_USER_ETHERPAD" "$DATABASE_NAME_ETHERPAD" > "etherpad_postgresqldb_dump_${DATE}.sql"
 gzip "etherpad_postgresqldb_dump_${DATE}.sql"
 {{ end }}
+{{ end }}
 
+{{ if eq .Values.dbpMoodle.backup.dump_kind "custom" }}
+PGPASSWORD="$DATABASE_PASSWORD" pg_dump -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" "$DATABASE_NAME" --format=custom --table='public.*' --no-owner --no-privileges -f "moodle_postgresqldb_dump_${DATE}.dump"
+gzip "moodle_postgresqldb_dump_${DATE}.dump"
+
+{{ if .Values.etherpadlite.enabled }}
+echo "=== Start DB dump (etherpad) ==="
+PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" pg_dump -h "$DATABASE_HOST_ETHERPAD" -p "$DATABASE_PORT_ETHERPAD" -U "$DATABASE_USER_ETHERPAD" "$DATABASE_NAME_ETHERPAD" --format=custom --table='public.*' --no-owner --no-privileges -f "etherpad_postgresqldb_dump_${DATE}.dump"
+gzip "etherpad_postgresqldb_dump_${DATE}.dump"
+{{ end }}
+{{ end }}
 
 # Get moodle folder
 echo "=== Start moodle directory backup ==="
