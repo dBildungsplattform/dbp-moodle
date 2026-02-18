@@ -105,6 +105,8 @@ checklist:mod_checklist:mod/checklist:                          {{- .Values.glob
 stash:block_stash:blocks/stash:                                 {{- .Values.global.moodlePlugins.block_stash.enabled }}{{"\n"}}
 completion_progress:block_completion_progress:blocks/completion_progress: {{- .Values.global.moodlePlugins.completion_progress.enabled }}{{"\n"}}
 coursearchiver:tool_coursearchiver:admin/tool/coursearchiver:   {{- .Values.global.moodlePlugins.coursearchiver.enabled }}{{"\n"}}
+subcourse:mod_subcourse:mod/subcourse:                          {{- .Values.global.moodlePlugins.mod_subcourse.enabled }}{{"\n"}}
+videotime:mod_videotime:mod/videotime:                          {{- .Values.global.moodlePlugins.mod_videotime.enabled }}{{"\n"}}
 {{- end -}}
 
 {{- define "dbpMoodle.pluginConfigMap.sys.uninstall.content" -}}
