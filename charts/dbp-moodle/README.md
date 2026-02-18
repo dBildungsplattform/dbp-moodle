@@ -101,7 +101,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | clamav.freshclamConfig | string | `"Bytecode yes\nDatabaseDirectory /data\nDatabaseMirror database.clamav.net\nDatabaseOwner 1001\nLogTime yes\nNotifyClamd /etc/clamav/clamd.conf\nPidFile /tmp/freshclam.pid\nScriptedUpdates yes\n"` |  |
 | clamav.hpa.enabled | bool | `false` |  |
 | clamav.image.pullPolicy | string | `"IfNotPresent"` |  |
-| clamav.image.tag | string | `"1.4.2-41"` |  |
+| clamav.image.tag | string | `"1.5.1"` |  |
 | clamav.kind | string | `"StatefulSet"` |  |
 | clamav.podSecurityContext.fsGroup | int | `1001` |  |
 | clamav.podSecurityContext.runAsGroup | int | `1001` |  |
