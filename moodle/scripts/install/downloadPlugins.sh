@@ -76,7 +76,7 @@ for plugin in "${plugin_dependency_list[@]}"; do
     check_plugin_size "$plugin"
 done
 
-for plugin in "${plugin__list[@]}"; do
+for plugin in "${plugin_list[@]}"; do
     moosh plugin-download -v "$major_minor" "$plugin"
     check_plugin_size "$plugin"
 done
