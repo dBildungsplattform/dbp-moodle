@@ -174,6 +174,7 @@ dbpMoodle:
   backup:
     enabled: false
     dump_kind: "full" # Possible values: full, custom
+    run_pre_upgrade: true
     # -- Defines the maximum age of a backup before it is deleted
     retention_time: "6M"
     # -- Defines the maximum age of a full backup before a new full backup is created. The backups in between are incremental
