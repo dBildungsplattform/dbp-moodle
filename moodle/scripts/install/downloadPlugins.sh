@@ -38,6 +38,9 @@ plugin_list=(
     block_stash
     block_completion_progress
     tool_coursearchiver
+    theme_adaptable
+    tool_usersuspension
+    tool_dynamic_cohorts
 )
 
 cd /plugins || exit 1
@@ -70,7 +73,6 @@ for plugin in "${plugin_dependency_list[@]}"; do
     moosh plugin-download -v "$major_minor" "$plugin"
     check_plugin_size "$plugin"
     ((plugin_index++))
-    echo "Loop 1: $plugin → index=$plugin_index"
 done
 
 for plugin in "${plugin_list[@]}"; do
@@ -81,16 +83,7 @@ for plugin in "${plugin_list[@]}"; do
     moosh plugin-download -v "$major_minor" "$plugin"
     check_plugin_size "$plugin"
     ((plugin_index++))
-    echo "Loop 2: $plugin → index=$plugin_index"
 done
 
 moosh plugin-download -v 3.7 customfield_dynamic
 check_plugin_size "customfield_dynamic"
-
-# Plugins
-moosh plugin-download -v "$major_minor" mod_skype
-moosh plugin-download -v "$major_minor" format_flexsections
-moosh plugin-download -v "$major_minor" format_multitopic
-moosh plugin-download -v "$major_minor" theme_adaptable
-moosh plugin-download -v "$major_minor" tool_usersuspension
-moosh plugin-download -v "$major_minor" tool_dynamic_cohorts
