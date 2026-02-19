@@ -66,17 +66,16 @@ download_oidc
 moosh plugin-list > /dev/null
 
 for plugin in "${plugin_dependency_list[@]}"; do
-    index="${plugin_dependency_list[$plugin]}"
-    
-    # if (( $index > 0 && $index % 40 == 0 )); then
-    #     echo "Reached batch of 40 plugins. Sleeping for 30 seconds..."
-    #     sleep 1
-    # fi
     moosh plugin-download -v "$major_minor" "$plugin"
     check_plugin_size "$plugin"
 done
 
 for plugin in "${plugin_list[@]}"; do
+    index="${plugin_list[$plugin]}"
+    if (( $index > 0 && $index % 15 == 0 )); then
+        echo "Reached batch of 15 plugins. Sleeping for 30 seconds..."
+        sleep 60
+    fi
     moosh plugin-download -v "$major_minor" "$plugin"
     check_plugin_size "$plugin"
 done
