@@ -62,3 +62,5 @@ moosh plugin-download -v "$major_minor" block_stash
 moosh plugin-download -v "$major_minor" block_completion_progress
 moosh plugin-download -v "$major_minor" tool_coursearchiver
 moosh plugin-download -v "$major_minor" block_sharing_cart
+moosh plugin-download -v "$major_minor" mod_subcourse
+moosh plugin-download -v "$major_minor" mod_videotime

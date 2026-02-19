@@ -90,6 +90,10 @@ global:
       enabled: false
     coursearchiver:
       enabled: false
+    mod_subcourse:
+      enabled: false
+    mod_videotime:
+      enabled: false
 
 dbpMoodle:
   name: infra
