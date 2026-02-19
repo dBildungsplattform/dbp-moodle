@@ -1,6 +1,7 @@
 #!/bin/bash
 
 major_minor="${MOODLE_VERSION%.*}"
+plugin_index=0
 
 plugin_dependency_list=(
     local_wunderbyte_table # Dependency of mod_booking
@@ -68,16 +69,19 @@ moosh plugin-list > /dev/null
 for plugin in "${plugin_dependency_list[@]}"; do
     moosh plugin-download -v "$major_minor" "$plugin"
     check_plugin_size "$plugin"
+    ((plugin_index++))
+    echo "Loop 1: $plugin → index=$plugin_index"
 done
 
 for plugin in "${plugin_list[@]}"; do
-    index="${plugin_list[$plugin]}"
-    if (( $index > 0 && $index % 15 == 0 )); then
-        echo "Reached batch of 15 plugins. Sleeping for 30 seconds..."
+    if (( $plugin_index > 0 && $plugin_index % 15 == 0 )); then
+        echo "Reached batch of 15 plugins. Sleeping for 60 seconds..."
         sleep 60
     fi
     moosh plugin-download -v "$major_minor" "$plugin"
     check_plugin_size "$plugin"
+    ((plugin_index++))
+    echo "Loop 2: $plugin → index=$plugin_index"
 done
 
 moosh plugin-download -v 3.7 customfield_dynamic
