@@ -94,6 +94,8 @@ global:
       enabled: false
     mod_videotime:
       enabled: false
+    local_intelliboard:
+      enabled: false
 
 dbpMoodle:
   name: infra
@@ -281,7 +283,7 @@ moodle:
     registry: "ghcr.io"
     repository: "dbildungsplattform/moodle"
     # -- The dbp-moodle image which is build for this helm chart
-    tag: "4.5.8-fpm-bookworm-8.2.30-dbp1"
+    tag: "4.5.8-fpm-bookworm-8.2.30-dbp1"   # TODO update image tag when rebuilt
     pullPolicy: Always
     # -- Debug mode for more detailed moodle installation and log output
     debug: false

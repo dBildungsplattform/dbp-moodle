@@ -107,6 +107,7 @@ completion_progress:block_completion_progress:blocks/completion_progress: {{- .V
 coursearchiver:tool_coursearchiver:admin/tool/coursearchiver:   {{- .Values.global.moodlePlugins.coursearchiver.enabled }}{{"\n"}}
 subcourse:mod_subcourse:mod/subcourse:                          {{- .Values.global.moodlePlugins.mod_subcourse.enabled }}{{"\n"}}
 videotime:mod_videotime:mod/videotime:                          {{- .Values.global.moodlePlugins.mod_videotime.enabled }}{{"\n"}}
+intelliboard:local_intelliboard:local/intelliboard:             {{- .Values.global.moodlePlugins.local_intelliboard.enabled }}{{"\n"}}
 {{- end -}}
 
 {{- define "dbpMoodle.pluginConfigMap.sys.uninstall.content" -}}

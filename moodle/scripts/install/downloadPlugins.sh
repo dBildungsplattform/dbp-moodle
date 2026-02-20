@@ -64,3 +64,4 @@ moosh plugin-download -v "$major_minor" tool_coursearchiver
 moosh plugin-download -v "$major_minor" block_sharing_cart
 moosh plugin-download -v "$major_minor" mod_subcourse
 moosh plugin-download -v "$major_minor" mod_videotime
+moosh plugin-download -v "$major_minor" local_intelliboard
