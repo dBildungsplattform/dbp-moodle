@@ -126,7 +126,7 @@ echo "=== Copy dump to DB (etherpad) ==="
 gunzip /tmp/Full/tmp/backup/etherpad_postgresqldb_dump_*
 mv /tmp/Full/tmp/backup/etherpad_postgresqldb_dump_* /tmp/etherpaddb.dump
 
-PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" pg_restore -h "$DATABASE_HOST_ETHERPAD" -p "$DATABASE_PORT_ETHERPAD" -U "$DATABASE_USER_ETHERPAD" -d "$DATABASE_NAME_ETHERPAD"  --no-owner --no-privileges --disable-triggers /tmp/moodledb.dump
+PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" pg_restore -h "$DATABASE_HOST_ETHERPAD" -p "$DATABASE_PORT_ETHERPAD" -U "$DATABASE_USER_ETHERPAD" -d "$DATABASE_NAME_ETHERPAD"  --no-owner --no-privileges --disable-triggers /tmp/etherpaddb.dump
 {{ end }}
 {{ end }}
 
