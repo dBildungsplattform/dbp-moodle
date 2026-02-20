@@ -43,6 +43,8 @@ plugin_list=(
     tool_dynamic_cohorts
 )
 
+moodle_plugin_list=("${plugin_dependency_list[@]}" "${plugin_list[@]}")
+
 cd /plugins || exit 1
 
 check_plugin_size() {
@@ -69,13 +71,7 @@ download_oidc() {
 download_oidc
 moosh plugin-list > /dev/null
 
-for plugin in "${plugin_dependency_list[@]}"; do
-    moosh plugin-download -v "$major_minor" "$plugin"
-    check_plugin_size "$plugin"
-    ((plugin_index++))
-done
-
-for plugin in "${plugin_list[@]}"; do
+for plugin in "${moodle_plugin_list[@]}"; do
     if (( $plugin_index > 0 && $plugin_index % 15 == 0 )); then
         echo "Reached batch of 15 plugins. Sleeping for 60 seconds..."
         sleep 60
