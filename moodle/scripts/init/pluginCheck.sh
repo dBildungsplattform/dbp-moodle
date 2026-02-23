@@ -33,6 +33,19 @@ cleanup() {
     fi
 }
 
+fix_local_intelliboard() {
+    # On uninstall the plugin 'local_intelliboard' expects the file cache/locallib.php to exist and otherwise fails.
+    # To fix this issue while it is not fixed by the provider a prop file is created.
+    local plugin_fullname
+    local plugin_path
+    plugin_fullname="$1"
+    plugin_path="$2"
+
+    if [ "$plugin_fullname" = "local_intelliboard" ]; then
+        touch "${moodle_path}/cache/locallib.php"
+    fi
+}
+
 install_plugin() {
     local plugin_name
     local plugin_fullname
@@ -52,6 +65,8 @@ uninstall_plugin() {
     local plugin_path
     plugin_fullname="$1"
     plugin_path="$2"
+
+    fix_local_intelliboard "$plugin_fullname" "$plugin_path"
 
     php "${moodle_path}/admin/cli/uninstall_plugins.php" --plugins="$plugin_fullname" --run
     rm -rf "${moodle_path:?}/${plugin_path:?}"
