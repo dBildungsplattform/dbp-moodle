@@ -41,6 +41,8 @@ plugin_list=(
     theme_adaptable
     tool_usersuspension
     tool_dynamic_cohorts
+    mod_subcourse
+    mod_videotime
 )
 
 moodle_plugin_list=("${plugin_dependency_list[@]}" "${plugin_list[@]}")

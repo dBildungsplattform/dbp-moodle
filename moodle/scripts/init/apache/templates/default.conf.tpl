@@ -46,3 +46,10 @@ SetEnvIf X-Forwarded-Proto https HTTPS=on
   RewriteRule "(\/Gruntfile\.js)" - [F]
 </VirtualHost>
 
+<VirtualHost 127.0.0.1:80>
+  ServerName status.localhost
+  <Location /server-status>
+    Require local
+    SetHandler server-status
+  </Location>
+</VirtualHost>

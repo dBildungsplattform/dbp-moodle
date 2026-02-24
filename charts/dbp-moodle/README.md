@@ -1,6 +1,6 @@
 # dbp-moodle
 
-![Version: 1.0.2](https://img.shields.io/badge/Version-1.0.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.5.8](https://img.shields.io/badge/AppVersion-4.5.8-informational?style=flat-square)
+![Version: 1.1.1](https://img.shields.io/badge/Version-1.1.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.5.8](https://img.shields.io/badge/AppVersion-4.5.8-informational?style=flat-square)
 
 This is a Helm Chart bundling some of the bitnami resources to deploy Moodle for DBildungsplattform. Extending them with features such as
 MariaDB and PostgreSQL support, Horizontal Autoscaling capabilities, Redis Session Store, Etherpad-Lite.
@@ -15,7 +15,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | file://charts/cronjob | cronjob | 0.1.0 |
 | file://charts/cronjob | cronjob | 0.1.0 |
 | file://charts/etherpad | etherpad | 0.1.0 |
-| file://charts/moodle | moodle | 27.0.3 |
+| file://charts/moodle | moodle | 27.0.4 |
 | https://burningalchemist.github.io/sql_exporter/ | sql-exporter | 0.6.1 |
 | https://charts.bitnami.com/bitnami | postgresql | 15.5.38 |
 | https://charts.bitnami.com/bitnami | postgresql | 15.5.38 |
@@ -101,7 +101,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | clamav.freshclamConfig | string | `"Bytecode yes\nDatabaseDirectory /data\nDatabaseMirror database.clamav.net\nDatabaseOwner 1001\nLogTime yes\nNotifyClamd /etc/clamav/clamd.conf\nPidFile /tmp/freshclam.pid\nScriptedUpdates yes\n"` |  |
 | clamav.hpa.enabled | bool | `false` |  |
 | clamav.image.pullPolicy | string | `"IfNotPresent"` |  |
-| clamav.image.tag | string | `"1.4.2-41"` |  |
+| clamav.image.tag | string | `"1.5.1"` |  |
 | clamav.kind | string | `"StatefulSet"` |  |
 | clamav.podSecurityContext.fsGroup | int | `1001` |  |
 | clamav.podSecurityContext.runAsGroup | int | `1001` |  |
@@ -225,7 +225,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | etherpadlite.volumes[0].secret.items[0].path | string | `"APIKEY.txt"` |  |
 | etherpadlite.volumes[0].secret.secretName | string | `"moodle"` |  |
 | global.kubectl_version | string | `"1.28.7"` |  |
-| global.moodlePlugins | object | `{"adaptable":{"enabled":false},"availability_cohort":{"enabled":false},"block_stash":{"enabled":false},"board":{"enabled":false},"booking":{"enabled":false},"boost_magnific":{"enabled":false},"boost_union":{"enabled":false},"certificate":{"enabled":false},"choicegroup":{"enabled":false},"completion_progress":{"enabled":false},"coursearchiver":{"enabled":false},"coursecertificate":{"enabled":false},"customfield_dynamic":{"enabled":false},"dash":{"enabled":false},"dynamic_cohorts":{"enabled":false},"etherpadlite":{"enabled":false},"filtercodes":{"enabled":false},"flexsections":{"enabled":false},"geogebra":{"enabled":false},"groupselect":{"enabled":false},"heartbeat":{"enabled":false},"hvp":{"enabled":false},"jitsi":{"enabled":false},"mod_checklist":{"enabled":false},"multitopic":{"enabled":false},"oidc":{"enabled":false},"pdfannotator":{"enabled":false},"qtype_stack":{"enabled":false},"reengagement":{"enabled":false},"remuiformat":{"enabled":false},"saml2":{"enabled":false},"sharing_cart":{"enabled":false},"shortcodes":{"enabled":false},"skype":{"enabled":false},"snap":{"enabled":false},"staticpage":{"enabled":false},"tiles":{"enabled":false},"topcoll":{"enabled":false},"unilabel":{"enabled":false},"usersuspension":{"enabled":false},"xp":{"enabled":false},"zoom":{"enabled":false}}` | All plugins are disabled by default. if enabled, the plugin is installed on image startup |
+| global.moodlePlugins | object | `{"adaptable":{"enabled":false},"availability_cohort":{"enabled":false},"block_stash":{"enabled":false},"board":{"enabled":false},"booking":{"enabled":false},"boost_magnific":{"enabled":false},"boost_union":{"enabled":false},"certificate":{"enabled":false},"choicegroup":{"enabled":false},"completion_progress":{"enabled":false},"coursearchiver":{"enabled":false},"coursecertificate":{"enabled":false},"customfield_dynamic":{"enabled":false},"dash":{"enabled":false},"dynamic_cohorts":{"enabled":false},"etherpadlite":{"enabled":false},"filtercodes":{"enabled":false},"flexsections":{"enabled":false},"geogebra":{"enabled":false},"groupselect":{"enabled":false},"heartbeat":{"enabled":false},"hvp":{"enabled":false},"jitsi":{"enabled":false},"mod_checklist":{"enabled":false},"mod_subcourse":{"enabled":false},"mod_videotime":{"enabled":false},"multitopic":{"enabled":false},"oidc":{"enabled":false},"pdfannotator":{"enabled":false},"qtype_stack":{"enabled":false},"reengagement":{"enabled":false},"remuiformat":{"enabled":false},"saml2":{"enabled":false},"sharing_cart":{"enabled":false},"shortcodes":{"enabled":false},"skype":{"enabled":false},"snap":{"enabled":false},"staticpage":{"enabled":false},"tiles":{"enabled":false},"topcoll":{"enabled":false},"unilabel":{"enabled":false},"usersuspension":{"enabled":false},"xp":{"enabled":false},"zoom":{"enabled":false}}` | All plugins are disabled by default. if enabled, the plugin is installed on image startup |
 | global.security.allowInsecureImages | bool | `true` |  |
 | global.storageClass | string | `"nfs-client"` | Default storage class, should support ReadWriteMany |
 | moodle.affinity | object | `{}` |  |
@@ -270,7 +270,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.image.pullPolicy | string | `"Always"` |  |
 | moodle.image.registry | string | `"ghcr.io"` |  |
 | moodle.image.repository | string | `"dbildungsplattform/moodle"` |  |
-| moodle.image.tag | string | `"4.5.8-fpm-bookworm-8.1.34-dbp3"` | The dbp-moodle image which is build for this helm chart |
+| moodle.image.tag | string | `"4.5.8-fpm-bookworm-8.2.30-dbp1"` | The dbp-moodle image which is build for this helm chart |
 | moodle.ingress.annotations."cert-manager.io/cluster-issuer" | string | `"sc-cert-manager-clusterissuer-letsencrypt"` |  |
 | moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-body-size" | string | `"200M"` |  |
 | moodle.ingress.annotations."nginx.ingress.kubernetes.io/proxy-connect-timeout" | string | `"30s"` |  |
@@ -283,6 +283,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.ingress.tls | bool | `true` |  |
 | moodle.metrics.enabled | bool | `true` |  |
 | moodle.metrics.image.repository | string | `"lusotycoon/apache-exporter"` |  |
+| moodle.metrics.image.tag | string | `"v1.0.12"` |  |
 | moodle.metrics.resources | object | `{"limits":{"cpu":"200m","memory":"256Mi"},"requests":{"cpu":"10m","memory":"16Mi"}}` | Resources have to be set so that the horizontal pod autoscaler for moodle can read the moodle cpu consumption correctly |
 | moodle.metrics.service.type | string | `"ClusterIP"` |  |
 | moodle.moodleEmail | string | `""` |  |
