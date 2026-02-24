@@ -1,4 +1,4 @@
-FROM php:8.1.34-fpm-bookworm AS build
+FROM php:8.2.30-fpm-bookworm AS build
 USER root
 ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.5.8"}
 #This is the path moodle will be placed after downloading for our Moodle Update Pipeline
@@ -65,7 +65,8 @@ RUN mkdir /.moosh &&\
 RUN /scripts/install/downloadMoodle.sh
 
 RUN MAJOR_MINOR=$(echo "$MOODLE_VERSION" | cut -d. -f1,2) && \
-    curl -L https://download.moodle.org/download.php/direct/langpack/${MAJOR_MINOR}/de.zip --output /tmp/de.zip
+    curl -L https://download.moodle.org/download.php/direct/langpack/${MAJOR_MINOR}/de.zip --output /tmp/de.zip && \
+    curl -L https://download.moodle.org/download.php/direct/langpack/${MAJOR_MINOR}/en.zip --output /tmp/en.zip
 
 # Hardening
 RUN apt-get update && apt-get upgrade -y && \
