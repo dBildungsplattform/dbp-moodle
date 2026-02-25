@@ -94,6 +94,8 @@ global:
       enabled: false
     mod_videotime:
       enabled: false
+    mod_glossary:
+      enabled: false
 
 dbpMoodle:
   name: infra
