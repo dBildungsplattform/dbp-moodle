@@ -94,7 +94,7 @@ global:
       enabled: false
     mod_videotime:
       enabled: false
-    mod_glossary:
+    qformat_glossary:
       enabled: false
 
 dbpMoodle:
