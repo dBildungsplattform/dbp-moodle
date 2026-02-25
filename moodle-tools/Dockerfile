@@ -19,7 +19,6 @@ RUN set -x \
         gnupg \
         apt-transport-https \
         postgresql-client-16 \
-        mariadb-client \
     && apt-get clean -y
 
 RUN chown -R 1001:1001 /tmp \

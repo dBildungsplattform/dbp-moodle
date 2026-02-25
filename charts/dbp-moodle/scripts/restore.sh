@@ -60,11 +60,7 @@ ln -s /etc/duply /home/nonrootuser/.duply
 export DUPLY_HOME="/etc/duply"
 
 # Duply restore logic
-if [ "$RESTORE_DATE" != "" ]; then
-    /usr/bin/duply default restore Full "$RESTORE_DATE"
-else
-    /usr/bin/duply default restore Full
-fi
+/usr/bin/duply default restore Full "$RESTORE_DATE"
 
 echo "=== Clear PVC ==="
 rm -rf /dbp-moodle/moodle/*
