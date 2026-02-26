@@ -75,8 +75,8 @@ download_oidc
 moosh plugin-list > /dev/null
 
 for plugin in "${moodle_plugin_list[@]}"; do
-    if (( $plugin_index > 0 && $plugin_index % 15 == 0 )); then
-        echo "Reached batch of 15 plugins. Sleeping for 60 seconds..."
+    if (( $plugin_index > 0 && $plugin_index % 12 == 0 )); then
+        echo "Reached batch of 12 plugins. Sleeping for 60 seconds to prevent exceeding request limit..."
         sleep 60
     fi
     moosh plugin-download -v "$major_minor" "$plugin"
