@@ -23,9 +23,9 @@ spec:
             - containerPort: {{ .Values.dbpMoodle.goemaxima.service.targetPort }}
           env:
             - name: PORT         # GoeMaxima listens on this port
-              value: {{ .Values.dbpMoodle.goemaxima.service.targetPort | toString }}
+              value: {{ .Values.dbpMoodle.goemaxima.service.targetPort | toString | quote }}
             - name: MAXIMA_TIMEOUT
-              value: {{ .Values.dbpMoodle.goemaxima.env.MAXIMA_TIMEOUT | toString }}
+              value: {{ .Values.dbpMoodle.goemaxima.env.MAXIMA_TIMEOUT | toString | quote }}
             - name: GOEMAXIMA_PROCESS_ISOLATION # otherwise the container needs capabilities to spawn new processes.
               value: none
           securityContext:
