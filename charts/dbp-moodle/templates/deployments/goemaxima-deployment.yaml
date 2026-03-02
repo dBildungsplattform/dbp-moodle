@@ -15,6 +15,11 @@ spec:
       labels:
         app: goemaxima
     spec:
+      volumes:
+        # The tmp volume is needed as during startup the container writes to the /tmp directory, 
+        # but the default security context prohibits this if we dont mount a writeable volume.
+        - name: tmp
+          emptyDir: {}
       containers:
         - name: goemaxima
           image: "{{ .Values.dbpMoodle.goemaxima.image.repository }}{{ if .Values.dbpMoodle.goemaxima.image.digest }}@{{ .Values.dbpMoodle.goemaxima.image.digest }}{{ else }}:{{ .Values.dbpMoodle.goemaxima.image.tag }}{{ end }}"
@@ -28,6 +33,9 @@ spec:
               value: {{ .Values.dbpMoodle.goemaxima.env.MAXIMA_TIMEOUT | toString | quote }}
             - name: GOEMAXIMA_PROCESS_ISOLATION # otherwise the container needs capabilities to spawn new processes.
               value: none
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           securityContext:
             {{- toYaml .Values.dbpMoodle.goemaxima.securityContext | nindent 12 }}
           resources:
