@@ -1,3 +1,4 @@
+{{ - if .Values.dbpMoodle.goemaxima.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -13,3 +14,4 @@ spec:
       port: {{ .Values.dbpMoodle.goemaxima.service.port }}       # service port
       targetPort: {{ .Values.dbpMoodle.goemaxima.service.targetPort }} # container port
   type: ClusterIP
+{{ end }}

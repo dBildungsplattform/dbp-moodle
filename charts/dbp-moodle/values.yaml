@@ -275,6 +275,7 @@ dbpMoodle:
     scaleup_cooldown: 15
 
   goemaxima:
+    enabled: false
     image:
       repository: mathinstitut/goemaxima
       tag: "2026010500-1.2.0"

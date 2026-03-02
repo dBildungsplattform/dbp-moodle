@@ -1,3 +1,4 @@
+{{ - if .Values.dbpMoodle.goemaxima.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -40,3 +41,4 @@ spec:
             {{- toYaml .Values.dbpMoodle.goemaxima.securityContext | nindent 12 }}
           resources:
             {{- toYaml .Values.dbpMoodle.goemaxima.resources | nindent 12 }}
+{{ end }}
