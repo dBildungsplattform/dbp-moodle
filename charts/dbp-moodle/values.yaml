@@ -282,33 +282,33 @@ dbpMoodle:
       pullPolicy: IfNotPresent
     replicaCount: 1
 
-  service:
-    type: ClusterIP
-    port: 8080
-    targetPort: 8080
-    annotations: {}
-    labels: {}
-  
-  resources:
-    requests:
-      cpu: "200m"
-      memory: "256Mi"
-    limits:
-      cpu: "1"
-      memory: "512Mi"
+    service:
+      type: ClusterIP
+      port: 8080
+      targetPort: 8080
+      annotations: {}
+      labels: {}
+    
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "256Mi"
+      limits:
+        cpu: "1"
+        memory: "512Mi"
 
-  env:
-    MAXIMA_TIMEOUT: "30"
-  
-  podSecurityContext: {}
-    # fsGroup: 1000
-  securityContext:
-    runAsNonRoot: true
-    runAsUser: 1000
-    allowPrivilegeEscalation: false
-    readOnlyRootFilesystem: true
-    seccompProfile:
-      type: RuntimeDefault
+    env:
+      MAXIMA_TIMEOUT: "30"
+    
+    podSecurityContext: {}
+      # fsGroup: 1000
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      seccompProfile:
+        type: RuntimeDefault
 
 moodle:
   updateStrategy:
