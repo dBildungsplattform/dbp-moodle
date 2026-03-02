@@ -274,6 +274,42 @@ dbpMoodle:
     # -- How many seconds to wait between upscaling adjustments
     scaleup_cooldown: 15
 
+  goemaxima:
+    image:
+      repository: mathinstitut/goemaxima
+      tag: "2026010500-1.2.0"
+      digest: "sha256:897e3b77a02a1a491b5348be86e8aa063438f484c0697ec47498f40f2f99a680"
+      pullPolicy: IfNotPresent
+    replicaCount: 1
+
+  service:
+    type: ClusterIP
+    port: 8080
+    targetPort: 8080
+    annotations: {}
+    labels: {}
+  
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "1"
+      memory: "512Mi"
+
+  env:
+    MAXIMA_TIMEOUT: "30"
+  
+  podSecurityContext: {}
+    # fsGroup: 1000
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    seccompProfile:
+      type: RuntimeDefault
+
 moodle:
   updateStrategy:
     type: RollingUpdate

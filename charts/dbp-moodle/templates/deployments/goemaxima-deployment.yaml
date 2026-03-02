@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goemaxima
+  labels:
+    app: goemaxima
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.dbpMoodle.goemaxima.replicaCount }}
+  selector:
+    matchLabels:
+      app: goemaxima
+  template:
+    metadata:
+      labels:
+        app: goemaxima
+    spec:
+      containers:
+        - name: goemaxima
+          image: "{{ .Values.dbpMoodle.goemaxima.image.repository }}{{ if .Values.dbpMoodle.goemaxima.image.digest }}@{{ .Values.dbpMoodle.goemaxima.image.digest }}{{ else }}:{{ .Values.dbpMoodle.goemaxima.image.tag }}{{ end }}"
+          imagePullPolicy: {{ .Values.dbpMoodle.goemaxima.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.dbpMoodle.goemaxima.service.targetPort }}
+          env:
+            - name: PORT         # GoeMaxima listens on this port
+              value: {{ .Values.dbpMoodle.goemaxima.service.targetPort | toString }}
+            - name: MAXIMA_TIMEOUT
+              value: {{ .Values.dbpMoodle.goemaxima.env.MAXIMA_TIMEOUT | toString }}
+            - name: GOEMAXIMA_PROCESS_ISOLATION # otherwise the container needs capabilities to spawn new processes.
+              value: none
+          securityContext:
+            {{- toYaml .Values.dbpMoodle.goemaxima.securityContext | nindent 12 }}
+          resources:
+            {{- toYaml .Values.dbpMoodle.goemaxima.resources | nindent 12 }}
