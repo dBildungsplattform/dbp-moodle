@@ -1,6 +1,6 @@
 # moodle
 
-![Version: 27.0.4](https://img.shields.io/badge/Version-27.0.4-informational?style=flat-square) ![AppVersion: 4.5.8](https://img.shields.io/badge/AppVersion-4.5.8-informational?style=flat-square)
+![Version: 27.0.4](https://img.shields.io/badge/Version-27.0.4-informational?style=flat-square) ![AppVersion: 4.5.10](https://img.shields.io/badge/AppVersion-4.5.10-informational?style=flat-square)
 
 Moodle(TM) LMS is an open source online Learning Management System widely used at universities, schools, and corporations. It is modular and highly adaptable to any type of online learning.
 
@@ -84,7 +84,7 @@ Moodle(TM) LMS is an open source online Learning Management System widely used a
 | image.pullSecrets | list | `[]` |  |
 | image.registry | string | `"ghcr.io"` |  |
 | image.repository | string | `"dbildungsplattform/moodle"` |  |
-| image.tag | string | `"4.5.4-debian-12-r0-dbp2"` |  |
+| image.tag | string | `"4.5.10-fpm-bookworm-8.2.30-dbp1"` |  |
 | ingress.annotations | object | `{}` |  |
 | ingress.apiVersion | string | `""` |  |
 | ingress.enabled | bool | `false` |  |
