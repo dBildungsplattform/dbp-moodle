@@ -288,7 +288,7 @@ moodle:
     registry: "ghcr.io"
     repository: "dbildungsplattform/moodle"
     # -- The dbp-moodle image which is build for this helm chart
-    tag: "4.5.8-fpm-bookworm-8.2.30-dbp2"
+    tag: "4.5.10-fpm-bookworm-8.2.30-dbp1"
     pullPolicy: Always
     # -- Debug mode for more detailed moodle installation and log output
     debug: false
