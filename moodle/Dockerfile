@@ -1,11 +1,12 @@
-FROM php:8.1.34-fpm-bookworm AS build
+FROM php:8.2.30-fpm-bookworm AS build
 USER root
-ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.5.8"}
+ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.5.10"}
 #This is the path moodle will be placed after downloading for our Moodle Update Pipeline
 ARG MOODLE_PATH="/opt/dbp-moodle/moodle"
 ARG EXTRA_LOCALES=""
-ARG APACHE_VERSION=${APACHE_VERSION:-"2.4.57"}
-ARG APACHE_DOWNLOAD_URL="https://snapshot.debian.org/archive/debian/20230408T145143Z/pool/main/a/apache2"
+#At the moment Apache will be updated to the latest release as unattended update during the build process
+ARG APACHE_VERSION=${APACHE_VERSION:-"2.4.66-1~deb12u1"}
+ARG APACHE_DOWNLOAD_URL="https://snapshot.debian.org/archive/debian/20260131T202859Z/pool/main/a/apache2/"
 WORKDIR /
 ARG WITH_ALL_LOCALES="no"
 RUN mkdir /bitnami
@@ -34,11 +35,11 @@ RUN apt-get update && \
     apt-get install -y postgresql-client-13
 
 # Install apache2 and its dependencies
-RUN apt-get install -y libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-ldap libexpat1 liblua5.3-0 media-types procps && \
-    curl -LO ${APACHE_DOWNLOAD_URL}/apache2-bin_${APACHE_VERSION}-1_amd64.deb && \
-    curl -LO ${APACHE_DOWNLOAD_URL}/apache2-data_${APACHE_VERSION}-1_all.deb && \
-    curl -LO ${APACHE_DOWNLOAD_URL}/apache2-utils_${APACHE_VERSION}-1_amd64.deb && \
-    curl -LO ${APACHE_DOWNLOAD_URL}/apache2_${APACHE_VERSION}-1_amd64.deb && \
+RUN apt-get install -y libapr1 libaprutil1 libc6 libaprutil1-dbd-sqlite3 libcurl4 libaprutil1-ldap libldap-2.5-0 libexpat1 liblua5.3-0 libssl3 libxml2 media-types procps && \
+    curl -LO ${APACHE_DOWNLOAD_URL}/apache2-bin_${APACHE_VERSION}_amd64.deb && \
+    curl -LO ${APACHE_DOWNLOAD_URL}/apache2-data_${APACHE_VERSION}_all.deb && \
+    curl -LO ${APACHE_DOWNLOAD_URL}/apache2-utils_${APACHE_VERSION}_amd64.deb && \
+    curl -LO ${APACHE_DOWNLOAD_URL}/apache2_${APACHE_VERSION}_amd64.deb && \
     dpkg -i *.deb && \
     apt-get install -y libapache2-mod-fcgid && \
     rm *.deb
@@ -65,7 +66,8 @@ RUN mkdir /.moosh &&\
 RUN /scripts/install/downloadMoodle.sh
 
 RUN MAJOR_MINOR=$(echo "$MOODLE_VERSION" | cut -d. -f1,2) && \
-    curl -L https://download.moodle.org/download.php/direct/langpack/${MAJOR_MINOR}/de.zip --output /tmp/de.zip
+    curl -L https://download.moodle.org/download.php/direct/langpack/${MAJOR_MINOR}/de.zip --output /tmp/de.zip && \
+    curl -L https://download.moodle.org/download.php/direct/langpack/${MAJOR_MINOR}/en.zip --output /tmp/en.zip
 
 # Hardening
 RUN apt-get update && apt-get upgrade -y && \

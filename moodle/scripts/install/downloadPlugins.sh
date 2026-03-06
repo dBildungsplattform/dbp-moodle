@@ -1,8 +1,62 @@
 #!/bin/bash
 
 major_minor="${MOODLE_VERSION%.*}"
+plugin_index=0
+
+plugin_dependency_list=(
+    local_wunderbyte_table # Dependency of mod_booking
+    tool_certificate # Dependency of mod_coursecertificate
+    qbehaviour_adaptivemultipart # Dependency of qtype_stack
+    qbehaviour_dfexplicitvaildate # Dependency of qtype_stack
+    qbehaviour_dfcbmexplicitvaildate # Dependency of qtype_stack
+)
+
+plugin_list=(
+    mod_booking
+    theme_boost_magnific
+    theme_boost_union
+    mod_choicegroup
+    mod_coursecertificate
+    mod_etherpadlite
+    mod_hvp
+    mod_pdfannotator
+    format_remuiformat
+    local_staticpage
+    format_tiles
+    format_topcoll
+    mod_unilabel
+    block_xp
+    mod_zoom
+    filter_filtercodes
+    filter_shortcodes
+    tool_heartbeat
+    availability_cohort
+    mod_board
+    mod_checklist
+    block_sharing_cart
+    qtype_stack
+    block_stash
+    block_completion_progress
+    tool_coursearchiver
+    theme_adaptable
+    tool_usersuspension
+    tool_dynamic_cohorts
+    mod_subcourse
+    mod_videotime
+)
+
+moodle_plugin_list=("${plugin_dependency_list[@]}" "${plugin_list[@]}")
 
 cd /plugins || exit 1
+
+check_plugin_size() {
+    plugin_name=$1    
+    plugin_size=$(stat -c%s "/plugins/${plugin_name}.zip")
+    if [ "$plugin_size" -eq 0 ]; then
+        echo "ERROR: Moodle Plugin '$plugin_name' is empty (size 0 bytes). Possible Download error." >&2
+        exit 1
+    fi
+}
 
 download_oidc() {
     target_branch="v_45" # eLeDia currently doesn't use any tags, we always use the latest version on branch v_45
@@ -19,46 +73,15 @@ download_oidc() {
 download_oidc
 moosh plugin-list > /dev/null
 
-# Dependencies
-moosh plugin-download -v "$major_minor" local_wunderbyte_table # Dependency of mod_booking
-moosh plugin-download -v "$major_minor" tool_certificate # Dependency of mod_coursecertificate
-moosh plugin-download -v "$major_minor" qbehaviour_adaptivemultipart # Dependency of qtype_stack
-moosh plugin-download -v "$major_minor" qbehaviour_dfexplicitvaildate # Dependency of qtype_stack
-moosh plugin-download -v "$major_minor" qbehaviour_dfcbmexplicitvaildate # Dependency of qtype_stack
+for plugin in "${moodle_plugin_list[@]}"; do
+    if (( $plugin_index > 0 && $plugin_index % 15 == 0 )); then
+        echo "Reached batch of 15 plugins. Sleeping for 60 seconds..."
+        sleep 60
+    fi
+    moosh plugin-download -v "$major_minor" "$plugin"
+    check_plugin_size "$plugin"
+    ((plugin_index++))
+done
 
-# Plugins
-moosh plugin-download -v "$major_minor" mod_etherpadlite
-moosh plugin-download -v "$major_minor" mod_hvp
-moosh plugin-download -v "$major_minor" mod_pdfannotator
-moosh plugin-download -v "$major_minor" mod_skype
-moosh plugin-download -v "$major_minor" mod_zoom
-moosh plugin-download -v "$major_minor" mod_booking
-moosh plugin-download -v "$major_minor" mod_unilabel
-moosh plugin-download -v "$major_minor" mod_choicegroup
-moosh plugin-download -v "$major_minor" mod_board
-moosh plugin-download -v "$major_minor" local_staticpage
-moosh plugin-download -v "$major_minor" format_remuiformat
-moosh plugin-download -v "$major_minor" format_tiles
-moosh plugin-download -v "$major_minor" format_topcoll
-moosh plugin-download -v "$major_minor" format_flexsections
-moosh plugin-download -v "$major_minor" format_multitopic
-moosh plugin-download -v "$major_minor" block_xp
-moosh plugin-download -v "$major_minor" mod_coursecertificate
-moosh plugin-download -v "$major_minor" theme_adaptable
-moosh plugin-download -v "$major_minor" theme_boost_union
-moosh plugin-download -v "$major_minor" theme_boost_magnific
-moosh plugin-download -v "$major_minor" tool_usersuspension
-moosh plugin-download -v "$major_minor" tool_dynamic_cohorts
 moosh plugin-download -v 3.7 customfield_dynamic
-sleep 60 # prevent Error 429 Too Many Requests 
-moosh plugin-download -v "$major_minor" filter_shortcodes
-moosh plugin-download -v "$major_minor" filter_filtercodes
-moosh plugin-download -v "$major_minor" availability_cohort
-moosh plugin-download -v "$major_minor" tool_heartbeat
-moosh plugin-download -v "$major_minor" qtype_stack
-moosh plugin-download -v "$major_minor" format_remuiformat
-moosh plugin-download -v "$major_minor" mod_checklist
-moosh plugin-download -v "$major_minor" block_stash
-moosh plugin-download -v "$major_minor" block_completion_progress
-moosh plugin-download -v "$major_minor" tool_coursearchiver
-moosh plugin-download -v "$major_minor" block_sharing_cart
+check_plugin_size "customfield_dynamic"
