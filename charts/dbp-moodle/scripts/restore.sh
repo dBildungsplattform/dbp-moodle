@@ -108,7 +108,7 @@ echo "=== Finished DB restore (moodle) ==="
 {{ if .Values.etherpadlite.enabled }}
 echo "=== Clear DB (etherpad) ==="
 # This command helps with - ERROR: database "moodle" is being accessed by other users
-PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" psql -h "$DATABASE_HOST_ETHERPAD" -p "$DATABASE_PORT_ETHERPAD" -U "$DATABASE_USER_ETHERPAD" -c "REVOKE CONNECT ON DATABASE ${DATABASE_NAME_ETHERPAD} FROM public;SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND pg_stat_activity.datname = '${DATABASE_NAME}';"
+PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" psql -h "$DATABASE_HOST_ETHERPAD" -p "$DATABASE_PORT_ETHERPAD" -U "$DATABASE_USER_ETHERPAD" -c "REVOKE CONNECT ON DATABASE ${DATABASE_NAME_ETHERPAD} FROM public;SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND pg_stat_activity.datname = '${DATABASE_NAME_ETHERPAD}';"
 PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" psql -h "$DATABASE_HOST_ETHERPAD" -p "$DATABASE_PORT_ETHERPAD" -U "$DATABASE_USER_ETHERPAD" -d postgres -c "DROP DATABASE ${DATABASE_NAME_ETHERPAD}"
 PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" psql -h "$DATABASE_HOST_ETHERPAD" -p "$DATABASE_PORT_ETHERPAD" -U "$DATABASE_USER_ETHERPAD" -d postgres -c "CREATE DATABASE ${DATABASE_NAME_ETHERPAD}"
 {{ if eq (default "full" .Values.dbpMoodle.restore.dump_kind) "full" }}
