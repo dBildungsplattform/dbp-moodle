@@ -74,7 +74,7 @@ redis:
 image:
   registry: ghcr.io
   repository: dbildungsplattform/moodle
-  tag: 4.5.10-fpm-bookworm-8.2.30-dbp1
+  tag: 4.5.10-fpm-bookworm-8.2.30-dbp2
   digest: ""
   ## Specify a imagePullPolicy
   ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
