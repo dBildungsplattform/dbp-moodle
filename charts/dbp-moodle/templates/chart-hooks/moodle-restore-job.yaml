@@ -103,6 +103,31 @@ spec:
             secretKeyRef:
               name: {{ .Values.dbpMoodle.restore.existingSecretDatabasePassword }}
               key: {{ .Values.dbpMoodle.restore.existingSecretKeyDatabasePassword }}
+        - name: DATABASE_HOST_ETHERPAD
+          valueFrom: 
+            secretKeyRef:
+              name: etherpad-database
+              key: host
+        - name: DATABASE_PORT_ETHERPAD
+          valueFrom: 
+            secretKeyRef:
+              name: etherpad-database
+              key: port
+        - name: DATABASE_NAME_ETHERPAD
+          valueFrom:
+            secretKeyRef:
+              name: etherpad-database
+              key: name
+        - name: DATABASE_USER_ETHERPAD
+          valueFrom:
+            secretKeyRef:
+              name: etherpad-database
+              key: user
+        - name: DATABASE_PASSWORD_ETHERPAD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.etherpadlite.externalDatabase.existingSecret }}
+              key: {{ .Values.etherpadlite.externalDatabase.existingSecretKey }}
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:

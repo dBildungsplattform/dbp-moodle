@@ -77,18 +77,62 @@ mv /tmp/mountData/moodledata/* /dbp-moodle/moodledata/
 mv /tmp/mountData/moodledata/.[!.]* /dbp-moodle/moodledata/
 
 cd /dbp-moodle/
-echo "=== Clear DB ==="
+echo "=== Clear DB (moodle) ==="
 # This command helps with - ERROR: database "moodle" is being accessed by other users
 PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" -c "REVOKE CONNECT ON DATABASE ${DATABASE_NAME} FROM public;SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND pg_stat_activity.datname = '${DATABASE_NAME}';"
 PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" -d postgres -c "DROP DATABASE ${DATABASE_NAME}"
 PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" -d postgres -c "CREATE DATABASE ${DATABASE_NAME}"
 
-echo "=== Copy dump to DB ==="
+{{ if eq (default "full" .Values.dbpMoodle.restore.dump_kind) "full" }}
+echo "=== Copy dump to DB (moodle) ==="
 gunzip /tmp/Full/tmp/backup/moodle_postgresqldb_dump_*
 mv /tmp/Full/tmp/backup/moodle_postgresqldb_dump_* /tmp/moodledb_dump.sql
 
+{{ if .Values.dbpMoodle.restore.replace_db_user_during_restore }}
+# Only necessary during migration process from local postgres to managed postgres.
+# Prior to managed PG database name and user name were 'moodle', post migration they are 'moodle_<instance-name>' so we need to adjust this in the sql commands.
+sed -i -e "s/OWNER TO moodle;/OWNER TO {{ .Values.moodle.externalDatabase.user }};/g" /tmp/moodledb_dump.sql
+{{ end }}
+
 PGPASSWORD="$DATABASE_PASSWORD" psql -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" "$DATABASE_NAME"  < /tmp/moodledb_dump.sql
-echo "=== Finished DB restore ==="
+{{ end }}
+{{ if eq .Values.dbpMoodle.restore.dump_kind "custom" }}
+echo "=== Copy dump to DB (moodle) ==="
+gunzip /tmp/Full/tmp/backup/moodle_postgresqldb_dump_*
+mv /tmp/Full/tmp/backup/moodle_postgresqldb_dump_* /tmp/moodledb.dump
+
+PGPASSWORD="$DATABASE_PASSWORD" pg_restore -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U "$DATABASE_USER" -d "$DATABASE_NAME"  --no-owner --no-privileges --disable-triggers /tmp/moodledb.dump
+{{ end }}
+echo "=== Finished DB restore (moodle) ==="
+
+{{ if .Values.etherpadlite.enabled }}
+echo "=== Clear DB (etherpad) ==="
+# This command helps with - ERROR: database "moodle" is being accessed by other users
+PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" psql -h "$DATABASE_HOST_ETHERPAD" -p "$DATABASE_PORT_ETHERPAD" -U "$DATABASE_USER_ETHERPAD" -c "REVOKE CONNECT ON DATABASE ${DATABASE_NAME_ETHERPAD} FROM public;SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND pg_stat_activity.datname = '${DATABASE_NAME_ETHERPAD}';"
+PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" psql -h "$DATABASE_HOST_ETHERPAD" -p "$DATABASE_PORT_ETHERPAD" -U "$DATABASE_USER_ETHERPAD" -d postgres -c "DROP DATABASE ${DATABASE_NAME_ETHERPAD}"
+PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" psql -h "$DATABASE_HOST_ETHERPAD" -p "$DATABASE_PORT_ETHERPAD" -U "$DATABASE_USER_ETHERPAD" -d postgres -c "CREATE DATABASE ${DATABASE_NAME_ETHERPAD}"
+{{ if eq (default "full" .Values.dbpMoodle.restore.dump_kind) "full" }}
+echo "=== Copy dump to DB (etherpad) ==="
+gunzip /tmp/Full/tmp/backup/etherpad_postgresqldb_dump_*
+mv /tmp/Full/tmp/backup/etherpad_postgresqldb_dump_* /tmp/etherpaddb_dump.sql
+
+{{ if .Values.dbpMoodle.restore.replace_db_user_during_restore }}
+# Only necessary during migration process from local postgres to managed postgres.
+# Prior to managed PG database name and user name were 'etherpad', post migration they are 'etherpad_<instance-name>' so we need to adjust this in the sql commands.
+sed -i -e "s/OWNER TO etherpad;/OWNER TO {{ .Values.etherpadlite.externalDatabase.user }};/g" /tmp/etherpaddb_dump.sql
+{{ end }}
+
+PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" psql -h "$DATABASE_HOST_ETHERPAD" -p "$DATABASE_PORT_ETHERPAD" -U "$DATABASE_USER_ETHERPAD" "$DATABASE_NAME_ETHERPAD"  < /tmp/etherpaddb_dump.sql
+echo "=== Finished DB restore (etherpad) ==="
+{{ end }}
+{{ if eq .Values.dbpMoodle.restore.dump_kind "custom" }}
+echo "=== Copy dump to DB (etherpad) ==="
+gunzip /tmp/Full/tmp/backup/etherpad_postgresqldb_dump_*
+mv /tmp/Full/tmp/backup/etherpad_postgresqldb_dump_* /tmp/etherpaddb.dump
+
+PGPASSWORD="$DATABASE_PASSWORD_ETHERPAD" pg_restore -h "$DATABASE_HOST_ETHERPAD" -p "$DATABASE_PORT_ETHERPAD" -U "$DATABASE_USER_ETHERPAD" -d "$DATABASE_NAME_ETHERPAD"  --no-owner --no-privileges --disable-triggers /tmp/etherpaddb.dump
+{{ end }}
+{{ end }}
 
 echo "=== Scaling deployment replicas to $replicas ==="
 kubectl patch "deployment/${deployment_name}" -n "{{ .Release.Namespace }}" --type=merge -p "$(echo "{\"spec\":{\"replicas\":$replicas}}")"

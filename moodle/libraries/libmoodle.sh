@@ -135,6 +135,8 @@ moodle_initialize() {
         db_name="$MOODLE_DATABASE_NAME"
         db_user="$MOODLE_DATABASE_USER"
         db_pass="$MOODLE_DATABASE_PASSWORD"
+        info "Wait for postgresql connection on $db_host:$db_port $db_name"
+        info "$MOODLE_DATABASE_HOST"
         [[ "$db_type" = "pgsql" ]] && moodle_wait_for_postgresql_connection "$db_host" "$db_port" "$db_name" "$db_user" "$db_pass"
 
         # Create Moodle install argument list, allowing to pass custom options via 'MOODLE_INSTALL_EXTRA_ARGS'
@@ -196,7 +198,7 @@ EOF
         info "Restoring persisted Moodle installation"
         restore_persisted_app "$app_name" "$MOODLE_DATA_TO_PERSIST"
 
-        info "Trying to connect to the database server"
+        info "Trying to connect to the database server $MOODLE_DATABASE_HOST:$MOODLE_DATABASE_PORT_NUMBER $MOODLE_DATABASE_NAME"
         db_type="$(moodle_conf_get "\$CFG->dbtype")"
         db_host="$(moodle_conf_get "\$CFG->dbhost")"
         db_port="$(moodle_conf_get "'dbport'")"
@@ -267,6 +269,9 @@ moodle_wait_for_postgresql_connection() {
     local -r db_name="${3:?missing database name}"
     local -r db_user="${4:?missing database user}"
     local -r db_pass="${5:-}"
+
+    info "wait for postgresql connection on $db_host:$db_port $db_name"
+
     check_postgresql_connection() {
         echo "SELECT 1" | postgresql_remote_execute "$db_host" "$db_port" "$db_name" "$db_user" "$db_pass"
     }
