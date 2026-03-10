@@ -119,7 +119,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | clamav.service.type | string | `"ClusterIP"` |  |
 | clamav.tolerations | list | `[]` |  |
 | dbpMoodle.allowInternalNetworkingOnly | bool | `false` | disallows all egress from release namespace for the moodle deployment |
-| dbpMoodle.backup | object | `{"cluster_name":"","enabled":false,"endpoint":"","gpg_key_names":"","gpgkeys":{"existingSecret":"","gpgkey.dbpinfra.pub.asc":"","gpgkey.dbpinfra.sec.asc":""},"max_full_backup_age":"1W","retention_time":"6M","rules":[{"apiGroups":["apps"],"resources":["deployments"],"verbs":["get","patch","list","watch"]},{"apiGroups":["batch"],"resources":["cronjobs","jobs"],"verbs":["get","patch"]}],"s3_bucket_name":"","s3_certificate_secret":{"enabled":false,"key":"certificate.crt","mountpath":"/certs","name":"s3-certificate"},"secrets":{"existingSecret":"","s3_access_key":"","s3_access_secret":"","s3_endpoint_url":""}}` | Backup configuration. Set enabled=true to enable the backup-cronjob. Also set s3 location credentials |
+| dbpMoodle.backup | object | `{"cluster_name":"","dump_kind":"full","enabled":false,"endpoint":"","gpg_key_names":"","gpgkeys":{"existingSecret":"","gpgkey.dbpinfra.pub.asc":"","gpgkey.dbpinfra.sec.asc":""},"max_full_backup_age":"1W","retention_time":"6M","rules":[{"apiGroups":["apps"],"resources":["deployments"],"verbs":["get","patch","list","watch"]},{"apiGroups":["batch"],"resources":["cronjobs","jobs"],"verbs":["get","patch"]}],"run_pre_upgrade":true,"s3_bucket_name":"","s3_certificate_secret":{"enabled":false,"key":"certificate.crt","mountpath":"/certs","name":"s3-certificate"},"secrets":{"existingSecret":"","s3_access_key":"","s3_access_secret":"","s3_endpoint_url":""}}` | Backup configuration. Set enabled=true to enable the backup-cronjob. Also set s3 location credentials |
 | dbpMoodle.backup.gpgkeys.existingSecret | string | `""` | Existing  secret for gpg keys |
 | dbpMoodle.backup.max_full_backup_age | string | `"1W"` | Defines the maximum age of a full backup before a new full backup is created. The backups in between are incremental |
 | dbpMoodle.backup.retention_time | string | `"6M"` | Defines the maximum age of a backup before it is deleted |
@@ -163,7 +163,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | dbpMoodle.phpConfig.ip.blocked | string | `""` |  |
 | dbpMoodle.phpConfig.pluginUIInstallation | object | `{"enabled":false}` | Prevents the installation of Plugins from the Moodle Web Interface for Admins (Disabled by default) |
 | dbpMoodle.redis | object | `{"host":"moodle-redis-master","port":6379}` | Configurations for the optional redis |
-| dbpMoodle.restore | object | `{"affinity":{},"enabled":false,"existingSecretDatabaseConfig":"moodle-database","existingSecretDatabasePassword":"moodle","existingSecretGPG":"","existingSecretKeyDatabasePassword":"","existingSecretKeyS3Access":"","existingSecretKeyS3Secret":"","existingSecretS3":"","image":"moodle-tools","podSecurityContext":{"fsGroup":1001},"repository":"ghcr.io/dbildungsplattform","resources":{"limits":{"cpu":"2000m","memory":"4Gi"},"requests":{"cpu":"1000m","memory":"2Gi"}},"restoreDate":"","rules":[{"apiGroups":["apps"],"resources":["deployments/scale","deployments"],"verbs":["get","list","patch"]}],"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"runAsGroup":1001},"tag":"1.1.14","tolerations":[]}` | This restores moodle to the latest snapshot. Requires an existing s3 backup. ONLY USE FOR ROLLBACK |
+| dbpMoodle.restore | object | `{"affinity":{},"dump_kind":"full","enabled":false,"existingSecretDatabaseConfig":"moodle-database","existingSecretDatabasePassword":"moodle","existingSecretGPG":"","existingSecretKeyDatabasePassword":"","existingSecretKeyS3Access":"","existingSecretKeyS3Secret":"","existingSecretS3":"","image":"moodle-tools","podSecurityContext":{"fsGroup":1001},"replace_db_user_during_restore":false,"repository":"ghcr.io/dbildungsplattform","resources":{"limits":{"cpu":"2000m","memory":"4Gi"},"requests":{"cpu":"1000m","memory":"2Gi"}},"restoreDate":"","rules":[{"apiGroups":["apps"],"resources":["deployments/scale","deployments"],"verbs":["get","list","patch"]}],"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"runAsGroup":1001},"tag":"1.1.14","tolerations":[]}` | This restores moodle to the latest snapshot. Requires an existing s3 backup. ONLY USE FOR ROLLBACK |
 | dbpMoodle.secrets | object | `{"database_admin_password":"","database_name":"","database_password":"","database_root_password":"","database_user":"","etherpad_api_key":"","etherpad_postgresql_password":"","moodle_password":"","moodle_user":"","redis_password":"","useChartSecret":true}` | Creates a secret with all relevant credentials for moodle -- Set useChartSecret: false to provide your own secret -- If you create your own secret, also set moodle.existingSecret (and moodle.externalDatabase.existingSecret if you bring your own DB) |
 | dbpMoodle.stage | string | `"infra"` |  |
 | dbpMoodle.uninstallSystemPlugins | bool | `false` |  |
@@ -202,6 +202,15 @@ The Chart can be deployed without any modification but it is advised to set own 
 | etherpadlite.env[5].valueFrom.secretKeyRef.name | string | `"moodle"` |  |
 | etherpadlite.env[6].name | string | `"REQUIRE_SESSION"` |  |
 | etherpadlite.env[6].value | string | `"true"` |  |
+| etherpadlite.externalDatabase.database | string | `"etherpad"` | Name of the existing database |
+| etherpadlite.externalDatabase.existingSecret | string | `"moodle"` | Name of an existing secret resource containing the DB password |
+| etherpadlite.externalDatabase.existingSecretKey | string | `"etherpad-postgresql-password"` | Name of the key holding the DB password in the existing Secret |
+| etherpadlite.externalDatabase.host | string | `"moodle-etherpad-postgresql"` | Host of the existing database |
+| etherpadlite.externalDatabase.password | string | `""` | Password for the above username |
+| etherpadlite.externalDatabase.port | int | `5432` | Port of the existing database |
+| etherpadlite.externalDatabase.ssl | bool | `false` | Use ssl to communicate with the database |
+| etherpadlite.externalDatabase.type | string | `"postgres"` | Type of DB to provision, possible values are "postgres" |
+| etherpadlite.externalDatabase.user | string | `"etherpad"` | Existing username in the external db |
 | etherpadlite.image.repository | string | `"ghcr.io/dbildungsplattform/etherpad"` |  |
 | etherpadlite.image.tag | string | `"2.6.1.0"` |  |
 | etherpadlite.ingress.annotations."cert-manager.io/cluster-issuer" | string | `"sc-cert-manager-clusterissuer-letsencrypt"` |  |
@@ -220,10 +229,15 @@ The Chart can be deployed without any modification but it is advised to set own 
 | etherpadlite.volumeMounts[0].mountPath | string | `"/opt/etherpad-lite/APIKEY.txt"` |  |
 | etherpadlite.volumeMounts[0].name | string | `"api-key"` |  |
 | etherpadlite.volumeMounts[0].subPath | string | `"APIKEY.txt"` |  |
+| etherpadlite.volumeMounts[1].mountPath | string | `"/opt/etherpad-lite/settings.json"` |  |
+| etherpadlite.volumeMounts[1].name | string | `"etherpad-settings"` |  |
+| etherpadlite.volumeMounts[1].subPath | string | `"settings"` |  |
 | etherpadlite.volumes[0].name | string | `"api-key"` |  |
 | etherpadlite.volumes[0].secret.items[0].key | string | `"etherpad-api-key"` |  |
 | etherpadlite.volumes[0].secret.items[0].path | string | `"APIKEY.txt"` |  |
 | etherpadlite.volumes[0].secret.secretName | string | `"moodle"` |  |
+| etherpadlite.volumes[1].configMap.name | string | `"etherpad-settings"` |  |
+| etherpadlite.volumes[1].name | string | `"etherpad-settings"` |  |
 | global.kubectl_version | string | `"1.28.7"` |  |
 | global.moodlePlugins | object | `{"adaptable":{"enabled":false},"availability_cohort":{"enabled":false},"block_stash":{"enabled":false},"board":{"enabled":false},"booking":{"enabled":false},"boost_magnific":{"enabled":false},"boost_union":{"enabled":false},"certificate":{"enabled":false},"choicegroup":{"enabled":false},"completion_progress":{"enabled":false},"coursearchiver":{"enabled":false},"coursecertificate":{"enabled":false},"customfield_dynamic":{"enabled":false},"dash":{"enabled":false},"dynamic_cohorts":{"enabled":false},"etherpadlite":{"enabled":false},"filtercodes":{"enabled":false},"flexsections":{"enabled":false},"geogebra":{"enabled":false},"groupselect":{"enabled":false},"heartbeat":{"enabled":false},"hvp":{"enabled":false},"jitsi":{"enabled":false},"mod_checklist":{"enabled":false},"mod_subcourse":{"enabled":false},"mod_videotime":{"enabled":false},"multitopic":{"enabled":false},"oidc":{"enabled":false},"pdfannotator":{"enabled":false},"qtype_stack":{"enabled":false},"reengagement":{"enabled":false},"remuiformat":{"enabled":false},"saml2":{"enabled":false},"sharing_cart":{"enabled":false},"shortcodes":{"enabled":false},"skype":{"enabled":false},"snap":{"enabled":false},"staticpage":{"enabled":false},"tiles":{"enabled":false},"topcoll":{"enabled":false},"unilabel":{"enabled":false},"usersuspension":{"enabled":false},"xp":{"enabled":false},"zoom":{"enabled":false}}` | All plugins are disabled by default. if enabled, the plugin is installed on image startup |
 | global.security.allowInsecureImages | bool | `true` |  |
