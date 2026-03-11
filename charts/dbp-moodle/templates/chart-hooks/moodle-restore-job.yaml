@@ -103,6 +103,7 @@ spec:
             secretKeyRef:
               name: {{ .Values.dbpMoodle.restore.existingSecretDatabasePassword }}
               key: {{ .Values.dbpMoodle.restore.existingSecretKeyDatabasePassword }}
+        {{ if .Values.etherpadlite.enabled }}
         - name: DATABASE_HOST_ETHERPAD
           valueFrom: 
             secretKeyRef:
@@ -128,6 +129,7 @@ spec:
             secretKeyRef:
               name: {{ .Values.etherpadlite.externalDatabase.existingSecret }}
               key: {{ .Values.etherpadlite.externalDatabase.existingSecretKey }}
+        {{ end }}
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
