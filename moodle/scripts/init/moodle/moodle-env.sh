@@ -122,7 +122,7 @@ export MOODLE_DATABASE_USER="${MOODLE_DATABASE_USER:-moodle}" # only used during
 export MOODLE_DATABASE_PASSWORD="${MOODLE_DATABASE_PASSWORD:-}" # only used during the first initialization
 
 # PHP configuration
-export PHP_DEFAULT_MEMORY_LIMIT="256M" # only used at build time
+export PHP_DEFAULT_MEMORY_LIMIT="512M" # only used at build time
 export PHP_DEFAULT_MAX_INPUT_VARS="5000" # only used at build time
 
 # Custom environment variables may be defined below
