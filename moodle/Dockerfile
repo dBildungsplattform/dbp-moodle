@@ -100,6 +100,8 @@ RUN /scripts/install/moodleInstall.sh
 
 EXPOSE 8080 8443
 
+RUN cat /usr/local/etc/php/php.ini
+
 # Install plugins to the image
 RUN mkdir /plugins && /scripts/install/downloadPlugins.sh
 
