@@ -78,8 +78,7 @@ for plugin in "${moodle_plugin_list[@]}"; do
         echo "Reached batch of 15 plugins. Sleeping for 60 seconds..."
         sleep 60
     fi
-    php -r 'echo "memory_limit=", ini_get("memory_limit"), PHP_EOL;'
-    moosh plugin-download -v "$major_minor" "$plugin"
+    php -d memory_limit=256M /usr/local/bin/moosh plugin-download -v "$major_minor" "$plugin"
     check_plugin_size "$plugin"
     ((plugin_index++))
 done
