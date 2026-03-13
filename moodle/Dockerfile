@@ -55,7 +55,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- \
 
 # Install moosh for plugin management
 # Because of current problems with moosh and no new release we use commit hashes. This one is the version bump to 1.38
-RUN curl -L https://github.com/tmuras/moosh/archive/12bf474815d0be2395a6689f9fa833eb0a7b83b0.tar.gz -o moosh.tar.gz && \
+RUN curl -L https://github.com/tmuras/moosh/archive/c7674a7b8de77a3205a289c89bed093377a20004.tar.gz -o moosh.tar.gz && \
     mkdir /moosh && tar -xzvf moosh.tar.gz -C /moosh/ --strip-components=1
 RUN mkdir /.moosh &&\
     chmod 774 /.moosh &&\
