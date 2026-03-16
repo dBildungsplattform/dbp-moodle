@@ -1,11 +1,12 @@
 FROM php:8.2.30-fpm-bookworm AS build
 USER root
-ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.5.8"}
+ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.5.10"}
 #This is the path moodle will be placed after downloading for our Moodle Update Pipeline
 ARG MOODLE_PATH="/opt/dbp-moodle/moodle"
 ARG EXTRA_LOCALES=""
-ARG APACHE_VERSION=${APACHE_VERSION:-"2.4.57"}
-ARG APACHE_DOWNLOAD_URL="https://snapshot.debian.org/archive/debian/20230408T145143Z/pool/main/a/apache2"
+#At the moment Apache will be updated to the latest release as unattended update during the build process
+ARG APACHE_VERSION=${APACHE_VERSION:-"2.4.66-1~deb12u1"}
+ARG APACHE_DOWNLOAD_URL="https://snapshot.debian.org/archive/debian/20260131T202859Z/pool/main/a/apache2/"
 WORKDIR /
 ARG WITH_ALL_LOCALES="no"
 RUN mkdir /bitnami
@@ -34,11 +35,11 @@ RUN apt-get update && \
     apt-get install -y postgresql-client-13
 
 # Install apache2 and its dependencies
-RUN apt-get install -y libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-ldap libexpat1 liblua5.3-0 media-types procps && \
-    curl -LO ${APACHE_DOWNLOAD_URL}/apache2-bin_${APACHE_VERSION}-1_amd64.deb && \
-    curl -LO ${APACHE_DOWNLOAD_URL}/apache2-data_${APACHE_VERSION}-1_all.deb && \
-    curl -LO ${APACHE_DOWNLOAD_URL}/apache2-utils_${APACHE_VERSION}-1_amd64.deb && \
-    curl -LO ${APACHE_DOWNLOAD_URL}/apache2_${APACHE_VERSION}-1_amd64.deb && \
+RUN apt-get install -y libapr1 libaprutil1 libc6 libaprutil1-dbd-sqlite3 libcurl4 libaprutil1-ldap libldap-2.5-0 libexpat1 liblua5.3-0 libssl3 libxml2 media-types procps && \
+    curl -LO ${APACHE_DOWNLOAD_URL}/apache2-bin_${APACHE_VERSION}_amd64.deb && \
+    curl -LO ${APACHE_DOWNLOAD_URL}/apache2-data_${APACHE_VERSION}_all.deb && \
+    curl -LO ${APACHE_DOWNLOAD_URL}/apache2-utils_${APACHE_VERSION}_amd64.deb && \
+    curl -LO ${APACHE_DOWNLOAD_URL}/apache2_${APACHE_VERSION}_amd64.deb && \
     dpkg -i *.deb && \
     apt-get install -y libapache2-mod-fcgid && \
     rm *.deb
@@ -54,7 +55,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- \
 
 # Install moosh for plugin management
 # Because of current problems with moosh and no new release we use commit hashes. This one is the version bump to 1.38
-RUN curl -L https://github.com/tmuras/moosh/archive/12bf474815d0be2395a6689f9fa833eb0a7b83b0.tar.gz -o moosh.tar.gz && \
+RUN curl -L https://github.com/tmuras/moosh/archive/c7674a7b8de77a3205a289c89bed093377a20004.tar.gz -o moosh.tar.gz && \
     mkdir /moosh && tar -xzvf moosh.tar.gz -C /moosh/ --strip-components=1
 RUN mkdir /.moosh &&\
     chmod 774 /.moosh &&\
@@ -70,9 +71,7 @@ RUN MAJOR_MINOR=$(echo "$MOODLE_VERSION" | cut -d. -f1,2) && \
 
 # Hardening
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get clean && rm -rf /var/lib/apt/lists /var/cache/apt/archives
-RUN apt-get update && apt-get upgrade -y && \
-    apt-get clean && rm -rf /var/lib/apt/lists /var/cache/apt/archives
+    apt-get clean && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 RUN find / -perm /6000 -type f -exec chmod a-s {} \; || true
 RUN sed -i -e '/pam_loginuid.so/ s/^#*/#/' /etc/pam.d/cron
 

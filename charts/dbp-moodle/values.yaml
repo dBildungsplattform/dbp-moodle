@@ -132,7 +132,6 @@ dbpMoodle:
   redis:
     host: "moodle-redis-master"
     port: 6379
-    password: ""
 
   external_pvc:
     enabled: true
@@ -149,10 +148,15 @@ dbpMoodle:
   secrets:
     useChartSecret: true
     moodle_password: ""
+    moodle_user: ""
+    database_admin_password: ""
     database_password: ""
+    database_user: ""
+    database_name: ""
     database_root_password: ""
     etherpad_postgresql_password: ""
     etherpad_api_key: ""
+    redis_password: ""
 
   # -- A preperation job which disables the php-cronjob, scales down the deployment and creates a backup if dbpMoodle.backup.enabled=true
   moodleUpdatePreparationJob:
@@ -163,7 +167,7 @@ dbpMoodle:
     # -- Which kubectl image to use
     repository: "ghcr.io/dbildungsplattform"
     image: "moodle-tools"
-    tag: "1.1.13"
+    tag: "1.1.14"
 
   moodleUpdatePreparationHook:
     rules:
@@ -177,6 +181,8 @@ dbpMoodle:
   # -- Backup configuration. Set enabled=true to enable the backup-cronjob. Also set s3 location credentials
   backup:
     enabled: false
+    dump_kind: "full" # Possible values: full, custom
+    run_pre_upgrade: true
     # -- Defines the maximum age of a backup before it is deleted
     retention_time: "6M"
     # -- Defines the maximum age of a full backup before a new full backup is created. The backups in between are incremental
@@ -216,9 +222,13 @@ dbpMoodle:
   # -- This restores moodle to the latest snapshot. Requires an existing s3 backup. ONLY USE FOR ROLLBACK
   restore:
     enabled: false
+    restoreDate: ""
+    # replace_db_user_during_restore is only added for the migration from local to managed postgres as the restore script needs to be adjusted dynamically
+    replace_db_user_during_restore: false
+    dump_kind: "full" # Possible values: full, custom
     repository: "ghcr.io/dbildungsplattform"
     image: "moodle-tools"
-    tag: "1.1.13"
+    tag: "1.1.14"
     resources:
       limits:
         cpu: 2000m
@@ -313,13 +323,15 @@ dbpMoodle:
         type: RuntimeDefault
 
 moodle:
+  redis:
+    enabled: '{{- include "moodle.redis.enabled" . -}}'
   updateStrategy:
     type: RollingUpdate
   image:
     registry: "ghcr.io"
     repository: "dbildungsplattform/moodle"
     # -- The dbp-moodle image which is build for this helm chart
-    tag: "4.5.8-fpm-bookworm-8.2.30-dbp1"
+    tag: "4.5.10-fpm-bookworm-8.2.30-dbp3"
     pullPolicy: Always
     # -- Debug mode for more detailed moodle installation and log output
     debug: false
@@ -532,7 +544,27 @@ etherpadlite:
   enabled: false
   image:
     repository: "ghcr.io/dbildungsplattform/etherpad"
-    tag: "2.2.7.0"
+    tag: "2.6.1.0"
+  # Currently this data is doubled with the env vars because we need the fields for backup and retore jobs
+  externalDatabase:
+    # -- Type of DB to provision, possible values are "postgres"
+    type: "postgres"
+    # -- Host of the existing database
+    host: "moodle-etherpad-postgresql"
+    # -- Port of the existing database
+    port: 5432
+    # -- Existing username in the external db
+    user: "etherpad"
+    # -- Password for the above username
+    password: ""
+    # -- Name of the existing database
+    database: "etherpad"
+    # -- Name of an existing secret resource containing the DB password
+    existingSecret: "moodle"
+    # -- Name of the key holding the DB password in the existing Secret
+    existingSecretKey: "etherpad-postgresql-password"
+    # -- -- Use ssl to communicate with the database
+    ssl: false
   env:
     - name: DB_TYPE
       value: "postgres"
@@ -558,10 +590,16 @@ etherpadlite:
         items:
           - key: "etherpad-api-key"
             path: "APIKEY.txt"
+    - name: "etherpad-settings"
+      configMap:
+        name: "etherpad-settings"
   volumeMounts:
     - name: "api-key"
       mountPath: "/opt/etherpad-lite/APIKEY.txt"
       subPath: "APIKEY.txt"
+    - name: "etherpad-settings"
+      mountPath: "/opt/etherpad-lite/settings.json"
+      subPath: settings
   ingress:
     enabled: true
     annotations:
@@ -625,7 +663,7 @@ etherpad-postgresql:
 moodlecronjob:
   image:
     repository: "ghcr.io/dbildungsplattform/moodle-tools"
-    tag: "1.1.13"
+    tag: "1.1.14"
   clusterRole:
     create: false
   serviceAccount:
@@ -677,7 +715,7 @@ moodlecronjob:
 backup-cronjob:
   image:
     repository: "ghcr.io/dbildungsplattform/moodle-tools"
-    tag: "1.1.13"
+    tag: "1.1.14"
   clusterRole:
     create: false
   serviceAccount:
