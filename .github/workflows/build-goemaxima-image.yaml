@@ -11,9 +11,9 @@ on:
         type: string
 
       goemaxima-ref:
-        description: "Ref of mathinstitut/goemaxima to build (branch, tag or SHA)"
+        description: "Ref of mathinstitut/goemaxima to build (branch, tag, SHA or blank to use latest available tag) "
         type: string
-        default: "master"
+        default: ""
 
 concurrency:
   group: dbp-moodle-goemaxima-image
@@ -27,12 +27,36 @@ jobs:
       SBCL_VERSION:         ${{ steps.vars.outputs.SBCL_VERSION }}
       LIB_PATH:             ${{ steps.vars.outputs.LIB_PATH }}
       LATEST_STACK_VERSION: ${{ steps.latest.outputs.LATEST_STACK_VERSION }}
+      LATEST_GOEMAXIMA_TAG: ${{ steps.semver.outputs.LATEST_GOEMAXIMA_TAG }}
     steps:
+      - name: Extract latest goemaxima tag (x.y.z)
+        id: semver
+        shell: bash
+        run: |
+          set -euo pipefail
+          # List remote tags, keep only refs/tags that look like x.y.z (ignore the existing ones with stack-version prefix),
+          # sort naturally by version, and take the last one.
+          LATEST_TAG="$(git ls-remote --tags --refs https://github.com/mathinstitut/goemaxima.git \
+            | awk -F/ '{print $3}' \
+            | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' \
+            | sort -V \
+            | tail -n1 || true)"
+
+          if [ -z "${LATEST_TAG:-}" ]; then
+            echo "No semver tag (x.y.z) found in mathinstitut/goemaxima, falling back to master" >&2
+            # Fallback to master to not break the build
+            LATEST_TAG="master"
+          fi
+
+          echo "Resolved latest goemaxima tag: $LATEST_TAG"
+          echo "LATEST_GOEMAXIMA_TAG=$LATEST_TAG" >> "$GITHUB_OUTPUT"
+
+
       - name: Checkout goemaxima
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
         with:
           repository: mathinstitut/goemaxima
-          ref: ${{ inputs['goemaxima-ref'] || 'master' }}
+          ref: ${{ inputs['goemaxima-ref'] || steps.semver.outputs.LATEST_GOEMAXIMA_TAG }}
           path: goemaxima
 
       - name: Extract latest stack version
@@ -91,7 +115,7 @@ jobs:
       image_name: "goemaxima"
       run_trivy_scan: true
       image_tag_generation: specified
-      image_tag: "${{ inputs['stack-version'] || needs.get_build_args.outputs.LATEST_STACK_VERSION }}"
+      image_tag: "${{ inputs['stack-version'] || needs.get_build_args.outputs.LATEST_STACK_VERSION }}-${{ inputs['goemaxima-ref'] || needs.get_build_args.outputs.LATEST_GOEMAXIMA_TAG }}"
       add_latest_tag: false
       container_registry: "ghcr.io"
       fail_on_vulnerabilites: false
