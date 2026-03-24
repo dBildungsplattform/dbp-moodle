@@ -13,7 +13,7 @@ on:
       goemaxima-ref:
         description: "Ref of mathinstitut/goemaxima to build (branch, tag, SHA or blank to use latest available tag) "
         type: string
-        default: ""
+        default: "master"
 
 concurrency:
   group: dbp-moodle-goemaxima-image
@@ -27,7 +27,7 @@ jobs:
       SBCL_VERSION:         ${{ steps.vars.outputs.SBCL_VERSION }}
       LIB_PATH:             ${{ steps.vars.outputs.LIB_PATH }}
       LATEST_STACK_VERSION: ${{ steps.latest.outputs.LATEST_STACK_VERSION }}
-      LATEST_GOEMAXIMA_TAG: ${{ steps.semver.outputs.LATEST_GOEMAXIMA_TAG }}
+      LATEST_GOEMAXIMA_TAG: ${{ steps.semver.outputs.LATEST_GOEMAXIMA_TAG }}  # Currently not used as the tags were not updated since 2024.
     steps:
       - name: Extract latest goemaxima tag (x.y.z)
         id: semver
@@ -56,7 +56,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
         with:
           repository: mathinstitut/goemaxima
-          ref: ${{ inputs['goemaxima-ref'] || steps.semver.outputs.LATEST_GOEMAXIMA_TAG }}
+          ref: ${{ inputs['goemaxima-ref'] || 'master' }}
           path: goemaxima
 
       - name: Extract latest stack version
@@ -115,7 +115,7 @@ jobs:
       image_name: "goemaxima"
       run_trivy_scan: true
       image_tag_generation: specified
-      image_tag: "${{ inputs['stack-version'] || needs.get_build_args.outputs.LATEST_STACK_VERSION }}-${{ inputs['goemaxima-ref'] || needs.get_build_args.outputs.LATEST_GOEMAXIMA_TAG }}"
+      image_tag: "${{ inputs['stack-version'] || needs.get_build_args.outputs.LATEST_STACK_VERSION }}-${{ inputs['goemaxima-ref'] || 'master' }}"
       add_latest_tag: false
       container_registry: "ghcr.io"
       fail_on_vulnerabilites: false

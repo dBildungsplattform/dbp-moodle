@@ -287,8 +287,8 @@ dbpMoodle:
   goemaxima:
     enabled: false
     image:
-      repository: mathinstitut/goemaxima
-      tag: "2026010500-1.2.0"
+      repository: ghcr.io/dbildungsplattform/goemaxima
+      tag: "2026010500-main"
       digest: "sha256:897e3b77a02a1a491b5348be86e8aa063438f484c0697ec47498f40f2f99a680"
       pullPolicy: IfNotPresent
 
