@@ -11,7 +11,7 @@ on:
         type: string
 
       goemaxima-ref:
-        description: "Ref of mathinstitut/goemaxima to build (branch, tag, SHA or blank to use latest available tag) "
+        description: "Ref of mathinstitut/goemaxima to build (branch, tag, SHA or blank to use latest available tag)"
         type: string
         default: "master"
 
