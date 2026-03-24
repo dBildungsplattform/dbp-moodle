@@ -27,13 +27,13 @@ jobs:
       MAXIMA_VERSION:       ${{ steps.vars.outputs.MAXIMA_VERSION }}
       SBCL_VERSION:         ${{ steps.vars.outputs.SBCL_VERSION }}
       LIB_PATH:             ${{ steps.vars.outputs.LIB_PATH }}
-      LATEST_STACK_VERSION: ${{ steps.vars.outputs.LATEST_STACK_VERSION }}
+      LATEST_STACK_VERSION: ${{ steps.latest.outputs.LATEST_STACK_VERSION }}
     steps:
       - name: Checkout goemaxima
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
         with:
           repository: mathinstitut/goemaxima
-          ref: ${{ inputs.goemaxima-ref || 'master' }}
+          ref: ${{ inputs['goemaxima-ref'] || 'master' }}
           path: goemaxima
 
       - name: Extract latest stack version
@@ -81,7 +81,7 @@ jobs:
           echo "LIB_PATH:         $LIB_PATH"
           echo "::endgroup::"
 
-
+          echo inputs['stack-version']  # TODO just for testing, remove afterwards
 
   build_image_and_push:
     permissions:
@@ -98,7 +98,7 @@ jobs:
       add_latest_tag: false
       container_registry: "ghcr.io"
       fail_on_vulnerabilites: false
-      context: "https://github.com/mathinstitut/goemaxima.git#${{ inputs.goemaxima-ref }}"
+      context: "https://github.com/mathinstitut/goemaxima.git#${{ inputs.goemaxima-ref || 'master' }}"
       build_args: |
         MAXIMA_VERSION=${{ needs.get_build_args.outputs.MAXIMA_VERSION }}
         SBCL_VERSION=${{ needs.get_build_args.outputs.SBCL_VERSION }}
