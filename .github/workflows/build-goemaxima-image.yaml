@@ -110,7 +110,7 @@ jobs:
       security-events: write
       contents: read
     needs: get_build_args
-    uses: dBildungsplattform/dbp-github-workflows/.github/workflows/image-publish-trivy.yaml@DBP-2191-enable-build-args-for-image-publish   # TODO adjust reference before merge.
+    uses: dBildungsplattform/dbp-github-workflows/.github/workflows/image-publish-trivy.yaml@DBP-2191-enable-build-args-for-image-publish   # TODO adjust reference before merge
     with:
       image_name: "goemaxima"
       run_trivy_scan: true
