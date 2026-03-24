@@ -91,7 +91,7 @@ jobs:
       image_name: "goemaxima"
       run_trivy_scan: true
       image_tag_generation: specified
-      image_tag: "${{ inputs['stack-version'] || needs.get_build_args.outputs.LATEST_STACK_VERSION }}-test" # TODO remove the test suffix before merge on main
+      image_tag: "${{ inputs['stack-version'] || needs.get_build_args.outputs.LATEST_STACK_VERSION }}"
       add_latest_tag: false
       container_registry: "ghcr.io"
       fail_on_vulnerabilites: false
