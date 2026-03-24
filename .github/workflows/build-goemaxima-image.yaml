@@ -32,17 +32,17 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: mathinstitut/goemaxima
-          ref: ${{ inputs.goemaxima-ref }}
+          ref: ${{ inputs.goemaxima-ref || 'master' }}
           path: goemaxima
 
-      - name: Extract versions for ${{ inputs.stack-version }}
+      - name: Extract versions for ${{ inputs.stack-version || '2026010500' }}
         id: vars
         shell: bash
         run: |
           set -euo pipefail
           cd goemaxima
 
-          STACK="${{ inputs['stack-version'] }}"
+          STACK="${{ inputs.stack-version || '2026010500' }}"
           # Find the line for this stack version in the 'versions' file
           LINE="$(awk -v s="$STACK" '$1==s{print $0}' versions || true)"
           if [ -z "$LINE" ]; then
