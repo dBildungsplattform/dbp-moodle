@@ -6,10 +6,9 @@ on:
   workflow_dispatch:
     inputs:
       stack-version:
-        description: "Stack version to build the goemaxima server image for"
-        default: "2026010500"
+        description: "Stack version to build the goemaxima server image for (blank to use latest available in versions file)"
+        default: ""
         type: string
-        required: true
 
       goemaxima-ref:
         description: "Ref of mathinstitut/goemaxima to build (branch, tag or SHA)"
@@ -42,7 +41,7 @@ jobs:
         run: |
           set -euo pipefail
           cd goemaxima
-          # Grab the last non-comment, non-empty line and print the first field
+          # Grab the last non-comment, non-empty line and print the first field from the versions file
           LATEST="$(awk '!/^#/ && NF { last=$1 } END { print last }' versions)"
           if [ -z "${LATEST:-}" ]; then
             echo "Could not determine latest stack version from 'versions' file" >&2
@@ -50,14 +49,14 @@ jobs:
           fi
           echo "LATEST_STACK_VERSION=$LATEST" >> "$GITHUB_OUTPUT"
 
-      - name: Extract versions for ${{ inputs.stack-version || steps.latest.outputs.LATEST_STACK_VERSION }}
+      - name: Extract versions for ${{ inputs['stack-version'] || steps.latest.outputs.LATEST_STACK_VERSION }}
         id: vars
         shell: bash
         run: |
           set -euo pipefail
           cd goemaxima
 
-          STACK="${{ inputs.stack-version || steps.latest.outputs.LATEST_STACK_VERSION }}"
+          STACK="${{ inputs['stack-version'] || steps.latest.outputs.LATEST_STACK_VERSION }}"
           # Find the line for this stack version in the 'versions' file
           LINE="$(awk -v s="$STACK" '$1==s{print $0}' versions || true)"
           if [ -z "$LINE" ]; then
@@ -81,8 +80,6 @@ jobs:
           echo "LIB_PATH:         $LIB_PATH"
           echo "::endgroup::"
 
-          echo "${{ inputs['stack-version'] }}"  # TODO just for testing, remove afterwards
-
   build_image_and_push:
     permissions:
       packages: write
@@ -94,11 +91,11 @@ jobs:
       image_name: "goemaxima"
       run_trivy_scan: true
       image_tag_generation: specified
-      image_tag: "${{ inputs.stack-version || needs.get_build_args.outputs.LATEST_STACK_VERSION }}-test" # TODO remove the test suffix before merge on main
+      image_tag: "${{ inputs['stack-version'] || needs.get_build_args.outputs.LATEST_STACK_VERSION }}-test" # TODO remove the test suffix before merge on main
       add_latest_tag: false
       container_registry: "ghcr.io"
       fail_on_vulnerabilites: false
-      context: "https://github.com/mathinstitut/goemaxima.git#${{ inputs.goemaxima-ref || 'master' }}"
+      context: "https://github.com/mathinstitut/goemaxima.git#${{ inputs['goemaxima-ref'] || 'master' }}"
       build_args: |
         MAXIMA_VERSION=${{ needs.get_build_args.outputs.MAXIMA_VERSION }}
         SBCL_VERSION=${{ needs.get_build_args.outputs.SBCL_VERSION }}
