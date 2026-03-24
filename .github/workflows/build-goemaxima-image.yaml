@@ -1,0 +1,81 @@
+name: Build Goemaxima Image
+on:
+  push:
+    branches: [DBP-1988-maxima]
+
+  workflow_dispatch:
+    inputs:
+      stack-version:
+        description: "Stack version to build the goemaxima server image for"
+        default: "2026010500"
+        type: string
+        required: true
+
+      goemaxima-ref:
+        description: "Ref of mathinstitut/goemaxima to build (branch, tag or SHA)"
+        type: string
+        default: "master"
+
+concurrency:
+  group: dbp-moodle-goemaxima-image
+  cancel-in-progress: true
+
+jobs:
+  get_build_args:
+    runs-on: ubuntu-latest
+    outputs:
+      MAXIMA_VERSION: ${{ steps.vars.outputs.MAXIMA_VERSION }}
+      SBCL_VERSION:   ${{ steps.vars.outputs.SBCL_VERSION }}
+      LIB_PATH:       ${{ steps.vars.outputs.LIB_PATH }}
+    steps:
+      - name: Checkout goemaxima
+        uses: actions/checkout@v4
+        with:
+          repository: mathinstitut/goemaxima
+          ref: ${{ inputs.goemaxima-ref }}
+          path: goemaxima
+
+      - name: Extract versions for ${{ inputs.stack-version }}
+        id: vars
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd goemaxima
+
+          STACK="${{ inputs['stack-version'] }}"
+          # Find the line for this stack version in the 'versions' file
+          LINE="$(awk -v s="$STACK" '$1==s{print $0}' versions || true)"
+          if [ -z "$LINE" ]; then
+            echo "Requested stack version '$STACK' not found in versions file" >&2
+            exit 1
+          fi
+
+          MAXIMA_VERSION="$(echo "$LINE" | cut -f2)"
+          SBCL_VERSION="$(echo "$LINE"   | cut -f3)"
+
+          echo "MAXIMA_VERSION=$MAXIMA_VERSION"           >> "$GITHUB_OUTPUT"
+          echo "SBCL_VERSION=$SBCL_VERSION"               >> "$GITHUB_OUTPUT"
+          echo "LIB_PATH=stack/${STACK}/maxima"           >> "$GITHUB_OUTPUT"
+
+
+  build_image_and_push:
+    permissions:
+      packages: write
+      security-events: write
+      contents: read
+    needs: get_build_args
+    uses: dBildungsplattform/dbp-github-workflows/.github/workflows/image-publish-trivy.yaml@DBP-2191-enable-build-args-for-image-publish
+    with:
+      image_name: "goemaxima"
+      run_trivy_scan: false
+      image_tag_generation: specified
+      image_tag: "${{ inputs.stack-version }}-test" # TODO remove the test suffix before merge on main
+      add_latest_tag: false
+      container_registry: "ghcr.io"
+      fail_on_vulnerabilites: false
+      context: "https://github.com/mathinstitut/goemaxima.git#${{ inputs.goemaxima-ref }}"
+      dockerfile: "./goemaxima/Dockerfile"
+      build_args: |
+        MAXIMA_VERSION=
+        SBCL_VERSION=
+        LIB_PATH=
