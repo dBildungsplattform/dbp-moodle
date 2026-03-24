@@ -67,6 +67,7 @@ jobs:
 
           MAXIMA_VERSION="$(echo "$LINE" | cut -f2)"
           SBCL_VERSION="$(echo "$LINE"   | cut -f3)"
+          LIB_PATH="stack/${STACK}/maxima"
 
           # Job outputs for downstream jobs
           echo "MAXIMA_VERSION=$MAXIMA_VERSION"           >> "$GITHUB_OUTPUT"
