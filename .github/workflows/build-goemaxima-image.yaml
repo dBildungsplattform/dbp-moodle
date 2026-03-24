@@ -74,7 +74,6 @@ jobs:
       container_registry: "ghcr.io"
       fail_on_vulnerabilites: false
       context: "https://github.com/mathinstitut/goemaxima.git#${{ inputs.goemaxima-ref }}"
-      dockerfile: "Dockerfile"
       build_args: |
         MAXIMA_VERSION=${{ needs.get_build_args.outputs.MAXIMA_VERSION }}
         SBCL_VERSION=${{ needs.get_build_args.outputs.SBCL_VERSION }}
