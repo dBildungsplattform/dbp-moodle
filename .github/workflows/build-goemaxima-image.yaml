@@ -30,7 +30,7 @@ jobs:
       LATEST_STACK_VERSION: ${{ steps.vars.outputs.LATEST_STACK_VERSION }}
     steps:
       - name: Checkout goemaxima
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
         with:
           repository: mathinstitut/goemaxima
           ref: ${{ inputs.goemaxima-ref || 'master' }}
