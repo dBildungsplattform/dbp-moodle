@@ -1,7 +1,5 @@
 name: Build Goemaxima Image
 on:
-  push:
-    branches: ["DBP-1988-maxima"]
   workflow_dispatch:
     inputs:
       stack-version:
