@@ -24,6 +24,7 @@ jobs:
       SBCL_VERSION:         ${{ steps.vars.outputs.SBCL_VERSION }}
       LIB_PATH:             ${{ steps.vars.outputs.LIB_PATH }}
       LATEST_STACK_VERSION: ${{ steps.latest.outputs.LATEST_STACK_VERSION }}
+      IMAGE_TAG_REF:        ${{ steps.tag.outputs.ref_tag }}
     steps:
       - name: Checkout goemaxima
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
@@ -77,6 +78,19 @@ jobs:
           echo "LIB_PATH:         $LIB_PATH"
           echo "::endgroup::"
 
+      - name: Set image tag
+        id: tag
+        shell: bash
+        run: |
+          REF="${{ inputs['goemaxima-ref'] || 'master' }}"
+          if [ "$REF" = "master" ]; then
+            TIMESTAMP=$(date +%Y%m%d)
+            TAG="master-${TIMESTAMP}"
+          else
+            TAG="$REF"
+          fi
+          echo "ref_tag=$TAG" >> "$GITHUB_OUTPUT"
+
   build_image_and_push:
     permissions:
       packages: write
@@ -88,7 +102,7 @@ jobs:
       image_name: "goemaxima"
       run_trivy_scan: true
       image_tag_generation: specified
-      image_tag: "${{ inputs['stack-version'] || needs.get_build_args.outputs.LATEST_STACK_VERSION }}-${{ inputs['goemaxima-ref'] || 'master' }}"
+      image_tag: "${{ inputs['stack-version'] || needs.get_build_args.outputs.LATEST_STACK_VERSION }}-${{ needs.get_build_args.outputs.IMAGE_TAG_REF }}"
       add_latest_tag: false
       container_registry: "ghcr.io"
       fail_on_vulnerabilites: false
