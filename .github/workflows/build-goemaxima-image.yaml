@@ -1,7 +1,5 @@
 name: Build Goemaxima Image
 on:
-  push: 
-    branches: ["DBP-1988-maxima"]
   workflow_dispatch:
     inputs:
       stack-version:
@@ -80,6 +78,8 @@ jobs:
           echo "LIB_PATH:         $LIB_PATH"
           echo "::endgroup::"
 
+      # The versioning of the repository is not actively used (last version bump to 1.2.0 was in 2024, changes to the dockerfile were made past this point)
+      # Therefore we have to build from the main branch and add a timestammp if we do so.
       - name: Set image tag
         id: tag
         shell: bash
