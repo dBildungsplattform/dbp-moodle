@@ -91,11 +91,11 @@ jobs:
       image_name: "goemaxima"
       run_trivy_scan: true
       image_tag_generation: specified
-      image_tag: "${{ inputs['stack-version'] || needs.get_build_args.outputs.LATEST_STACK_VERSION }}-${{ inputs['goemaxima-ref'] || 'master' }}"
+      image_tag: "${{ inputs['stack-version'] || needs.get_build_args.outputs.LATEST_STACK_VERSION }}-1.2.0" # ${{ inputs['goemaxima-ref'] || 'master' }}
       add_latest_tag: false
       container_registry: "ghcr.io"
       fail_on_vulnerabilites: false
-      context: "https://github.com/mathinstitut/goemaxima.git#${{ inputs['goemaxima-ref'] || 'master' }}"
+      context: "https://github.com/mathinstitut/goemaxima.git#1.2.0" # ${{ inputs['goemaxima-ref'] || 'master' }}
       build_args: |
         MAXIMA_VERSION=${{ needs.get_build_args.outputs.MAXIMA_VERSION }}
         SBCL_VERSION=${{ needs.get_build_args.outputs.SBCL_VERSION }}
