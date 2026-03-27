@@ -1,0 +1,17 @@
+{{ if .Values.dbpMoodle.goemaxima.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: moodle-goemaxima
+  labels:
+    app: goemaxima
+spec:
+  selector:
+    app: goemaxima
+  ports:
+    - name: http
+      protocol: TCP
+      port: {{ .Values.dbpMoodle.goemaxima.service.port }}       # service port
+      targetPort: {{ .Values.dbpMoodle.goemaxima.service.targetPort }} # container port
+  type: ClusterIP
+{{ end }}

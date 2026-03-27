@@ -1,6 +1,6 @@
 # dbp-moodle
 
-![Version: 1.2.2](https://img.shields.io/badge/Version-1.2.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.5.10](https://img.shields.io/badge/AppVersion-4.5.10-informational?style=flat-square)
+![Version: 1.3.0](https://img.shields.io/badge/Version-1.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.5.10](https://img.shields.io/badge/AppVersion-4.5.10-informational?style=flat-square)
 
 This is a Helm Chart bundling some of the bitnami resources to deploy Moodle for DBildungsplattform. Extending them with features such as
 PostgreSQL support, Horizontal Autoscaling capabilities, Redis Session Store, Etherpad-Lite.
@@ -133,6 +133,27 @@ The Chart can be deployed without any modification but it is advised to set own 
 | dbpMoodle.external_pvc.name | string | `"moodle-data"` |  |
 | dbpMoodle.external_pvc.size | string | `"8Gi"` |  |
 | dbpMoodle.external_pvc.storage_class | string | `"nfs-client"` |  |
+| dbpMoodle.goemaxima.enabled | bool | `false` |  |
+| dbpMoodle.goemaxima.env.MAXIMA_TIMEOUT | string | `"30"` |  |
+| dbpMoodle.goemaxima.image.pullPolicy | string | `"IfNotPresent"` |  |
+| dbpMoodle.goemaxima.image.repository | string | `"ghcr.io/dbildungsplattform/goemaxima"` |  |
+| dbpMoodle.goemaxima.image.tag | string | `"latest"` |  |
+| dbpMoodle.goemaxima.podSecurityContext | object | `{}` |  |
+| dbpMoodle.goemaxima.replicaCount | int | `1` |  |
+| dbpMoodle.goemaxima.resources.limits.cpu | string | `"1"` |  |
+| dbpMoodle.goemaxima.resources.limits.memory | string | `"512Mi"` |  |
+| dbpMoodle.goemaxima.resources.requests.cpu | string | `"200m"` |  |
+| dbpMoodle.goemaxima.resources.requests.memory | string | `"256Mi"` |  |
+| dbpMoodle.goemaxima.securityContext.allowPrivilegeEscalation | bool | `false` |  |
+| dbpMoodle.goemaxima.securityContext.readOnlyRootFilesystem | bool | `true` |  |
+| dbpMoodle.goemaxima.securityContext.runAsNonRoot | bool | `true` |  |
+| dbpMoodle.goemaxima.securityContext.runAsUser | int | `1000` |  |
+| dbpMoodle.goemaxima.securityContext.seccompProfile.type | string | `"RuntimeDefault"` |  |
+| dbpMoodle.goemaxima.service.annotations | object | `{}` |  |
+| dbpMoodle.goemaxima.service.labels | object | `{}` |  |
+| dbpMoodle.goemaxima.service.port | int | `8080` |  |
+| dbpMoodle.goemaxima.service.targetPort | int | `8080` |  |
+| dbpMoodle.goemaxima.service.type | string | `"ClusterIP"` |  |
 | dbpMoodle.hpa | object | `{"average_cpu_utilization":50,"deployment_name_ref":"moodle","enabled":false,"max_replicas":4,"min_replicas":1,"scaledown_cooldown":60,"scaledown_value":25,"scaleup_cooldown":15,"scaleup_value":50}` | Horizontal pod autoscaling values |
 | dbpMoodle.hpa.scaledown_cooldown | int | `60` | How many seconds to wait between downscaling adjustments |
 | dbpMoodle.hpa.scaledown_value | int | `25` | The max amount in percent to scale down in one step per cooldown period |

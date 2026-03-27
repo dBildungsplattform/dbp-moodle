@@ -284,6 +284,45 @@ dbpMoodle:
     # -- How many seconds to wait between upscaling adjustments
     scaleup_cooldown: 15
 
+  goemaxima:
+    enabled: false
+    image:
+      repository: ghcr.io/dbildungsplattform/goemaxima
+      tag: "latest"
+      pullPolicy: IfNotPresent
+      # digest: "sha256:897..."
+
+
+    replicaCount: 1
+
+    service:
+      type: ClusterIP
+      port: 8080
+      targetPort: 8080
+      annotations: {}
+      labels: {}
+
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "256Mi"
+      limits:
+        cpu: "1"
+        memory: "512Mi"
+
+    env:
+      MAXIMA_TIMEOUT: "30"
+
+    podSecurityContext: {}
+      # fsGroup: 1000
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      seccompProfile:
+        type: RuntimeDefault
+
 moodle:
   redis:
     enabled: '{{- include "moodle.redis.enabled" . -}}'
