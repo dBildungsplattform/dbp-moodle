@@ -408,10 +408,6 @@ moodle:
       nginx.ingress.kubernetes.io/proxy-body-size: "200M"
       nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
       nginx.ingress.kubernetes.io/whitelist-source-range: "0.0.0.0/0"
-  # Switch to bitnamilegacy, see https://github.com/bitnami/charts/issues/35164
-  certificates:
-    image:
-      repository: bitnamilegacy/os-shell
   metrics:
     enabled: true
     image:

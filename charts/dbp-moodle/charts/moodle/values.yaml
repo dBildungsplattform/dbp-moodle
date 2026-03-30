@@ -767,69 +767,6 @@ metrics:
     prometheus.io/port: "{{ .Values.metrics.service.port }}"
 ## @section Certificate injection parameters
 
-## Add custom certificates and certificate authorities to Moodle&trade; container
-##
-certificates:
-  ## @param certificates.customCertificate.certificateSecret Secret containing the certificate and key to add
-  ## @param certificates.customCertificate.chainSecret.name Name of the secret containing the certificate chain
-  ## @param certificates.customCertificate.chainSecret.key Key of the certificate chain file inside the secret
-  ## @param certificates.customCertificate.certificateLocation Location in the container to store the certificate
-  ## @param certificates.customCertificate.keyLocation Location in the container to store the private key
-  ## @param certificates.customCertificate.chainLocation Location in the container to store the certificate chain
-  ##
-  customCertificate:
-    certificateSecret: ""
-    chainSecret:
-      name: ""
-      key: ""
-    certificateLocation: /etc/ssl/certs/ssl-cert-snakeoil.pem
-    keyLocation: /etc/ssl/private/ssl-cert-snakeoil.key
-    chainLocation: /etc/ssl/certs/mychain.pem
-  ## @param certificates.customCAs Defines a list of secrets to import into the container trust store
-  ##
-  customCAs: []
-  ## @param certificates.command Override default container command (useful when using custom images)
-  ##
-  command: []
-  ## @param certificates.args Override default container args (useful when using custom images)
-  ## e.g:
-  ## - secret: custom-CA
-  ## - secret: more-custom-CAs
-  ##
-  args: []
-  ## @param certificates.extraEnvVars Container sidecar extra environment variables (eg proxy)
-  ##
-  extraEnvVars: []
-  ## @param certificates.extraEnvVarsCM ConfigMap with extra environment variables
-  ##
-  extraEnvVarsCM: ""
-  ## @param certificates.extraEnvVarsSecret Secret with extra environment variables
-  ##
-  extraEnvVarsSecret: ""
-  ## @param certificates.image.registry [default: REGISTRY_NAME] Container sidecar registry
-  ## @param certificates.image.repository [default: REPOSITORY_NAME/os-shell] Container sidecar image repository
-  ## @skip certificates.image.tag Container sidecar image tag (immutable tags are recommended)
-  ## @param certificates.image.digest Container sidecar image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag
-  ## @param certificates.image.pullPolicy Container sidecar image pull policy
-  ## @param certificates.image.pullSecrets Container sidecar image pull secrets
-  ##
-  image:
-    registry: docker.io
-    repository: bitnamilegacy/os-shell
-    tag: 12-debian-12-r50
-    digest: ""
-    ## Specify a imagePullPolicy
-    ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
-    ##
-    pullPolicy: IfNotPresent
-    ## Optionally specify an array of imagePullSecrets.
-    ## Secrets must be manually created in the namespace.
-    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-    ## e.g:
-    ## pullSecrets:
-    ##   - myRegistryKeySecretName
-    ##
-    pullSecrets: []
 ## @section NetworkPolicy parameters
 
 ## Network Policy configuration

@@ -82,7 +82,6 @@ You can access Apache Prometheus metrics following the steps below:
 
 {{- include "common.warnings.rollingTag" .Values.image }}
 {{- include "common.warnings.rollingTag" .Values.metrics.image }}
-{{- include "common.warnings.rollingTag" .Values.certificates.image }}
 
 {{- $passwordValidationErrors := list -}}
 {{- if not .Values.existingSecret -}}
@@ -94,5 +93,5 @@ You can access Apache Prometheus metrics following the steps below:
 
 {{- include "common.errors.upgrade.passwords.empty" (dict "validationErrors" $passwordValidationErrors "context" $) -}}
 {{- include "common.warnings.resources" (dict "sections" (list "metrics" "" "volumePermissions") "context" $) }}
-{{- include "common.warnings.modifiedImages" (dict "images" (list .Values.image .Values.metrics.image .Values.certificates.image) "context" $) }}
-{{- include "common.errors.insecureImages" (dict "images" (list .Values.image  .Values.metrics.image .Values.certificates.image) "context" $) }}
+{{- include "common.warnings.modifiedImages" (dict "images" (list .Values.image .Values.metrics.image) "context" $) }}
+{{- include "common.errors.insecureImages" (dict "images" (list .Values.image  .Values.metrics.image) "context" $) }}
