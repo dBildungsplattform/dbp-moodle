@@ -412,9 +412,6 @@ moodle:
   certificates:
     image:
       repository: bitnamilegacy/os-shell
-  volumePermissions:
-    image:
-      repository: bitnamilegacy/os-shell
   metrics:
     enabled: true
     image:
