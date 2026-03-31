@@ -1,6 +1,6 @@
 # dbp-moodle
 
-![Version: 1.3.0](https://img.shields.io/badge/Version-1.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.5.10](https://img.shields.io/badge/AppVersion-4.5.10-informational?style=flat-square)
+![Version: 1.3.1](https://img.shields.io/badge/Version-1.3.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.5.10](https://img.shields.io/badge/AppVersion-4.5.10-informational?style=flat-square)
 
 This is a Helm Chart bundling some of the bitnami resources to deploy Moodle for DBildungsplattform. Extending them with features such as
 PostgreSQL support, Horizontal Autoscaling capabilities, Redis Session Store, Etherpad-Lite.
@@ -265,7 +265,6 @@ The Chart can be deployed without any modification but it is advised to set own 
 | global.storageClass | string | `"nfs-client"` | Default storage class, should support ReadWriteMany |
 | moodle.affinity | object | `{}` |  |
 | moodle.allowEmptyPassword | bool | `false` |  |
-| moodle.certificates.image.repository | string | `"bitnamilegacy/os-shell"` |  |
 | moodle.containerPorts.http | int | `8080` |  |
 | moodle.containerPorts.https | int | `8443` |  |
 | moodle.containerSecurityContext.enabled | bool | `true` |  |
@@ -341,7 +340,6 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.tolerations | list | `[]` |  |
 | moodle.updateStrategy.type | string | `"RollingUpdate"` |  |
 | moodle.usePasswordFiles | bool | `false` |  |
-| moodle.volumePermissions.image.repository | string | `"bitnamilegacy/os-shell"` |  |
 | moodlecronjob.affinity | object | `{}` |  |
 | moodlecronjob.clusterRole.create | bool | `false` |  |
 | moodlecronjob.image.repository | string | `"ghcr.io/dbildungsplattform/moodle-tools"` |  |
