@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1] - 2026-04-02
+
+### Changed
+
+- **DBP-2221**: 
+  - Updated Moodle Image to '4.5.10-fpm-bookworm-8.2.30-dbp4'
+
 ## [1.3.0] - 2026-03-27
 
 ### Added
