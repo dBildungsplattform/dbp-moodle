@@ -332,7 +332,7 @@ moodle:
     registry: "ghcr.io"
     repository: "dbildungsplattform/moodle"
     # -- The dbp-moodle image which is build for this helm chart
-    tag: "4.5.10-fpm-bookworm-8.2.30-dbp4"
+    tag: "4.5.10-fpm-bookworm-8.2.30-dbp6"
     pullPolicy: Always
     # -- Debug mode for more detailed moodle installation and log output
     debug: false
@@ -408,13 +408,6 @@ moodle:
       nginx.ingress.kubernetes.io/proxy-body-size: "200M"
       nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
       nginx.ingress.kubernetes.io/whitelist-source-range: "0.0.0.0/0"
-  # Switch to bitnamilegacy, see https://github.com/bitnami/charts/issues/35164
-  certificates:
-    image:
-      repository: bitnamilegacy/os-shell
-  volumePermissions:
-    image:
-      repository: bitnamilegacy/os-shell
   metrics:
     enabled: true
     image:
