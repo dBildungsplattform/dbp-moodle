@@ -52,9 +52,7 @@ commonLabels: {}
 ## @param extraDeploy Array with extra yaml to deploy with the chart. Evaluated as a template
 ##
 extraDeploy: []
-## @param usePasswordFiles Mount credentials as files instead of using environment variables
-##
-usePasswordFiles: true
+
 ## @section Moodle&trade; parameters
 
 ## @param  redis.enabled gets the value from the umbrella helm chart to use a ENV Var inside the
