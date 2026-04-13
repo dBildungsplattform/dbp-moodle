@@ -3,7 +3,7 @@ name: Sync OIDC Repo with eLeDia GitLab
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 * * * *' # Hourly sync
+    - cron: '0 0 * * *' # Daily sync
 
 # The necessary values for the secrets to be added to GitHub can be found in this 1PW secret: "Gitlab-Zugang bei eLeDia"
 jobs:
