@@ -12,4 +12,8 @@ data:
   # contains the names of the system plugins which will be uninstalled
   # plugin_name:plugin_fullname:plugin_install_path:delete_plugin
   # include values are defined in _helpers.tpl file
+{{- if include "dbpMoodle.pluginConfigMap.sys.uninstall.content" . }}
   moodle-plugin-sys-uninstall-list: {{ include "dbpMoodle.pluginConfigMap.sys.uninstall.content" . | nindent 4 }}
+{{- else }}
+  moodle-plugin-sys-uninstall-list: ""
+{{- end }}
