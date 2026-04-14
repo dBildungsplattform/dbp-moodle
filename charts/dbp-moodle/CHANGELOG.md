@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.3] - 2026-04-14
+
+### Fixed
+- **DBP-2263**: Adjusted plugin-list config map to work with empty MOODLE_PLUGINS_SYS_UNINSTALL properly
+  - moodle-plugins cm now always contains the key "moodle-plugin-sys-uninstall-list", which is empty if .Values.dbpMoodle.uninstallSystemPlugins is false
+
 ## [1.3.2] - 2026-04-14
 
 ### Removed
