@@ -6,7 +6,7 @@
 - **DBP-2263**: Adjusted plugin-list config map to work with empty MOODLE_PLUGINS_SYS_UNINSTALL properly
   - moodle-plugins cm now always contains the key "moodle-plugin-sys-uninstall-list", which is empty if .Values.dbpMoodle.uninstallSystemPlugins is false
 
-## [1.3.2] - 2026-04-13
+## [1.3.2] - 2026-04-14
 
 ### Removed
 
@@ -14,6 +14,8 @@
   - Removed `.Values.moodle.certificates` section in `values.yaml` as we dont need custom certificates in the container
   - Removed `.Values.moodle.volumePermissions` section in `values.yaml` as this was implemented by bitnami to Change the owner and group of the persistent volume mountpoint to runAsUser:fsGroup values from the securityContext section in kubernetes settings that had issues with this, which is not the case in our setup.
   - Both setups required an initContainer which used bitnamis os-shell container, to reduce bitnami dependencies and unused code this was removed entirely
+- **DBP-2264**: Removed Support for secretFiles
+  - Removed `.Values.moodle.usePasswordFiles` and all the according implementations.
 
 ### Changed
 - 

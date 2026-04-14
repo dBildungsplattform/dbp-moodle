@@ -337,7 +337,6 @@ moodle:
     # -- Debug mode for more detailed moodle installation and log output
     debug: false
   moodleSkipInstall: false
-  usePasswordFiles: false
   moodleSiteName: "Moodle"
   moodleLang: "de"
   moodleUsername: admin
@@ -465,7 +464,6 @@ moodle:
 
 postgresql:
   enabled: true
-  # usePasswordFiles: false required if we increase the helm chart version
   # Switch to bitnamilegacy, see https://github.com/bitnami/charts/issues/35164
   image:
     repository: bitnamilegacy/postgresql
@@ -621,7 +619,6 @@ etherpadlite:
 
 etherpad-postgresql:
   enabled: false
-  # usePasswordFiles: false
   # Switch to bitnamilegacy, see https://github.com/bitnami/charts/issues/35164
   image:
     repository: bitnamilegacy/postgresql
