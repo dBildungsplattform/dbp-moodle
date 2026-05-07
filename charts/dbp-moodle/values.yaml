@@ -738,6 +738,31 @@ backup-cronjob:
         secretKeyRef:
           name: moodle
           key: mariadb-password
+    - name: DATABASE_HOST_ETHERPAD
+      valueFrom: 
+        secretKeyRef:
+          name: etherpad-database
+          key: host
+    - name: DATABASE_PORT_ETHERPAD
+      valueFrom: 
+        secretKeyRef:
+          name: etherpad-database
+          key: port
+    - name: DATABASE_NAME_ETHERPAD
+      valueFrom:
+        secretKeyRef:
+          name: etherpad-database
+          key: name
+    - name: DATABASE_USER_ETHERPAD
+      valueFrom:
+        secretKeyRef:
+          name: etherpad-database
+          key: user
+    - name: DATABASE_PASSWORD_ETHERPAD
+      valueFrom:
+        secretKeyRef:
+          name: moodle
+          key: etherpad-postgresql-password
     - name: AWS_ACCESS_KEY_ID
       valueFrom:
         secretKeyRef:
