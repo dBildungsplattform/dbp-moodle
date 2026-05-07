@@ -1,6 +1,6 @@
 # dbp-moodle
 
-![Version: 1.3.3](https://img.shields.io/badge/Version-1.3.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.5.10](https://img.shields.io/badge/AppVersion-4.5.10-informational?style=flat-square)
+![Version: 1.3.4](https://img.shields.io/badge/Version-1.3.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.5.10](https://img.shields.io/badge/AppVersion-4.5.10-informational?style=flat-square)
 
 This is a Helm Chart bundling some of the bitnami resources to deploy Moodle for DBildungsplattform. Extending them with features such as
 PostgreSQL support, Horizontal Autoscaling capabilities, Redis Session Store, Etherpad-Lite.
@@ -31,6 +31,15 @@ The Chart can be deployed without any modification but it is advised to set own 
 | backup-cronjob.env[0].name | string | `"DATABASE_HOST"` |  |
 | backup-cronjob.env[0].valueFrom.secretKeyRef.key | string | `"host"` |  |
 | backup-cronjob.env[0].valueFrom.secretKeyRef.name | string | `"moodle-database"` |  |
+| backup-cronjob.env[10].name | string | `"AWS_ACCESS_KEY_ID"` |  |
+| backup-cronjob.env[10].valueFrom.secretKeyRef.key | string | `"s3_access_key"` |  |
+| backup-cronjob.env[10].valueFrom.secretKeyRef.name | string | `"moodle-backup-s3"` |  |
+| backup-cronjob.env[11].name | string | `"AWS_SECRET_ACCESS_KEY"` |  |
+| backup-cronjob.env[11].valueFrom.secretKeyRef.key | string | `"s3_access_secret"` |  |
+| backup-cronjob.env[11].valueFrom.secretKeyRef.name | string | `"moodle-backup-s3"` |  |
+| backup-cronjob.env[12].name | string | `"S3_BACKUP_REGION_URL"` |  |
+| backup-cronjob.env[12].valueFrom.secretKeyRef.key | string | `"s3_endpoint_url"` |  |
+| backup-cronjob.env[12].valueFrom.secretKeyRef.name | string | `"moodle-backup-s3"` |  |
 | backup-cronjob.env[1].name | string | `"DATABASE_PORT"` |  |
 | backup-cronjob.env[1].valueFrom.secretKeyRef.key | string | `"port"` |  |
 | backup-cronjob.env[1].valueFrom.secretKeyRef.name | string | `"moodle-database"` |  |
@@ -43,15 +52,21 @@ The Chart can be deployed without any modification but it is advised to set own 
 | backup-cronjob.env[4].name | string | `"DATABASE_PASSWORD"` |  |
 | backup-cronjob.env[4].valueFrom.secretKeyRef.key | string | `"mariadb-password"` |  |
 | backup-cronjob.env[4].valueFrom.secretKeyRef.name | string | `"moodle"` |  |
-| backup-cronjob.env[5].name | string | `"AWS_ACCESS_KEY_ID"` |  |
-| backup-cronjob.env[5].valueFrom.secretKeyRef.key | string | `"s3_access_key"` |  |
-| backup-cronjob.env[5].valueFrom.secretKeyRef.name | string | `"moodle-backup-s3"` |  |
-| backup-cronjob.env[6].name | string | `"AWS_SECRET_ACCESS_KEY"` |  |
-| backup-cronjob.env[6].valueFrom.secretKeyRef.key | string | `"s3_access_secret"` |  |
-| backup-cronjob.env[6].valueFrom.secretKeyRef.name | string | `"moodle-backup-s3"` |  |
-| backup-cronjob.env[7].name | string | `"S3_BACKUP_REGION_URL"` |  |
-| backup-cronjob.env[7].valueFrom.secretKeyRef.key | string | `"s3_endpoint_url"` |  |
-| backup-cronjob.env[7].valueFrom.secretKeyRef.name | string | `"moodle-backup-s3"` |  |
+| backup-cronjob.env[5].name | string | `"DATABASE_HOST_ETHERPAD"` |  |
+| backup-cronjob.env[5].valueFrom.secretKeyRef.key | string | `"host"` |  |
+| backup-cronjob.env[5].valueFrom.secretKeyRef.name | string | `"etherpad-database"` |  |
+| backup-cronjob.env[6].name | string | `"DATABASE_PORT_ETHERPAD"` |  |
+| backup-cronjob.env[6].valueFrom.secretKeyRef.key | string | `"port"` |  |
+| backup-cronjob.env[6].valueFrom.secretKeyRef.name | string | `"etherpad-database"` |  |
+| backup-cronjob.env[7].name | string | `"DATABASE_NAME_ETHERPAD"` |  |
+| backup-cronjob.env[7].valueFrom.secretKeyRef.key | string | `"name"` |  |
+| backup-cronjob.env[7].valueFrom.secretKeyRef.name | string | `"etherpad-database"` |  |
+| backup-cronjob.env[8].name | string | `"DATABASE_USER_ETHERPAD"` |  |
+| backup-cronjob.env[8].valueFrom.secretKeyRef.key | string | `"user"` |  |
+| backup-cronjob.env[8].valueFrom.secretKeyRef.name | string | `"etherpad-database"` |  |
+| backup-cronjob.env[9].name | string | `"DATABASE_PASSWORD_ETHERPAD"` |  |
+| backup-cronjob.env[9].valueFrom.secretKeyRef.key | string | `"etherpad-postgresql-password"` |  |
+| backup-cronjob.env[9].valueFrom.secretKeyRef.name | string | `"moodle"` |  |
 | backup-cronjob.extraVolumeMounts[0].mountPath | string | `"/scripts/"` |  |
 | backup-cronjob.extraVolumeMounts[0].name | string | `"moodle-backup-script"` |  |
 | backup-cronjob.extraVolumeMounts[1].mountPath | string | `"/mountData"` |  |
