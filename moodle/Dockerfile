@@ -5,8 +5,8 @@ ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.5.10"}
 ARG MOODLE_PATH="/opt/dbp-moodle/moodle"
 ARG EXTRA_LOCALES=""
 #At the moment Apache will be updated to the latest release as unattended update during the build process
-ARG APACHE_VERSION=${APACHE_VERSION:-"2.4.66-1~deb12u1"}
-ARG APACHE_DOWNLOAD_URL="https://snapshot.debian.org/archive/debian/20260131T202859Z/pool/main/a/apache2/"
+ARG APACHE_VERSION=${APACHE_VERSION:-"2.4.67-1~deb12u1"}
+ARG APACHE_DOWNLOAD_URL="https://snapshot.debian.org/archive/debian/20260508T024741Z/pool/main/a/apache2/"
 WORKDIR /
 ARG WITH_ALL_LOCALES="no"
 RUN mkdir /bitnami
