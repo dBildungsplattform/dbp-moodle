@@ -4,6 +4,7 @@ on:
   schedule:
 
     - cron: '0 2 * * *'
+  workflow_dispatch:
 permissions:
   # security-events required for all workflows; action, contents only required for workflows in private repositories
   security-events: write
