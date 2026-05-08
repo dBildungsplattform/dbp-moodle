@@ -11,7 +11,7 @@ permissions:
   contents: write
 jobs:
   trivy_image_scan_cron:
-    uses: hpi-schul-cloud/infra-tools/.github/workflows/trivy-scan.yaml@master
+    uses: hpi-schul-cloud/infra-tools/.github/workflows/trivy-scan.yaml@main
     with:
       image-ref: 'ghcr.io/dbildungsplattform/moodle:latest'
   clamav_scan:
