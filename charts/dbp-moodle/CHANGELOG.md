@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.3.4] - 2026-05-08
+
+### Fixed
+- **DBP-2274**: Add default chart values for the etherpad database in the backup-cronjob config.
+    - DATABASE_HOST_ETHERPAD, DATABASE_PORT_ETHERPAD, DATABASE_NAME_ETHERPAD, DATABASE_USER_ETHERPAD are all filled via the automatically created etherpad-db-secret and configured via etherpadlite.externalDatabase by default
+    - DATABASE_PASSWORD_ETHERPAD references the moodle secret and expects by default an etherpad-postgresql-password key in that secret. If this is not supported in your setup it must be adjusted by overriding the env block with the according values.
+
+### Changed
+- Image Update
+  - Updated Moodle Image to '4.5.10-fpm-bookworm-8.2.30-dbp8'
+
 ## [1.3.3] - 2026-04-14
 
 ### Fixed
