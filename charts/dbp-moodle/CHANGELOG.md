@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0]
+
+### Feature
+- **DBP-2304**: Add Plugin tool_mediatime
+  - Added `.Values.global.noodlePlugins.tool_mediatime.enabled`
+  - Updated Moodle Image to '4.5.10-fpm-bookworm-8.2.30-dbp9' containing the plugin 
+
 ## [1.3.4] - 2026-05-08
 
 ### Fixed
