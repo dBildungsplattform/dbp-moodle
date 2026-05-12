@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.4.0]
 
 ### Feature
 - **DBP-2304**: Add Plugin tool_mediatime
