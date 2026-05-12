@@ -43,6 +43,7 @@ plugin_list=(
     tool_dynamic_cohorts
     mod_subcourse
     mod_videotime
+    tool_mediatime
 )
 
 moodle_plugin_list=("${plugin_dependency_list[@]}" "${plugin_list[@]}")
