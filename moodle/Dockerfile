@@ -1,12 +1,12 @@
-FROM php:8.2.30-fpm-bookworm AS build
+FROM php:8.2.31-fpm-trixie AS build
 USER root
 ARG MOODLE_VERSION=${MOODLE_VERSION:-"4.5.10"}
 #This is the path moodle will be placed after downloading for our Moodle Update Pipeline
 ARG MOODLE_PATH="/opt/dbp-moodle/moodle"
 ARG EXTRA_LOCALES=""
 #At the moment Apache will be updated to the latest release as unattended update during the build process
-ARG APACHE_VERSION=${APACHE_VERSION:-"2.4.67-1~deb12u1"}
-ARG APACHE_DOWNLOAD_URL="https://snapshot.debian.org/archive/debian/20260508T024741Z/pool/main/a/apache2/"
+ARG APACHE_VERSION=${APACHE_VERSION:-"2.4.67-1~deb13u1"}
+ARG APACHE_DOWNLOAD_URL="https://snapshot.debian.org/archive/debian/20260508T024741Z/pool/main/a/apache2"
 WORKDIR /
 ARG WITH_ALL_LOCALES="no"
 RUN mkdir /bitnami
@@ -29,23 +29,26 @@ RUN apt-get update && apt-get upgrade -y && \
 
 # Install psql Version 13.x like in the other bitnami moodle image
 RUN curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list
+    echo "deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt trixie-pgdg main" > /etc/apt/sources.list.d/pgdg.list
 
 RUN apt-get update && \
     apt-get install -y postgresql-client-13
 
 # Install apache2 and its dependencies
-RUN apt-get install -y libapr1 libaprutil1 libc6 libaprutil1-dbd-sqlite3 libcurl4 libaprutil1-ldap libldap-2.5-0 libexpat1 liblua5.3-0 libssl3 libxml2 media-types procps && \
-    curl -LO ${APACHE_DOWNLOAD_URL}/apache2-bin_${APACHE_VERSION}_amd64.deb && \
+RUN apt-get install -y libapr1 libaprutil1 libc6 libaprutil1-dbd-sqlite3 libcurl4 libaprutil1-ldap libexpat1 liblua5.3-0 libssl3 libxml2 media-types procps
+RUN curl -LO ${APACHE_DOWNLOAD_URL}/apache2-bin_${APACHE_VERSION}_amd64.deb && \
     curl -LO ${APACHE_DOWNLOAD_URL}/apache2-data_${APACHE_VERSION}_all.deb && \
     curl -LO ${APACHE_DOWNLOAD_URL}/apache2-utils_${APACHE_VERSION}_amd64.deb && \
     curl -LO ${APACHE_DOWNLOAD_URL}/apache2_${APACHE_VERSION}_amd64.deb && \
-    dpkg -i *.deb && \
+    dpkg -i *.deb || apt-get -y -f install && \
     apt-get install -y libapache2-mod-fcgid && \
     rm *.deb
 
 #Install other dependencies
-RUN apt-get install -y nano gettext libpq5 libedit2 libfontconfig1 libfreetype6 libglib2.0-0 libjpeg62-turbo liblcms2-2 libltdl7 libmagickcore-6.q16-6 libmagickwand-6.q16-6 libmemcached11 libpcre3 libpng16-16 libtidy5deb1 libwebp7 libxslt1.1 libzip4 libbz2-dev
+
+RUN apt-get update && \
+    apt-get install -y nano gettext imagemagick libmemcached11 libpq5 libzip-dev libxml2 libxslt1.1 && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN /scripts/init/phpRedisInstall.sh
 
