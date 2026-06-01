@@ -22,18 +22,18 @@ BUILD_PACKAGES="libcurl4-openssl-dev libfreetype6-dev libicu-dev libjpeg62-turbo
   uuid-dev libbz2-dev libzip-dev zlib1g-dev libgmp-dev libssl-dev libreadline-dev \
   libsqlite3-dev libtidy-dev libjpeg-dev libwebp-dev libxpm-dev pkg-config"
 
-apt-get update && apt-get install -y --no-install-recommends $BUILD_PACKAGES
 
-# ZIP
-docker-php-ext-configure zip --with-zip
-docker-php-ext-install zip
+RUNTIME_PACKAGES="\
+  libicu76 libtidy58 libzip4 zlib1g libpq5 libldap-2.5-0 libpng16-16 \
+  libjpeg62-turbo libwebp7 libxpm4 libxml2 libxslt1.1 libsqlite3-0 libgmp10 libssl3 libreadline8 libbz2-1.0"
+
+apt-get update && apt-get install -y --no-install-recommends $BUILD_PACKAGES $RUNTIME_PACKAGES
 
 docker-php-ext-install -j$(nproc) \
-    exif intl mysqli opcache pgsql soap xsl bcmath bz2 calendar exif gmp iconv intl ldap pcntl pdo pdo_mysql soap sockets tidy xsl zip
+    bcmath bz2 calendar exif gd gmp iconv intl ldap mysqli opcache pcntl pdo pdo_mysql pgsql soap sockets tidy xsl zip
 
 # GD.
 docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/
-docker-php-ext-install -j$(nproc) gd
 
 # Cleanup after source build
 apt-get remove --purge -y $BUILD_PACKAGES
