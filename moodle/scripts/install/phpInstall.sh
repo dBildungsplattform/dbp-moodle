@@ -24,7 +24,7 @@ BUILD_PACKAGES="libcurl4-openssl-dev libfreetype6-dev libicu-dev libjpeg62-turbo
 
 
 RUNTIME_PACKAGES="\
-  libicu76 libtidy58 libzip4 zlib1g libpq5 libldap-2.5-0 libpng16-16 \
+  libicu76 libtidy58 libzip5 zlib1g libpq5 libldap2 libpng16-16 \
   libjpeg62-turbo libwebp7 libxpm4 libxml2 libxslt1.1 libsqlite3-0 libgmp10 libssl3 libreadline8 libbz2-1.0"
 
 apt-get update && apt-get install -y --no-install-recommends $BUILD_PACKAGES $RUNTIME_PACKAGES
