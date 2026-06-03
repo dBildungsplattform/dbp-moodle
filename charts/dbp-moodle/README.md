@@ -1,6 +1,6 @@
 # dbp-moodle
 
-![Version: 1.4.0](https://img.shields.io/badge/Version-1.4.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.5.10](https://img.shields.io/badge/AppVersion-4.5.10-informational?style=flat-square)
+![Version: 1.4.1](https://img.shields.io/badge/Version-1.4.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.5.10](https://img.shields.io/badge/AppVersion-4.5.10-informational?style=flat-square)
 
 This is a Helm Chart bundling some of the bitnami resources to deploy Moodle for DBildungsplattform. Extending them with features such as
 PostgreSQL support, Horizontal Autoscaling capabilities, Redis Session Store, Etherpad-Lite.
@@ -15,7 +15,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | file://charts/cronjob | cronjob | 0.1.0 |
 | file://charts/cronjob | cronjob | 0.1.0 |
 | file://charts/etherpad | etherpad | 0.1.0 |
-| file://charts/moodle | moodle | 27.0.4 |
+| file://charts/moodle | moodle | 27.0.5 |
 | https://burningalchemist.github.io/sql_exporter/ | sql-exporter | 0.6.1 |
 | https://charts.bitnami.com/bitnami | postgresql | 15.5.38 |
 | https://charts.bitnami.com/bitnami | postgresql | 15.5.38 |
