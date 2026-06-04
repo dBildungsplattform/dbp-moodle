@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.4.1]
+### Fix
+- **PB-70**: Mailserver Configuration
+    - Added "smtpExistingSecret" to moodle chart, which allows to set the mail servers secret via an existing secret
+    - With `.Values.moodle.smtpExistingSecret` the secret can now be adjusted and if used the `smtp-password` key is expected to hold the password.
+    - Use this to setup the smtp server config via IaC in combination with 
+      - smtpHost: ""
+      - smtpPort: ""
+      - smtpUser: ""
+      - smtpProtocol: ""
+
 ## [1.4.0]
 
 ### Feature

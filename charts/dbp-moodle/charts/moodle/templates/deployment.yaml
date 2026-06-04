@@ -141,11 +141,11 @@ spec:
             - name: SMTP_USER
               value: {{ .Values.smtpUser | quote }}
             {{- end }}
-            {{- if .Values.smtpPassword }}
+            {{- if or .Values.smtpExistingSecret .Values.smtpPassword }}
             - name: SMTP_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}
+                  name: {{ default (include "common.names.fullname" .) .Values.smtpExistingSecret }}
                   key: smtp-password
             {{- end }}
             {{- if .Values.smtpProtocol }}
