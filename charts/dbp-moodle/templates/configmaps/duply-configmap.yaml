@@ -6,8 +6,7 @@ metadata:
   namespace: "{{ .Release.Namespace }}"
 data:
   conf: |-
-    GPG_KEYS_ENC={% for gpg_key in .Values.dbpMoodle.backup.gpg_key_names %}$(gpg --show-keys --with-colons /etc/duply/default/gpgkey.{{ gpg_key }}.pub | awk -F: '/^pub/ { print $5 }'),{% endfor %}
-    GPG_KEY_SIGN="disabled"
+    GPG_KEYS_ENC={{ include "dbpMoodle.backup.gpg_key_names.hex" . }}
     GPG_OPTS="--pinentry-mode loopback --trust-model always"
     GPG="/usr/bin/gpg"
     TARGET="boto3+s3://{{ .Values.dbpMoodle.backup.s3_bucket_name }}/{{ .Values.dbpMoodle.backup.cluster_name }}/{{ .Release.Namespace }}/"
@@ -19,3 +18,6 @@ data:
     + /tmp/backup
     - **
 {{- end }}
+
+## remove GPG_KEYS_ENC, create and export in backup script
+## GPG_KEYS_ENC references a var that is created in backup script
