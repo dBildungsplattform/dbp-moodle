@@ -6,7 +6,7 @@ metadata:
   namespace: "{{ .Release.Namespace }}"
 data:
   conf: |-
-    GPG_KEYS_ENC="{{ .Values.dbpMoodle.backup.gpg_key_names }}"
+    GPG_KEYS_ENC={% for gpg_key in .Values.dbpMoodle.backup.gpg_key_names %}$(gpg --show-keys --with-colons /etc/duply/default/gpgkey.{{ gpg_key }}.pub | awk -F: '/^pub/ { print $5 }'),{% endfor %}
     GPG_KEY_SIGN="disabled"
     GPG_OPTS="--pinentry-mode loopback --trust-model always"
     GPG="/usr/bin/gpg"
