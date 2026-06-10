@@ -6,7 +6,7 @@ metadata:
   namespace: "{{ .Release.Namespace }}"
 data:
   conf: |-
-    GPG_KEYS_ENC={{ include "dbpMoodle.backup.gpg_key_names.hex" . }}
+    GPG_KEYS_ENC={{ include "dbpMoodle.backup.gpg_key_names.cmd" . }}
     GPG_OPTS="--pinentry-mode loopback --trust-model always"
     GPG="/usr/bin/gpg"
     TARGET="boto3+s3://{{ .Values.dbpMoodle.backup.s3_bucket_name }}/{{ .Values.dbpMoodle.backup.cluster_name }}/{{ .Release.Namespace }}/"
