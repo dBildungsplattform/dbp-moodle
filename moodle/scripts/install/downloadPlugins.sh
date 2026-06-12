@@ -44,6 +44,7 @@ plugin_list=(
     mod_subcourse
     mod_videotime
     tool_mediatime
+    auth_oidc
 )
 
 moodle_plugin_list=("${plugin_dependency_list[@]}" "${plugin_list[@]}")
@@ -66,7 +67,7 @@ download_oidc() {
     cd dbp-moodle-plugin-oidc/ || exit 1
     git checkout ${target_branch}
     # create the zip archive in the initial directory, s.t. it can be treated equally to the other plugins
-    (cd auth && zip -r ../../auth_oidc.zip oidc)
+    (cd auth && zip -r ../../eledia_auth_oidc.zip oidc)
     cd ..
     rm -rf dbp-moodle-plugin-oidc/
 }

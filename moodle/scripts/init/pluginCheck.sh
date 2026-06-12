@@ -103,6 +103,15 @@ main() {
         plugin_path="${parts[2]}"
         plugin_target_state="${parts[3]}"
 
+        # Check to ensure that only eledia oidc or the original oidc plugin will be installed
+        if [[ "$plugin_name" = "eledia_oidc" && "$plugin_target_state" = true ]]; then
+            MODULE="dbp-plugins" info "Eledia oidc plugin is activated, starting preparation of the eledia oidc plugin"
+            rm -rf /plugins/auth_oidc.zip
+            mv /plugins/eledia_auth_oidc.zip /plugins/auth_oidc.zip || exit 1
+            plugin_name="oidc"
+            plugin_fullname="auth_oidc"
+        fi
+
         plugin_parent_path=$(dirname "$plugin_path")
         full_path="${moodle_path}/${plugin_path}"
 
@@ -141,6 +150,7 @@ main() {
             last_installed_plugin=""
             anychange=true
 
+        # We still need to cover the case where eledia oidc is true and oidc is false to avoid the deinstallation of eledia oidc by the podc = false state
         elif [ "$plugin_target_state" = false ]; then
             MODULE="dbp-plugins" info "Uninstalling plugin ${plugin_name} (${plugin_fullname}) from path \"${plugin_path}\""
             uninstall_plugin "$plugin_fullname" "$plugin_path"
