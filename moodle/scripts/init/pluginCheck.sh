@@ -20,6 +20,7 @@ update_failed_path="/dbp-moodle/moodledata/UpdateFailed"
 update_cli_path="/dbp-moodle/moodledata/CliUpdate"
 maintenance_html_path="/dbp-moodle/moodledata/climaintenance.html"
 
+eledia_oidc_plugin_active= false
 last_installed_plugin=""
 cleanup_failed_install() {
     if [[ -n "$last_installed_plugin" ]]; then
@@ -110,6 +111,7 @@ main() {
             mv /plugins/eledia_auth_oidc.zip /plugins/auth_oidc.zip || exit 1
             plugin_name="oidc"
             plugin_fullname="auth_oidc"
+            eledia_oidc_plugin_active=true
         fi
 
         plugin_parent_path=$(dirname "$plugin_path")
@@ -150,11 +152,14 @@ main() {
             last_installed_plugin=""
             anychange=true
 
-        # We still need to cover the case where eledia oidc is true and oidc is false to avoid the deinstallation of eledia oidc by the podc = false state
         elif [ "$plugin_target_state" = false ]; then
-            MODULE="dbp-plugins" info "Uninstalling plugin ${plugin_name} (${plugin_fullname}) from path \"${plugin_path}\""
-            uninstall_plugin "$plugin_fullname" "$plugin_path"
-            anychange=true
+            if [ "$plugin_name" = "oidc" && "$eledia_oidc_plugin_active" = true ]
+                MODULE="dbp-plugins" info "Skipping uninstall of oidc because eledia_oidc is active"
+            else
+                MODULE="dbp-plugins" info "Uninstalling plugin ${plugin_name} (${plugin_fullname}) from path \"${plugin_path}\""
+                uninstall_plugin "$plugin_fullname" "$plugin_path"
+                anychange=true
+            fi
         else
             MODULE="dbp-plugins" error "Unexpected value for plugin_target_state: \"$plugin_target_state\". Expecting \"true/false\". Exiting..."
             exit 1
