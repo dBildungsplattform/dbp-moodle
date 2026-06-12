@@ -104,6 +104,11 @@ main() {
         plugin_path="${parts[2]}"
         plugin_target_state="${parts[3]}"
 
+        # This is required to avoid conflicts between eledia oidc and oicd including update and uninstall steps
+        if [ "$plugin_name" = "oidc" && "$eledia_oidc_plugin_active" = true ]
+            continue
+        fi
+
         # Check to ensure that only eledia oidc or the original oidc plugin will be installed
         if [[ "$plugin_name" = "eledia_oidc" && "$plugin_target_state" = true ]]; then
             MODULE="dbp-plugins" info "Eledia oidc plugin is activated, starting preparation of the eledia oidc plugin"
@@ -153,13 +158,9 @@ main() {
             anychange=true
 
         elif [ "$plugin_target_state" = false ]; then
-            if [ "$plugin_name" = "oidc" && "$eledia_oidc_plugin_active" = true ]
-                MODULE="dbp-plugins" info "Skipping uninstall of oidc because eledia_oidc is active"
-            else
-                MODULE="dbp-plugins" info "Uninstalling plugin ${plugin_name} (${plugin_fullname}) from path \"${plugin_path}\""
-                uninstall_plugin "$plugin_fullname" "$plugin_path"
-                anychange=true
-            fi
+            MODULE="dbp-plugins" info "Uninstalling plugin ${plugin_name} (${plugin_fullname}) from path \"${plugin_path}\""
+            uninstall_plugin "$plugin_fullname" "$plugin_path"
+            anychange=true
         else
             MODULE="dbp-plugins" error "Unexpected value for plugin_target_state: \"$plugin_target_state\". Expecting \"true/false\". Exiting..."
             exit 1
