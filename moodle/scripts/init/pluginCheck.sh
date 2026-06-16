@@ -20,7 +20,7 @@ update_failed_path="/dbp-moodle/moodledata/UpdateFailed"
 update_cli_path="/dbp-moodle/moodledata/CliUpdate"
 maintenance_html_path="/dbp-moodle/moodledata/climaintenance.html"
 
-eledia_oidc_plugin_active= false
+eledia_oidc_plugin_active=false
 last_installed_plugin=""
 cleanup_failed_install() {
     if [[ -n "$last_installed_plugin" ]]; then
