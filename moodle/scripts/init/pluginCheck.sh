@@ -110,13 +110,18 @@ main() {
         fi
 
         # Check to ensure that only eledia oidc or the original oidc plugin will be installed
-        if [[ "$plugin_name" = "eledia_oidc" && "$plugin_target_state" = true ]]; then
-            MODULE="dbp-plugins" info "Eledia oidc plugin is activated, starting preparation of the eledia oidc plugin"
-            rm -rf /plugins/auth_oidc.zip
-            mv /plugins/eledia_auth_oidc.zip /plugins/auth_oidc.zip || exit 1
-            plugin_name="oidc"
-            plugin_fullname="auth_oidc"
-            eledia_oidc_plugin_active=true
+        if [[ "$plugin_name" = "eledia_oidc" ]]; then
+            if [[ "$plugin_target_state" = true ]]; then
+                MODULE="dbp-plugins" info "Eledia oidc plugin is activated, starting preparation of the eledia oidc plugin"
+                rm -rf /plugins/auth_oidc.zip
+                mv /plugins/eledia_auth_oidc.zip /plugins/auth_oidc.zip || exit 1
+                plugin_name="oidc"
+                plugin_fullname="auth_oidc"
+                eledia_oidc_plugin_active=true
+            else
+                # if eledia_oidc is not active let the default oidc handle it, to not uninstall it when its actually needed for the standard oidc
+                continue
+            fi
         fi
 
         plugin_parent_path=$(dirname "$plugin_path")
