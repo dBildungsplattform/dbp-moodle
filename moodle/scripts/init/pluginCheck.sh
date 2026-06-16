@@ -105,7 +105,7 @@ main() {
         plugin_target_state="${parts[3]}"
 
         # This is required to avoid conflicts between eledia oidc and oicd including update and uninstall steps
-        if [ "$plugin_name" = "oidc" && "$eledia_oidc_plugin_active" = true ]
+        if [[ "$plugin_name" = "oidc" && "$eledia_oidc_plugin_active" = true ]]; then
             continue
         fi
 
