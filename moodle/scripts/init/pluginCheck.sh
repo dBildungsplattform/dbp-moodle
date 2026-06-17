@@ -20,6 +20,7 @@ update_failed_path="/dbp-moodle/moodledata/UpdateFailed"
 update_cli_path="/dbp-moodle/moodledata/CliUpdate"
 maintenance_html_path="/dbp-moodle/moodledata/climaintenance.html"
 
+eledia_oidc_plugin_active=false
 last_installed_plugin=""
 cleanup_failed_install() {
     if [[ -n "$last_installed_plugin" ]]; then
@@ -102,6 +103,26 @@ main() {
         plugin_fullname="${parts[1]}"
         plugin_path="${parts[2]}"
         plugin_target_state="${parts[3]}"
+
+        # This is required to avoid conflicts between eledia oidc and oicd including update and uninstall steps
+        if [[ "$plugin_name" = "oidc" && "$eledia_oidc_plugin_active" = true ]]; then
+            continue
+        fi
+
+        # Check to ensure that only eledia oidc or the original oidc plugin will be installed
+        if [[ "$plugin_name" = "eledia_oidc" ]]; then
+            if [[ "$plugin_target_state" = true ]]; then
+                MODULE="dbp-plugins" info "Eledia oidc plugin is activated, starting preparation of the eledia oidc plugin"
+                rm -rf /plugins/auth_oidc.zip
+                mv /plugins/eledia_auth_oidc.zip /plugins/auth_oidc.zip || exit 1
+                plugin_name="oidc"
+                plugin_fullname="auth_oidc"
+                eledia_oidc_plugin_active=true
+            else
+                # if eledia_oidc is not active let the default oidc handle it, to not uninstall it when its actually needed for the standard oidc
+                continue
+            fi
+        fi
 
         plugin_parent_path=$(dirname "$plugin_path")
         full_path="${moodle_path}/${plugin_path}"
