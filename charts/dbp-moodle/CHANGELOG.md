@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+### Fix
+- **DBP-2270**: ssl-proxy
+    - Added '$CFG->sslproxy = true;' to the php-config
+    - This way moodle expects the tls-termination prior to the apache webserver and can handle it properly
+    - Solves problems where json responses were wrapped in htlm code due to errors
+
 ## [1.4.1]
 ### Fix
 - **PB-70**: Mailserver Configuration

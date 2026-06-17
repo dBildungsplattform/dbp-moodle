@@ -70,6 +70,8 @@ define('MDL_PERFDB' , true);
 define('MDL_PERFTOLOG' , true); // OK for production
 {{- end }}
 
+$CFG->sslproxy = true;  // tls is already terminated at ingress, so http reaches the moodle pod and behaves like an ssl-proxy.
+
 {{ if .Values.dbpMoodle.phpConfig.debug -}}
 @error_reporting(E_ALL | E_STRICT); // NOT FOR PRODUCTION SERVERS!
 @ini_set('display_errors', '1');    // NOT FOR PRODUCTION SERVERS!
