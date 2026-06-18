@@ -352,6 +352,8 @@ The Chart can be deployed without any modification but it is advised to set own 
 | moodle.resources.requests.cpu | string | `"300m"` |  |
 | moodle.resources.requests.memory | string | `"512Mi"` |  |
 | moodle.service.type | string | `"ClusterIP"` |  |
+| moodle.startupProbe.enabled | bool | `true` |  |
+| moodle.startupProbe.failureThreshold | int | `120` |  |
 | moodle.tolerations | list | `[]` |  |
 | moodle.updateStrategy.type | string | `"RollingUpdate"` |  |
 | moodlecronjob.affinity | object | `{}` |  |
