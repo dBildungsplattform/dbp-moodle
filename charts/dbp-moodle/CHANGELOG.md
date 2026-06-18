@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+### Fix
+- **DBP-2357**: Add startup probe
+    - Larger Instances need more time during the startup, exceeding the delay of the liveness probe
+    - This leads to pod terminations and restarts during version updates, which might lead to a corrupted state
+    - To prevent this the usage of a startup probe is introduced by default which only terminates the pod after ~20 Minutes
+    - If more time is needed this can be adjusted via `.Values.moodle.startupProbe.failureThreshold` and `.Values.moodle.startupProbe.failureThreshold.periodSeconds`
+
 ## [1.5.0]
 ### Feature
 - **DM-272**: Support for both oidc and eledia_oidc plugins
