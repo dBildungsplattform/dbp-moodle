@@ -8,6 +8,7 @@
     - If `.Values.global.noodlePlugins.oidc.enabled` was true prior to this change set it to false and set `eledia_oidc` to true instead.
     - Use `oidc` from now on to use the regular auth_oidc plugin and `eledia_oidc` to use the custom extension by eledia.
     - These plugins should be used mutually exclusive.
+    - Updated Moodle Image to '4.5.10-fpm-bookworm-8.2.30-dbp10' containing the plugin
 
 ### Fix
 - **DBP-2270**: ssl-proxy
