@@ -465,6 +465,9 @@ moodle:
     https: 8443
   networkPolicy:
     enabled: false
+  startupProbe:
+    enabled: true
+    failureThreshold: 120
 
 postgresql:
   enabled: true
