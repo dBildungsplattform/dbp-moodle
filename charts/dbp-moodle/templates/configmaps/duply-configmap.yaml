@@ -19,6 +19,3 @@ data:
     + /tmp/backup
     - **
 {{- end }}
-
-## remove GPG_KEYS_ENC, create and export in backup script
-## GPG_KEYS_ENC references a var that is created in backup script
