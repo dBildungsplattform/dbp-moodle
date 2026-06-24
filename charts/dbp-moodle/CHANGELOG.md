@@ -1,6 +1,11 @@
 # Changelog
 
-## [Unreleased]
+## [1.6.0]
+
+### Changed
+- Image Update
+  - Updated Moodle Image to '4.5.10-fpm-trixie-8.2.31-dbp1'
+  - Updated Moodle-Tools Image to '1.1.15'
 
 ### Fix
 - **DBP-2357**: Add startup probe

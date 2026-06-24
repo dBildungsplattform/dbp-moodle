@@ -171,7 +171,7 @@ dbpMoodle:
     # -- Which kubectl image to use
     repository: "ghcr.io/dbildungsplattform"
     image: "moodle-tools"
-    tag: "1.1.14"
+    tag: "1.1.15"
 
   moodleUpdatePreparationHook:
     rules:
@@ -232,7 +232,7 @@ dbpMoodle:
     dump_kind: "full" # Possible values: full, custom
     repository: "ghcr.io/dbildungsplattform"
     image: "moodle-tools"
-    tag: "1.1.14"
+    tag: "1.1.15"
     resources:
       limits:
         cpu: 2000m
@@ -336,7 +336,7 @@ moodle:
     registry: "ghcr.io"
     repository: "dbildungsplattform/moodle"
     # -- The dbp-moodle image which is build for this helm chart
-    tag: "4.5.10-fpm-bookworm-8.2.30-dbp10"
+    tag: "4.5.10-fpm-trixie-8.2.31-dbp1"
     pullPolicy: Always
     # -- Debug mode for more detailed moodle installation and log output
     debug: false
@@ -661,7 +661,7 @@ etherpad-postgresql:
 moodlecronjob:
   image:
     repository: "ghcr.io/dbildungsplattform/moodle-tools"
-    tag: "1.1.14"
+    tag: "1.1.15"
   clusterRole:
     create: false
   serviceAccount:
@@ -713,7 +713,7 @@ moodlecronjob:
 backup-cronjob:
   image:
     repository: "ghcr.io/dbildungsplattform/moodle-tools"
-    tag: "1.1.14"
+    tag: "1.1.15"
   clusterRole:
     create: false
   serviceAccount:
