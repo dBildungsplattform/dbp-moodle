@@ -3,7 +3,7 @@
 ## [1.6.0]
 
 ### Changed
-- Image Update
+- Image Update to increase the debian Version from 12(Bookworm) to 13(Trixie) to ensure continuous security update support.
   - Updated Moodle Image to '4.5.10-fpm-trixie-8.2.31-dbp1'
   - Updated Moodle-Tools Image to '1.1.15'
 
