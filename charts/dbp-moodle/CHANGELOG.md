@@ -1,11 +1,16 @@
 # Changelog
 
-## [1.6.0]
+## [1.6.0] - 2026-06-24
 
 ### Changed
-- Image Update to increase the debian Version from 12(Bookworm) to 13(Trixie) to ensure continuous security update support.
-  - Updated Moodle Image to '4.5.10-fpm-trixie-8.2.31-dbp1'
-  - Updated Moodle-Tools Image to '1.1.15'
+- **PB-128**: Update to Debian 13 Trixie
+  - Helm Chart GPG Key way of working adjusted
+    - Affected Helm value: Values.dbpMoodle.backup.gpg_key_names
+      - This value will now be handled in the helpers.tpl to create dbpMoodle.backup.gpg_key_names.cmd which is used during runtime to create the Keys to the key names.
+    - Because of the adjustements, the way the GPG Keys are handled were adjusted. If multiple Keys are used, the input in the values.yaml should be a List of Strings like this: "Key1Name, Key2Name"
+  - Image Update to increase the debian Version from 12(Bookworm) to 13(Trixie) to ensure continuous security update support.
+    - Updated Moodle Image to '4.5.10-fpm-trixie-8.2.31-dbp1'
+    - Updated Moodle-Tools Image to '1.1.15'
 
 ### Fix
 - **DBP-2357**: Add startup probe
