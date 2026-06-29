@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.6.1] - 2026-06-29
+
+### Changed
+- **PB-149**: Bump Moodle Version from 4.5.10 to 4.5.12
+  - Use new Moodle default Image in Helm CHart Version 1.6.1: 4.5.12-fpm-trixie-8.2.31-dbp1
+
 ## [1.6.0] - 2026-06-24
 
 ### Changed
