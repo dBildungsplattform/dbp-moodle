@@ -460,6 +460,7 @@ moodle:
     privileged: false
   podSecurityContext:
     enabled: true
+    fsGroupChangePolicy: OnRootMismatch
   containerPorts:
     http: 8080
     https: 8443
