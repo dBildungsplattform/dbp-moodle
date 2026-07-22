@@ -79,7 +79,7 @@ download_booking() {
     cd moodle-mod_booking/ || exit 1
     git checkout ${target_branch}
     # create the zip archive in the initial directory, s.t. it can be treated equally to the other plugins
-    (cd mod && zip -r ../../mod_booking.zip booking)
+    zip -r ../mod_booking.zip .
     cd ..
     rm -rf moodle-mod_booking/
 }
