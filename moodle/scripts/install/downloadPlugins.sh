@@ -12,7 +12,7 @@ plugin_dependency_list=(
 )
 
 plugin_list=(
-    # mod_booking
+    # mod_booking   custom download logic from gh until it is available via marketplace/directory 
     theme_boost_magnific
     theme_boost_union
     mod_choicegroup
@@ -72,7 +72,20 @@ download_oidc() {
     rm -rf dbp-moodle-plugin-oidc/
 }
 
+download_booking() {
+    target_branch="MOODLE_405_STABLE"
+
+    git clone https://github.com/Wunderbyte-GmbH/moodle-mod_booking.git
+    cd moodle-mod_booking/ || exit 1
+    git checkout ${target_branch}
+    # create the zip archive in the initial directory, s.t. it can be treated equally to the other plugins
+    (cd mod && zip -r ../../mod_booking.zip booking)
+    cd ..
+    rm -rf moodle-mod_booking/
+}
+
 download_oidc
+download_booking
 moosh plugin-list > /dev/null
 
 for plugin in "${moodle_plugin_list[@]}"; do
