@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 major_minor="${MOODLE_VERSION%.*}"
 plugin_index=0
@@ -67,7 +68,7 @@ download_oidc() {
     cd dbp-moodle-plugin-oidc/ || exit 1
     git checkout ${target_branch}
     # create the zip archive in the initial directory, s.t. it can be treated equally to the other plugins
-    (cd auth && zip -r ../../eledia_auth_oidc.zip oidc)
+    (cd auth && zip -rq ../../eledia_auth_oidc.zip oidc)
     cd ..
     rm -rf dbp-moodle-plugin-oidc/
 }
@@ -79,7 +80,7 @@ download_booking() {
     cd moodle-mod_booking/ || exit 1
     git checkout ${target_branch}
     # create the zip archive in the initial directory, s.t. it can be treated equally to the other plugins
-    zip -r ../mod_booking.zip .
+    zip -rq ../mod_booking.zip .
     cd ..
     rm -rf moodle-mod_booking/
 }
