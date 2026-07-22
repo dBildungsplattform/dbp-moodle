@@ -12,7 +12,7 @@ plugin_dependency_list=(
 )
 
 plugin_list=(
-    mod_booking
+    # mod_booking
     theme_boost_magnific
     theme_boost_union
     mod_choicegroup
