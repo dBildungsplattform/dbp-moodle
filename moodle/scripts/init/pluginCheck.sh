@@ -142,7 +142,7 @@ main() {
                 new_plugin_path="${plugin_unzip_path}/${plugin_name}"
                 new_plugin_version="$(get_plugin_version $new_plugin_path)"
 
-                if [[ "$plugin_name" = "eledia_oidc" ]]; then
+                if [[ "$plugin_name" = "booking" ]]; then
                     echo "new_plugin_version: $new_plugin_version"
                     echo "installed_plugin_version: $installed_plugin_version"
                 fi
