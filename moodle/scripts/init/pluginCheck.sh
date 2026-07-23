@@ -135,7 +135,6 @@ main() {
 
         if [ "$plugin_target_state" = "$plugin_cur_state" ]; then
             # Check if plugin update is required due to newer version in new image
-            echo "Check plugin state of $plugin_name"
             if [ "$plugin_target_state" = true ]; then
                 installed_plugin_version="$(get_plugin_version $full_path)"
                 unzip -q "${plugin_zip_path}/${plugin_fullname}.zip" -d "$plugin_unzip_path"
@@ -143,8 +142,11 @@ main() {
                 new_plugin_version="$(get_plugin_version $new_plugin_path)"
 
                 if [[ "$plugin_name" = "booking" ]]; then
+                    echo "plugin_unzip_path: $plugin_unzip_path; plugin_zip_path: $plugin_zip_path; "
                     echo "new_plugin_version: $new_plugin_version"
                     echo "installed_plugin_version: $installed_plugin_version"
+                    ls /plugins
+                    ls "$plugin_unzip_path" 
                 fi
 
                 # Plugin version comparison
