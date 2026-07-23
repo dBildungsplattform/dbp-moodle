@@ -106,6 +106,7 @@ main() {
 
         # skip mod_booking while it is not available to download via marketplace
         if [[ "$plugin_name" = "booking" ]]; then
+            MODULE="dbp-plugins" info "SKIPPING mod_booking since its not available in moodle marketplace"
             continue
         fi
 
