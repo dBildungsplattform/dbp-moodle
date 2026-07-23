@@ -88,7 +88,7 @@ download_booking() {
 }
 
 download_oidc
-download_booking
+# download_booking
 moosh plugin-list > /dev/null
 
 for plugin in "${moodle_plugin_list[@]}"; do
