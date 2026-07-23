@@ -1,8 +1,10 @@
 #!/bin/bash
-set -euo pipefail
+set -eo pipefail
 
 major_minor="${MOODLE_VERSION%.*}"
 plugin_index=0
+
+echo "major_minor: $major_minor"
 
 plugin_dependency_list=(
     local_wunderbyte_table # Dependency of mod_booking
