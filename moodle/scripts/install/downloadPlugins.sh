@@ -67,6 +67,7 @@ download_oidc() {
     git clone https://github.com/dBildungsplattform/dbp-moodle-plugin-oidc.git
     cd dbp-moodle-plugin-oidc/ || exit 1
     git checkout ${target_branch}
+    cat auth/version.php
     # create the zip archive in the initial directory, s.t. it can be treated equally to the other plugins
     (cd auth && zip -rq ../../eledia_auth_oidc.zip oidc)
     cd ..
@@ -79,6 +80,7 @@ download_booking() {
     git clone https://github.com/Wunderbyte-GmbH/moodle-mod_booking.git
     cd moodle-mod_booking/ || exit 1
     git checkout ${target_branch}
+    cat version.php
     # create the zip archive in the initial directory, s.t. it can be treated equally to the other plugins
     zip -rq ../mod_booking.zip .
     cd ..
