@@ -103,3 +103,5 @@ done
 
 moosh plugin-download -v 3.7 customfield_dynamic
 check_plugin_size "customfield_dynamic"
+
+# trigger build
