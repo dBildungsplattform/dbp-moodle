@@ -147,7 +147,7 @@ main() {
                     echo "installed_plugin_version: $installed_plugin_version"
                     ls /plugins
                     ls "$plugin_unzip_path"
-                    cat "$plugin_unzip_path/version.php"
+                    cat "${plugin_unzip_path}/${plugin_name}/version.php"
                 fi
 
                 # Plugin version comparison
