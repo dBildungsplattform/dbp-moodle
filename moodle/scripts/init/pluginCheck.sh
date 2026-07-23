@@ -104,6 +104,11 @@ main() {
         plugin_path="${parts[2]}"
         plugin_target_state="${parts[3]}"
 
+        # skip mod_booking while it is not available to download via marketplace
+        if [[ "$plugin_name" = "booking" ]]; then
+            continue
+        fi
+
         # This is required to avoid conflicts between eledia oidc and oicd including update and uninstall steps
         if [[ "$plugin_name" = "oidc" && "$eledia_oidc_plugin_active" = true ]]; then
             continue
@@ -140,15 +145,6 @@ main() {
                 unzip -q "${plugin_zip_path}/${plugin_fullname}.zip" -d "$plugin_unzip_path"
                 new_plugin_path="${plugin_unzip_path}/${plugin_name}"
                 new_plugin_version="$(get_plugin_version $new_plugin_path)"
-
-                if [[ "$plugin_name" = "booking" ]]; then
-                    echo "plugin_unzip_path: $plugin_unzip_path; plugin_zip_path: $plugin_zip_path; "
-                    echo "new_plugin_version: $new_plugin_version"
-                    echo "installed_plugin_version: $installed_plugin_version"
-                    ls /plugins
-                    ls "$plugin_unzip_path"
-                    cat "${plugin_unzip_path}/${plugin_name}/version.php"
-                fi
 
                 # Plugin version comparison
                 if [ "$new_plugin_version" -gt "$installed_plugin_version" ]; then
