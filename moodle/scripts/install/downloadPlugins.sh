@@ -77,14 +77,14 @@ download_oidc() {
 download_booking() {
     target_branch="MOODLE_405_STABLE"
 
-    git clone https://github.com/Wunderbyte-GmbH/moodle-mod_booking.git
-    cd moodle-mod_booking/ || exit 1
+    git clone https://github.com/Wunderbyte-GmbH/moodle-mod_booking.git booking
+    cd booking/ || exit 1
     git checkout ${target_branch}
     cat version.php
     # create the zip archive in the initial directory, s.t. it can be treated equally to the other plugins
-    zip -rq ../mod_booking.zip .
+    (cd .. && zip -rq mod_booking.zip booking)
     cd ..
-    rm -rf moodle-mod_booking/
+    rm -rf booking/
 }
 
 download_oidc
