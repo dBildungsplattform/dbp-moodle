@@ -4,9 +4,6 @@ set -eo pipefail
 major_minor="${MOODLE_VERSION%.*}"
 plugin_index=0
 
-# just a comment to test pipeline trigger
-echo "major_minor: $major_minor"
-
 plugin_dependency_list=(
     local_wunderbyte_table # Dependency of mod_booking
     tool_certificate # Dependency of mod_coursecertificate
@@ -70,7 +67,7 @@ download_oidc() {
     git clone https://github.com/dBildungsplattform/dbp-moodle-plugin-oidc.git
     cd dbp-moodle-plugin-oidc/ || exit 1
     git checkout ${target_branch}
-    cat auth/version.php
+    cat auth/oidc/version.php
     # create the zip archive in the initial directory, s.t. it can be treated equally to the other plugins
     (cd auth && zip -rq ../../eledia_auth_oidc.zip oidc)
     cd ..
