@@ -1,5 +1,5 @@
 #!/bin/bash
-set -xeo pipefail
+#set -xeo pipefail
 
 major_minor="${MOODLE_VERSION%.*}"
 plugin_index=0
