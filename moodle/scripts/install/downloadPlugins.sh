@@ -98,7 +98,7 @@ for plugin in "${moodle_plugin_list[@]}"; do
     fi
     php -d memory_limit=256M /usr/local/bin/moosh plugin-download -v "$major_minor" "$plugin"
     check_plugin_size "$plugin"
-    ((plugin_index++))
+    plugin_index=$((plugin_index + 1))
 done
 
 moosh plugin-download -v 3.7 customfield_dynamic
