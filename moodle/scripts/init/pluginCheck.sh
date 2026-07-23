@@ -135,11 +135,18 @@ main() {
 
         if [ "$plugin_target_state" = "$plugin_cur_state" ]; then
             # Check if plugin update is required due to newer version in new image
+            echo "Check plugin state of $plugin_name"
             if [ "$plugin_target_state" = true ]; then
                 installed_plugin_version="$(get_plugin_version $full_path)"
                 unzip -q "${plugin_zip_path}/${plugin_fullname}.zip" -d "$plugin_unzip_path"
                 new_plugin_path="${plugin_unzip_path}/${plugin_name}"
                 new_plugin_version="$(get_plugin_version $new_plugin_path)"
+
+                if [[ "$plugin_name" = "eledia_oidc" ]]; then
+                    echo "new_plugin_version: $new_plugin_version"
+                    echo "installed_plugin_version: $installed_plugin_version"
+                fi
+
                 # Plugin version comparison
                 if [ "$new_plugin_version" -gt "$installed_plugin_version" ]; then
                     MODULE="dbp-plugins" info "Plugin ${plugin_name} version changed (installed version: ${installed_plugin_version}, new version: ${new_plugin_version}). Updating..."
