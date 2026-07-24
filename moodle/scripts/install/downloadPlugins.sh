@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -xeo pipefail
+#set -eo pipefail
 
 major_minor="${MOODLE_VERSION%.*}"
 plugin_index=0
@@ -103,5 +103,3 @@ done
 
 moosh plugin-download -v 3.7 customfield_dynamic
 check_plugin_size "customfield_dynamic"
-
-# trigger build
