@@ -74,10 +74,6 @@
 {{- if or .Values.redis.enabled (.Values.valkey).enabled -}}true{{- end -}}
 {{- end -}}
 
-{{- if and .Values.redis.enabled .Values.valkey.enabled -}}
-{{- fail "Enable either redis or valkey, not both" -}}
-{{- end -}}
-
 {{- define "dbpMoodle.pluginConfigMap.content" -}}
 eledia_oidc:eledia_auth_oidc:auth/oidc:                         {{- .Values.global.moodlePlugins.eledia_oidc.enabled }}{{"\n"}}
 wunderbyte_table:local_wunderbyte_table:local/wunderbyte_table: {{- .Values.global.moodlePlugins.booking.enabled}}{{"\n"}}

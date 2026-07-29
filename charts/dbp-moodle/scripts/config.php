@@ -31,7 +31,7 @@ $CFG->blockedip = '{{ .Values.dbpMoodle.phpConfig.ip.blocked }}';
 
 {{- if include "dbpMoodle.sessionStore.enabled" . }}
 $CFG->session_handler_class = '\core\session\redis';
-$CFG->session_redis_host = '{{ include "dbpMoodle.sessionStore.host" . }}';
+$CFG->session_redis_host = '{{ .Values.dbpMoodle.redis.host }}';
 $CFG->session_redis_port = {{ .Values.dbpMoodle.redis.port }};
 $CFG->session_redis_database = 0;
 $CFG->session_redis_auth = getenv('REDIS_PASSWORD');
