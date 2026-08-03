@@ -1,4 +1,5 @@
 #!/bin/bash
+#set -eo pipefail
 
 major_minor="${MOODLE_VERSION%.*}"
 plugin_index=0
@@ -12,7 +13,7 @@ plugin_dependency_list=(
 )
 
 plugin_list=(
-    mod_booking
+    # mod_booking   custom download logic from gh until it is available via marketplace/directory 
     theme_boost_magnific
     theme_boost_union
     mod_choicegroup
@@ -66,13 +67,28 @@ download_oidc() {
     git clone https://github.com/dBildungsplattform/dbp-moodle-plugin-oidc.git
     cd dbp-moodle-plugin-oidc/ || exit 1
     git checkout ${target_branch}
+    cat auth/oidc/version.php
     # create the zip archive in the initial directory, s.t. it can be treated equally to the other plugins
-    (cd auth && zip -r ../../eledia_auth_oidc.zip oidc)
+    (cd auth && zip -rq ../../eledia_auth_oidc.zip oidc)
     cd ..
     rm -rf dbp-moodle-plugin-oidc/
 }
 
+download_booking() {
+    target_branch="MOODLE_405_STABLE"
+
+    git clone https://github.com/Wunderbyte-GmbH/moodle-mod_booking.git booking
+    cd booking/ || exit 1
+    git checkout ${target_branch}
+    cat version.php
+    # create the zip archive in the initial directory, s.t. it can be treated equally to the other plugins
+    (cd .. && zip -rq mod_booking.zip booking)
+    cd ..
+    rm -rf booking/
+}
+
 download_oidc
+#download_booking
 moosh plugin-list > /dev/null
 
 for plugin in "${moodle_plugin_list[@]}"; do
@@ -82,7 +98,7 @@ for plugin in "${moodle_plugin_list[@]}"; do
     fi
     php -d memory_limit=256M /usr/local/bin/moosh plugin-download -v "$major_minor" "$plugin"
     check_plugin_size "$plugin"
-    ((plugin_index++))
+    plugin_index=$((plugin_index + 1))
 done
 
 moosh plugin-download -v 3.7 customfield_dynamic

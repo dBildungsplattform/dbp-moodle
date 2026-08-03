@@ -1,13 +1,17 @@
 # Changelog
 
-## [1.6.1] - 2026-06-29
+## [1.6.2] - 2026-07-24
+### Fix
+- **PB-161**: Change plugin source to moodle marketplace from moodle plugin directory
+  - Using a new moodle default image in Helm Chart Version 1.6.1: 4.5.12-fpm-trixie-8.2.31-dbp2
+  - This skips the installation and update check of the mod_booking plugin as its currently not available via any plugin source
 
+## [1.6.1] - 2026-06-29
 ### Changed
 - **PB-149**: Bump Moodle Version from 4.5.10 to 4.5.12
-  - Use new Moodle default Image in Helm CHart Version 1.6.1: 4.5.12-fpm-trixie-8.2.31-dbp1
+  - Use new Moodle default Image in Helm Chart Version 1.6.1: 4.5.12-fpm-trixie-8.2.31-dbp1
 
 ## [1.6.0] - 2026-06-24
-
 ### Changed
 - **PB-128**: Update to Debian 13 Trixie
   - Helm Chart GPG Key way of working adjusted
