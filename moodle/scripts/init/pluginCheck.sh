@@ -39,11 +39,8 @@ cleanup() {
 # plugin sources.
 #
 # The name of the root directory inside a plugin ZIP is NOT part of any contract.
-# Plugins released to the Moodle plugins directory / Moodle Marketplace via the
-# standard GitHub release workflow are submitted as GitHub zipballs, whose root
-# directory is "<owner>-<repo>-<short-sha>" (e.g.
-# "Wunderbyte-GmbH-moodle-local_wunderbyte_table-12e6781"). Moodle core itself does
-# not rely on that name either - it renames the extracted root directory while
+# Plugins released to the Moodle Marketplace may have a different root directory name (e.g. moodle-local_wunderbyte_table-3.2.8-stable instead of wunderbyte_table). 
+# Moodle core itself does not rely on that name either - it renames the extracted root directory while
 # installing (see \core\update\code_manager::unzip_plugin_file()).
 # Therefore we locate the plugin by its version.php / component instead of guessing.
 extract_plugin() {
