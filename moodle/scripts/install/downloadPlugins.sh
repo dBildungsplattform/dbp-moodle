@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -eo pipefail
+set -eo pipefail
 
 major_minor="${MOODLE_VERSION%.*}"
 plugin_index=0
@@ -52,11 +52,27 @@ moodle_plugin_list=("${plugin_dependency_list[@]}" "${plugin_list[@]}")
 
 cd /plugins || exit 1
 
-check_plugin_size() {
-    plugin_name=$1    
-    plugin_size=$(stat -c%s "/plugins/${plugin_name}.zip")
-    if [ "$plugin_size" -eq 0 ]; then
-        echo "ERROR: Moodle Plugin '$plugin_name' is empty (size 0 bytes). Possible Download error." >&2
+check_plugin_zip() {
+    plugin_name=$1
+    plugin_zip="/plugins/${plugin_name}.zip"
+
+    if [ ! -s "$plugin_zip" ]; then
+        echo "ERROR: Moodle plugin '$plugin_name' was not downloaded or is empty. Possible download error." >&2
+        exit 1
+    fi
+
+    # A ZIP that cannot be listed (e.g. an HTML error page saved as .zip) must not
+    # end up in the image either.
+    if ! unzip -tq "$plugin_zip" > /dev/null; then
+        echo "ERROR: Moodle plugin '$plugin_name' is not a valid ZIP archive." >&2
+        exit 1
+    fi
+
+    # The root directory inside the ZIP is intentionally NOT checked here - it is not
+    # guaranteed to match the plugin directory name (GitHub zipballs use
+    # "<owner>-<repo>-<sha>"). pluginCheck.sh resolves it via version.php.
+    if ! unzip -Z1 "$plugin_zip" | grep -qE '(^|/)version\.php$'; then
+        echo "ERROR: Moodle plugin '$plugin_name' contains no version.php." >&2
         exit 1
     fi
 }
@@ -97,9 +113,9 @@ for plugin in "${moodle_plugin_list[@]}"; do
         sleep 60
     fi
     php -d memory_limit=256M /usr/local/bin/moosh plugin-download -v "$major_minor" "$plugin"
-    check_plugin_size "$plugin"
+    check_plugin_zip "$plugin"
     plugin_index=$((plugin_index + 1))
 done
 
 moosh plugin-download -v 3.7 customfield_dynamic
-check_plugin_size "customfield_dynamic"
+check_plugin_zip "customfield_dynamic"
