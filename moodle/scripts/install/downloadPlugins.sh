@@ -69,8 +69,7 @@ check_plugin_zip() {
     fi
 
     # The root directory inside the ZIP is intentionally NOT checked here - it is not
-    # guaranteed to match the plugin directory name (GitHub zipballs use
-    # "<owner>-<repo>-<sha>"). pluginCheck.sh resolves it via version.php.
+    # guaranteed to match the plugin directory name. pluginCheck.sh resolves it via version.php.
     # No "grep -q" here: with pipefail enabled, grep -q exiting on the first match
     # kills unzip with SIGPIPE (exit 141) on large archives and fails the check.
     if ! unzip -Z1 "$plugin_zip" | grep -E '(^|/)version\.php$' > /dev/null; then
