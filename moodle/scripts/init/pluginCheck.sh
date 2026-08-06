@@ -68,7 +68,9 @@ extract_plugin() {
     for candidate in "$dest" "$dest"/*; do
         [ -d "$candidate" ] || continue
         [ -f "${candidate}/version.php" ] || continue
-        if grep -qE "\\\$plugin->component[[:space:]]*=[[:space:]]*'${plugin_fullname}'" "${candidate}/version.php"; then
+        # The component may be quoted with single or double quotes (e.g.
+        # theme_boost_magnific uses double quotes).
+        if grep -qE "\\\$plugin->component[[:space:]]*=[[:space:]]*['\"]${plugin_fullname}['\"]" "${candidate}/version.php"; then
             printf '%s' "$candidate"
             return 0
         fi
