@@ -6,6 +6,11 @@
     - With the switch to marketplace some vendors changed the naming convention of the plugins root directory
     - Added additional logic to dynamically find the appropriate directory
 
+### Changed
+- **DBP-2397** Upload Size Timeouts
+    - Increase the apache timeout and proxy timeout to 600 seconds
+    - Allows for uploads of larger files on slow innternet connections
+
 ## [1.6.2] - 2026-07-24
 ### Fix
 - **PB-161**: Change plugin source to moodle marketplace from moodle plugin directory
