@@ -5,6 +5,8 @@ SetEnvIf X-Forwarded-Proto https HTTPS=on
 
 <VirtualHost _default_:8080>
   DocumentRoot "/opt/dbp-moodle/moodle"
+  ProxyTimeout 600
+  Timeout 600
   <Directory "/opt/dbp-moodle/moodle">
     Options Indexes FollowSymLinks
     AllowOverride All
