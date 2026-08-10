@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased Changes
+## [1.6.3] - 2026-08-10
 ### Fix
 - **DBP-2450** Plugin install logic
     - With the switch to marketplace some vendors changed the naming convention of the plugins root directory
