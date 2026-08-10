@@ -117,6 +117,7 @@ board:mod_board:mod/board:                                      {{- .Values.glob
 adaptivemultipart:qbehaviour_adaptivemultipart:question/behaviour/adaptivemultipart: {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
 dfexplicitvaildate:qbehaviour_dfexplicitvaildate:question/behaviour/dfexplicitvaildate: {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
 dfcbmexplicitvaildate:qbehaviour_dfcbmexplicitvaildate:question/behaviour/dfcbmexplicitvaildate: {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
+importasversion:qbank_importasversion:/question/bank/importasversion: {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
 stack:qtype_stack:question/type/stack:                          {{- .Values.global.moodlePlugins.qtype_stack.enabled }}{{"\n"}}
 checklist:mod_checklist:mod/checklist:                          {{- .Values.global.moodlePlugins.mod_checklist.enabled }}{{"\n"}}
 stash:block_stash:blocks/stash:                                 {{- .Values.global.moodlePlugins.block_stash.enabled }}{{"\n"}}
