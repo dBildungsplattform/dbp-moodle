@@ -1,6 +1,6 @@
 # Changelog
 
-## [Uncommited]
+## [1.6.4]
 ### Fix
 - **DBP-2462** qtype stack dependencies
   - Added qbank_importasversion plugin as a dependency for qtype_stack as it is now required.
