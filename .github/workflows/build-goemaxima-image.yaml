@@ -12,6 +12,16 @@ on:
         type: string
         default: "master"
 
+      qtype-stack-commit:
+        description: "Ref (branch, tag or full SHA) of the qtype_stack plugin to build the stackmaxima libraries from. If set, the libraries are taken from the plugin instead of goemaxima's stack/ folder and stack-version is ignored. Use this when the installed plugin expects a stackmaxima version goemaxima does not ship yet."
+        type: string
+        default: ""
+
+      qtype-stack-remote:
+        description: "Git remote of the qtype_stack plugin (only used together with qtype-stack-commit)"
+        type: string
+        default: "https://github.com/maths/moodle-qtype_stack"
+
 concurrency:
   group: dbp-moodle-goemaxima-image
   cancel-in-progress: true
@@ -23,6 +33,9 @@ jobs:
       MAXIMA_VERSION:       ${{ steps.vars.outputs.MAXIMA_VERSION }}
       SBCL_VERSION:         ${{ steps.vars.outputs.SBCL_VERSION }}
       LIB_PATH:             ${{ steps.vars.outputs.LIB_PATH }}
+      STACK_VERSION:        ${{ steps.vars.outputs.STACK_VERSION }}
+      QTYPE_STACK_REMOTE:   ${{ steps.vars.outputs.QTYPE_STACK_REMOTE }}
+      QTYPE_STACK_COMMIT:   ${{ steps.vars.outputs.QTYPE_STACK_COMMIT }}
       LATEST_STACK_VERSION: ${{ steps.latest.outputs.LATEST_STACK_VERSION }}
       IMAGE_TAG_REF:        ${{ steps.tag.outputs.ref_tag }}
     steps:
@@ -47,35 +60,81 @@ jobs:
           fi
           echo "LATEST_STACK_VERSION=$LATEST" >> "$GITHUB_OUTPUT"
 
-      - name: Extract versions for ${{ inputs['stack-version'] || steps.latest.outputs.LATEST_STACK_VERSION }}
+      # When building against a specific qtype_stack ref, the stackmaxima
+      # version is defined by the plugin itself, so derive it from there
+      # (same extraction the goemaxima Dockerfile uses).
+      - name: Derive stackmaxima version from qtype_stack plugin
+        id: plugin
+        if: ${{ inputs['qtype-stack-commit'] != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git init -q qtype_stack
+          cd qtype_stack
+          git remote add origin "${{ inputs['qtype-stack-remote'] }}"
+          git fetch -q --depth 1 origin "${{ inputs['qtype-stack-commit'] }}"
+          git checkout -q FETCH_HEAD
+          STACKVER="$(tail -n1 stack/maxima/stackmaxima.mac | cut -d ':' -f2 | tr -d '$' | tr -d '[:space:]')"
+          if ! [[ "$STACKVER" =~ ^[0-9]{10}$ ]]; then
+            echo "Could not derive stackmaxima version from plugin (got: '$STACKVER')" >&2
+            exit 1
+          fi
+          echo "Plugin stackmaxima version: $STACKVER"
+          echo "PLUGIN_STACK_VERSION=$STACKVER" >> "$GITHUB_OUTPUT"
+
+      - name: Extract versions for ${{ steps.plugin.outputs.PLUGIN_STACK_VERSION || inputs['stack-version'] || steps.latest.outputs.LATEST_STACK_VERSION }}
         id: vars
         shell: bash
         run: |
           set -euo pipefail
           cd goemaxima
 
-          STACK="${{ inputs['stack-version'] || steps.latest.outputs.LATEST_STACK_VERSION }}"
+          if [ -n "${{ inputs['qtype-stack-commit'] }}" ]; then
+            # Plugin mode: libraries are cloned from qtype_stack inside the
+            # Dockerfile, so LIB_PATH must stay empty.
+            STACK="${{ steps.plugin.outputs.PLUGIN_STACK_VERSION }}"
+            LIB_PATH=""
+            QTYPE_STACK_REMOTE="${{ inputs['qtype-stack-remote'] }}"
+            QTYPE_STACK_COMMIT="${{ inputs['qtype-stack-commit'] }}"
+          else
+            STACK="${{ inputs['stack-version'] || steps.latest.outputs.LATEST_STACK_VERSION }}"
+            LIB_PATH="stack/${STACK}/maxima"
+            QTYPE_STACK_REMOTE=""
+            QTYPE_STACK_COMMIT=""
+          fi
+
           # Find the line for this stack version in the 'versions' file
           LINE="$(awk -v s="$STACK" '$1==s{print $0}' versions || true)"
           if [ -z "$LINE" ]; then
-            echo "Requested stack version '$STACK' not found in versions file" >&2
-            exit 1
+            if [ -n "$QTYPE_STACK_COMMIT" ]; then
+              # Plugin is newer than goemaxima's versions file: fall back to
+              # the Maxima/SBCL versions of the newest known entry.
+              LINE="$(awk '!/^#/ && NF' versions | tail -n1)"
+              echo "::warning::stackmaxima version '$STACK' not found in goemaxima versions file, falling back to Maxima/SBCL versions of entry '$(echo "$LINE" | cut -f1)'"
+            else
+              echo "Requested stack version '$STACK' not found in versions file" >&2
+              exit 1
+            fi
           fi
 
           MAXIMA_VERSION="$(echo "$LINE" | cut -f2)"
           SBCL_VERSION="$(echo "$LINE"   | cut -f3)"
-          LIB_PATH="stack/${STACK}/maxima"
 
           # Job outputs for downstream jobs
           echo "MAXIMA_VERSION=$MAXIMA_VERSION"           >> "$GITHUB_OUTPUT"
           echo "SBCL_VERSION=$SBCL_VERSION"               >> "$GITHUB_OUTPUT"
-          echo "LIB_PATH=stack/${STACK}/maxima"           >> "$GITHUB_OUTPUT"
+          echo "LIB_PATH=$LIB_PATH"                       >> "$GITHUB_OUTPUT"
+          echo "STACK_VERSION=$STACK"                     >> "$GITHUB_OUTPUT"
+          echo "QTYPE_STACK_REMOTE=$QTYPE_STACK_REMOTE"   >> "$GITHUB_OUTPUT"
+          echo "QTYPE_STACK_COMMIT=$QTYPE_STACK_COMMIT"   >> "$GITHUB_OUTPUT"
 
           echo "::group::Build argument summary"
-          echo "STACK:            $STACK"
-          echo "MAXIMA_VERSION:   $MAXIMA_VERSION"
-          echo "SBCL_VERSION:     $SBCL_VERSION"
-          echo "LIB_PATH:         $LIB_PATH"
+          echo "STACK:              $STACK"
+          echo "MAXIMA_VERSION:     $MAXIMA_VERSION"
+          echo "SBCL_VERSION:       $SBCL_VERSION"
+          echo "LIB_PATH:           $LIB_PATH"
+          echo "QTYPE_STACK_REMOTE: $QTYPE_STACK_REMOTE"
+          echo "QTYPE_STACK_COMMIT: $QTYPE_STACK_COMMIT"
           echo "::endgroup::"
 
       # The versioning of the repository is not actively used (last version bump to 1.2.0 was in 2024, changes to the dockerfile were made past this point)
@@ -120,7 +179,7 @@ jobs:
       image_name: "goemaxima"
       run_trivy_scan: true
       image_tag_generation: specified
-      image_tag: "${{ inputs['stack-version'] || needs.get_build_args.outputs.LATEST_STACK_VERSION }}-${{ needs.get_build_args.outputs.IMAGE_TAG_REF }}"
+      image_tag: "${{ needs.get_build_args.outputs.STACK_VERSION }}-${{ needs.get_build_args.outputs.IMAGE_TAG_REF }}"
       add_latest_tag: true
       container_registry: "ghcr.io"
       fail_on_vulnerabilites: false
@@ -130,3 +189,5 @@ jobs:
         MAXIMA_VERSION=${{ needs.get_build_args.outputs.MAXIMA_VERSION }}
         SBCL_VERSION=${{ needs.get_build_args.outputs.SBCL_VERSION }}
         LIB_PATH=${{ needs.get_build_args.outputs.LIB_PATH }}
+        QTYPE_STACK_REMOTE=${{ needs.get_build_args.outputs.QTYPE_STACK_REMOTE }}
+        QTYPE_STACK_COMMIT=${{ needs.get_build_args.outputs.QTYPE_STACK_COMMIT }}
