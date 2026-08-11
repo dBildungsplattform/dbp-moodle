@@ -1,6 +1,6 @@
 # dbp-moodle
 
-![Version: 1.6.4](https://img.shields.io/badge/Version-1.6.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.5.12](https://img.shields.io/badge/AppVersion-4.5.12-informational?style=flat-square)
+![Version: 1.6.5](https://img.shields.io/badge/Version-1.6.5-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.5.12](https://img.shields.io/badge/AppVersion-4.5.12-informational?style=flat-square)
 
 This is a Helm Chart bundling some of the bitnami resources to deploy Moodle for DBildungsplattform. Extending them with features such as
 PostgreSQL support, Horizontal Autoscaling capabilities, Redis Session Store, Etherpad-Lite.
@@ -152,7 +152,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | dbpMoodle.goemaxima.env.MAXIMA_TIMEOUT | string | `"30"` |  |
 | dbpMoodle.goemaxima.image.pullPolicy | string | `"IfNotPresent"` |  |
 | dbpMoodle.goemaxima.image.repository | string | `"ghcr.io/dbildungsplattform/goemaxima"` |  |
-| dbpMoodle.goemaxima.image.tag | string | `"latest"` |  |
+| dbpMoodle.goemaxima.image.tag | string | `"2026080600-master-20260811"` |  |
 | dbpMoodle.goemaxima.podSecurityContext | object | `{}` |  |
 | dbpMoodle.goemaxima.replicaCount | int | `1` |  |
 | dbpMoodle.goemaxima.resources.limits.cpu | string | `"1"` |  |
