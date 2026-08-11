@@ -148,12 +148,6 @@ main() {
         plugin_path="${parts[2]}"
         plugin_target_state="${parts[3]}"
 
-        # skip mod_booking while it is not available to download via marketplace
-        if [[ "$plugin_name" = "booking" ]]; then
-            MODULE="dbp-plugins" info "SKIPPING mod_booking since its not available in moodle marketplace"
-            continue
-        fi
-
         # This is required to avoid conflicts between eledia oidc and oicd including update and uninstall steps
         if [[ "$plugin_name" = "oidc" && "$eledia_oidc_plugin_active" = true ]]; then
             continue
