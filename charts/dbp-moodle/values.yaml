@@ -292,7 +292,7 @@ dbpMoodle:
     enabled: false
     image:
       repository: ghcr.io/dbildungsplattform/goemaxima
-      tag: "latest"
+      tag: "2026080600-master-20260811"
       pullPolicy: IfNotPresent
       # digest: "sha256:897..."
 

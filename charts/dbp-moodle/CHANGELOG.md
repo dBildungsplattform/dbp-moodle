@@ -1,4 +1,9 @@
 # Changelog
+## [1.6.5]
+### Fix
+- **DBP-2464** goemaxima update
+  - With the new Stack plugin a new version for goemaxima was needed.
+  - We are now using ghcr.io/dbildungsplattform/goemaxima:2026080600-master-20260811
 
 ## [1.6.4]
 ### Fix
