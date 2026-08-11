@@ -10,6 +10,7 @@ plugin_dependency_list=(
     qbehaviour_adaptivemultipart # Dependency of qtype_stack
     qbehaviour_dfexplicitvaildate # Dependency of qtype_stack
     qbehaviour_dfcbmexplicitvaildate # Dependency of qtype_stack
+    qbank_importasversion # Dependency of qtype_stack
 )
 
 plugin_list=(

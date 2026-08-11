@@ -1,10 +1,17 @@
 # Changelog
 
+## [Uncommited]
+### Fix
+- **DBP-2462** qtype stack dependencies
+  - Added qbank_importasversion plugin as a dependency for qtype_stack as it is now required.
+  - Use Image 4.5.12-fpm-trixie-8.2.31-dbp4
+
 ## [1.6.3] - 2026-08-10
 ### Fix
 - **DBP-2450** Plugin install logic
     - With the switch to marketplace some vendors changed the naming convention of the plugins root directory
     - Added additional logic to dynamically find the appropriate directory
+    - Use Image 4.5.12-fpm-trixie-8.2.31-dbp3
 
 ### Changed
 - **DBP-2397** Upload Size Timeouts
