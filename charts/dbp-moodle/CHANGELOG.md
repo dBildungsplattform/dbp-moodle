@@ -6,7 +6,7 @@
     - In Version 1.6.2 the installation and updating of mod_booking plugin was skipped due to a missing source
     - Switched from marketplace to the github source for the plugin download during the image creation
     - Use Image 4.5.12-fpm-trixie-8.2.31-dbp5
-    - Ships mod-booking from wunderbyte (github tag v9.7.4-stable)
+    - Ships mod-booking version 2026081100 (github tag v9.7.4-stable)
 
 ## [1.6.5] - 2026-08-11
 ### Fix
