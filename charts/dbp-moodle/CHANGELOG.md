@@ -1,11 +1,20 @@
 # Changelog
-## [1.6.5]
+
+## Unreleased
+### Fix
+- **DBP-2411** enable mod_booking again
+    - In Version 1.6.2 the installation and updating of mod_booking plugin was skipped due to a missing source
+    - Switched from marketplace to the github source for the plugin download during the image creation
+    - Use Image 4.5.12-fpm-trixie-8.2.31-dbp5
+    - Ships mod-booking from wunderbyte (github tag v9.7.4-stable)
+
+## [1.6.5] - 2026-08-11
 ### Fix
 - **DBP-2464** goemaxima update
   - With the new Stack plugin a new version for goemaxima was needed.
   - We are now using ghcr.io/dbildungsplattform/goemaxima:2026080600-master-20260811
 
-## [1.6.4]
+## [1.6.4] - 2026-08-11
 ### Fix
 - **DBP-2462** qtype stack dependencies
   - Added qbank_importasversion plugin as a dependency for qtype_stack as it is now required.
