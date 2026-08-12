@@ -1,12 +1,15 @@
 # Changelog
 
-## Unreleased
+## [1.6.6] - 2026-08-12
 ### Fix
 - **DBP-2411** enable mod_booking again
-    - In Version 1.6.2 the installation and updating of mod_booking plugin was skipped due to a missing source
-    - Switched from marketplace to the github source for the plugin download during the image creation
-    - Use Image 4.5.12-fpm-trixie-8.2.31-dbp5
-    - Ships mod-booking version 2026081100 (github tag v9.7.4-stable)
+  - In Version 1.6.2 the installation and updating of mod_booking plugin was skipped due to a missing source
+  - Switched from marketplace to the github source for the plugin download during the image creation
+  - Use Image 4.5.12-fpm-trixie-8.2.31-dbp5
+  - Ships mod-booking version 2026081100 (github tag v9.7.4-stable)
+- **DBP-2383** oidc plugin enable
+  - Set oidc plugin enabled via php-config if the plugin is used
+  - Fixes an issue where updates disable the plugin
 
 ## [1.6.5] - 2026-08-11
 ### Fix
