@@ -103,11 +103,11 @@ download_boost_magnific() {
 }
 
 download_booking() {
-    target_branch="MOODLE_405_STABLE"
+    target_tag="v9.7.4-stable"
 
     git clone https://github.com/Wunderbyte-GmbH/moodle-mod_booking.git booking
     cd booking/ || exit 1
-    git checkout ${target_branch}
+    git checkout ${target_tag}
     cat version.php
     # create the zip archive in the initial directory, s.t. it can be treated equally to the other plugins
     (cd .. && zip -rq mod_booking.zip booking)
@@ -118,7 +118,7 @@ download_booking() {
 download_oidc
 download_boost_magnific
 check_plugin_zip "theme_boost_magnific"
-#download_booking
+download_booking
 moosh plugin-list > /dev/null
 
 for plugin in "${moodle_plugin_list[@]}"; do
