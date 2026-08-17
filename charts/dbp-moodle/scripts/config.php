@@ -44,6 +44,9 @@ $CFG->session_redis_serializer_use_igbinary = false;
 $CFG->session_redis_compressor = 'none';
 {{- end }}
 
+{{- if or .Values.global.moodlePlugins.oidc.enabled .Values.global.moodlePlugins.eledia_oidc.enabled }}
+$CFG->auth ='oidc';
+{{- end }}
 
 {{- if .Values.dbpMoodle.phpConfig.pluginUIInstallation.enabled }}
 $CFG->disableupdateautodeploy = false;

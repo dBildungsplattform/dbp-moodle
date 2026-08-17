@@ -3,6 +3,7 @@
 # If the PluginsFailed and UpdateFailed signal files do not exist, it will move the plugins from the image to the moodle installation.
 # This will ensure that always the most up to date plugins from the image will be used.
 set -o errexit
+set -o errtrace # required, otherwise the ERR trap is not inherited by functions
 set -o nounset
 set -o pipefail
 # set -o xtrace # Uncomment this line for debugging purposes
@@ -34,18 +35,61 @@ cleanup() {
     fi
 }
 
+# Extracts <plugin_fullname>.zip and echoes the directory that actually holds the
+# plugin sources.
+#
+# The name of the root directory inside a plugin ZIP is NOT part of any contract.
+# Plugins released to the Moodle Marketplace may have a different root directory name (e.g. moodle-local_wunderbyte_table-3.2.8-stable instead of wunderbyte_table). 
+# Moodle core itself does not rely on that name either - it renames the extracted root directory while
+# installing (see \core\update\code_manager::unzip_plugin_file()).
+# Therefore we locate the plugin by its version.php / component instead of guessing.
+extract_plugin() {
+    local plugin_fullname
+    local zip_file
+    local dest
+    local candidate
+
+    plugin_fullname="$1"
+    zip_file="${plugin_zip_path}/${plugin_fullname}.zip"
+    dest="${plugin_unzip_path}/${plugin_fullname}"
+
+    if [ ! -s "$zip_file" ]; then
+        MODULE="dbp-plugins" error "Plugin archive \"${zip_file}\" is missing or empty."
+        return 1
+    fi
+
+    rm -rf "${dest:?}"
+    mkdir -p "$dest"
+    unzip -qo "$zip_file" -d "$dest"
+
+    for candidate in "$dest" "$dest"/*; do
+        [ -d "$candidate" ] || continue
+        [ -f "${candidate}/version.php" ] || continue
+        # The component may be quoted with single or double quotes (e.g.
+        # theme_boost_magnific uses double quotes).
+        if grep -qE "\\\$plugin->component[[:space:]]*=[[:space:]]*['\"]${plugin_fullname}['\"]" "${candidate}/version.php"; then
+            printf '%s' "$candidate"
+            return 0
+        fi
+    done
+
+    MODULE="dbp-plugins" error "Could not find component ${plugin_fullname} inside \"${zip_file}\". Content: $(ls -A "$dest" | tr '\n' ' ')"
+    return 1
+}
+
 install_plugin() {
-    local plugin_name
     local plugin_fullname
     local plugin_path
+    local source_dir
 
-    plugin_name="$1"
-    plugin_fullname="$2"
-    plugin_path="$3"
+    plugin_fullname="$1"
+    plugin_path="$2"
 
-    unzip -q "${plugin_zip_path}/${plugin_fullname}.zip" -d "$plugin_unzip_path"
-    mkdir -p "${moodle_path}/${plugin_path}"
-    mv "${plugin_unzip_path}${plugin_name}" "${moodle_path}/${plugin_parent_path:?}/"
+    source_dir="$(extract_plugin "$plugin_fullname")"
+
+    mkdir -p "${moodle_path}/$(dirname "$plugin_path")"
+    rm -rf "${moodle_path:?}/${plugin_path:?}"
+    cp -a "$source_dir" "${moodle_path}/${plugin_path}"
 }
 
 uninstall_plugin() {
@@ -104,12 +148,6 @@ main() {
         plugin_path="${parts[2]}"
         plugin_target_state="${parts[3]}"
 
-        # skip mod_booking while it is not available to download via marketplace
-        if [[ "$plugin_name" = "booking" ]]; then
-            MODULE="dbp-plugins" info "SKIPPING mod_booking since its not available in moodle marketplace"
-            continue
-        fi
-
         # This is required to avoid conflicts between eledia oidc and oicd including update and uninstall steps
         if [[ "$plugin_name" = "oidc" && "$eledia_oidc_plugin_active" = true ]]; then
             continue
@@ -130,7 +168,6 @@ main() {
             fi
         fi
 
-        plugin_parent_path=$(dirname "$plugin_path")
         full_path="${moodle_path}/${plugin_path}"
 
         plugin_cur_state=false
@@ -142,17 +179,29 @@ main() {
         if [ "$plugin_target_state" = "$plugin_cur_state" ]; then
             # Check if plugin update is required due to newer version in new image
             if [ "$plugin_target_state" = true ]; then
-                installed_plugin_version="$(get_plugin_version $full_path)"
-                unzip -q "${plugin_zip_path}/${plugin_fullname}.zip" -d "$plugin_unzip_path"
-                new_plugin_path="${plugin_unzip_path}/${plugin_name}"
-                new_plugin_version="$(get_plugin_version $new_plugin_path)"
+                installed_plugin_version="$(get_plugin_version "$full_path")"
+                new_plugin_path="$(extract_plugin "$plugin_fullname")"
+                new_plugin_version="$(get_plugin_version "$new_plugin_path")"
+
+                if [ -z "$new_plugin_version" ]; then
+                    MODULE="dbp-plugins" error "Could not read version of ${plugin_fullname} from its archive. Aborting."
+                    exit 1
+                fi
+
+                # An unreadable installed version means the directory exists but does not
+                # contain a usable plugin (e.g. an empty directory left behind by a
+                # previously failed install). Treat it as "needs to be installed".
+                if [ -z "$installed_plugin_version" ]; then
+                    MODULE="dbp-plugins" info "Plugin ${plugin_name} is present but has no readable version.php. Reinstalling..."
+                    installed_plugin_version=0
+                fi
 
                 # Plugin version comparison
                 if [ "$new_plugin_version" -gt "$installed_plugin_version" ]; then
                     MODULE="dbp-plugins" info "Plugin ${plugin_name} version changed (installed version: ${installed_plugin_version}, new version: ${new_plugin_version}). Updating..."
                     rm -rf "${moodle_path:?}/${plugin_path:?}"
-                    mv "${plugin_unzip_path}${plugin_name}" "${moodle_path}/${plugin_parent_path:?}/"
-                    new_installed_plugin_version="$(get_plugin_version $full_path)"
+                    cp -a "$new_plugin_path" "${moodle_path}/${plugin_path}"
+                    new_installed_plugin_version="$(get_plugin_version "$full_path")"
                     MODULE="dbp-plugins" info "New installed plugin ${plugin_name} version: ${new_installed_plugin_version}"
                     anychange=true
                 else
@@ -165,7 +214,7 @@ main() {
         if [ "$plugin_target_state" = true ]; then
             last_installed_plugin="$full_path"
             MODULE="dbp-plugins" info "Installing plugin ${plugin_name} (${plugin_fullname}) to path \"${plugin_path}\""
-            install_plugin "$plugin_name" "$plugin_fullname" "$plugin_path"
+            install_plugin "$plugin_fullname" "$plugin_path"
             last_installed_plugin=""
             anychange=true
 

@@ -292,7 +292,7 @@ dbpMoodle:
     enabled: false
     image:
       repository: ghcr.io/dbildungsplattform/goemaxima
-      tag: "latest"
+      tag: "2026080600-master-20260811"
       pullPolicy: IfNotPresent
       # digest: "sha256:897..."
 
@@ -334,7 +334,7 @@ moodle:
     registry: "ghcr.io"
     repository: "dbildungsplattform/moodle"
     # -- The dbp-moodle image which is build for this helm chart
-    tag: "4.5.12-fpm-trixie-8.2.31-dbp2"
+    tag: "4.5.12-fpm-trixie-8.2.31-dbp5"
     pullPolicy: Always
     # -- Debug mode for more detailed moodle installation and log output
     debug: false

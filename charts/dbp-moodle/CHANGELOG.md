@@ -1,5 +1,40 @@
 # Changelog
 
+## [1.6.6] - 2026-08-12
+### Fix
+- **DBP-2411** enable mod_booking again
+  - In Version 1.6.2 the installation and updating of mod_booking plugin was skipped due to a missing source
+  - Switched from marketplace to the github source for the plugin download during the image creation
+  - Use Image 4.5.12-fpm-trixie-8.2.31-dbp5
+  - Ships mod-booking version 2026081100 (github tag v9.7.4-stable)
+- **DBP-2383** oidc plugin enable
+  - Set oidc plugin enabled via php-config if the plugin is used
+  - Fixes an issue where updates disable the plugin
+
+## [1.6.5] - 2026-08-11
+### Fix
+- **DBP-2464** goemaxima update
+  - With the new Stack plugin a new version for goemaxima was needed.
+  - We are now using ghcr.io/dbildungsplattform/goemaxima:2026080600-master-20260811
+
+## [1.6.4] - 2026-08-11
+### Fix
+- **DBP-2462** qtype stack dependencies
+  - Added qbank_importasversion plugin as a dependency for qtype_stack as it is now required.
+  - Use Image 4.5.12-fpm-trixie-8.2.31-dbp4
+
+## [1.6.3] - 2026-08-10
+### Fix
+- **DBP-2450** Plugin install logic
+    - With the switch to marketplace some vendors changed the naming convention of the plugins root directory
+    - Added additional logic to dynamically find the appropriate directory
+    - Use Image 4.5.12-fpm-trixie-8.2.31-dbp3
+
+### Changed
+- **DBP-2397** Upload Size Timeouts
+    - Increase the apache timeout and proxy timeout to 600 seconds
+    - Allows for uploads of larger files on slow innternet connections
+
 ## [1.6.2] - 2026-07-24
 ### Fix
 - **PB-161**: Change plugin source to moodle marketplace from moodle plugin directory

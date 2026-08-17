@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -eo pipefail
+set -eo pipefail
 
 major_minor="${MOODLE_VERSION%.*}"
 plugin_index=0
@@ -10,11 +10,12 @@ plugin_dependency_list=(
     qbehaviour_adaptivemultipart # Dependency of qtype_stack
     qbehaviour_dfexplicitvaildate # Dependency of qtype_stack
     qbehaviour_dfcbmexplicitvaildate # Dependency of qtype_stack
+    qbank_importasversion # Dependency of qtype_stack
 )
 
 plugin_list=(
-    # mod_booking   custom download logic from gh until it is available via marketplace/directory 
-    theme_boost_magnific
+    # mod_booking   custom download logic from gh until it is available via marketplace/directory
+    # theme_boost_magnific   custom download logic below - the marketplace metadata of its only published version is broken
     theme_boost_union
     mod_choicegroup
     mod_coursecertificate
@@ -52,11 +53,28 @@ moodle_plugin_list=("${plugin_dependency_list[@]}" "${plugin_list[@]}")
 
 cd /plugins || exit 1
 
-check_plugin_size() {
-    plugin_name=$1    
-    plugin_size=$(stat -c%s "/plugins/${plugin_name}.zip")
-    if [ "$plugin_size" -eq 0 ]; then
-        echo "ERROR: Moodle Plugin '$plugin_name' is empty (size 0 bytes). Possible Download error." >&2
+check_plugin_zip() {
+    plugin_name=$1
+    plugin_zip="/plugins/${plugin_name}.zip"
+
+    if [ ! -s "$plugin_zip" ]; then
+        echo "ERROR: Moodle plugin '$plugin_name' was not downloaded or is empty. Possible download error." >&2
+        exit 1
+    fi
+
+    # A ZIP that cannot be listed (e.g. an HTML error page saved as .zip) must not
+    # end up in the image either.
+    if ! unzip -tq "$plugin_zip" > /dev/null; then
+        echo "ERROR: Moodle plugin '$plugin_name' is not a valid ZIP archive." >&2
+        exit 1
+    fi
+
+    # The root directory inside the ZIP is intentionally NOT checked here - it is not
+    # guaranteed to match the plugin directory name. pluginCheck.sh resolves it via version.php.
+    # No "grep -q" here: with pipefail enabled, grep -q exiting on the first match
+    # kills unzip with SIGPIPE (exit 141) on large archives and fails the check.
+    if ! unzip -Z1 "$plugin_zip" | grep -E '(^|/)version\.php$' > /dev/null; then
+        echo "ERROR: Moodle plugin '$plugin_name' contains no version.php." >&2
         exit 1
     fi
 }
@@ -74,12 +92,22 @@ download_oidc() {
     rm -rf dbp-moodle-plugin-oidc/
 }
 
+download_boost_magnific() {
+    # The maintainer stopped publishing new versions to the Moodle marketplace; the
+    # only remaining published version (9.6.2, requires Moodle >= 4.4) has broken
+    # supported-versions metadata ("Moodle 1.9"), so "moosh plugin-download -v 4.5"
+    # refuses it. Download that version directly instead. New releases are only
+    # distributed via https://eduardokraus.com/marketplace-plugins/plugin/theme_boost_magnific
+    curl -sSfL "https://marketplace.moodle.com/api/plugins/theme_boost_magnific/versions/2026062801/download" \
+        -o theme_boost_magnific.zip
+}
+
 download_booking() {
-    target_branch="MOODLE_405_STABLE"
+    target_tag="v9.7.4-stable"
 
     git clone https://github.com/Wunderbyte-GmbH/moodle-mod_booking.git booking
     cd booking/ || exit 1
-    git checkout ${target_branch}
+    git checkout ${target_tag}
     cat version.php
     # create the zip archive in the initial directory, s.t. it can be treated equally to the other plugins
     (cd .. && zip -rq mod_booking.zip booking)
@@ -88,7 +116,9 @@ download_booking() {
 }
 
 download_oidc
-#download_booking
+download_boost_magnific
+check_plugin_zip "theme_boost_magnific"
+download_booking
 moosh plugin-list > /dev/null
 
 for plugin in "${moodle_plugin_list[@]}"; do
@@ -97,9 +127,9 @@ for plugin in "${moodle_plugin_list[@]}"; do
         sleep 60
     fi
     php -d memory_limit=256M /usr/local/bin/moosh plugin-download -v "$major_minor" "$plugin"
-    check_plugin_size "$plugin"
+    check_plugin_zip "$plugin"
     plugin_index=$((plugin_index + 1))
 done
 
 moosh plugin-download -v 3.7 customfield_dynamic
-check_plugin_size "customfield_dynamic"
+check_plugin_zip "customfield_dynamic"
