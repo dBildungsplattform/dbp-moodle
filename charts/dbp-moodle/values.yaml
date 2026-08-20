@@ -193,8 +193,8 @@ dbpMoodle:
     max_full_backup_age: "1W"
     gpg_key_names: ""
     gpgkeys:
-      gpgkey.dbpinfra.pub.asc: ""
-      gpgkey.dbpinfra.sec.asc: ""
+      gpgkey.devops.pub.asc: ""
+      gpgkey.devops.sec.asc: ""
       # -- Existing  secret for gpg keys
       existingSecret: ""
     s3_bucket_name: ""
