@@ -29,6 +29,11 @@ $CFG->getremoteaddrconf = 0; // Shows the real client IPs
 $CFG->allowedip = '{{ .Values.dbpMoodle.phpConfig.ip.allowed }}';
 $CFG->blockedip = '{{ .Values.dbpMoodle.phpConfig.ip.blocked }}';
 
+// Always enable account locking to prevent brute force attacks
+$CFG->lockoutthreshold = 5; // Number of failed login attempts before locking the account
+$CFG->lockoutduration = 30; // Duration (in minutes) for which the account remains locked
+$CFG->lockoutwindow = 30; // Time window (in minutes) for counting failed login attempts
+
 {{- if include "dbpMoodle.sessionStore.enabled" . }}
 $CFG->session_handler_class = '\core\session\redis';
 $CFG->session_redis_host = '{{ .Values.dbpMoodle.redis.host }}';
