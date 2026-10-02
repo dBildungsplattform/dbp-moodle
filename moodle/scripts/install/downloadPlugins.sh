@@ -134,7 +134,7 @@ download_github_release() {
 # The maintainer withdrew both plugins from the Moodle plugins directory, so they are no longer
 # in the plugin list. Latest releases of the MOODLE_405 branches (Moodle 4.5 only).
 download_topcoll() {
-    download_github_release format_topcoll gjbarnard/moodle-format_topcoll V405.1.4
+    download_github_release format_topcoll gjbarnard/moodle-format_topcoll V405.1.5
 }
 
 download_adaptable() {
