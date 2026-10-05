@@ -644,6 +644,7 @@ ingress:
   ## and reference on the ingress. Each entry needs a `name` and a `spec`. The `name` is used
   ## verbatim as the resource name, so it must be unique per namespace. The order of the list
   ## determines the order in which the middlewares are referenced on the ingress.
+  ## -- ApiVersion and Kind can be overriden on individual middlewares.
   ## e.g:
   ## middlewares:
   ##   - name: rate-limit
