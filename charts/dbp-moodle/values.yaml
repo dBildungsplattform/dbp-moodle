@@ -104,7 +104,7 @@ global:
 # -- List of arbitrary Kubernetes objects to deploy alongside the release.
 # -- Each entry is a full manifest which requires apiVersion, kind and metadata.name.
 # -- namespace defaults to the release namespace unless set in metadata.
-# -- For cluster-scoped resources set namespace but leave it empty.
+# -- For cluster-scoped resources set namespace to "".
 # -- Default labels (app.kubernetes.io/..., helm.sh/chart) are added, user labels take precedence.
 extraObjects: []
 #  - apiVersion: v1
