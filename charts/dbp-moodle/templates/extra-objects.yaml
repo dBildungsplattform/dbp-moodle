@@ -7,7 +7,7 @@
 {{- end }}
 {{- $labels := merge (dict
   "app.kubernetes.io/managed-by" $.Release.Service
-  "helm.sh/chart" (printf "%s-%s" $.Chart.Name $.Chart.Version)
+  "helm.sh/chart" (printf "%s-%s" $.Chart.Name $.Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-")
   "app.kubernetes.io/instance" $.Release.Name
   "app.kubernetes.io/name" $.Chart.Name
 ) (get $meta "labels" | default dict) }}
