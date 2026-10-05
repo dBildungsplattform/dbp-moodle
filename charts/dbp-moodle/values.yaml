@@ -116,7 +116,7 @@ extraObjects: []
 #  - apiVersion: rbac.authorization.k8s.io/v1
 #    kind: ClusterRole
 #    metadata:
-#      namespace:
+#      namespace: ""
 #      name: my-clusterrole
 
 dbpMoodle:
