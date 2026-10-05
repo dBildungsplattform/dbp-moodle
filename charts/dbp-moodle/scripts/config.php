@@ -29,6 +29,11 @@ $CFG->getremoteaddrconf = 0; // Shows the real client IPs
 $CFG->allowedip = '{{ .Values.dbpMoodle.phpConfig.ip.allowed }}';
 $CFG->blockedip = '{{ .Values.dbpMoodle.phpConfig.ip.blocked }}';
 
+// Always enable account locking to prevent brute force attacks
+$CFG->lockoutthreshold = 5; // Number of failed login attempts before locking the account
+$CFG->lockoutduration = 30; // Duration (in minutes) for which the account remains locked
+$CFG->lockoutwindow = 30; // Time window (in minutes) for counting failed login attempts
+
 {{- if include "dbpMoodle.sessionStore.enabled" . }}
 $CFG->session_handler_class = '\core\session\redis';
 $CFG->session_redis_host = '{{ .Values.dbpMoodle.redis.host }}';
@@ -63,6 +68,12 @@ $CFG->antiviruses = "clamav"; // Enables the clamav antivirus plugin by default.
 $CFG->forced_plugin_settings['antivirus_clamav']['runningmethod'] = 'tcpsocket';
 $CFG->forced_plugin_settings['antivirus_clamav']['tcpsockethost'] = 'moodle-clamav';
 $CFG->forced_plugin_settings['antivirus_clamav']['tcpsocketport'] = 3310;
+{{- end }}
+
+{{- if and .Values.global.moodlePlugins.qtype_stack.enabled .Values.dbpMoodle.goemaxima.enabled}}
+$CFG->forced_plugin_settings['qtype_stack']['platform'] = 'server';
+$CFG->forced_plugin_settings['qtype_stack']['maximacommandserver'] = 'http://moodle-goemaxima:8080/goemaxima';
+$CFG->forced_plugin_settings['qtype_stack']['maximaversion'] = 'default';
 {{- end }}
 
 require_once(__DIR__ . '/lib/setup.php');
