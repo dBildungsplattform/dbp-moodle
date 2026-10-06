@@ -21,7 +21,7 @@
 - **DBP-2178** Disable local postgres by default
   - Changed `postgresql.enabled` to `false` as the chart owned database is deprecated
 
--  Use Image 4.5.14-fpm-trixie-8.2.33-dbp2 as default
+-  Use Image 4.5.14-fpm-trixie-8.2.33-dbp3 as default
 
 ## [1.8.2] - 2026-09-22
 ### Changes
