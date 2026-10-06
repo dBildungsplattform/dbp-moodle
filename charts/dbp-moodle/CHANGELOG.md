@@ -1,5 +1,5 @@
 # Changelog
-## Unreleased
+## [1.9.0] - 2026-10-06
 ### Changes
 - **DBP-2467** Set required stack-plugin config via code
   - Set the maximaversion, platform and maximacommandserver values via php-config.
@@ -20,6 +20,8 @@
   - If the annotation is set explicitly under `ingress.annotations` it takes precedence over the generated one
 - **DBP-2178** Disable local postgres by default
   - Changed `postgresql.enabled` to `false` as the chart owned database is deprecated
+
+-  Use Image 4.5.14-fpm-trixie-8.2.33-dbp3 as default
 
 ## [1.8.2] - 2026-09-22
 ### Changes
