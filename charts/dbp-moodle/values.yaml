@@ -74,6 +74,8 @@ global:
       enabled: false
     filtercodes:
       enabled: false
+    customfield_dynamicformat:
+      enabled: false
     customfield_dynamic:
       enabled: false
     availability_cohort:
