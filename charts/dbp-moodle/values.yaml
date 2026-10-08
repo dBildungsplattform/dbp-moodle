@@ -645,6 +645,11 @@ etherpadlite:
     - name: "etherpad-settings"
       mountPath: "/opt/etherpad-lite/settings.json"
       subPath: settings
+  # -- Content of the robots.txt served by Etherpad at /robots.txt.
+  # -- Mounted to /opt/etherpad-lite/src/static/robots.txt; defaults to deny all.
+  robotsTxt: |-
+    User-agent: *
+    Disallow: /
   ingress:
     enabled: true
     annotations:
