@@ -265,6 +265,7 @@ The Chart can be deployed without any modification but it is advised to set own 
 | etherpadlite.resources.limits.memory | string | `"1Gi"` |  |
 | etherpadlite.resources.requests.cpu | string | `"100m"` |  |
 | etherpadlite.resources.requests.memory | string | `"128Mi"` |  |
+| etherpadlite.robotsTxt | string | `"User-agent: *\nDisallow: /"` | Content of the robots.txt served by Etherpad at /robots.txt. -- Mounted to /opt/etherpad-lite/src/static/robots.txt; defaults to deny all. |
 | etherpadlite.securityContext.privileged | bool | `false` |  |
 | etherpadlite.tolerations | list | `[]` |  |
 | etherpadlite.volumeMounts[0].mountPath | string | `"/opt/etherpad-lite/APIKEY.txt"` |  |
