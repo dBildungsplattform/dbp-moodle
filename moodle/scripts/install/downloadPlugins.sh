@@ -152,6 +152,7 @@ download_booking
 download_course_reminder
 download_topcoll
 download_adaptable
+download_dynamicformat
 install_plugin_list
 
 for plugin in "${moodle_plugin_list[@]}"; do
