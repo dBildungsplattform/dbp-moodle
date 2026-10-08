@@ -1,0 +1,454 @@
+"""Unit tests for check.py. Run: python -m unittest discover -s moodle/scripts/ci/plugin_health"""
+import io
+import json
+import os
+import shutil
+import sys
+import types
+import unittest
+import zipfile
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import check  # noqa: E402
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+REPO = os.path.abspath(os.path.join(HERE, "../../../.."))
+INSTALL = os.path.join(REPO, "moodle/scripts/install")
+
+
+def make_checker(config=None, **argv):
+    import tempfile
+    args = types.SimpleNamespace(repo_root=REPO, work_dir=tempfile.mkdtemp(prefix="ph-work-"), offline=False,
+                                 cve_dir=None, live_pluglist=False, no_bash_crosscheck=True, download_delay=0,
+                                 moodle_version=None)
+    for k, v in argv.items():
+        setattr(args, k, v)
+    return check.Checker(args, config or {"thresholds": {}})
+
+
+def zip_bytes(files):
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as zf:
+        for name, content in files.items():
+            zf.writestr(name, content)
+    return buf.getvalue()
+
+
+GPL_HEADER = """<?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+"""
+
+
+class ParseBashArrays(unittest.TestCase):
+    def test_multiline_comments_and_refs(self):
+        text = """
+deps=(
+    local_a # dependency of x
+    tool_b
+)
+main=(
+    # mod_custom   custom download logic
+    mod_c
+    mod_d   # trailing comment
+)
+all=("${deps[@]}" "${main[@]}")
+"""
+        arrays, commented = check.parse_bash_arrays(text)
+        self.assertEqual(arrays["deps"], ["local_a", "tool_b"])
+        self.assertEqual(arrays["main"], ["mod_c", "mod_d"])
+        self.assertEqual(arrays["all"], ["local_a", "tool_b", "mod_c", "mod_d"])
+        self.assertEqual(commented["main"][0][0], "mod_custom")
+
+    def test_append_form(self):
+        arrays, _ = check.parse_bash_arrays("a=(x)\na+=(y z)\n")
+        self.assertEqual(arrays["a"], ["x", "y", "z"])
+
+    def test_circular_reference_is_an_error(self):
+        with self.assertRaises(ValueError):
+            check.parse_bash_arrays('a=("${b[@]}")\nb=("${a[@]}")\n')
+
+    def test_real_file_matches_bash(self):
+        path = os.path.join(INSTALL, "pluginList.sh")
+        if not os.path.exists(path) or not shutil.which("bash"):
+            self.skipTest("pluginList.sh oder bash fehlt")
+        arrays, _ = check.parse_bash_arrays(check.read_text(path))
+        seen = check.bash_crosscheck(path, list(arrays))
+        self.assertIsNotNone(seen)
+        for name, items in arrays.items():
+            self.assertEqual(seen[name], items, name)
+
+
+class ParseDownloadScript(unittest.TestCase):
+    SAMPLE = """
+download_x() {
+    target_tag="v1.2.3"
+    git clone https://github.com/o/moodle-mod_x.git x
+}
+download_y() {
+    target_branch="main" # comment
+    git clone https://github.com/o/y.git
+}
+unused() {
+    git clone https://github.com/o/never.git
+}
+download_github_release() {
+    plugin_name=$1
+    repo=$2
+    tag=$3
+    curl -sSfL --retry 5 \\
+        "https://github.com/${repo}/archive/refs/tags/${tag}.zip" -o "${plugin_name}.zip"
+}
+download_z() {
+    download_github_release format_z o/moodle-format_z V405.1.5
+}
+download_m() {
+    curl -sSfL "https://marketplace.moodle.com/api/plugins/theme_m/versions/2026080600/download" -o m.zip
+}
+download_x
+download_y
+download_z
+download_m
+moosh plugin-download -v 3.7 customfield_old
+"""
+
+    def test_sources(self):
+        sources, legacy, uncalled = check.parse_download_script(self.SAMPLE)
+        kinds = {(s.kind, s.component, s.ref) for s in sources}
+        self.assertIn(("git-tag", None, "v1.2.3"), kinds)
+        self.assertIn(("git-branch", None, "main"), kinds)
+        self.assertIn(("github-archive", "format_z", "V405.1.5"), kinds)
+        self.assertIn(("marketplace-pin", "theme_m", "2026080600"), kinds)
+        self.assertNotIn("never", " ".join(s.repo_url or "" for s in sources))
+        self.assertEqual(legacy, {"customfield_old": "3.7"})
+        self.assertIn("unused", uncalled)
+
+    def test_real_file(self):
+        path = os.path.join(INSTALL, "downloadPlugins.sh")
+        if not os.path.exists(path):
+            self.skipTest("downloadPlugins.sh fehlt")
+        sources, legacy, _ = check.parse_download_script(check.read_text(path))
+        self.assertGreaterEqual(len(sources), 1)
+        for s in sources:
+            self.assertTrue(s.repo_url or s.download_url, s)
+            self.assertNotIn("$", (s.ref or "") + (s.repo_url or ""), s)
+
+
+class VersionSelection(unittest.TestCase):
+    PLUGIN = {"versions": [
+        {"version": "2024010100", "supportedmoodles": [{"release": "4.5"}]},
+        {"version": "2025010100", "supportedmoodles": [{"release": "4.5"}, {"release": "5.0"}]},
+        {"version": "2026010100", "supportedmoodles": [{"release": "5.0"}]},
+    ]}
+
+    def test_picks_newest_supporting(self):
+        self.assertEqual(check.select_directory_version(self.PLUGIN, "4.5")["version"], "2025010100")
+
+    def test_none_when_unsupported(self):
+        self.assertIsNone(check.select_directory_version(self.PLUGIN, "3.9"))
+
+
+class Helpers(unittest.TestCase):
+    def test_tag_family(self):
+        fam = check.tag_family("V405.1.5")
+        self.assertTrue(fam.match("V405.1.6"))
+        self.assertFalse(fam.match("V502.2.1"))
+        fam = check.tag_family("v9.7.10-stable")
+        self.assertTrue(fam.match("v9.7.11-stable"))
+        self.assertFalse(fam.match("v10.0.1-stable"))
+        self.assertGreater(check.version_tuple("v9.7.11"), check.version_tuple("v9.7.10"))
+
+    def test_license(self):
+        self.assertEqual(check.classify_license(GPL_HEADER), "GPL-3.0-or-later")
+        self.assertIsNone(check.classify_license("<?php\n$plugin->version = 1;"))
+        self.assertEqual(check.classify_license("// GNU General Public License version 3 only"), "GPL-3.0")
+
+    def test_normalized_matching(self):
+        self.assertIn(check.norm_text("pdfannotator"), check.norm_text("Moodle PDF Annotator plugin v1.5"))
+
+    def test_repo_url_normalization(self):
+        self.assertEqual(check.normalize_repo_url("https://github.com/o/r/tree/MOODLE_500%2B_rc"),
+                         "https://github.com/o/r")
+        self.assertEqual(check.normalize_repo_url("https://bitbucket.org/dw8/moodle-format_tiles/"),
+                         "https://bitbucket.org/dw8/moodle-format_tiles")
+
+
+class ArtifactChecks(unittest.TestCase):
+    CONFIG = {
+        "thresholds": {"future_version_tolerance_days": 31},
+        "code_patterns": [
+            {"component": "mod_demo", "file": "lib.php", "mode": "required", "pattern": "require_sesskey\\(\\)",
+             "reason": "CSRF"},
+            {"component": "mod_demo", "file": "view.php", "mode": "forbidden", "pattern": "eval\\(",
+             "reason": "eval"},
+            {"component": "mod_demo", "file": "missing.php", "mode": "required", "pattern": "x", "reason": "fehlt"},
+        ],
+        "library_map": [{"match": "pdf\\.js", "ecosystem": "npm", "package": "pdfjs-dist"}],
+    }
+
+    def tree(self, component="mod_demo", version="2099010100", lib=True):
+        files = {
+            "demo/version.php": GPL_HEADER + f"$plugin->component = '{component}';\n$plugin->version = {version};\n"
+                                             "$plugin->release = '1.0';\n",
+            "demo/lib.php": "<?php // nothing\n",
+            "demo/view.php": "<?php eval($x);\n",
+            "demo/vendor/other/version.php": "<?php $plugin->component = 'mod_other';",
+        }
+        if lib:
+            files["demo/thirdpartylibs.xml"] = ("<libraries><library><location>js/pdf.js</location><name>pdf.js</name>"
+                                                "<version>2.14.34</version><license>Apache</license></library>"
+                                                "<library><name>Mystery</name><version>1.0</version></library></libraries>")
+        return check.ZipTree(zip_bytes(files))
+
+    def run_artifact(self, tree, component="mod_demo"):
+        c = make_checker(self.CONFIG)
+        res = check.PluginResult(component, check.Source("directory", component))
+        c.fetch_tree = lambda r: tree
+        c.check_artifact(res)
+        c.results.append(res)
+        return c, res
+
+    def test_findings(self):
+        _, res = self.run_artifact(self.tree())
+        msgs = {(f.severity, f.check) for f in res.findings}
+        self.assertIn(("WARN", "version"), msgs)                      # future-dated version
+        sev = [f.severity for f in res.findings if f.check == "code-pattern"]
+        self.assertEqual(sev.count("FAIL"), 3)                        # missing fix, forbidden, missing file
+        self.assertEqual(res.metrics["license"], "GPL-3.0-or-later")
+        self.assertEqual(len(res.metrics["libraries"]), 2)
+
+    def test_component_mismatch(self):
+        _, res = self.run_artifact(self.tree(component="mod_evil"))
+        self.assertTrue(any(f.severity == "FAIL" and f.check == "artifact" for f in res.findings))
+
+    def test_osv_hit_is_fail_until_triaged(self):
+        c, res = self.run_artifact(self.tree())
+        orig = check.http_get
+        check.http_get = lambda *a, **k: json.dumps({"results": [{"vulns": [{"id": "GHSA-test"}]}]}).encode()
+        try:
+            c.check_osv()
+        finally:
+            check.http_get = orig
+        self.assertTrue(any(f.severity == "FAIL" and "GHSA-test" in f.message for f in res.findings))
+        self.assertTrue(any(f.severity == "UNCHECKED" and "Mystery" in f.message for f in res.findings))
+
+    def test_osv_failure_is_unchecked_not_ok(self):
+        c, res = self.run_artifact(self.tree())
+
+        def boom(*a, **k):
+            raise OSError("network down")
+        orig = check.http_get
+        check.http_get = boom
+        try:
+            c.check_osv()
+        finally:
+            check.http_get = orig
+        lib = [f for f in res.findings if f.check == "libraries" and "pdf.js" in f.message]
+        self.assertTrue(lib and all(f.severity == "UNCHECKED" for f in lib))
+
+
+class Triage(unittest.TestCase):
+    def test_fixed_version(self):
+        cfg = {"vulnerability_triage": {"CVE-1": {"status": "fixed", "fixed_version": "2026010100"}}}
+        c = make_checker(cfg)
+        old = check.PluginResult("mod_x", check.Source("directory", "mod_x"), version="2025010100")
+        new = check.PluginResult("mod_x", check.Source("directory", "mod_x"), version="2026020100")
+        c.triage(old, "CVE-1", "t")
+        c.triage(new, "CVE-1", "t")
+        self.assertEqual(old.findings[0].severity, "FAIL")
+        self.assertEqual(new.findings[0].severity, "INFO")
+
+    def test_unreviewed_is_fail_by_default(self):
+        c = make_checker({})
+        r = check.PluginResult("mod_x", check.Source("directory", "mod_x"))
+        c.triage(r, "CVE-2", "t")
+        self.assertEqual(r.findings[0].severity, "FAIL")
+
+    def test_triage_for_other_component_does_not_apply(self):
+        c = make_checker({"vulnerability_triage": {"CVE-3": {"component": "mod_a", "status": "not_affected"}}})
+        r = check.PluginResult("mod_b", check.Source("directory", "mod_b"))
+        c.triage(r, "CVE-3", "t")
+        self.assertEqual(r.findings[0].severity, "FAIL")
+
+
+class RepoChecks(unittest.TestCase):
+    """check_repo against a real local git repository (no network)."""
+
+    @classmethod
+    def setUpClass(cls):
+        import subprocess
+        import tempfile
+        cls.tmp = tempfile.mkdtemp(prefix="ph-test-")
+        cls.repo = os.path.join(cls.tmp, "upstream")
+        os.makedirs(cls.repo)
+        env = {**os.environ, "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t", "GIT_COMMITTER_NAME": "t",
+               "GIT_COMMITTER_EMAIL": "t@t"}
+
+        def g(*args, date=None):
+            e = dict(env)
+            if date:
+                e["GIT_AUTHOR_DATE"] = e["GIT_COMMITTER_DATE"] = date
+            subprocess.run(["git", *args], cwd=cls.repo, env=e, check=True, capture_output=True)
+        g("init", "-q", "-b", "main")
+        for i, (date, tag) in enumerate([("2020-01-01T00:00:00", "v1.0.0"), ("2020-02-01T00:00:00", "v1.0.1"),
+                                         ("2020-03-01T00:00:00", "v2.0.0")]):
+            with open(os.path.join(cls.repo, "f.txt"), "w") as fh:
+                fh.write(str(i))
+            g("add", "f.txt")
+            g("commit", "-q", "-m", f"c{i}", date=date)
+            g("tag", tag, date=date)
+        cls.url = "file://" + cls.repo
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmp, ignore_errors=True)
+
+    def run_repo(self, kind, ref, cfg=None):
+        c = make_checker(cfg or {"thresholds": {}}, offline=True, work_dir=os.path.join(self.tmp, "work-" + kind + str(ref)))
+        os.makedirs(os.path.join(c.work, "repos"), exist_ok=True)
+        res = check.PluginResult("mod_x", check.Source(kind, None, self.url, ref), repo_url=self.url)
+        c.check_repo(res)
+        return res
+
+    def has(self, res, sev, check_name, text=""):
+        return any(f.severity == sev and f.check == check_name and text in f.message for f in res.findings)
+
+    def test_stale_repo_fails(self):
+        self.assertTrue(self.has(self.run_repo("git-tag", "v2.0.0"), "FAIL", "maintenance"))
+
+    def test_maintenance_exception_downgrades(self):
+        res = self.run_repo("git-tag", "v2.0.0", {"thresholds": {}, "maintenance_exceptions": {"mod_x": "stabil"}})
+        self.assertFalse(self.has(res, "FAIL", "maintenance"))
+        self.assertTrue(self.has(res, "INFO", "maintenance", "stabil"))
+
+    def test_newer_tag_in_same_line(self):
+        res = self.run_repo("git-tag", "v1.0.0")
+        self.assertTrue(self.has(res, "WARN", "pin", "v1.0.1"))
+        self.assertFalse(self.has(res, "WARN", "pin", "v2.0.0"))
+
+    def test_missing_tag_fails(self):
+        self.assertTrue(self.has(self.run_repo("github-archive", "v9.9.9"), "FAIL", "pin"))
+
+    def test_branch_pin_warns(self):
+        self.assertTrue(self.has(self.run_repo("git-branch", "main"), "WARN", "pin", "Branch"))
+
+    def test_non_github_repo_is_unchecked(self):
+        self.assertTrue(self.has(self.run_repo("git-tag", "v2.0.0"), "UNCHECKED", "github"))
+
+    def test_github_meta_offline_and_without_token_is_not_ok(self):
+        c = make_checker({}, offline=True)
+        self.assertNotEqual(c.github_meta("https://github.com/o/r").get("status"), "ok")
+        c = make_checker({}, offline=False)
+        c.token = None
+        self.assertNotEqual(c.github_meta("https://github.com/o/r").get("status"), "ok")
+
+
+class DownloadIntegrity(unittest.TestCase):
+    def test_md5_mismatch_fails(self):
+        c = make_checker({})
+        data = zip_bytes({"x/version.php": "<?php $plugin->component = 'mod_x';"})
+        src = check.Source("directory", "mod_x", download_url="https://example.invalid/x.zip", download_md5="0" * 32)
+        res = check.PluginResult("mod_x", src)
+        orig = check.http_get
+        check.http_get = lambda *a, **k: data
+        try:
+            c.fetch_tree(res)
+        finally:
+            check.http_get = orig
+        self.assertTrue(any(f.severity == "FAIL" and f.check == "integrity" for f in res.findings))
+
+
+class CveScan(unittest.TestCase):
+    def test_rejected_records_are_ignored_and_matches_reported(self):
+        import tempfile
+        tmp = tempfile.mkdtemp(prefix="ph-cve-")
+        try:
+            d = os.path.join(tmp, "cves", "2025", "1xxx")
+            os.makedirs(d)
+
+            def dump(obj, path):
+                with open(path, "w") as fh:
+                    json.dump(obj, fh)
+
+            def rec(cve_id, state, text):
+                return {"cveMetadata": {"cveId": cve_id, "state": state, "datePublished": "2025-01-01"},
+                        "containers": {"cna": {"descriptions": [{"value": text}], "references": []}}}
+            dump(rec("CVE-2025-1000", "PUBLISHED", "Moodle PDF Annotator plugin allows XSS"),
+                      os.path.join(d, "CVE-2025-1000.json"))
+            dump(rec("CVE-2025-1001", "REJECTED", "Moodle pdfannotator duplicate"),
+                      os.path.join(d, "CVE-2025-1001.json"))
+            dump(rec("CVE-2025-1002", "PUBLISHED", "Moodle core stack trace leak"),
+                      os.path.join(d, "CVE-2025-1002.json"))
+            c = make_checker({"cve_generic_terms": ["stack"]}, cve_dir=tmp)
+            pdf = check.PluginResult("mod_pdfannotator", check.Source("directory", "mod_pdfannotator"))
+            stack = check.PluginResult("qtype_stack", check.Source("directory", "qtype_stack"))
+            c.results = [pdf, stack]
+            c.check_cves()
+            ids = " ".join(f.message for f in pdf.findings)
+            self.assertIn("CVE-2025-1000", ids)
+            self.assertNotIn("CVE-2025-1001", ids)
+            self.assertFalse(stack.findings, "generischer Begriff 'stack' darf nicht matchen")
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+
+class BashCrosscheck(unittest.TestCase):
+    def test_broken_file_returns_none(self):
+        import tempfile
+        if not shutil.which("bash"):
+            self.skipTest("bash fehlt")
+        with tempfile.NamedTemporaryFile("w", suffix=".sh", delete=False) as fh:
+            fh.write("a=(x\nexit 7\n")
+        try:
+            self.assertIsNone(check.bash_crosscheck(fh.name, ["a"]))
+        finally:
+            os.unlink(fh.name)
+
+
+class Baseline(unittest.TestCase):
+    def test_known_findings_become_info_new_ones_stay(self):
+        import tempfile
+        c = make_checker({})
+        r = check.PluginResult("mod_x", check.Source("directory", "mod_x"))
+        r.add("FAIL", "maintenance", "Letzter Commit vor 800 Tagen – vermutlich unmaintained.")
+        r.add("FAIL", "vulnerability", "CVE-2099-1 – unbewertet")
+        c.results = [r]
+        base = {"plugins": [{"component": "mod_x", "findings": [
+            {"severity": "FAIL", "check": "maintenance", "message": "Letzter Commit vor 793 Tagen – vermutlich unmaintained."}]}],
+            "global_findings": []}
+        with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as fh:
+            json.dump(base, fh)
+        try:
+            c.apply_baseline(fh.name)
+        finally:
+            os.unlink(fh.name)
+        sev = {f.check: f.severity for f in r.findings}
+        self.assertEqual(sev["maintenance"], "INFO")
+        self.assertEqual(sev["vulnerability"], "FAIL")
+
+
+class Duplicates(unittest.TestCase):
+    def test_unexpected_duplicate_fails(self):
+        c = make_checker({})
+        c.results = [check.PluginResult("mod_x", check.Source("directory", "mod_x"), version="1"),
+                     check.PluginResult("mod_x", check.Source("git-tag", None, origin="f"), version="2")]
+        c.check_duplicates()
+        self.assertTrue(any(f.severity == "FAIL" for f in c.global_findings))
+
+    def test_allowed_duplicate_flags_downgrade(self):
+        c = make_checker({"allowed_duplicates": {"auth_oidc": "runtime switch"}})
+        up = check.PluginResult("auth_oidc", check.Source("directory", "auth_oidc"), version="2024100740")
+        fork = check.PluginResult("auth_oidc", check.Source("git-branch", None, origin="f"), version="2024100737")
+        c.results = [up, fork]
+        c.check_duplicates()
+        self.assertFalse(any(f.severity == "FAIL" for f in c.global_findings))
+        self.assertTrue(any(f.check == "downgrade" for f in fork.findings))
+        self.assertFalse(any(f.check == "downgrade" for f in up.findings))
+
+
+if __name__ == "__main__":
+    unittest.main()
