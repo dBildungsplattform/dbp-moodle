@@ -1,4 +1,10 @@
 # Changelog
+## [1.10.0] - 2026-10-08
+### Changes
+- **DBP-2563** Serve a deny-all `robots.txt` for Etherpad
+  - Mounted to `/opt/etherpad-lite/src/static/robots.txt` in the Etherpad container
+  - The content can be set in the values under `etherpadlite.robotsTxt` (defaults to `User-agent: *` / `Disallow: /`)
+
 ## [1.9.0] - 2026-10-06
 ### Changes
 - **DBP-2467** Set required stack-plugin config via code
