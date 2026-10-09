@@ -18,12 +18,10 @@ plugin_list=(
     # local_course_reminder   custom download logic below - the marketplace metadata of its only published version is broken
     # format_topcoll   custom download logic below - the maintainer withdrew the plugin from the Moodle plugins directory (2026-09)
     # theme_adaptable   custom download logic below - the maintainer withdrew the plugin from the Moodle plugins directory (2026-09)
-    theme_boost_union
     mod_choicegroup
     mod_coursecertificate
     mod_etherpadlite
     mod_hvp
-    mod_pdfannotator
     format_remuiformat
     local_staticpage
     format_tiles
